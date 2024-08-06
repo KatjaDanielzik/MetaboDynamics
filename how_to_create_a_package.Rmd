@@ -171,6 +171,238 @@ exists("strsplit1",where=globalenv(),inherits=F)
 ```
 [1] FALSE
 
-### commit function
+commit (after every step) and eventually push function via the GIT menu in RStudio
+
+### check function
+```{r}
+check()
+```
+checks should be run often !
+Show in New Window
+══ Documenting ═════════════════════════════════════════════════════════════════════════════════════════════════
+ℹ Updating MetaboDynamics documentation
+ℹ Loading MetaboDynamics
+
+══ Building ════════════════════════════════════════════════════════════════════════════════════════════════════
+Setting env vars:
+• CFLAGS    : -Wall -pedantic -fdiagnostics-color=always
+• CXXFLAGS  : -Wall -pedantic -fdiagnostics-color=always
+• CXX11FLAGS: -Wall -pedantic -fdiagnostics-color=always
+• CXX14FLAGS: -Wall -pedantic -fdiagnostics-color=always
+• CXX17FLAGS: -Wall -pedantic -fdiagnostics-color=always
+• CXX20FLAGS: -Wall -pedantic -fdiagnostics-color=always
+── R CMD build ─────────────────────────────────────────────────────────────────────────────────────────────────
+✔  checking for file ‘/media/home/MetaboDynamics/DESCRIPTION’ ...
+─  preparing ‘MetaboDynamics’:
+✔  checking DESCRIPTION meta-information
+─  checking for LF line-endings in source and make files and shell scripts
+─  checking for empty or unneeded directories
+   Removed empty directory ‘MetaboDynamics/man’
+─  building ‘MetaboDynamics_0.0.0.9000.tar.gz’
+   
+══ Checking ════════════════════════════════════════════════════════════════════════════════════════════════════
+Setting env vars:
+• _R_CHECK_CRAN_INCOMING_USE_ASPELL_           : TRUE
+• _R_CHECK_CRAN_INCOMING_REMOTE_               : FALSE
+• _R_CHECK_CRAN_INCOMING_                      : FALSE
+• _R_CHECK_FORCE_SUGGESTS_                     : FALSE
+• _R_CHECK_PACKAGES_USED_IGNORE_UNUSED_IMPORTS_: FALSE
+• NOT_CRAN                                     : true
+── R CMD check ─────────────────────────────────────────────────────────────────────────────────────────────────
+─  using log directory ‘/tmp/RtmpqgnxA6/filefc6e22285322/MetaboDynamics.Rcheck’
+─  using R version 4.4.1 (2024-06-14)
+─  using platform: x86_64-pc-linux-gnu
+─  R was compiled by
+       gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+       GNU Fortran (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+─  running under: Ubuntu 22.04.2 LTS
+─  using session charset: UTF-8
+─  using options ‘--no-manual --as-cran’
+✔  checking for file ‘MetaboDynamics/DESCRIPTION’
+─  this is package ‘MetaboDynamics’ version ‘0.0.0.9000’
+─  package encoding: UTF-8
+✔  checking package namespace information
+✔  checking package dependencies (655ms)
+✔  checking if this is a source package
+✔  checking if there is a namespace
+✔  checking for executable files
+✔  checking for hidden files and directories
+✔  checking for portable file names
+✔  checking for sufficient/correct file permissions
+✔  checking serialization versions
+✔  checking whether package ‘MetaboDynamics’ can be installed (785ms)
+✔  checking installed package size ...
+✔  checking package directory
+✔  checking for future file timestamps (489ms)
+W  checking DESCRIPTION meta-information ...
+   Non-standard license specification:
+     `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+     license
+   Standardizable: FALSE
+N  checking top-level files
+   Non-standard file/directory found at top level:
+     ‘how_to_create_a_package.Rmd’
+✔  checking for left-over files
+✔  checking index information
+✔  checking package subdirectories ...
+✔  checking code files for non-ASCII characters ...
+✔  checking R files for syntax errors ...
+✔  checking whether the package can be loaded ...
+✔  checking whether the package can be loaded with stated dependencies ...
+✔  checking whether the package can be unloaded cleanly ...
+✔  checking whether the namespace can be loaded with stated dependencies ...
+✔  checking whether the namespace can be unloaded cleanly ...
+✔  checking loading without being on the library search path ...
+✔  checking dependencies in R code ...
+✔  checking S3 generic/method consistency ...
+✔  checking replacement functions ...
+✔  checking foreign function calls ...
+✔  checking R code for possible problems (1.8s)
+✔  checking for missing documentation entries ...
+─  checking examples ... NONE
+✔  checking for non-standard things in the check directory
+✔  checking for detritus in the temp directory
+   
+   See
+     ‘/tmp/RtmpqgnxA6/filefc6e22285322/MetaboDynamics.Rcheck/00check.log’
+   for details.
+   
+── R CMD check results ────────────────────────────────────────────────────────── MetaboDynamics 0.0.0.9000 ────
+Duration: 6.8s
+
+❯ checking DESCRIPTION meta-information ... WARNING
+  Non-standard license specification:
+    `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
+  Standardizable: FALSE
+
+❯ checking top-level files ... NOTE
+  Non-standard file/directory found at top level:
+    ‘how_to_create_a_package.Rmd’
+
+0 errors ✔ | 1 warning ✖ | 1 note ✖
+
+## edit description
+edit "DESCRIPTION" file 
+
+## set a licencse
+to choose a copyleft license (allows to freely copy and modify code for personal
+use but if you publish modified versions or bundle with other code, the modified
+version or complete bundle must also be licensed with the GPL)
+```{r}
+use_gpl_license()
+# minimal restrictions
+# use_mit_license()
+```
+
+✔ Adding "GPL (>= 3)" to License.
+✔ Writing LICENSE.md.
+✔ Adding "^LICENSE\\.md$" to .Rbuildignore.
+
+## document
+for future users to get help with the functions a R documentation file "man/strsplit1.Rd"
+is needed. Written in R-specific markup language. We let roxygen2 handle the creation 
+of this file. Go into the function definition with the cursor: code>insert roxygen skeleton
+and fill it out.
+```{r}
+document()
+```
+ℹ Updating MetaboDynamics documentation
+ℹ Loading MetaboDynamics
+✖ strplit1.R:3: @param requires two parts: an argument name and a description.
+✖ strplit1.R:9: @examples requires a value.
+Writing NAMESPACE
+Writing strsplit1.Rd
+
+this should add man/strsplit1.Rd and add export(strsplit1) in the "NAMESPACE"
+file
+```{r}
+help("strsplit1")
+```
+should open the help page of the function
+after re-checking again we can now install the package into our library
+
+## install 
+```{r}
+install()
+library(MetaboDynamics)
+```
+
+# test functions
+we can formalize tests for functions in unit tests with 
+```{r}
+# declare intent to write unite tests and use testthat package
+use_testthat(3)
+# open and/or create test file
+use_test("strsplit1")
+```
+
+
+
+this creates a folder "tests" with subfolder "testthat" and "testthat.R"
+✔ Adding testthat to Suggests field in DESCRIPTION.
+✔ Adding "3" to Config/testthat/edition.
+✔ Creating tests/testthat/.
+✔ Writing tests/testthat.R.
+☐ Call usethis::use_test() to initialize a basic test file and open it for editing.
+
+use_test("functionname") creates a file test-functionname.R and returns
+✔ Writing tests/testthat/test-strsplit1.R.
+☐ Modify tests/testthat/test-strsplit1.R.
+```{r}
+# run tests
+test()
+
+# tests also run whenever one uses check()
+check()
+```
+ℹ Testing MetaboDynamics
+✔ | F W  S  OK | Context
+✔ |          1 | strsplit1                                                                                      
+
+══ Results ═════════════════════════════════════════════════════════════════════════════════════════════════════
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 1 ]
+
+# use other packages
+we have to declare other packages we need with package specific methods. 
+When submitting to CRAN that even applies to functions in packages such as 
+"stats" and "utils".
+It adds the package to the "DESCRIPTION" file under "Imports". That means
+that the package will be installed along with your own package, but not loaded
+(library()) into the enviroment. This needs still to be done in the functions or
+used as stringr::. Operatorators such as %>% cannot be accessed behind stringr::
+so the corresponding package has to be loaded beforehand.
+
+For our package we will need strinr, rstan, ggplot, dplyr I think.
+Bayesplot not necessary but it makes it easier for the user to inspect
+the resulting modelling files -> suggested
+```{r}
+use_package("stringr", "imports",min_version=TRUE) # min_version=TRUE sets to current version
+use_package("rstan","imports",min_version = TRUE)
+use_package("ggplot2","imports",min_version=TRUE)
+use_package("bayesplot","suggests",min_version=TRUE)
+```
+✔ Adding stringr to Imports field in DESCRIPTION.
+☐ Refer to functions with `stringr::fun()`.
+
+# create readme files
+The "README.md" file is the package's hoem page and welcome mat. 
+Additionally one create a website, vignette or submit to CRAN.
+```{r}
+# intitializes a basic executable README.Rmd that can be edited
+use_readme_rmd()
+# building happens with
+build_readme()
+```
+Registered S3 method overwritten by 'rmarkdown':
+  method         from
+  print.paged_df     
+✔ Setting active project to "/media/home/MetaboDynamics".
+✔ Writing README.Rmd.
+✔ Adding "^README\\.Rmd$" to .Rbuildignore.
+☐ Modify README.Rmd.
+✔ Writing .git/hooks/pre-commit.
+
+It creates a file "README.Rmd" that can be edited by the author.
 
 

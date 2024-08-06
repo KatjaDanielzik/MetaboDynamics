@@ -1,12 +1,19 @@
 Package: MetaboDynamics
-Title: What the Package Does (One Line, Title Case)
+Title: Bayesian Analysis of longitudinal metabolomics data
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Katja", "Danielzik", , "katja.danielzik@uni-due.de", role = c("aut", "cre"),
+           comment = c(ORCID = "https://orcid.org/0009-0007-5021-6212"))
+Description: This will be an R-package employing bayesian models for the robust and reproducible analysis of longitudinal metabolomics data. Metabolomics data is often noisy and only small number of replicates are available due to high costs. Our workflow employs 3 models. 1) robust estimation of mean concentrations from concentration tables, resulting vectors can be used for clustering, 2) quantification of over-representation of functional KEGG modules of clusters of metabolites with similar dynamics, 3) quantification of dynamic similarity of clusters from different experimental conditions
+License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Suggests: 
+    bayesplot (>= 1.11.1),
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports: 
+    ggplot2 (>= 3.5.1),
+    rstan (>= 2.32.6),
+    stringr (>= 1.5.1)
