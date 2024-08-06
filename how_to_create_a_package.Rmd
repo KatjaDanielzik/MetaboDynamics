@@ -71,6 +71,46 @@ devtools::dev_sitrep()
 ## Git repository
 create a new folder and a new git repository, initial git in the folder and set
 the git repository to 
+Disable automatic workspace save: tools > global options > Restore .RData uncheck,
+Save workspace to .RData -> change to "never"
+Go to terminal in RStudio 
+```{bash}
+git config --global credential.helper store
+# confirmation with 
+git config credential.helper
+```
+store
+
+```{bash}
+# I am using a local credential helper here for this project as I am normally
+# pushing to gitlab, if global than "git config --global ..."
+git config user.name "KatjaDanielzik"
+git config user.email "katja.danielzik@uni-due.de"
+```
+
+create a token for the current github project https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
+
+```{r}
+install.packages("gitcreds")
+
+gitcreds::gitcreds_set()
+```
+Show in New Window
+
+-> Your current credentials for 'https://github.com':
+
+  protocol: https
+  host    : github.com
+  username: PersonalAccessToken
+  password: <-- hidden -->
+
+-> What would you like to do? 
+
+1: Abort update with error, and keep the existing credentials
+2: Replace these credentials
+3: See the password / token
+
+can also be used to see the password/token
 
 # Building a toy package
 devtools package is a public face set of packages that support package development
@@ -124,4 +164,13 @@ in package development
 ```{r}
 load_all()
 ```
+makes all functions availale (not in the global enviroment) and simulates the process
+ of building, installing, and attaching the new package. 
+```{r}
+exists("strsplit1",where=globalenv(),inherits=F)
+```
+[1] FALSE
+
+### commit function
+
 
