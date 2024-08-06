@@ -1,0 +1,82 @@
+---
+title: "how_to_build_a_package"
+author: "Katja Danielzik"
+date: "2024-08-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+---
+title: "Creating_packages"
+author: "Katja Danielzik"
+date: "2024-08-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is a follow along of the bock "R packages: 2nd edition" by Hadley Wickham
+and Jennifer Bryan (https://r-pkgs.org/).
+
+# System setup
+install current R version (4.4.1)
+```{bash}
+# update indices
+sudo apt update -qq
+# install two helper packages we need
+sudo apt install --no-install-recommends software-properties-common dirmngr
+# add the signing key (by Michael Rutter) for these repos
+# To verify key, run gpg --show-keys /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc 
+# Fingerprint: E298A3A825C0D65DFD57CBB651716619E084DAB9
+wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc
+# add the R 4.0 repo from CRAN -- adjust 'focal' to 'groovy' or 'bionic' as needed
+sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
+# install base r
+sudo apt install r-base
+# install development tools
+sudo apt install r-base-dev
+```
+
+## install necessary packages 
+```{r}
+install.packages(c("devtools","roxygen2","testthat","knitr"))
+library(devtools)
+# attach devtools for every R session
+if (interactive()) {
+  suppressMessages(require(devtools))
+}
+```
+
+## check if necessary packages are installed
+```{r}
+devtools::dev_sitrep()
+```
+── R ────────────────────────────────────────────────────────────────────────────────────────────────
+• version: 4.4.1
+• path: '/usr/lib/R/'
+── RStudio ──────────────────────────────────────────────────────────────────────────────────────────
+• version: 2024.4.2.764
+── devtools ─────────────────────────────────────────────────────────────────────────────────────────
+• version: 2.4.5
+── dev package ──────────────────────────────────────────────────────────────────────────────────────
+• package: <unset>
+• path: <unset>
+✔ All checks passed
+
+## Git repository
+create a new folder and a new git repository, initial git in the folder and set
+the git repository to 
+
+# Building a toy package
+devtools package is a public face set of packages that support package development
+## creating a package
+```{r}
+library(devtools)
+# initialize a new package in a directory 
+create_package("/media/home/MetaboDynamics")
+```
