@@ -403,6 +403,9 @@ Registered S3 method overwritten by 'rmarkdown':
 ☐ Modify README.Rmd.
 ✔ Writing .git/hooks/pre-commit.
 
+
+ℹ Installing MetaboDynamics in temporary library
+ℹ Building /media/home/MetaboDynamics/README.Rmd
 It creates a file "README.Rmd" that can be edited by the author.
 
 
