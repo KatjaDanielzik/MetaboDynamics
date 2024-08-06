@@ -334,7 +334,7 @@ we can formalize tests for functions in unit tests with
 # declare intent to write unite tests and use testthat package
 use_testthat(3)
 # open and/or create test file
-use_test("strsplit1")
+use_test("Vignette")
 ```
 
 
@@ -444,4 +444,49 @@ build_rmd("vignettes/MetaboDynamics.Rmd")
 ℹ Installing MetaboDynamics in temporary library
 ℹ Building /media/home/MetaboDynamics/vignettes/MetaboDynamics.Rmd
 
+# integrate data
+data is often needed for a package in order to write a Vignette with examples
+```{r}
+data_sim <- sample(1000)
+use_data(data_sim)
+```
+✔ Adding R to Depends field in DESCRIPTION.
+✔ Creating data/.
+✔ Setting LazyData to "true" in DESCRIPTION.
+✔ Saving "data_sim" to "data/data_sim.rda".
+☐ Document your data (see <https://r-pkgs.org/data.html>).
 
+This adds also "LazyData: true" in the Description as it makes data directly
+available in the enviroment after attaching the pacakge.
+R objects should be stored in a .rda file and use the same name for the object
+and the .rda file. Use lazy-loading by default.
+Objects in "data" are exported. This means they must be documented. For this 
+you use an R script with the data name as name and roxygen to document the 
+data origin. This must be save in /R
+## raw data
+The code used to clean up raw data should be in the source version of your 
+package.
+Keep the code for clean-up in an .R file in a folder data-raw. It should not 
+be in the bundled version of the package, so this folder should be listed in 
+.Rbuildignore
+```{r}
+use_data_raw("data_sim")
+```
+✔ Creating data-raw/.
+✔ Adding "^data-raw$" to .Rbuildignore.
+✔ Writing data-raw/data_sim.R.
+☐ Modify data-raw/data_sim.R.
+☐ Finish writing the data preparation script in data-raw/data_sim.R.
+☐ Use `usethis::use_data()` to add prepared data to package.
+
+This creates the directory "data_raw" with the R-script "data_sim.R" where the 
+code to process the raw data should be stored. Documentation with roxyskeleton
+and build documentation with 
+```{r}
+promptData(data_sim)
+```
+Created file named ‘data_sim.Rd’.
+Edit the file and move it to the appropriate directory.
+
+.RD files should be stored in the folder "man", so I edit the data_sim.Rd
+file and move it to /man

@@ -20,8 +20,3 @@ library(MetaboDynamics)
 
 This is a testfile for a future Vignette of a worked example of analysis
 of longitudinal metabolomics data with the package "MetaboDynamics"
-
-```{r}
-vignette("linking",package="pkgdown")
-```
-

@@ -22,11 +22,12 @@ You can install the development version of MetaboDynamics from
 pak::pak("KatjaDanielzik/MetaboDynamics")
 ```
 
-## Example
+## Overview
 
-This is a basic example which shows you how to solve a common problem:
+this should describe the main components of the package and can point to
+the vignettes in case of a more complex package Describe also how the
+pacakge fits into the ecosystem of its target domain.
 
-``` r
-library(MetaboDynamics)
-## basic example code
-```
+## Workflow & output
+
+graphical abstract of workflow with data input and example outputs

@@ -32,13 +32,11 @@ You can install the development version of MetaboDynamics from [GitHub](https://
 pak::pak("KatjaDanielzik/MetaboDynamics")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-```{r example}
-library(MetaboDynamics)
-## basic example code
-```
+## Overview
+this should describe the main components of the package and can point to the
+vignettes in case of a more complex package
+Describe also how the pacakge fits into the ecosystem of its target domain.
 
 
+## Workflow & output
+graphical abstract of workflow with data input and example outputs
