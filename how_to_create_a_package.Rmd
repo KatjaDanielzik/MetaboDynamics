@@ -385,7 +385,8 @@ use_package("bayesplot","suggests",min_version=TRUE)
 ✔ Adding stringr to Imports field in DESCRIPTION.
 ☐ Refer to functions with `stringr::fun()`.
 
-# create readme files
+# create welcome mats to the package
+## README on github
 The "README.md" file is the package's hoem page and welcome mat. 
 Additionally one create a website, vignette or submit to CRAN.
 ```{r}
@@ -407,5 +408,40 @@ Registered S3 method overwritten by 'rmarkdown':
 ℹ Installing MetaboDynamics in temporary library
 ℹ Building /media/home/MetaboDynamics/README.Rmd
 It creates a file "README.Rmd" that can be edited by the author.
+
+## Vignettes
+Vignettes are long-form guides to a package. Function documentation is needed
+but Vignettes can be framed around a target problem the package was designed
+to solve. So it is perfect to a show a workflow that solves a particular 
+problem start to finish.
+Vignettes can be accessed by "browseVignettes(packagename)"
+```{r}
+# create a first Vignette
+use_vignette("MetaboDynamics")
+```
+✔ Adding knitr to Suggests field in DESCRIPTION.
+✔ Adding rmarkdown to Suggests field in DESCRIPTION.
+✔ Adding "knitr" to VignetteBuilder.
+✔ Adding "inst/doc" to .gitignore.
+✔ Creating vignettes/.
+✔ Adding "*.html" and "*.R" to vignettes/.gitignore.
+✔ Writing vignettes/MetaboDynamics.Rmd.
+☐ Modify vignettes/MetaboDynamics.Rmd.
+
+and creates the file "MetaboDynamics.Rmd" that we can now edit.
+
+Vignettes are only rendered using the currently installed version of a package!!!
+That is because of the intial call of "library(packagename)".
+So the current version has to be installed with devtools::install()
+```{r}
+# install package and request Vignette build
+devtools::install(build_vignettes = TRUE)
+browseVignettes("MetaboDynamics")
+
+# OR USE DEVTOOLS 
+build_rmd("vignettes/MetaboDynamics.Rmd")
+```
+ℹ Installing MetaboDynamics in temporary library
+ℹ Building /media/home/MetaboDynamics/vignettes/MetaboDynamics.Rmd
 
 

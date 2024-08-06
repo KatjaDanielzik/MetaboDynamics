@@ -1,0 +1,27 @@
+---
+title: "MetaboDynamics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MetaboDynamics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(MetaboDynamics)
+```
+
+This is a testfile for a future Vignette of a worked example of analysis
+of longitudinal metabolomics data with the package "MetaboDynamics"
+
+```{r}
+vignette("linking",package="pkgdown")
+```
+
