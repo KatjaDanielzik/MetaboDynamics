@@ -80,3 +80,48 @@ library(devtools)
 # initialize a new package in a directory 
 create_package("/media/home/MetaboDynamics")
 ```
+
+## use git
+```{r}
+use_git()
+```
+✔ Setting active project to "/media/home/MetaboDynamics".
+✔ Adding ".Rhistory", ".Rdata", ".httr-oauth", ".DS_Store", and ".quarto" to .gitignore.
+ℹ There are 6 uncommitted files:
+• .gitignore
+• .Rbuildignore
+• DESCRIPTION
+• how_to_create_a_package.Rmd
+• MetaboDynamics.Rproj
+• NAMESPACE
+! Is it ok to commit them?
+
+1: Definitely
+2: No
+3: Not now
+
+Selection: 1
+✔ Adding files.
+✔ Making a commit with message "Initial commit".
+
+## first function
+### define function
+```{r}
+strsplit1 <- function(x,split){
+  strsplit(x,split=split)[[1]]
+}
+```
+### save in an R file
+```{r}
+use_r("strplit1")
+```
+
+put definition of the function and NOTHING else in the file and then save.
+
+### make function available
+usually we would just source the R script in the global enviroment, but not 
+in package development
+```{r}
+load_all()
+```
+
