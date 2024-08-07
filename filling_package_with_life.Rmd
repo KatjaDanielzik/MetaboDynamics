@@ -1,0 +1,28 @@
+---
+title: "filling_package_skeleton_with_life"
+author: "Katja Danielzik"
+date: "2024-08-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# raw data 
+will be worked on later
+
+# data
+import already pre-processed intracellular metabolite concentrations with one
+column specifying the experimental condition (in our case radiation dose) and
+one column specifying time (numerical)
+```{r}
+intra <- read_csv("/media/home/5-1-package pipeline/data/intra_corrected_cell_counts.csv")
+# save as rda file
+use_data(intra)
+# write documentation
+promptData(intra)
+```
+
+
+

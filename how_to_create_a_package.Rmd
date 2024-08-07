@@ -490,3 +490,28 @@ Edit the file and move it to the appropriate directory.
 
 .RD files should be stored in the folder "man", so I edit the data_sim.Rd
 file and move it to /man
+
+
+# Code styling
+we can enforce specific code style with the styler package
+```{r}
+styler::style_pkg() # restyles entire package according to the tidyverse style guide
+```
+
+
+
+# Development workflow commands
+```{r}
+# update documentation
+document()
+# load functions for testing
+load_all()
+# run tests
+test()
+# check entire package
+check()
+# install package -> functions are available for markdowns
+install()
+
+```
+
