@@ -13,7 +13,8 @@
 #' @return returns one modelfit named fit_condition per experimental condition
 #' @export
 #'
-#' @examples No examples yet
+#' @examples
+#' fit_dynamics_model(intra)
 #'
 #' @import methods
 #' @import Rcpp
@@ -53,6 +54,9 @@ fit <- rstan::sampling(object=stanmodels$m_ANOVA_partial_pooling,
 # assign condition name to fit and return
 return(assign(paste0("fit","_",conditions[i]),fit))
 }
+#cleanup
+rm(i,temp,conditions,fit)
 }
+
 
 

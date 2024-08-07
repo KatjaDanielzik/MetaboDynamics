@@ -31,6 +31,6 @@ MetaboDynamics provides a hierachical model for robust estimation of mean
 concentrations over time of single metabolites at single experimental conditions.
 }
 \examples{
-No examples yet
+fit_dynamics_model(intra)
 
 }
