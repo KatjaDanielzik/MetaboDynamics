@@ -16,6 +16,8 @@ will be worked on later
 import already pre-processed intracellular metabolite concentrations with one
 column specifying the experimental condition (in our case radiation dose) and
 one column specifying time (numerical)
+
+## intracellular concentrations
 ```{r}
 intra <- read_csv("/media/home/5-1-package pipeline/data/intra_corrected_cell_counts.csv")
 # save as rda file
@@ -23,6 +25,24 @@ use_data(intra)
 # write documentation
 promptData(intra)
 ```
+## KEGG-database 
+these files are summaries of the pull request from KEGG via KEGGREST
+```{r}
+# total background information
+modules_compounds  <- read_csv("/media/home/5-1-package pipeline/data/modules_compounds.csv")
+use_data(modules_compounds)
+promptData(modules_compounds)
+
+# experimental metabolites mapped to modules
+metabolite_modules <- read_csv("/media/home/5-1-package pipeline/data/metabolite_modules.csv")
+use_data(metabolite_modules)
+promptData(metabolite_modules)
+
+# suggest KEGGREST as package for developers to test the code or obtain own datasets
+use_package("KEGGREST","suggests",min_version=TRUE)
+document()
+```
+
 
 
 

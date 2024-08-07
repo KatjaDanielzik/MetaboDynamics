@@ -23,17 +23,17 @@ The experiment was conducted by Dr. Johann Matschke and LC-MS was performed by P
     \item{\code{cpc}}{Concentration Per Cell= Value/cells}
   }
 }
-\details{
+%%\details{
 %%  ~~ If necessary, more details than the __description__ above ~~
-}
+%%}
 \source{
 Johann Matschke
 }
-\references{
+%%\references{
 %%  ~~ possibly secondary sources and usages ~~
-}
+%%}
 \examples{
-data(intra)
+data("intra")
 head(intra)
 }
 \keyword{datasets}
