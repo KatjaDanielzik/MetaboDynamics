@@ -363,7 +363,7 @@ check()
 ══ Results ═════════════════════════════════════════════════════════════════════════════════════════════════════
 [ FAIL 0 | WARN 0 | SKIP 0 | PASS 1 ]
 
-# use other packages
+# Dependencies: use other packages
 we have to declare other packages we need with package specific methods. 
 When submitting to CRAN that even applies to functions in packages such as 
 "stats" and "utils".
@@ -380,6 +380,7 @@ the resulting modelling files -> suggested
 use_package("stringr", "imports",min_version=TRUE) # min_version=TRUE sets to current version
 use_package("rstan","imports",min_version = TRUE)
 use_package("ggplot2","imports",min_version=TRUE)
+use_package("dplyr","imports",min_version=TRUE)
 use_package("bayesplot","suggests",min_version=TRUE)
 ```
 ✔ Adding stringr to Imports field in DESCRIPTION.
@@ -513,5 +514,24 @@ check()
 # install package -> functions are available for markdowns
 install()
 
+```
+
+# STAN packages
+to make Stan models available we need another development enviroment from
+rstantools 
+```{r}
+# install.packages("rstantools")
+# add Stan infrastructure to an existing package
+rstantools::use_rstan("/media/home/MetaboDynamics")
+# this updates the package when Stan files are updated
+rstantools::rstan_config()
+
+# in function file: Code > insert roxygen skeleton
+#' @import methods
+#' @import Rcpp
+#' @importFrom rstan sampling
+#' @importFrom rstantools rstan_config
+#' @importFrom RcppParallel RcppParallelLibs
+#' @useDynLib MetaboDynamics
 ```
 

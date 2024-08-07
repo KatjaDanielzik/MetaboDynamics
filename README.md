@@ -28,7 +28,7 @@ this should describe the main components of the package and can point to
 the vignettes in case of a more complex package Describe also how the
 pacakge fits into the ecosystem of its target domain.
 
-## Workflow & output
+## Workflow draft
 
 <figure>
 <img src="/man/figures/README-metabolomics_pitch_draft.png"

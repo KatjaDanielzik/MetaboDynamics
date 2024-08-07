@@ -1,5 +1,5 @@
 ---
-title: "MetaboDynamics"
+title: "MetaboDynamics: a worked example"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{MetaboDynamics}
@@ -14,9 +14,79 @@ knitr::opts_chunk$set(
 )
 ```
 
+## setup: load required packages
 ```{r setup}
 library(MetaboDynamics)
+library(ggplot2)
+library(dplyr)
 ```
 
-This is a testfile for a future Vignette of a worked example of analysis
-of longitudinal metabolomics data with the package "MetaboDynamics"
+## load data and plot data overview
+```{r,fig.align='center',fig.dpi=150}
+data("intra")
+ggplot(intra,aes(x=cpc))+
+  geom_density()+
+  theme_bw()+
+  facet_grid(cols=vars(time),rows=vars(dose))+
+  ggtitle("raw data","cpc values")
+```
+We can see that there are only measurements at 0h for the 0Gy dose. As this
+is the control before irradiation the 0h measurement also is valid for the 2Gy 
+and 10Gy group. Furthermore we can see that the cpc values are not distributed
+normally.
+So let's assign the 0h values also to 2Gy and 10 Gy and log-transform.
+```{r,fig.align='center',fig.dpi=150}
+# we are taking t=0h for every radiation dose
+# we will duplicate the measurements for 0h for 2Gy and 10Gy
+temp <- intra[intra$time=="0h",]
+temp$dose<-"2Gy"
+temp2<-temp
+temp2$dose<-"10Gy"
+intra <- rbind(intra,temp,temp2)
+rm(temp,temp2)
+intra <- intra%>%mutate(log_cpc=log10(cpc))
+
+# we standardize to a mean of zero and a standard deviation of one of log-transformed data
+ggplot(intra,aes(x=log_cpc))+
+  geom_density()+
+  theme_bw()+
+  facet_grid(cols=vars(time),rows=vars(dose))+
+  ggtitle("data","log(cpc) values")
+```
+That looks better. As we want to estimate the dynamics of every single metabolite
+next let's think about what that means. We want to estimate the deviations
+at every single timepoint from the metabolites mean over time. 
+```{r,fig.align='center',fig.dpi=150}
+# get time as numeric variable
+intra$time <- gsub("h","",intra$time)
+intra$time <- as.numeric(intra$time)
+intra <-intra%>%arrange(as.numeric(time))
+ggplot(intra)+
+  geom_line(aes(x=as.numeric(as.factor(time)),y=log_cpc,col=metabolite))+
+  theme_bw()+
+  xlab("timepoint")+
+  theme(legend.position = "none")+
+  facet_grid(rows=vars(dose))+
+  ggtitle("raw metabolite dynamics","col=metabolite")
+```
+As the concentrations
+of metabolites can differ by magnitudes from each other, we standardize each
+metabolite at each radiation dose to a mean of zero and a standard deviation
+of one. 
+```{r,fig.align='center',fig.dpi=150}
+intra <- intra%>%group_by(dose,metabolite)%>%mutate(log_cpc_stand=((log_cpc-mean(log_cpc))/sd(log_cpc)))
+ggplot(intra)+
+  geom_line(aes(x=as.numeric(as.factor(time)),y=log_cpc_stand,col=metabolite))+
+  theme_bw()+
+  xlab("timepoint")+
+  theme(legend.position = "none")+
+  facet_grid(rows=vars(dose))+
+  ggtitle("standardized dynamics","col=metabolite")
+```
+Now we can finally model the dynamics.
+
+## Model dynamics
+```{r}
+#fit_dynamics_model()
+```
+
