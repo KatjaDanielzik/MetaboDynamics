@@ -39,5 +39,5 @@ Describe also how the pacakge fits into the ecosystem of its target domain.
 
 
 ## Workflow & output
-\figure{man/figures/metabolomics_pitch_draft.png}
+![Workflow](metabolomics_pitch_draft.png)
 
