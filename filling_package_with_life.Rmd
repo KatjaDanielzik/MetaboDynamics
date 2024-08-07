@@ -50,8 +50,19 @@ Pre-compiled Stan models make it much easier and faster for the user
 ```{r}
 load("/media/home/5-1-package pipeline/compiled_dynamics_model.RData")
 use_data(compiled_dynamics_model)
-
 ```
 
+# functions
+## fit_dynamics_model
+```{r}
+use_r("fit_dynamics_model.R")
+document()
+load_all()
+use_test("fit_dynamics_model.R")
+
+# check if everything is available
+MetaboDynamics::fit_dynamics_model() # is available
+help("fit_dynamics_model") # should open help page
+```
 
 

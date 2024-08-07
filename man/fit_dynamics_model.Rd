@@ -2,13 +2,35 @@
 % Please edit documentation in R/fit_dynamics_model.R
 \name{fit_dynamics_model}
 \alias{fit_dynamics_model}
-\title{Title}
+\title{Fits dynamic model}
 \usage{
-fit_dynamics_model(data, metabolite, condition)
+fit_dynamics_model(
+  data = intra,
+  metabolite = "metabolite",
+  time = "time",
+  condition = "dose",
+  cpc = "log_cpc_stand"
+)
 }
 \arguments{
-\item{condition}{}
+\item{data}{concentration table containing the columns "metabolite", "condition", "cpc_stand" for default}
+
+\item{metabolite}{column of "data" that contains the metabolite names or IDs}
+
+\item{time}{column of "time" that contains time as numeric, make sure your time column is ordered from lowest to highest for the model to work}
+
+\item{condition}{column of "data" that contains the experimental conditions}
+
+\item{cpc}{column of "data" that contains the concentrations per cell, centered and normalized per metabolite and experimental condition (mean=0, sd=1)}
+}
+\value{
+returns one modelfit named fit_condition per experimental condition
 }
 \description{
-Title
+MetaboDynamics provides a hierachical model for robust estimation of mean
+concentrations over time of single metabolites at single experimental conditions.
+}
+\examples{
+No examples yet
+
 }
