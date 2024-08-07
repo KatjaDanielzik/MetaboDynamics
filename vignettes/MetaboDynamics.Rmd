@@ -53,9 +53,9 @@ ggplot(intra,aes(x=log_cpc))+
   facet_grid(cols=vars(time),rows=vars(dose))+
   ggtitle("data","log(cpc) values")
 ```
-That looks better. As we want to estimate the dynamics of every single metabolite
-next let's think about what that means. We want to estimate the deviations
-at every single timepoint from the metabolites mean over time. 
+That looks better. As we want to estimate the dynamics of every single 
+metabolite next let's think about what that means. We want to estimate the deviations
+at every single time point from the metabolites mean over time. 
 ```{r,fig.align='center',fig.dpi=150}
 # get time as numeric variable
 intra$time <- gsub("h","",intra$time)
@@ -69,10 +69,9 @@ ggplot(intra)+
   facet_grid(rows=vars(dose))+
   ggtitle("raw metabolite dynamics","col=metabolite")
 ```
-As the concentrations
-of metabolites can differ by magnitudes from each other, we standardize each
-metabolite at each radiation dose to a mean of zero and a standard deviation
-of one. 
+As the concentrations of metabolites can differ by magnitudes from each other, 
+we standardize each metabolite at each radiation dose to a mean of zero and a 
+standard deviation of one. 
 ```{r,fig.align='center',fig.dpi=150}
 intra <- intra%>%group_by(dose,metabolite)%>%mutate(log_cpc_stand=((log_cpc-mean(log_cpc))/sd(log_cpc)))
 ggplot(intra)+
@@ -87,6 +86,10 @@ Now we can finally model the dynamics.
 
 ## Model dynamics
 ```{r}
-#fit_dynamics_model()
+#fits <- fit_dynamics_model(data=intra[intra$dose=="0Gy"&intra$time==1,])
 ```
+This returns a list of model fits that are named by the experimental condition ("0Gy","2Gy","10Gy"). 
+
+### PPC + diagnostics
+### store estimates
 
