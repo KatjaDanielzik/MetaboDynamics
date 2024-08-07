@@ -29,5 +29,3 @@ the vignettes in case of a more complex package Describe also how the
 pacakge fits into the ecosystem of its target domain.
 
 ## Workflow & output
-
-graphical abstract of workflow with data input and example outputs

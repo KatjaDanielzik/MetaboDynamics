@@ -39,4 +39,5 @@ Describe also how the pacakge fits into the ecosystem of its target domain.
 
 
 ## Workflow & output
-graphical abstract of workflow with data input and example outputs
+\figure{man/figures/metabolomics_pitch_draft.png}
+
