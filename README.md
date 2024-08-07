@@ -31,6 +31,7 @@ pacakge fits into the ecosystem of its target domain.
 ## Workflow & output
 
 <figure>
-<img src="metabolomics_pitch_draft.png" alt="Workflow" />
+<img src="/man/figures/README-metabolomics_pitch_draft.png"
+alt="Workflow" />
 <figcaption aria-hidden="true">Workflow</figcaption>
 </figure>
