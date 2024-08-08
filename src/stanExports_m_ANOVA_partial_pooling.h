@@ -441,10 +441,11 @@ public:
           current_statement__ = 24;
           stan::model::assign(delta_mu,
             (stan::model::rvalue(mu, "mu", stan::model::index_uni(m),
-               stan::model::index_uni((i - 1))) -
+               stan::model::index_uni(i)) -
             stan::model::rvalue(mu, "mu", stan::model::index_uni(m),
-              stan::model::index_uni(i))), "assigning variable delta_mu",
-            stan::model::index_uni(m), stan::model::index_uni((i - 1)));
+              stan::model::index_uni((i - 1)))),
+            "assigning variable delta_mu", stan::model::index_uni(m),
+            stan::model::index_uni((i - 1)));
         }
       }
       current_statement__ = 33;

@@ -28,6 +28,7 @@ are needed. We employ a hierachical Bayesian model for that.
 library(MetaboDynamics)
 library(ggplot2)
 library(dplyr)
+library(tidyr)
 ```
 
 ## load data and plot data overview
@@ -97,17 +98,17 @@ Now we can finally model the dynamics.
 
 ## Model dynamics
 ```{r,fig.align='center',fig.dpi=150}
-# # fit model
-# fits_dynamics <- fit_dynamics_model(data = intra[intra$dose=="0Gy",],
-#cpc = "log_cpc_stand", condition = "dose", max_treedepth = 14, adapt_delta = 0.999, iter = 4000, cores = 7)
-# 
-# # extract diagnostics
-# diagnostics_dynamics <- extract_diagnostics_dynamics(data=intra,iter=4000,fits=fits_dynamics)
-# diagnostics_dynamics[["plot_divergences"]]
-# diagnostics_dynamics[["plot_treedepth_error"]]
-# diagnostics_dynamics[["plot_rhat"]]
-# diagnostics_dynamics[["plot_neff"]]
-# diagnostics_dynamics[["plot_PCC_0Gy"]]
+# fit model
+fits_dynamics <- fit_dynamics_model(data = intra[intra$dose=="0Gy",],
+cpc = "log_cpc_stand", condition = "dose", max_treedepth = 14, adapt_delta = 0.999, iter = 4000, cores = 7)
+
+# extract diagnostics
+diagnostics_dynamics <- extract_diagnostics_dynamics(data=intra,iter=4000,fits=fits_dynamics)
+diagnostics_dynamics[["plot_divergences"]]
+diagnostics_dynamics[["plot_treedepth_error"]]
+diagnostics_dynamics[["plot_rhat"]]
+diagnostics_dynamics[["plot_neff"]]
+diagnostics_dynamics[["plot_PCC_0Gy"]]
 
 ```
 For our experimental dataset this might take up to 10 minutes per radiation dose
@@ -119,12 +120,14 @@ the diagnostic criteria of Bayesian models (rhat,neff,divergences,max_treedept)
 and visualize them. Additionally dataframes for visual Posterior predictive 
 checks (PPC) are prepared and Plots generated for the PPCs and diagnostic criteria.
 
-After checking the diagnostic criteria and the PPC we can extract the estimates.
+After checking the diagnostic criteria and the PPC we can extract the estimates:
+
 ```{r,fig.align='center',fig.dpi=150}
 # extract estimates
 estimates_dynamics <- extract_estimates_dynamics(data=intra,fits=fits_dynamics,iter=4000)
 # combine all three conditions in one dataframe
 temp <- rbind(estimates_dynamics[[1]])#,estimates_dynamics[[2]],estimates_dynamics[[3]])
+temp <- temp[,c(1:15)]
 temp <- temp%>%pivot_longer(cols=c(mu1_mean,mu2_mean,mu3_mean,mu4_mean),names_to = "timepoint",values_to="mu_mean")
 ggplot(temp,aes(x=as.factor(as.numeric(as.factor(timepoint))),y=mu_mean,group=metabolite.ID,col=metabolite))+
   geom_line()+
@@ -135,6 +138,49 @@ ggplot(temp,aes(x=as.factor(as.numeric(as.factor(timepoint))),y=mu_mean,group=me
   facet_grid(rows=vars(condition))+
   ggtitle("dynamics","color=metabolite")
   
+```
+We get two major outputs:
+1) the estimation of concentration differences between two subsequent timepoints
+  of each metabolite at each experimental condition
+2) the dynamic profiles of each metabolites at each experimental condition
+
+## 1) differences between two timepoints
+```{r,fig.align='center',fig.dpi=150}
+# 1) the differences between two timepoints
+temp <- rbind(estimates_dynamics[[1]])#,estimates_dynamics[[2]],estimates_dynamics[[3]])
+temp <- temp[,c(1:3,(6*t+7):(6*t+15))]
+temp <- temp%>%pivot_longer(cols=-c(condition,metabolite.ID,metabolite),names_to=c("timepoints",".value"),names_sep = "_")
+temp <- temp%>%  mutate(col=ifelse(higher<0,"HDI>0",
+                                      ifelse(lower>0,"HDI<0","0inHDI")))
+ggplot(temp,aes(x=as.numeric(mean),y=metabolite,col=col))+
+  geom_point()+
+  geom_errorbarh(aes(xmin=lower,xmax=higher))+
+  xlab("delta")+
+  scale_color_manual(values = c("black","green","red"), labels=c("0inCrI","CrI>0","CrI<0"),name="")+
+  geom_vline(xintercept=0)+
+  facet_grid(cols=vars(timepoints),rows=vars(condition))+
+  theme_bw()+
+  ggtitle("differences between timepoints")
+```
+If the 95% highest density interval of the posterior does not include zero
+we can confidently stat that there is a difference in mean concentrations 
+between two timepoints. If the 95% HDI is left of zero we have a decrease in
+concentrations between the two timepoints, if it is right of zero we have an
+increase in concentrations between timepoints. 
+
+## 2) dynamic profiles
+```{r,fig.align='center',fig.dpi=150}
+# 2) dynamic profiles
+temp <- rbind(estimates_dynamics[[1]])#,estimates_dynamics[[2]],estimates_dynamics[[3]])
+temp <- temp%>%pivot_longer(cols=c(mu1.mean,mu2.mean,mu3.mean,mu4.mean),names_to = "timepoint",values_to="mu_mean")
+ggplot(temp,aes(x=as.factor(as.numeric(as.factor(timepoint))),y=mu_mean,group=metabolite.ID,col=metabolite))+
+  geom_line()+
+  xlab("timepoint")+
+  ylab("estimated mean concentration")+
+  theme_bw()+
+  theme(legend.position = "none")+
+  facet_grid(rows=vars(condition))+
+  ggtitle("dynamics","color=metabolite")
 ```
 So we now have dynamic profiles of the metabolites at each radiation dose.
 What do we do with this?

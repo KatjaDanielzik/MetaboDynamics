@@ -53,7 +53,7 @@ extract_estimates_dynamics<-function(data,M=length(unique(data$metabolite)),t=le
       # single loops to get reasonable order for clustering
       for (j in 1:t){
         # get means of estimated means at timepoints
-        dynamics_log_cpc[m,paste0("mu",j,"_mean")] <- pS[paste0("mu[",m,",",j,"]"),"mean"]
+        dynamics_log_cpc[m,paste0("mu",j,".mean")] <- pS[paste0("mu[",m,",",j,"]"),"mean"]
       }
       for(j in 1:t){
         # lower border of 95% CrI
@@ -87,11 +87,11 @@ extract_estimates_dynamics<-function(data,M=length(unique(data$metabolite)),t=le
       for (j in 1:(t-1))
       {
         # mean
-        dynamics_log_cpc[m,paste0("delta_mu",j,"_mean")] <- pS[paste0("delta_mu[",m,",",j,"]"),"mean"]
+        dynamics_log_cpc[m,paste0("delta",j,j+1,"_mean")] <- pS[paste0("delta_mu[",m,",",j,"]"),"mean"]
         # lower border of 95% CrI
-        dynamics_log_cpc[m,paste0("delta_mu",j,"_lower")] <- pS[paste0("delta_mu[",m,",",j,"]"),"2.5%"]
+        dynamics_log_cpc[m,paste0("delta",j,j+1,"_lower")] <- pS[paste0("delta_mu[",m,",",j,"]"),"2.5%"]
         # higher border of 95% CrI
-        dynamics_log_cpc[m,paste0("delta_mu",j,"_higher")] <- pS[paste0("delta_mu[",m,",",j,"]"),"97.5%"]
+        dynamics_log_cpc[m,paste0("delta",j,j+1,"_higher")] <- pS[paste0("delta_mu[",m,",",j,"]"),"97.5%"]
       }
 
 

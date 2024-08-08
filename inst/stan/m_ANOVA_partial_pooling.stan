@@ -72,7 +72,7 @@ for (m in 1:M){
    // calculate delta_mu
   for (m in 1:M){
     for (i in 2:t){
-      delta_mu[m,i-1] = mu[m,i-1]-mu[m,i];
+      delta_mu[m,i-1] = mu[m,i]-mu[m,i-1];
    }
   }
 
