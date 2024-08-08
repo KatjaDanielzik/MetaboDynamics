@@ -9,6 +9,16 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# dependencies
+```{r}
+use_package("stringr", "imports",min_version=TRUE) # min_version=TRUE sets to current version
+use_package("rstan","imports",min_version = TRUE)
+use_package("ggplot2","imports",min_version=TRUE)
+use_package("dplyr","imports",min_version=TRUE)
+use_package("tidyr","imports",min_version = TRUE)
+```
+
+
 # raw data 
 will be worked on later
 
@@ -63,6 +73,12 @@ use_test("fit_dynamics_model.R")
 # check if everything is available
 MetaboDynamics::fit_dynamics_model() # is available
 help("fit_dynamics_model") # should open help page
+```
+
+### extract_diagnostics_dynamics
+```{r}
+use_r("extract_diagnostics_dynamics.R")
+document()
 ```
 
 
