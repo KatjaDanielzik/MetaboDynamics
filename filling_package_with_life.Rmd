@@ -74,4 +74,9 @@ use_r("extract_diagnostics_dynamics.R")
 document()
 ```
 
+### extract_estimates_dynamics
+```{r}
+use_r("extract_estimates_dynamics.R")
+document()
+```
 

@@ -14,6 +14,15 @@ knitr::opts_chunk$set(
 )
 ```
 
+Here we want to show a complete workflow to analyze concentration tables.
+As example we have a data set of irradiated cancer cells lines that were observed
+over four timepoints.
+This package was built to faciliate the analysis of longitudinal metabolomics
+data. Common tools mostly only allow the comparison between two timepoints or
+experimental conditions and are using frequentist statistical methods. As 
+metabolomics data is often noise robust methods for the estimation of dynamics
+are needed. We employ a hierachical Bayesian model for that. 
+
 ## setup: load required packages
 ```{r setup}
 library(MetaboDynamics)
@@ -100,7 +109,6 @@ Now we can finally model the dynamics.
 # diagnostics_dynamics[["plot_neff"]]
 # diagnostics_dynamics[["plot_PCC_0Gy"]]
 
-# extract estimates
 ```
 For our experimental dataset this might take up to 10 minutes per radiation dose
 depending on how many cores are used. 
@@ -111,7 +119,23 @@ the diagnostic criteria of Bayesian models (rhat,neff,divergences,max_treedept)
 and visualize them. Additionally dataframes for visual Posterior predictive 
 checks (PPC) are prepared and Plots generated for the PPCs and diagnostic criteria.
 
-
-### PPC + diagnostics
-### store estimates
+After checking the diagnostic criteria and the PPC we can extract the estimates.
+```{r,fig.align='center',fig.dpi=150}
+# extract estimates
+estimates_dynamics <- extract_estimates_dynamics(data=intra,fits=fits_dynamics,iter=4000)
+# combine all three conditions in one dataframe
+temp <- rbind(estimates_dynamics[[1]])#,estimates_dynamics[[2]],estimates_dynamics[[3]])
+temp <- temp%>%pivot_longer(cols=c(mu1_mean,mu2_mean,mu3_mean,mu4_mean),names_to = "timepoint",values_to="mu_mean")
+ggplot(temp,aes(x=as.factor(as.numeric(as.factor(timepoint))),y=mu_mean,group=metabolite.ID,col=metabolite))+
+  geom_line()+
+  xlab("timepoint")+
+  ylab("estimated mean concentration")+
+  theme_bw()+
+  theme(legend.position = "none")+
+  facet_grid(rows=vars(condition))+
+  ggtitle("dynamics","color=metabolite")
+  
+```
+So we now have dynamic profiles of the metabolites at each radiation dose.
+What do we do with this?
 
