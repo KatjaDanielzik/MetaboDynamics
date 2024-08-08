@@ -55,13 +55,6 @@ devtools::document()
 
 That is all we need for now.
 
-## Compiled Stan models
-Pre-compiled Stan models make it much easier and faster for the user
-```{r}
-load("/media/home/5-1-package pipeline/compiled_dynamics_model.RData")
-use_data(compiled_dynamics_model)
-```
-
 # functions
 ## fit_dynamics_model
 ```{r}

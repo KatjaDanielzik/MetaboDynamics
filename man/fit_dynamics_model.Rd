@@ -39,7 +39,7 @@ fit_dynamics_model(
 
 \item{iter}{how many iterations are run, increasing might help with effective sampling size being to low, default=2000}
 
-\item{warm_up}{how many iterations the model warms up for, increasing might facilitate efficiences, must be at least 25\% of ITER, default=iter/4}
+\item{warmup}{how many iterations the model warms up for, increasing might facilitate efficiences, must be at least 25\% of ITER, default=iter/4}
 }
 \value{
 returns a list of modelfits. One modelfit named fit_condition per experimental condition

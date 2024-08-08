@@ -8,7 +8,7 @@
 
 MetaboDynamics provides a framework of Bayesian models for robust and
 easy analysis of longitudinal Metabolomics Data. It takes concentration
-tables as input an provides robust estimation of mean concentrations,
+tables as input and provides robust estimation of mean concentrations,
 functional enrichment analysis employing the KEGG database and
 comparison of dynamic clusters of different biological conditions.
 
@@ -24,11 +24,9 @@ pak::pak("KatjaDanielzik/MetaboDynamics")
 
 ## Overview
 
-this should describe the main components of the package and can point to
-the vignettes in case of a more complex package Describe also how the
-pacakge fits into the ecosystem of its target domain.
+NaN
 
-## Workflow draft
+## Workflow draft: Network analysis not included yet
 
 <figure>
 <img src="/man/figures/README-metabolomics_pitch_draft.png"

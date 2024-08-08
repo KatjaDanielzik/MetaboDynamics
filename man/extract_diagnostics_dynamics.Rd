@@ -9,12 +9,11 @@ extract_diagnostics_dynamics(
   N = nrow(data),
   M = length(unique(data$metabolite)),
   t = length(unique(data$time)),
-  max_treedepth = 10,
-  adapt_delta = 0.95,
   iter = 2000,
   warmup = iter/4,
   chains = 4,
-  fits = "fits_dynamcis"
+  fits = "fits_dynamcis",
+  cpc = "log_cpc_stand"
 )
 }
 \arguments{
@@ -26,10 +25,6 @@ extract_diagnostics_dynamics(
 
 \item{t}{number of timepoints in experimental dataset}
 
-\item{max_treedepth}{max_treedepth setting used to fit dynamic model}
-
-\item{adapt_delta}{adapt_delta setting used to fit dynamic model}
-
 \item{iter}{number of iterations used for model fit}
 
 \item{warmup}{number of warmup iterations used for model fit}
@@ -37,14 +32,21 @@ extract_diagnostics_dynamics(
 \item{chains}{number of chains used for model fit}
 
 \item{fits}{list of models for which diagnostics should be extracted, is the object that gets returned by fit_dynamics_model()}
+
+\item{cpc}{concentration values used to model fit, should be normalized by experimental condition and metabolite to mean of zero and standard deviation of one}
 }
 \value{
-a list which contains diagnostics criteria of all conditions in a dataframe (named "model_diagnostics") and one dataframe per condition that contains necessary information for Posterior predictive check (named "PPC_condition"). Additionally plots for diagnostics and PPC named "plot_criteria" and "plot_PPC_condition"
+a list which contains diagnostics criteria of all conditions in a dataframe (named "model_diagnostics") and one dataframe per condition that contains necessary information for Posterior predictive check (named "PPC_condition"). Additionally plots for diagnostics and PPC named "plot_criteria" and "plot_PPC_condition".
 }
 \description{
 gathers number of divergences, rhat values, number of effectives samples (n_eff) and provides plots for diagnostics criteria as well ad Posterior predictive checks
+Dataframe "model_diagnostics" contains information about experimental condition, number of divergent transitions and rhat and neff values for all timepoints
 }
 \examples{
-extract_diagnostics_dynamics(data=intra)
+data("intra")
+# only run after fit_dynamics_model(intra): see Vignette and documentation
+#of function
+# extract_diagnostics_dynamics(data=intra,max_treedepth=14,
+# adapt_delta=0.999,iter=4000,fits=fits_dynamics)
 
 }

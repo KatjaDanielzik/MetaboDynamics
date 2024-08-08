@@ -89,12 +89,18 @@ Now we can finally model the dynamics.
 ## Model dynamics
 ```{r,fig.align='center',fig.dpi=150}
 # # fit model
-# fits_dynamics <- fit_dynamics_model(data = intra[intra$dose=="0Gy",], cpc = "log_cpc_stand", condition = "dose", max_treedepth = 14, adapt_delta = 0.999, iter = 4000, cores = 7)
+# fits_dynamics <- fit_dynamics_model(data = intra[intra$dose=="0Gy",],
+#cpc = "log_cpc_stand", condition = "dose", max_treedepth = 14, adapt_delta = 0.999, iter = 4000, cores = 7)
 # 
 # # extract diagnostics
-# diagnostics_dynamics <- extract_diagnostics_dynamics(data=intra,max_treedepth=14,adapt_delta=0.999,iter=4000,fits=fits_dynamics)
+# diagnostics_dynamics <- extract_diagnostics_dynamics(data=intra,iter=4000,fits=fits_dynamics)
 # diagnostics_dynamics[["plot_divergences"]]
+# diagnostics_dynamics[["plot_treedepth_error"]]
 # diagnostics_dynamics[["plot_rhat"]]
+# diagnostics_dynamics[["plot_neff"]]
+# diagnostics_dynamics[["plot_PCC_0Gy"]]
+
+# extract estimates
 ```
 For our experimental dataset this might take up to 10 minutes per radiation dose
 depending on how many cores are used. 
