@@ -104,7 +104,7 @@ ORA_hypergeometric <- function(background,annotations,
 
     for(j in unique(clusters$condition)){
       temp1 <- left_join(mapped_m,clusters[clusters$condition==j,], by="metabolite")
-      for (i in 1:length(unique(clusters$cluster))){
+      for (i in 1:length(unique(temp1$cluster))){
         temp <- temp1[temp1$cluster==i,]
         a_list <- sapply(M,.get_module)
         # vector of metabolites in this cluster sample
