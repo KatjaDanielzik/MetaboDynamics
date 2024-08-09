@@ -64,15 +64,15 @@ ggplot(intra, aes(x = log_cpc)) +
   ggtitle("data", "log(cpc) values")
 ```
 That looks better. As we want to estimate the dynamics of every single 
-metabolite next let's think about what that means. We want to estimate the deviations
-at every single time point from the metabolites mean over time. 
+metabolite next let's think about what that means. We want to estimate the 
+deviations at every single time point from the metabolites mean over time. 
 ```{r,fig.align='center',fig.dpi=150}
 # get time as numeric variable
 intra$time <- gsub("h", "", intra$time)
 intra$time <- as.numeric(intra$time)
 intra <- intra %>% arrange(as.numeric(time))
 ggplot(intra) +
-  geom_line(aes(x = as.numeric(as.factor(time)), y = log_cpc, col = metabolite)) +
+  geom_line(aes(x = as.numeric(as.factor(time)), y=log_cpc, col=metabolite)) +
   theme_bw() +
   xlab("timepoint") +
   theme(legend.position = "none") +
@@ -87,7 +87,8 @@ intra <- intra %>%
   group_by(dose, metabolite) %>%
   mutate(log_cpc_stand = ((log_cpc - mean(log_cpc)) / sd(log_cpc)))
 ggplot(intra) +
-  geom_line(aes(x = as.numeric(as.factor(time)), y = log_cpc_stand, col = metabolite)) +
+  geom_line(aes(x = as.numeric(as.factor(time)), 
+                y=log_cpc_stand, col=metabolite)) +
   theme_bw() +
   xlab("timepoint") +
   theme(legend.position = "none") +
@@ -99,17 +100,18 @@ Now we can finally model the dynamics.
 ## Model dynamics
 ```{r,fig.align='center',fig.dpi=150}
 # fit model
-fits_dynamics <- fit_dynamics_model(data = intra[intra$dose=="0Gy",],
-cpc = "log_cpc_stand", condition = "dose", max_treedepth = 14, adapt_delta = 0.999, iter = 4000, cores = 7)
+fits_dynamics <- fit_dynamics_model(data = intra, cpc = "log_cpc_stand",
+                                    condition = "dose", max_treedepth = 14,
+                                    adapt_delta = 0.999, iter = 4000, cores = 7)
 
 # extract diagnostics
-diagnostics_dynamics <- extract_diagnostics_dynamics(data=intra,iter=4000,fits=fits_dynamics)
+diagnostics_dynamics <- extract_diagnostics_dynamics(data=intra,iter=4000,
+                                                     fits=fits_dynamics)
 diagnostics_dynamics[["plot_divergences"]]
 diagnostics_dynamics[["plot_treedepth_error"]]
 diagnostics_dynamics[["plot_rhat"]]
 diagnostics_dynamics[["plot_neff"]]
 diagnostics_dynamics[["plot_PCC_0Gy"]]
-
 ```
 For our experimental dataset this might take up to 10 minutes per radiation dose
 depending on how many cores are used. 
@@ -118,26 +120,15 @@ This returns a list of model fits that are named by the experimental condition
 ("0Gy","2Gy","10Gy"). With extract_diagnostics_dynamics() we can extract all
 the diagnostic criteria of Bayesian models (rhat,neff,divergences,max_treedept)
 and visualize them. Additionally dataframes for visual Posterior predictive 
-checks (PPC) are prepared and Plots generated for the PPCs and diagnostic criteria.
+checks (PPC) are prepared and Plots generated for the PPCs and diagnostic 
+criteria.
 
 After checking the diagnostic criteria and the PPC we can extract the estimates:
 
 ```{r,fig.align='center',fig.dpi=150}
 # extract estimates
-estimates_dynamics <- extract_estimates_dynamics(data=intra,fits=fits_dynamics,iter=4000)
-# combine all three conditions in one dataframe
-temp <- rbind(estimates_dynamics[[1]])#,estimates_dynamics[[2]],estimates_dynamics[[3]])
-temp <- temp[,c(1:15)]
-temp <- temp%>%pivot_longer(cols=c(mu1_mean,mu2_mean,mu3_mean,mu4_mean),names_to = "timepoint",values_to="mu_mean")
-ggplot(temp,aes(x=as.factor(as.numeric(as.factor(timepoint))),y=mu_mean,group=metabolite.ID,col=metabolite))+
-  geom_line()+
-  xlab("timepoint")+
-  ylab("estimated mean concentration")+
-  theme_bw()+
-  theme(legend.position = "none")+
-  facet_grid(rows=vars(condition))+
-  ggtitle("dynamics","color=metabolite")
-  
+estimates_dynamics <- extract_estimates_dynamics(data=intra,fits=fits_dynamics,
+                                                 iter=4000)
 ```
 We get two major outputs:
 1) the estimation of concentration differences between two subsequent timepoints
@@ -147,20 +138,8 @@ We get two major outputs:
 ## 1) differences between two timepoints
 ```{r,fig.align='center',fig.dpi=150}
 # 1) the differences between two timepoints
-temp <- rbind(estimates_dynamics[[1]])#,estimates_dynamics[[2]],estimates_dynamics[[3]])
-temp <- temp[,c(1:3,(6*t+7):(6*t+15))]
-temp <- temp%>%pivot_longer(cols=-c(condition,metabolite.ID,metabolite),names_to=c("timepoints",".value"),names_sep = "_")
-temp <- temp%>%  mutate(col=ifelse(higher<0,"HDI>0",
-                                      ifelse(lower>0,"HDI<0","0inHDI")))
-ggplot(temp,aes(x=as.numeric(mean),y=metabolite,col=col))+
-  geom_point()+
-  geom_errorbarh(aes(xmin=lower,xmax=higher))+
-  xlab("delta")+
-  scale_color_manual(values = c("black","green","red"), labels=c("0inCrI","CrI>0","CrI<0"),name="")+
-  geom_vline(xintercept=0)+
-  facet_grid(cols=vars(timepoints),rows=vars(condition))+
-  theme_bw()+
-  ggtitle("differences between timepoints")
+# set numer of timepoints
+estimates_dynamics[["plot_timepoint_differences"]]
 ```
 If the 95% highest density interval of the posterior does not include zero
 we can confidently stat that there is a difference in mean concentrations 
@@ -171,17 +150,109 @@ increase in concentrations between timepoints.
 ## 2) dynamic profiles
 ```{r,fig.align='center',fig.dpi=150}
 # 2) dynamic profiles
-temp <- rbind(estimates_dynamics[[1]])#,estimates_dynamics[[2]],estimates_dynamics[[3]])
-temp <- temp%>%pivot_longer(cols=c(mu1.mean,mu2.mean,mu3.mean,mu4.mean),names_to = "timepoint",values_to="mu_mean")
-ggplot(temp,aes(x=as.factor(as.numeric(as.factor(timepoint))),y=mu_mean,group=metabolite.ID,col=metabolite))+
+estimates_dynamics[["plot_dynamics"]]
+```
+So we now have dynamic profiles of the metabolites at each radiation dose.
+What do we do with this?
+We could cluster these dynamics vectors, that we obtained (estimates_dynamics[,c("mu1.mean":"mut.mean)]) to see if we find groups of metabolites that
+have similar dynamics.
+
+# cluster dynamics
+For the sake of demonstration we only show a rudimentary hierachical clustering
+with the number of optimal clusters determined beforehand with clustering 
+criteria in the package "factoextra".
+```{r,echo=FALSE}
+# get distances between vectors
+dd_0Gy <- dist(estimates_dynamics[["0Gy"]][,c("mu1.mean","mu2.mean",
+                                                "mu3.mean","mu4.mean")],
+                 method="euclidean")
+# hierachical clustering
+clust <- hclust(dd_0Gy,method = "ward.D2")
+clust_cut <- cutree(clust,k=7)
+# assing cluster ID to estimates
+clust_0Gy <- estimates_dynamics[["0Gy"]][,c("metabolite","condition","mu1.mean","mu2.mean",
+                                                "mu3.mean","mu4.mean")]
+clust_0Gy$cluster <- clust_cut
+
+rm(dd_0Gy,clust,clust_cut)
+
+# get distances between vectors
+dd_2Gy <- dist(estimates_dynamics[["2Gy"]][,c("mu1.mean","mu2.mean",
+                                                "mu3.mean","mu4.mean")],
+                 method="euclidean")
+# hierachical clustering
+clust <- hclust(dd_2Gy,method = "ward.D2")
+clust_cut <- cutree(clust,k=8)
+# assing cluster ID to estimates
+clust_2Gy <- estimates_dynamics[["2Gy"]][,c("metabolite","condition","mu1.mean","mu2.mean",
+                                                "mu3.mean","mu4.mean")]
+clust_2Gy$cluster <- clust_cut
+
+rm(dd_2Gy,clust,clust_cut)
+
+# get distances between vectors
+dd_10Gy <- dist(estimates_dynamics[["10Gy"]][,c("mu1.mean","mu2.mean",
+                                                "mu3.mean","mu4.mean")],
+                 method="euclidean")
+# hierachical clustering
+clust <- hclust(dd_10Gy,method = "ward.D2")
+clust_cut <- cutree(clust,k=8)
+# assing cluster ID to estimates
+clust_10Gy <- estimates_dynamics[["10Gy"]][,c("metabolite","condition","mu1.mean","mu2.mean",
+                                                "mu3.mean","mu4.mean")]
+clust_10Gy$cluster <- clust_cut
+rm(dd_10Gy,clust,clust_cut)
+
+cluster <- rbind(clust_0Gy,clust_2Gy,clust_10Gy)
+rm(clust_0Gy,clust_2Gy,clust_10Gy)
+```
+
+We combine all clustering results in one dataframe that hold columns "metabolite",
+"condition", "mu1-t.mean" and "cluster". "Cluster" refers to the cluster ID
+of the metabolite.
+
+```{r,fig.align='center',fig.dpi=150}
+temp <- cluster
+temp <- temp%>%pivot_longer(cols=c(mu1.mean,mu2.mean,mu3.mean,mu4.mean),
+                            names_to = "timepoint",values_to="mu_mean")
+ggplot(temp,aes(x=as.factor(as.numeric(as.factor(timepoint))),
+                y=mu_mean,group=metabolite))+
   geom_line()+
   xlab("timepoint")+
   ylab("estimated mean concentration")+
   theme_bw()+
   theme(legend.position = "none")+
-  facet_grid(rows=vars(condition))+
-  ggtitle("dynamics","color=metabolite")
+  facet_grid(rows=vars(condition),cols=vars(cluster))+
+  ggtitle("clustered dynamics","color=metabolite, panels=cluster ID")
 ```
-So we now have dynamic profiles of the metabolites at each radiation dose.
-What do we do with this?
+# Over-representation analysis of functional modules
+We now have clusters of metabolites with similar dynamics per radiation dose.
+To quantify the possible biological function of these dynamic clusters we 
+retrieved from the KEGG-database the following information 
+(with package KEGGREST):
+1) to which functional modules our experimental metabolites are annotated and
+2) which metabolites are annotated to functional modules in general
+The functional modules of the KEGG-database are organised in three hierchacies:
+upper, middle and lower. Here we will do funtional analysis on the middle 
+hierachy. 
+To facilitate analysis the dataframes "metabolite_modules" which holds the 
+information about experimental metabolites and "modules_compounds" which holds
+the information about which metabolites are in general annotated to functional 
+modules. 
+We load both datasets and can inspect the documentation.
+```{r}
+data("metabolite_modules")
+help("metabolite_modules")
+head(metabolite_modules)
+data("modules_compounds")
+help("modules_compounds")
+head(modules_compounds)
+```
 
+For the functional analysis we employ a hypergeometric model:
+```{r}
+ORA <- ORA_hypergeometric(background=modules_compounds,annotations=metabolite_modules,clusters=cluster,tested_column = "middle_hierachy")
+ORA[["plot_ORA"]]
+```
+Great, we can now see which functional module is over- or under-represented in which
+dynamic cluster!

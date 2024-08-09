@@ -175,7 +175,7 @@ ORA_hypergeometric <- function(background,annotations,
   ORA_hyper[["ORA"]] <- a_clusters
   ORA_hyper[["plot_ORA"]]<-ggplot(a_clusters,
                                  aes(x=log(OvE_gen),y=module_name))+
-      geom_pointrange(aes(x=log(OvE_gen),xmin=log(OvE_gen_lower),xmax=log(OvE_gen_higher)))+
+      geom_pointrange(aes(xmin=log(OvE_gen_lower),xmax=log(OvE_gen_higher)))+
       geom_point(aes(x=log(OvE_gen_median)),col="red")+
       geom_vline(xintercept=0)+
       theme_bw()+

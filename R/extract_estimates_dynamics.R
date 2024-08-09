@@ -14,6 +14,7 @@
 #' @param samples how many posterior samples should be drawn (p.e. for check of clustering precision)
 #'
 #' @import dplyr
+#' @import ggplot2
 #' @importFrom stats runif
 #'
 #' @return a list of dataframes (one per experimental condition) that contains the estimates at the timepoints and samples from the posterior (number as specified in samples)
@@ -30,6 +31,8 @@ extract_estimates_dynamics<-function(data,M=length(unique(data$metabolite)),t=le
 
   # bind variables
   dynamics_log_cpc <- NULL
+  temp_t <- NULL
+  temp <- NULL
   conditions <- unique(data[[condition]])
 
   dynamics <- list()
@@ -114,6 +117,48 @@ extract_estimates_dynamics<-function(data,M=length(unique(data$metabolite)),t=le
     dynamics_log_cpc <- unique(dynamics_log_cpc)
     dynamics[[i]] <- dynamics_log_cpc
   }
+
+  # visualize
+    temp <- dynamics[1]
+    for(i in 2:length(names(dynamics))){
+    temp <- rbind(temp,dynamics[i])
+    }
+    rm(i)
+
+    # differences between timepoints
+    temp_t <- temp[,c(1:3,(6*t+7):(6*t+15))]
+    temp_t <- temp_t%>%pivot_longer(cols=-c(condition,metabolite.ID,metabolite),
+                                names_to=c("timepoints",".value"),names_sep = "_")
+    temp_t <- temp_t%>%  mutate(col=ifelse(higher<0,"HDI>0",
+                                       ifelse(lower>0,"HDI<0","0inHDI")))
+    dynamics[["plot_timepoint_differences"]]<-
+    ggplot(temp_t,aes(x=as.numeric(mean),y=metabolite,col=col))+
+      geom_point()+
+      geom_errorbarh(aes(xmin=lower,xmax=higher))+
+      xlab("delta")+
+      scale_color_manual(values = c("black","green","red"),
+                         labels=c("0inCrI","CrI>0","CrI<0"),name="")+
+      geom_vline(xintercept=0)+
+      facet_grid(cols=vars(timepoints),rows=vars(condition))+
+      theme_bw()+
+      ggtitle("differences between timepoints")
+    rm(temp_t)
+
+    # dynamics
+    temp <- temp%>%pivot_longer(cols=c(mu1.mean,mu2.mean,mu3.mean,mu4.mean),
+                                names_to = "timepoint",values_to="mu_mean")
+    dynamics[["plot_dynamics"]]<-
+    ggplot(temp,aes(x=as.factor(as.numeric(as.factor(timepoint))),
+                    y=mu_mean,group=metabolite.ID,col=metabolite))+
+      geom_line()+
+      xlab("timepoint")+
+      ylab("estimated mean concentration")+
+      theme_bw()+
+      theme(legend.position = "none")+
+      facet_grid(rows=vars(condition))+
+      ggtitle("dynamics","color=metabolite")
+    rm(temp)
+
   return(dynamics)
   rm(pS,fit,i,mu_posterior,j,k,x,conditions,metabolites,dynamics_loc_cpc)
 }
