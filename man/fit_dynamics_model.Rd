@@ -45,7 +45,7 @@ fit_dynamics_model(
 returns a list of modelfits. One modelfit named fit_condition per experimental condition
 }
 \description{
-MetaboDynamics provides a hierachical model for robust estimation of mean
+Employs a hierachical model that assumes a normal distribution of standardized (mean=0,sd=1) log(cpc) values for robust estimation of mean
 concentrations over time of single metabolites at single experimental conditions.
 }
 \examples{

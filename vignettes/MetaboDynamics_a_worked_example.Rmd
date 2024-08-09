@@ -101,12 +101,12 @@ during this Vignette.
 
 ## Model dynamics
 ```{r,fig.align='center',fig.dpi=150}
-# fit model
-# fits_dynamics <- fit_dynamics_model(data = intra, cpc = "log_cpc_stand",
-#                                     condition = "dose", max_treedepth = 14,
-#                                     adapt_delta = 0.999, iter = 4000, cores = 7)
+#fit model
+fits_dynamics <- fit_dynamics_model(data = intra, cpc = "log_cpc_stand",
+                                    condition = "dose", max_treedepth = 14,
+                                    adapt_delta = 0.999, iter = 4000, cores = 7)
 
-load("/media/home/fits_dynamics.RData")
+#load("/media/home/fits_dynamics.RData")
 # extract diagnostics
 diagnostics_dynamics <- extract_diagnostics_dynamics(data=intra,iter=4000,
                                                      fits=fits_dynamics)
@@ -115,7 +115,8 @@ diagnostics_dynamics[["plot_treedepth_error"]]
 diagnostics_dynamics[["plot_rhat"]]
 diagnostics_dynamics[["plot_neff"]]
 diagnostics_dynamics[["plot_PCC_0Gy"]]
-save(fits_dynamics,file="/media/home/fits_dynamics.RData")
+diagnostics_dynamics[["plot_PCC_2Gy"]]
+diagnostics_dynamics[["plot_PCC_10Gy"]]
 ```
 For our experimental dataset this might take up to 10 minutes per radiation dose
 depending on how many cores are used. 
@@ -232,7 +233,7 @@ ggplot(temp,aes(x=as.factor(as.numeric(as.factor(timepoint))),
 ```
 
 
-# Over-representation analysis of functional modules
+# Over-representation analysis of functional modules in dynamic clusters
 We now have clusters of metabolites with similar dynamics per radiation dose.
 To quantify the possible biological function of these dynamic clusters we 
 retrieved from the KEGG-database the following information 
@@ -265,3 +266,16 @@ ORA[["plot_ORA"]]
 ```
 Great, we can now see which functional module is over- or under-represented in which
 dynamic cluster!
+
+# Comparison of dynamics between clusters of different experimental conditions
+We can not only do over-representation analysis of KEGG-functional modules but
+also compare dynamic clusters across different experimental conditions.
+```{r}
+comparison <- compare_conditions(clusters=cluster,dynamics=c("mu1_mean","mu2_mean","mu3_mean","mu4_mean"))
+comparison[["plot_comparison"]]
+```
+The bigger and brighter a point is the smaller is the mean distance between
+dynamic clusters and the smaller is the standard deviation. That means big bright
+moins indicate high dynamic similarity which small spread. Here 10Gy_7 and 2Gy_8
+have high similiarty in dynamics. If we recall the ORA analysis this pair also
+has similar patterns in ORA of functional modules. 10Gy_1 and 0Gy_1 however
