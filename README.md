@@ -37,6 +37,7 @@ timepoint employing Bayesian models.
 ## Workflow
 
 <figure>
-<img src="/man/figures/README-metabolomics_pitch.png" alt="Workflow" />
+<img src="/man/figures/README-MetaboDynamics_pitch.png"
+alt="Workflow" />
 <figcaption aria-hidden="true">Workflow</figcaption>
 </figure>
