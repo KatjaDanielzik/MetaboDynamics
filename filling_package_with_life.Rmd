@@ -45,8 +45,8 @@ devtools::promptData(modules_compounds)
 
 # experimental metabolites mapped to modules
 metabolite_modules <- readr::read_csv("/media/home/5-1-package pipeline/data/metabolite_modules.csv")
-devtools::use_data(metabolite_modules)
-devtools::promptData(metabolite_modules)
+use_data(metabolite_modules)
+promptData(metabolite_modules)
 
 # suggest KEGGREST as package for developers to test the code or obtain own datasets
 devtools::use_package("KEGGREST","suggests",min_version=TRUE)
@@ -77,6 +77,12 @@ document()
 ### extract_estimates_dynamics
 ```{r}
 use_r("extract_estimates_dynamics.R")
+document()
+```
+
+## OverRepresentationAnalysis with hypergeometric model
+```{r}
+use_r("ORA_hypergeometric.R")
 document()
 ```
 

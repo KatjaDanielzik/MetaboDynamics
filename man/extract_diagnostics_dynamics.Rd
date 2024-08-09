@@ -12,7 +12,7 @@ extract_diagnostics_dynamics(
   iter = 2000,
   warmup = iter/4,
   chains = 4,
-  fits = "fits_dynamcis",
+  fits,
   cpc = "log_cpc_stand"
 )
 }

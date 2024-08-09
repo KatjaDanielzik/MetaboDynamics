@@ -25,8 +25,11 @@
 ## # cpc = "log_cpc_stand", condition = "dose", max_treedepth = 14, adapt_delta = 0.999, iter = 4000, cores = 7): see Vignette and documentation
 #' #of function
 #' # extract_estimates(data=intra,fits=fits_dynamics,iter=4000)
+
 extract_estimates_dynamics<-function(data,M=length(unique(data$metabolite)),t=length(unique(data$time)),condition="dose",fits,iter=2000,warmup=iter/4,chains=4,samples=100){
 
+  # bind variables
+  dynamics_log_cpc <- NULL
   conditions <- unique(data[[condition]])
 
   dynamics <- list()

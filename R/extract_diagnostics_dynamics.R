@@ -11,6 +11,7 @@
 #' @param iter number of iterations used for model fit
 #' @param chains number of chains used for model fit
 #' @param cpc concentration values used to model fit, should be normalized by experimental condition and metabolite to mean of zero and standard deviation of one
+#'
 #' @import tidyr
 #' @import ggplot2
 #' @import dplyr
@@ -26,21 +27,21 @@
 #' # adapt_delta=0.999,iter=4000,fits=fits_dynamics)
 #'
 
-extract_diagnostics_dynamics <- function(data,N=nrow(data),M=length(unique(data$metabolite)),t=length(unique(data$time)),iter=2000,warmup=iter/4,chains=4,fits="fits_dynamcis",cpc="log_cpc_stand"){
+extract_diagnostics_dynamics <- function(data,N=nrow(data),M=length(unique(data$metabolite)),t=length(unique(data$time)),iter=2000,warmup=iter/4,chains=4,fits,cpc="log_cpc_stand"){
 
   # create list to store all subsequent results
   list_diagnostics <- list()
 
   # diagnostic criteria from model
   diagnostics_dynamics <- as.data.frame(matrix(ncol=4+2*t))
-  names <- c()
+  names_d <- c()
   for (i in 1:t){
-  names[i] <- paste0("rhat_mu",i,"_mean")
+  names_d[i] <- paste0("rhat_mu",i,"_mean")
   }
   for (i in (t+1):(2*t)){
-    names[i] <- paste0("neff_mu",i-t,"_mean")
+    names_d[i] <- paste0("neff_mu",i-t,"_mean")
   }
-  colnames(diagnostics_dynamics) <- c("metabolite.ID","condition","divergences","treedepth_error",names)
+  colnames(diagnostics_dynamics) <- c("metabolite.ID","condition","divergences","treedepth_error",names_d)
   rm(i)
   # bind columns created in function to data frame
   log_cpc_stand <- NULL
@@ -70,12 +71,12 @@ extract_diagnostics_dynamics <- function(data,N=nrow(data),M=length(unique(data$
       end <- (m*t)
       rhat_mu_mean[,1:t]<-rhat[start:end]
       neff_mu_mean[,1:t]<-n_eff[start:end]
-      colnames(rhat_mu_mean)<-names[1:t]
-      colnames(neff_mu_mean)<-names[(t+1):(2*t)]
+      colnames(rhat_mu_mean)<-names_d[1:t]
+      colnames(neff_mu_mean)<-names_d[(t+1):(2*t)]
       temp <- cbind(metabolite.ID=m,condition=condition,divergences=divergences,treedepth_error=max_treedepth,rhat_mu_mean,neff_mu_mean)
       diagnostics_dynamics <- rbind(diagnostics_dynamics,temp)
     }
-    rm(names,m)
+    rm(m)
 
     # Posterior predictive check
     # turn y_rep from model fit into long format and add metabolite.ID and time.ID

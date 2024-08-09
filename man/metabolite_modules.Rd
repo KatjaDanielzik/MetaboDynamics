@@ -5,7 +5,7 @@
 KEGG Query Results of experimental metabolites
 }
 \description{
-Using the package KEGGREST (https://www.bioconductor.org/packages/release/bioc/html/KEGGREST.html) all experimental metabolites (see data("intra")) was queried and all functional modules recorded to which the metabolite is annotated in the KEGG-database.
+Using the package KEGGREST (https://www.bioconductor.org/packages/release/bioc/html/KEGGREST.html) all experimental metabolites (see data("intra")) were queried with there KEGG-IDs and all functional modules recorded to which the metabolite is annotated in the KEGG-database.
 Restricted to HUMAN pathways and DOES
 NOT include functional modules "Xenobiotics biodegradation", "Biosynthesis of other secondary metabolites",
 "Biosynthesis of terpenoids and polyketides"
