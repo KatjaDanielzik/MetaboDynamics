@@ -57,8 +57,11 @@ ORA_hypergeometric <- function(background,annotations,
   median <- NULL
   OvE_gen_lower <- NULL
   OvE_gen_higher <- NULL
+  OvE_gen_median <- NULL
   module <- NULL
   module_name <- NULL
+  condition <- NULL
+  cluster <-NULL
 
   # all unique metabolites in Background -> uniquely to avoid bias p.e. for side-compounds
   N_b <- unique(background$kegg_id)
@@ -78,7 +81,7 @@ ORA_hypergeometric <- function(background,annotations,
   # get list of Modules and corresponding KEGG IDs
   a_b_list <- sapply(M,.get_module_background)
   # extract number of unique background metabolites in module
-  a_b <- c(1:length(M))
+  a_b <- c()
     for(i in 1:length(M))
     {
       # extract number of unique experimental metabolites in module
@@ -176,7 +179,7 @@ ORA_hypergeometric <- function(background,annotations,
       geom_point(aes(x=log(OvE_gen_median)),col="red")+
       geom_vline(xintercept=0)+
       theme_bw()+
-      xlab("log(p(OvE))")
+      xlab("log(p(OvE))")+
       facet_grid(cols=vars(cluster),rows=vars(condition))+
       ggtitle("hypergeometric ORA","red=median, points=95% interquantile range, panels=clusterID")
 
