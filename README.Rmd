@@ -40,6 +40,6 @@ metabolomics data is often noise robust methods for the estimation of dynamics
 are needed. We employ a hierachical Bayesian model for that. 
 
 
-## Workflow draft: Network analysis not included yet
+## Workflow
 ![Workflow](/man/figures/README-metabolomics_pitch_draft.png)
 
