@@ -5,9 +5,9 @@
 \title{OverRepresentationAnalysis with a hypergeometric model}
 \usage{
 ORA_hypergeometric(
-  background = modules_compounds,
-  annotations = metabolite_modules,
-  clusters = cluster,
+  background,
+  annotations,
+  clusters,
   tested_column = "middle_hierachy"
 )
 }
@@ -16,7 +16,7 @@ ORA_hypergeometric(
 
 \item{annotations}{to which functional modules our experimental metabolites are annotated}
 
-\item{clusters}{dataframe containing columns "metabolite","cluster" and a column specifying the experimental condition}
+\item{clusters}{dataframe containing columns "metabolite","cluster" and a column specifying the experimental condition called "condition"}
 
 \item{tested_column}{column that is in background and annotations and on which the hypergeometric model shall be executed}
 }

@@ -8,7 +8,7 @@
 #'
 #' @param background dataframe that contains which metabolites (represented as KEGG ID) are annotated to functional modules in general
 #' @param annotations to which functional modules our experimental metabolites are annotated
-#' @param clusters dataframe containing columns "metabolite","cluster" and a column specifying the experimental condition
+#' @param clusters dataframe containing columns "metabolite","cluster" and a column specifying the experimental condition called "condition"
 #' @param tested_column column that is in background and annotations and on which the hypergeometric model shall be executed
 #
 #' @return a list with a dataframe containing the ORA results and a plot of the ORA
@@ -16,6 +16,9 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @importFrom stats median
+#' @importFrom stats quantile
+#' @importFrom stats rhyper
 #'
 #' @examples
 #' #data("metabolite_modules")
@@ -28,8 +31,8 @@
 
 
 
-ORA_hypergeometric <- function(background=modules_compounds,annotations=metabolite_modules,
-                               clusters=cluster, tested_column="middle_hierachy"){
+ORA_hypergeometric <- function(background,annotations,
+                               clusters, tested_column="middle_hierachy"){
 
   # return object
   ORA_hyper <- list()
@@ -44,6 +47,19 @@ ORA_hypergeometric <- function(background=modules_compounds,annotations=metaboli
   temp_N <- NULL
   a_list <- NULL
   series <- NULL
+  hits_in_module <- NULL
+  background_module <- NULL
+  total_background <- NULL
+  total_in_cluster <- NULL
+  n_gen <- NULL
+  n_obs <- NULL
+  OvE_gen <- NULL
+  median <- NULL
+  OvE_gen_lower <- NULL
+  OvE_gen_higher <- NULL
+  module <- NULL
+  module_name <- NULL
+
   # all unique metabolites in Background -> uniquely to avoid bias p.e. for side-compounds
   N_b <- unique(background$kegg_id)
   # all experimental metabolites that are mapped to KEGG modules
@@ -160,8 +176,9 @@ ORA_hypergeometric <- function(background=modules_compounds,annotations=metaboli
       geom_point(aes(x=log(OvE_gen_median)),col="red")+
       geom_vline(xintercept=0)+
       theme_bw()+
-      facet_grid(col=vars(cluster),rows=vars(condition))+
-      ggtitle("OvE with n_theo=100 simulations","red=median, panels=clusterID")
+      xlab("log(p(OvE))")
+      facet_grid(cols=vars(cluster),rows=vars(condition))+
+      ggtitle("hypergeometric ORA","red=median, points=95% interquantile range, panels=clusterID")
 
 return(ORA_hyper)
 }
