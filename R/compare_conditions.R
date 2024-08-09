@@ -38,7 +38,6 @@ compare_conditions <- function(clusters,dynamics){
   comparison <- list()
 
   # helper function for distance matrix
-  #' get distances
   #' @keywords internal
   eu <- function(a,b)
   {

@@ -22,6 +22,5 @@ Employs a Bayesian model that assumes a normal distribution of euclidean distanc
 }
 \examples{
 #' compare_conditions <- functions(clusters=cluster,dynamics=c("mu1_mean","mu2_mean","mu3_mean","mu4_mean"))
-get distances
 }
 \keyword{internal}
