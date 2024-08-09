@@ -26,7 +26,7 @@
 #' #head(metabolite_modules)
 #' #head(modules_compounds)
 #' #ORA_hyper <- ORA_hypergeometric(background=modules_compounds,
-#' #annotations=metabolite_modules,clusters=cluster,tested_column="middle_hierachy")
+#' #annotations=metabolite_modules,clusters=cluster,tested_column)
 
 
 
