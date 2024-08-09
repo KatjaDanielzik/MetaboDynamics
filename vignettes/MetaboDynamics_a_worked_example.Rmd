@@ -1,8 +1,8 @@
 ---
-title: "MetaboDynamics: a worked example"
+title: "MetaboDynamics_a_worked_example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{MetaboDynamics}
+  %\VignetteIndexEntry{MetaboDynamics_a_worked_example}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -87,7 +87,7 @@ intra <- intra %>%
   group_by(dose, metabolite) %>%
   mutate(log_cpc_stand = ((log_cpc - mean(log_cpc)) / sd(log_cpc)))
 ggplot(intra) +
-  geom_line(aes(x = as.numeric(as.factor(time)), 
+  geom_line(aes(x = as.numeric(as.factor(time)),
                 y=log_cpc_stand, col=metabolite)) +
   theme_bw() +
   xlab("timepoint") +
@@ -96,14 +96,17 @@ ggplot(intra) +
   ggtitle("standardized dynamics", "col=metabolite")
 ```
 Now we can finally model the dynamics.
+We have done the modeling beforehand, so that it does not take to much time
+during this Vignette. 
 
 ## Model dynamics
 ```{r,fig.align='center',fig.dpi=150}
 # fit model
-fits_dynamics <- fit_dynamics_model(data = intra, cpc = "log_cpc_stand",
-                                    condition = "dose", max_treedepth = 14,
-                                    adapt_delta = 0.999, iter = 4000, cores = 7)
+# fits_dynamics <- fit_dynamics_model(data = intra, cpc = "log_cpc_stand",
+#                                     condition = "dose", max_treedepth = 14,
+#                                     adapt_delta = 0.999, iter = 4000, cores = 7)
 
+load("/media/home/fits_dynamics.RData")
 # extract diagnostics
 diagnostics_dynamics <- extract_diagnostics_dynamics(data=intra,iter=4000,
                                                      fits=fits_dynamics)
@@ -112,6 +115,7 @@ diagnostics_dynamics[["plot_treedepth_error"]]
 diagnostics_dynamics[["plot_rhat"]]
 diagnostics_dynamics[["plot_neff"]]
 diagnostics_dynamics[["plot_PCC_0Gy"]]
+save(fits_dynamics,file="/media/home/fits_dynamics.RData")
 ```
 For our experimental dataset this might take up to 10 minutes per radiation dose
 depending on how many cores are used. 
@@ -136,7 +140,7 @@ We get two major outputs:
 2) the dynamic profiles of each metabolites at each experimental condition
 
 ## 1) differences between two timepoints
-```{r,fig.align='center',fig.dpi=150}
+```{r,fig.align='center',out.width="100%"}
 # 1) the differences between two timepoints
 # set numer of timepoints
 estimates_dynamics[["plot_timepoint_differences"]]
@@ -148,7 +152,7 @@ concentrations between the two timepoints, if it is right of zero we have an
 increase in concentrations between timepoints. 
 
 ## 2) dynamic profiles
-```{r,fig.align='center',fig.dpi=150}
+```{r,fig.align='center',out.width="100%"}
 # 2) dynamic profiles
 estimates_dynamics[["plot_dynamics"]]
 ```
@@ -157,49 +161,50 @@ What do we do with this?
 We could cluster these dynamics vectors, that we obtained (estimates_dynamics[,c("mu1.mean":"mut.mean)]) to see if we find groups of metabolites that
 have similar dynamics.
 
+
 # cluster dynamics
 For the sake of demonstration we only show a rudimentary hierachical clustering
 with the number of optimal clusters determined beforehand with clustering 
 criteria in the package "factoextra".
 ```{r,echo=FALSE}
 # get distances between vectors
-dd_0Gy <- dist(estimates_dynamics[["0Gy"]][,c("mu1.mean","mu2.mean",
-                                                "mu3.mean","mu4.mean")],
+dd_0Gy <- dist(estimates_dynamics[["0Gy"]][,c("mu1_mean","mu2_mean",
+                                                "mu3_mean","mu4_mean")],
                  method="euclidean")
 # hierachical clustering
 clust <- hclust(dd_0Gy,method = "ward.D2")
 clust_cut <- cutree(clust,k=7)
 # assing cluster ID to estimates
-clust_0Gy <- estimates_dynamics[["0Gy"]][,c("metabolite","condition","mu1.mean","mu2.mean",
-                                                "mu3.mean","mu4.mean")]
+clust_0Gy <- estimates_dynamics[["0Gy"]][,c("metabolite","condition","mu1_mean","mu2_mean",
+                                                "mu3_mean","mu4_mean")]
 clust_0Gy$cluster <- clust_cut
 
 rm(dd_0Gy,clust,clust_cut)
 
 # get distances between vectors
-dd_2Gy <- dist(estimates_dynamics[["2Gy"]][,c("mu1.mean","mu2.mean",
-                                                "mu3.mean","mu4.mean")],
+dd_2Gy <- dist(estimates_dynamics[["2Gy"]][,c("mu1_mean","mu2_mean",
+                                                "mu3_mean","mu4_mean")],
                  method="euclidean")
 # hierachical clustering
 clust <- hclust(dd_2Gy,method = "ward.D2")
 clust_cut <- cutree(clust,k=8)
 # assing cluster ID to estimates
-clust_2Gy <- estimates_dynamics[["2Gy"]][,c("metabolite","condition","mu1.mean","mu2.mean",
-                                                "mu3.mean","mu4.mean")]
+clust_2Gy <- estimates_dynamics[["2Gy"]][,c("metabolite","condition","mu1_mean","mu2_mean",
+                                                "mu3_mean","mu4_mean")]
 clust_2Gy$cluster <- clust_cut
 
 rm(dd_2Gy,clust,clust_cut)
 
 # get distances between vectors
-dd_10Gy <- dist(estimates_dynamics[["10Gy"]][,c("mu1.mean","mu2.mean",
-                                                "mu3.mean","mu4.mean")],
+dd_10Gy <- dist(estimates_dynamics[["10Gy"]][,c("mu1_mean","mu2_mean",
+                                                "mu3_mean","mu4_mean")],
                  method="euclidean")
 # hierachical clustering
 clust <- hclust(dd_10Gy,method = "ward.D2")
 clust_cut <- cutree(clust,k=8)
 # assing cluster ID to estimates
-clust_10Gy <- estimates_dynamics[["10Gy"]][,c("metabolite","condition","mu1.mean","mu2.mean",
-                                                "mu3.mean","mu4.mean")]
+clust_10Gy <- estimates_dynamics[["10Gy"]][,c("metabolite","condition","mu1_mean","mu2_mean",
+                                                "mu3_mean","mu4_mean")]
 clust_10Gy$cluster <- clust_cut
 rm(dd_10Gy,clust,clust_cut)
 
@@ -213,7 +218,7 @@ of the metabolite.
 
 ```{r,fig.align='center',fig.dpi=150}
 temp <- cluster
-temp <- temp%>%pivot_longer(cols=c(mu1.mean,mu2.mean,mu3.mean,mu4.mean),
+temp <- temp%>%pivot_longer(cols=c(mu1_mean,mu2_mean,mu3_mean,mu4_mean),
                             names_to = "timepoint",values_to="mu_mean")
 ggplot(temp,aes(x=as.factor(as.numeric(as.factor(timepoint))),
                 y=mu_mean,group=metabolite))+
@@ -225,6 +230,8 @@ ggplot(temp,aes(x=as.factor(as.numeric(as.factor(timepoint))),
   facet_grid(rows=vars(condition),cols=vars(cluster))+
   ggtitle("clustered dynamics","color=metabolite, panels=cluster ID")
 ```
+
+
 # Over-representation analysis of functional modules
 We now have clusters of metabolites with similar dynamics per radiation dose.
 To quantify the possible biological function of these dynamic clusters we 
@@ -250,8 +257,10 @@ head(modules_compounds)
 ```
 
 For the functional analysis we employ a hypergeometric model:
-```{r}
+```{r,fig.align='center',out.width="100%"}
 ORA <- ORA_hypergeometric(background=modules_compounds,annotations=metabolite_modules,clusters=cluster,tested_column = "middle_hierachy")
+ORA[["plot_ORA"]]
+ORA <- ORA_hypergeometric(background=modules_compounds,annotations=metabolite_modules,clusters=cluster[cluster$condition=="0Gy",],tested_column = "lower_hierachy")
 ORA[["plot_ORA"]]
 ```
 Great, we can now see which functional module is over- or under-represented in which

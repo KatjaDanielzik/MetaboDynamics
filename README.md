@@ -24,12 +24,15 @@ pak::pak("KatjaDanielzik/MetaboDynamics")
 
 ## Overview
 
-This package was built to faciliate the analysis of longitudinal
-metabolomics data. Common tools mostly only allow the comparison between
-two timepoints or experimental conditions and are using frequentist
-statistical methods. As metabolomics data is often noise robust methods
-for the estimation of dynamics are needed. We employ a hierachical
-Bayesian model for that.
+MetaboDynamics facilitates the analysis of longitudinal metabolomics
+data. Common tools mostly only allow the comparison between two
+timepoints or experimental conditions and are using frequentist
+statistical methods.
+
+As metabolomics data is often noisy, robust methods for the estimation
+of dynamics are needed. MetaboDynamics employs a hierachical Bayesian
+model. MetaboDynamics allows longitudinal analysis over multiple
+timepoint employing Bayesian models.
 
 ## Workflow
 

@@ -19,8 +19,9 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 MetaboDynamics provides a framework of Bayesian models for robust and easy
-analysis of longitudinal Metabolomics Data. It takes concentration tables as input and provides robust estimation of mean concentrations, functional enrichment
-analysis employing the KEGG database and comparison of dynamic clusters of 
+analysis of longitudinal Metabolomics Data. It takes concentration tables as 
+input and provides robust estimation of mean concentrations, functional
+enrichment analysis employing the KEGG database and comparison of dynamic clusters of 
 different biological conditions.
 
 ## Installation
@@ -33,12 +34,14 @@ pak::pak("KatjaDanielzik/MetaboDynamics")
 ```
 
 ## Overview
-This package was built to faciliate the analysis of longitudinal metabolomics
+MetaboDynamics facilitates the analysis of longitudinal metabolomics
 data. Common tools mostly only allow the comparison between two timepoints or
-experimental conditions and are using frequentist statistical methods. As 
-metabolomics data is often noise robust methods for the estimation of dynamics
-are needed. We employ a hierachical Bayesian model for that. 
+experimental conditions and are using frequentist statistical methods. 
 
+As metabolomics data is often noisy, robust methods for the estimation of 
+dynamics are needed. MetaboDynamics employs a hierachical Bayesian model. 
+MetaboDynamics allows longitudinal analysis over multiple timepoint employing
+Bayesian models.
 
 ## Workflow
 ![Workflow](/man/figures/README-metabolomics_pitch_draft.png)

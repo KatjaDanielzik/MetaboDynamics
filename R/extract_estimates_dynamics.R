@@ -33,6 +33,12 @@ extract_estimates_dynamics<-function(data,M=length(unique(data$metabolite)),t=le
   dynamics_log_cpc <- NULL
   temp_t <- NULL
   temp <- NULL
+  metabolite.ID <- NULL
+  metabolite <- NULL
+  higher <- NULL
+  lower <- NULL
+  timepoints <- NULL
+
   conditions <- unique(data[[condition]])
 
   dynamics <- list()
@@ -59,7 +65,7 @@ extract_estimates_dynamics<-function(data,M=length(unique(data$metabolite)),t=le
       # single loops to get reasonable order for clustering
       for (j in 1:t){
         # get means of estimated means at timepoints
-        dynamics_log_cpc[m,paste0("mu",j,".mean")] <- pS[paste0("mu[",m,",",j,"]"),"mean"]
+        dynamics_log_cpc[m,paste0("mu",j,"_mean")] <- pS[paste0("mu[",m,",",j,"]"),"mean"]
       }
       for(j in 1:t){
         # lower border of 95% CrI
@@ -119,9 +125,9 @@ extract_estimates_dynamics<-function(data,M=length(unique(data$metabolite)),t=le
   }
 
   # visualize
-    temp <- dynamics[1]
+    temp <- dynamics[[1]]
     for(i in 2:length(names(dynamics))){
-    temp <- rbind(temp,dynamics[i])
+    temp <- rbind(temp,dynamics[[i]])
     }
     rm(i)
 
@@ -142,14 +148,14 @@ extract_estimates_dynamics<-function(data,M=length(unique(data$metabolite)),t=le
       facet_grid(cols=vars(timepoints),rows=vars(condition))+
       theme_bw()+
       ggtitle("differences between timepoints")
-    rm(temp_t)
 
     # dynamics
-    temp <- temp%>%pivot_longer(cols=c(mu1.mean,mu2.mean,mu3.mean,mu4.mean),
-                                names_to = "timepoint",values_to="mu_mean")
+    temp_d <- temp[,c(1:3,4:(t+3))]
+    temp_d <- temp_d%>%pivot_longer(cols=-c(condition,metabolite.ID,metabolite),
+                                names_to=c("timepoints",".value"),names_sep = "_")
     dynamics[["plot_dynamics"]]<-
-    ggplot(temp,aes(x=as.factor(as.numeric(as.factor(timepoint))),
-                    y=mu_mean,group=metabolite.ID,col=metabolite))+
+    ggplot(temp_d,aes(x=as.factor(as.numeric(as.factor(timepoints))),
+                    y=mean,group=metabolite.ID,col=metabolite))+
       geom_line()+
       xlab("timepoint")+
       ylab("estimated mean concentration")+
@@ -157,7 +163,7 @@ extract_estimates_dynamics<-function(data,M=length(unique(data$metabolite)),t=le
       theme(legend.position = "none")+
       facet_grid(rows=vars(condition))+
       ggtitle("dynamics","color=metabolite")
-    rm(temp)
+    rm(temp,temp_t,temp_d)
 
   return(dynamics)
   rm(pS,fit,i,mu_posterior,j,k,x,conditions,metabolites,dynamics_loc_cpc)
