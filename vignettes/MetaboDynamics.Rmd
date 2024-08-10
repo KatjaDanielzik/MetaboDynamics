@@ -270,6 +270,7 @@ ggplot(temp, aes(
   theme(legend.position = "none") +
   facet_grid(rows = vars(condition), cols = vars(cluster)) +
   ggtitle("clustered dynamics", "color=metabolite, panels=cluster ID")
+rm(temp)
 ```
 
 
@@ -308,16 +309,47 @@ ORA[["plot_ORA"]]
 Great, we can now see which functional module is over- or under-represented in which
 dynamic cluster!
 
-# Comparison of dynamics between clusters of different experimental conditions
+# Comparison of clusters of different experimental conditions
+
+## dynamics 
 We can not only do over-representation analysis of KEGG-functional modules but
 also compare dynamic clusters across different experimental conditions.
 ```{r}
-comparison <- compare_conditions(clusters = cluster, dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"))
-comparison[["plot_comparison"]]
+comparison_dynamics <- compare_dynamics(clusters = cluster, dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"))
+comparison_dynamics[["plot_dynamic_comparison"]]
 ```
 The bigger and brighter a point is the smaller is the mean distance between
 dynamic clusters and the smaller is the standard deviation. That means big bright
 moins indicate high dynamic similarity which small spread. Here 10Gy_7 and 2Gy_8
-have high similiarty in dynamics. If we recall the ORA analysis this pair also
-has similar patterns in ORA of functional modules. 10Gy_1 and 0Gy_1 however
+have high similiarity in dynamics. If we recall the ORA analysis this pair also
+2Gy_8 has less over-expression of Carbohydrate metabolism. 
 
+## metabolites
+```{r}
+comparison_metabolites <- compare_metabolites(clusters=cluster)
+comparison_metabolites[["plot_metabolite_comparison"]]
+```
+We have two clusters that are very similar in their metabolite composition:
+10Gy_5 and 2Gy_6. If we compare that to the dynamic profiles and ORA analysis
+we see that similar functional modules are over-expressed as expected BUT
+the dynamics differ between the two radiation doses. 
+
+Can we facilitate visualization?
+
+## combine both
+```{r}
+dynamics <- comparison_dynamics[["estimates"]]
+metabolites <- comparison_metabolites[["Jaccard"]]
+temp <- left_join(dynamics,metabolites,by=c("cluster_a","cluster_b"))
+ggplot(temp,aes(x=1/mu_mean,y=Jaccard))+
+  geom_point(aes(col=1/sigma_mean))+
+  theme_bw()+
+  geom_text(aes(label=ifelse(Jaccard>0.4&1/mu_mean<1.0,comparison,NA)),nudge_y=-0.03)+
+  scale_color_viridis_c()+
+  xlab("dynamics similarity")+
+  ylab("metabolite similarity")+
+  ggtitle("comparison of clusters")
+```
+We can find two cluster pairs that are pretty similar in regards to their
+composing metabolites but dissimilar in regards to their dynamics. Their ORA
+profiles are quit similar as expected from the similar metabolite compositions. 

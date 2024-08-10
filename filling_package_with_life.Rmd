@@ -16,7 +16,6 @@ use_package("rstan","imports",min_version = TRUE)
 use_package("ggplot2","imports",min_version=TRUE)
 use_package("dplyr","imports",min_version=TRUE)
 use_package("tidyr","imports",min_version = TRUE)
-
 ```
 
 
@@ -84,6 +83,14 @@ document()
 ## OverRepresentationAnalysis with hypergeometric model
 ```{r}
 use_r("ORA_hypergeometric.R")
+document()
+```
+
+## compare_conditions
+```{r}
+use_r("compare_dynamics.R")
+document()
+use_r("compare_metabolites.R")
 document()
 ```
 
