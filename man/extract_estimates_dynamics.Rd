@@ -36,15 +36,21 @@ extract_estimates_dynamics(
 \item{samples}{how many posterior samples should be drawn (p.e. for check of clustering precision)}
 }
 \value{
-a list of dataframes (one per experimental condition) that contains the estimates at the timepoints and samples from the posterior (number as specified in samples)
+a list of dataframes (one per experimental condition) that contains
+the estimates at the timepoints and samples from the posterior
+(number as specified in samples)
 }
 \description{
 Extracts the mean concentrations (mu) at every timepoint from the dynamic model fit as well as the 95\% HDI. As well as the estimated standard deviation of metabolite concentrations at every time point (sigma) and the pooled standard deviation of every metabolite over all timepoints (lambda).
 Additionally samples from the posterior of mu can be drawn. This can be helpful if p.e. one wants to estimate the clustering precision. Lambda can be used for clustering algorithms such as VSClust that also take the variance into account.
 }
 \examples{
-#' data("intra")
-# only run after fit_dynamics_model(data = intra[intra$dose=="0Gy",],
-#of function
-# extract_estimates(data=intra,fits=fits_dynamics,iter=4000)
+\dontrun{
+data("intra")
+# only run after fit_dynamics_model(data = intra,
+# cpc = "log_cpc_stand", condition = "dose", max_treedepth = 14,
+# adapt_delta = 0.999, iter = 4000, cores = 7): see Vignette and documentation
+# of function
+extract_estimates(data = intra, fits = fits_dynamics, iter = 4000)
+}
 }

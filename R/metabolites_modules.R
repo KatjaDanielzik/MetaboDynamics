@@ -12,7 +12,8 @@
 # library(stringr)
 #
 # # load list of metabolites from script (script/CAS_ID_mapping_for_graphite.R)
-# # which is dependent on script/input_metaboanalyst.R and contains metabaolite names and KEGG IDS
+# # which is dependent on script/input_metaboanalyst.R and contains metabaolite
+# # names and KEGG IDS
 # name_map_HMDB_CAS <- readr::read_csv("/media/home/5-1-package pipeline/data/name_map_HMDB_CAS.csv")
 #
 # # hand KEGG IDs to KEGGREST, KEGGREST can only do 10 queries at a time

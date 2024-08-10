@@ -17,18 +17,24 @@
 #' @import ggplot2
 #' @importFrom stats runif
 #'
-#' @return a list of dataframes (one per experimental condition) that contains the estimates at the timepoints and samples from the posterior (number as specified in samples)
+#' @return a list of dataframes (one per experimental condition) that contains
+#' the estimates at the timepoints and samples from the posterior
+#' (number as specified in samples)
 #' @export
 #'
 #' @examples
-#' #' data("intra")
-#' # only run after fit_dynamics_model(data = intra[intra$dose=="0Gy",],
-## # cpc = "log_cpc_stand", condition = "dose", max_treedepth = 14, adapt_delta = 0.999, iter = 4000, cores = 7): see Vignette and documentation
-#' #of function
-#' # extract_estimates(data=intra,fits=fits_dynamics,iter=4000)
-
-extract_estimates_dynamics<-function(data,M=length(unique(data$metabolite)),t=length(unique(data$time)),condition="dose",fits,iter=2000,warmup=iter/4,chains=4,samples=100){
-
+#' \dontrun{
+#' data("intra")
+#' # only run after fit_dynamics_model(data = intra,
+#' # cpc = "log_cpc_stand", condition = "dose", max_treedepth = 14,
+#' # adapt_delta = 0.999, iter = 4000, cores = 7): see Vignette and documentation
+#' # of function
+#' extract_estimates(data = intra, fits = fits_dynamics, iter = 4000)
+#' }
+extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
+                                       t = length(unique(data$time)),
+                                       condition = "dose", fits, iter = 2000,
+                                       warmup = iter / 4, chains = 4, samples = 100) {
   # bind variables
   dynamics_log_cpc <- NULL
   temp_t <- NULL
@@ -47,12 +53,12 @@ extract_estimates_dynamics<-function(data,M=length(unique(data$metabolite)),t=le
   for (i in names(fits))
   {
     # generate dataframe for storage
-    dynamics_log_cpc <- as.data.frame(cbind(condition=i,metabolite.ID=1:M))
+    dynamics_log_cpc <- as.data.frame(cbind(condition = i, metabolite.ID = 1:M))
     # select only models for which delta mu with 0Gy/0h was computed
     fit <- fits[[i]]
     # generate n=samples random draw numbers from posterior, but same draw
     # from every delta alpha as they are dependent on each other
-    x <- floor(runif(samples, min=1, max=(iter-warmup)*chains))
+    x <- floor(runif(samples, min = 1, max = (iter - warmup) * chains))
 
     # posterior summary
     pS <- as.data.frame(rstan::summary(fit)$summary)
@@ -61,110 +67,134 @@ extract_estimates_dynamics<-function(data,M=length(unique(data$metabolite)),t=le
     mu_posterior <- as.matrix(fit)
 
 
-    for (m in 1:M){
+    for (m in 1:M) {
       # single loops to get reasonable order for clustering
-      for (j in 1:t){
+      for (j in 1:t) {
         # get means of estimated means at timepoints
-        dynamics_log_cpc[m,paste0("mu",j,"_mean")] <- pS[paste0("mu[",m,",",j,"]"),"mean"]
+        dynamics_log_cpc[m, paste0("mu", j, "_mean")] <-
+          pS[paste0("mu[", m, ",", j, "]"), "mean"]
       }
-      for(j in 1:t){
+      for (j in 1:t) {
         # lower border of 95% CrI
-        dynamics_log_cpc[m,paste0("mu",j,"_lower")] <- pS[paste0("mu[",m,",",j,"]"),"2.5%"]
+        dynamics_log_cpc[m, paste0("mu", j, "_lower")] <-
+          pS[paste0("mu[", m, ",", j, "]"), "2.5%"]
       }
-      for (j in 1:t){
+      for (j in 1:t) {
         # higher border of 95% CrI
-        dynamics_log_cpc[m,paste0("mu",j,"_higher")] <- pS[paste0("mu[",m,",",j,"]"),"97.5%"]
+        dynamics_log_cpc[m, paste0("mu", j, "_higher")] <-
+          pS[paste0("mu[", m, ",", j, "]"), "97.5%"]
       }
-      for (j in 1:t){
+      for (j in 1:t) {
         # get means of sigma
-        dynamics_log_cpc[m,paste0("sigma",j,"_mean")] <- pS[paste0("sigma[",m,",",j,"]"),"mean"]
+        dynamics_log_cpc[m, paste0("sigma", j, "_mean")] <-
+          pS[paste0("sigma[", m, ",", j, "]"), "mean"]
       }
-      for(j in 1:t){
+      for (j in 1:t) {
         # lower border of 95% CrI
-        dynamics_log_cpc[m,paste0("sigma",j,"_lower")] <- pS[paste0("sigma[",m,",",j,"]"),"2.5%"]
+        dynamics_log_cpc[m, paste0("sigma", j, "_lower")] <-
+          pS[paste0("sigma[", m, ",", j, "]"), "2.5%"]
       }
-      for (j in 1:t){
+      for (j in 1:t) {
         # higher border of 95% CrI
-        dynamics_log_cpc[m,paste0("sigma",j,"_higher")] <- pS[paste0("sigma[",m,",",j,"]"),"97.5%"]
+        dynamics_log_cpc[m, paste0("sigma", j, "_higher")] <-
+          pS[paste0("sigma[", m, ",", j, "]"), "97.5%"]
       }
       # get means of lambda
-      dynamics_log_cpc[m,"lambda_mean"] <- pS[paste0("lambda[",m,"]"),"mean"]
+      dynamics_log_cpc[m, "lambda_mean"] <- pS[paste0("lambda[", m, "]"), "mean"]
       # lower border of 95% CrI
-      dynamics_log_cpc[m,"lambda_lower"] <- pS[paste0("lambda[",m,"]"),"2.5%"]
+      dynamics_log_cpc[m, "lambda_lower"] <- pS[paste0("lambda[", m, "]"), "2.5%"]
       # higher border of 95% CrI
-      dynamics_log_cpc[m,"lambda_higher"] <- pS[paste0("lambda[",m,"]"),"97.5%"]
+      dynamics_log_cpc[m, "lambda_higher"] <- pS[paste0("lambda[", m, "]"), "97.5%"]
 
       # delta mus
       # we have one less delta_mu than timepoints
-      for (j in 1:(t-1))
+      for (j in 1:(t - 1))
       {
         # mean
-        dynamics_log_cpc[m,paste0("delta",j,j+1,"_mean")] <- pS[paste0("delta_mu[",m,",",j,"]"),"mean"]
+        dynamics_log_cpc[m, paste0("delta", j, j + 1, "_mean")] <-
+          pS[paste0("delta_mu[", m, ",", j, "]"), "mean"]
         # lower border of 95% CrI
-        dynamics_log_cpc[m,paste0("delta",j,j+1,"_lower")] <- pS[paste0("delta_mu[",m,",",j,"]"),"2.5%"]
+        dynamics_log_cpc[m, paste0("delta", j, j + 1, "_lower")] <-
+          pS[paste0("delta_mu[", m, ",", j, "]"), "2.5%"]
         # higher border of 95% CrI
-        dynamics_log_cpc[m,paste0("delta",j,j+1,"_higher")] <- pS[paste0("delta_mu[",m,",",j,"]"),"97.5%"]
+        dynamics_log_cpc[m, paste0("delta", j, j + 1, "_higher")] <-
+          pS[paste0("delta_mu[", m, ",", j, "]"), "97.5%"]
       }
 
 
       for (k in 1:length(x))
       {
-        for(j in 1:t){
-          dynamics_log_cpc[m,paste0("mu",j,"_sample",k)] <- mu_posterior[,paste0("mu[",m,",",j,"]")][x[k]]
+        for (j in 1:t) {
+          dynamics_log_cpc[m, paste0("mu", j, "_sample", k)] <-
+            mu_posterior[, paste0("mu[", m, ",", j, "]")][x[k]]
         }
       }
     }
 
     # get correct assignment of metabolites and metabolite.ID used in modelling
-    metabolites <- as.data.frame(cbind(metabolite=unique(intra$metabolite),metabolite.ID=as.numeric(as.factor(intra$metabolite))))
+    metabolites <- as.data.frame(cbind(
+      metabolite = unique(intra$metabolite),
+      metabolite.ID = as.numeric(as.factor(intra$metabolite))
+    ))
 
-    dynamics_log_cpc <- left_join(dynamics_log_cpc,metabolites,by="metabolite.ID")
-    dynamics_log_cpc <- dynamics_log_cpc%>%relocate("metabolite",.after="metabolite.ID")
+    dynamics_log_cpc <- left_join(dynamics_log_cpc, metabolites,
+      by = "metabolite.ID"
+    )
+    dynamics_log_cpc <- dynamics_log_cpc %>% relocate("metabolite", .after = "metabolite.ID")
     dynamics_log_cpc <- unique(dynamics_log_cpc)
     dynamics[[i]] <- dynamics_log_cpc
   }
 
   # visualize
-    temp <- dynamics[[1]]
-    for(i in 2:length(names(dynamics))){
-    temp <- rbind(temp,dynamics[[i]])
-    }
-    rm(i)
+  temp <- dynamics[[1]]
+  for (i in 2:length(names(dynamics))) {
+    temp <- rbind(temp, dynamics[[i]])
+  }
+  rm(i)
 
-    # differences between timepoints
-    temp_t <- temp[,c(1:3,(6*t+7):(6*t+15))]
-    temp_t <- temp_t%>%pivot_longer(cols=-c(condition,metabolite.ID,metabolite),
-                                names_to=c("timepoints",".value"),names_sep = "_")
-    temp_t <- temp_t%>%  mutate(col=ifelse(higher<0,"HDI>0",
-                                       ifelse(lower>0,"HDI<0","0inHDI")))
-    dynamics[["plot_timepoint_differences"]]<-
-    ggplot(temp_t,aes(x=as.numeric(mean),y=metabolite,col=col))+
-      geom_point()+
-      geom_errorbarh(aes(xmin=lower,xmax=higher))+
-      xlab("delta")+
-      scale_color_manual(values = c("black","green","red"),
-                         labels=c("0inCrI","CrI>0","CrI<0"),name="")+
-      geom_vline(xintercept=0)+
-      facet_grid(cols=vars(timepoints),rows=vars(condition))+
-      theme_bw()+
-      ggtitle("differences between timepoints")
+  # differences between timepoints
+  temp_t <- temp[, c(1:3, (6 * t + 7):(6 * t + 15))]
+  temp_t <- temp_t %>% pivot_longer(
+    cols = -c(condition, metabolite.ID, metabolite),
+    names_to = c("timepoints", ".value"), names_sep = "_"
+  )
+  temp_t <- temp_t %>% mutate(col = ifelse(higher < 0, "HDI>0",
+    ifelse(lower > 0, "HDI<0", "0inHDI")
+  ))
+  dynamics[["plot_timepoint_differences"]] <-
+    ggplot(temp_t, aes(x = as.numeric(mean), y = metabolite, col = col)) +
+    geom_point() +
+    geom_errorbarh(aes(xmin = lower, xmax = higher)) +
+    xlab("delta") +
+    scale_color_manual(
+      values = c("black", "green", "red"),
+      labels = c("0inCrI", "CrI>0", "CrI<0"), name = ""
+    ) +
+    geom_vline(xintercept = 0) +
+    facet_grid(cols = vars(timepoints), rows = vars(condition)) +
+    theme_bw() +
+    ggtitle("differences between timepoints")
 
-    # dynamics
-    temp_d <- temp[,c(1:3,4:(t+3))]
-    temp_d <- temp_d%>%pivot_longer(cols=-c(condition,metabolite.ID,metabolite),
-                                names_to=c("timepoints",".value"),names_sep = "_")
-    dynamics[["plot_dynamics"]]<-
-    ggplot(temp_d,aes(x=as.factor(as.numeric(as.factor(timepoints))),
-                    y=mean,group=metabolite.ID,col=metabolite))+
-      geom_line()+
-      xlab("timepoint")+
-      ylab("estimated mean concentration")+
-      theme_bw()+
-      theme(legend.position = "none")+
-      facet_grid(rows=vars(condition))+
-      ggtitle("dynamics","color=metabolite")
-    rm(temp,temp_t,temp_d)
+  # dynamics
+  temp_d <- temp[, c(1:3, 4:(t + 3))]
+  temp_d <- temp_d %>% pivot_longer(
+    cols = -c(condition, metabolite.ID, metabolite),
+    names_to = c("timepoints", ".value"), names_sep = "_"
+  )
+  dynamics[["plot_dynamics"]] <-
+    ggplot(temp_d, aes(
+      x = as.factor(as.numeric(as.factor(timepoints))),
+      y = mean, group = metabolite.ID, col = metabolite
+    )) +
+    geom_line() +
+    xlab("timepoint") +
+    ylab("estimated mean concentration") +
+    theme_bw() +
+    theme(legend.position = "none") +
+    facet_grid(rows = vars(condition)) +
+    ggtitle("dynamics", "color=metabolite")
+  rm(temp, temp_t, temp_d)
 
   return(dynamics)
-  rm(pS,fit,i,mu_posterior,j,k,x,conditions,metabolites,dynamics_loc_cpc)
+  rm(pS, fit, i, mu_posterior, j, k, x, conditions, metabolites, dynamics_loc_cpc)
 }

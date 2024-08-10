@@ -31,22 +31,35 @@ extract_diagnostics_dynamics(
 
 \item{chains}{number of chains used for model fit}
 
-\item{fits}{list of models for which diagnostics should be extracted, is the object that gets returned by fit_dynamics_model()}
+\item{fits}{list of models for which diagnostics should be extracted, is the
+object that gets returned by fit_dynamics_model()}
 
-\item{cpc}{concentration values used to model fit, should be normalized by experimental condition and metabolite to mean of zero and standard deviation of one}
+\item{cpc}{concentration values used to model fit, should be normalized by
+experimental condition and metabolite to mean of zero and standard deviation
+of one}
 }
 \value{
-a list which contains diagnostics criteria of all conditions in a dataframe (named "model_diagnostics") and one dataframe per condition that contains necessary information for Posterior predictive check (named "PPC_condition"). Additionally plots for diagnostics and PPC named "plot_criteria" and "plot_PPC_condition".
+a list which contains diagnostics criteria of all conditions in a
+dataframe (named "model_diagnostics") and one dataframe per condition that
+contains necessary information for Posterior predictive check
+(named "PPC_condition"). Additionally plots for diagnostics and PPC named
+"plot_criteria" and "plot_PPC_condition".
 }
 \description{
-gathers number of divergences, rhat values, number of effectives samples (n_eff) and provides plots for diagnostics criteria as well ad Posterior predictive checks
-Dataframe "model_diagnostics" contains information about experimental condition, number of divergent transitions and rhat and neff values for all timepoints
+gathers number of divergences, rhat values, number of effective
+samples (n_eff) and provides plots for diagnostics criteria as well ad
+Posterior predictive checks. Dataframe "model_diagnostics" contains
+information about experimental condition, number of divergent transitions
+and rhat and neff values for all timepoints
 }
 \examples{
+\dontrun{
 data("intra")
 # only run after fit_dynamics_model(intra): see Vignette and documentation
-#of function
-# extract_diagnostics_dynamics(data=intra,max_treedepth=14,
-# adapt_delta=0.999,iter=4000,fits=fits_dynamics)
-
+# of function
+extract_diagnostics_dynamics(
+  data = intra, max_treedepth = 14,
+  adapt_delta = 0.999, iter = 4000, fits = fits_dynamics
+)
+}
 }

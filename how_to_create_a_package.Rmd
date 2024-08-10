@@ -418,7 +418,7 @@ problem start to finish.
 Vignettes can be accessed by "browseVignettes(packagename)"
 ```{r}
 # create a first Vignette
-use_vignette("MetaboDynamics_a_worked_example")
+use_vignette("MetaboDynamics")
 ```
 ✔ Adding knitr to Suggests field in DESCRIPTION.
 ✔ Adding rmarkdown to Suggests field in DESCRIPTION.

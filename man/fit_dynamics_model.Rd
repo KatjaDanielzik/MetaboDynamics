@@ -19,36 +19,51 @@ fit_dynamics_model(
 )
 }
 \arguments{
-\item{data}{concentration table containing the columns "metabolite", "condition", "cpc_stand" for default}
+\item{data}{concentration table containing the columns "metabolite",
+"condition", "cpc_stand" for default}
 
 \item{metabolite}{column of "data" that contains the metabolite names or IDs}
 
-\item{time}{column of "time" that contains time as numeric, make sure your time column is ordered from lowest to highest for the model to work}
+\item{time}{column of "time" that contains time as numeric, make sure your
+time column is ordered from lowest to highest for the model to work}
 
 \item{condition}{column of "data" that contains the experimental conditions}
 
-\item{cpc}{column of "data" that contains the concentrations per cell, centered and normalized per metabolite and experimental condition (mean=0, sd=1)}
+\item{cpc}{column of "data" that contains the concentrations per cell,
+centered and normalized per metabolite and experimental condition (mean=0, sd=1)}
 
-\item{chains}{how many Markov-Chains should be used for model fitting, use at least two, default=4}
+\item{chains}{how many Markov-Chains should be used for model fitting, use at
+least two, default=4}
 
-\item{cores}{how many cores should be used for model fitting, this parallelizes the model fitting and therefore speeds it up default=4}
+\item{cores}{how many cores should be used for model fitting, this
+parallelizes the model fitting and therefore speeds it up default=4}
 
-\item{adapt_delta}{target average acceptance probability, can be adapted if divergent transitions are reported, default is 0.95}
+\item{adapt_delta}{target average acceptance probability, can be adapted if
+divergent transitions are reported, default is 0.95}
 
-\item{max_treedepth}{can be adapted if model throws warnings about hitting max_treedepth, warnings are mostly effeciency not validity concerns and treedepth can be raised, default=10}
+\item{max_treedepth}{can be adapted if model throws warnings about hitting
+max_treedepth, warnings are mostly effeciency not validity concerns and
+treedepth can be raised, default=10}
 
-\item{iter}{how many iterations are run, increasing might help with effective sampling size being to low, default=2000}
+\item{iter}{how many iterations are run, increasing might help with effective}
 
-\item{warmup}{how many iterations the model warms up for, increasing might facilitate efficiences, must be at least 25\% of ITER, default=iter/4}
+\item{warmup}{how many iterations the model warms up for, increasing might
+facilitate efficiences, must be at least 25\% of ITER, default=iter/4}
 }
 \value{
-returns a list of modelfits. One modelfit named fit_condition per experimental condition
+returns a list of modelfits. One modelfit named fit_condition per
+experimental condition
 }
 \description{
-Employs a hierachical model that assumes a normal distribution of standardized (mean=0,sd=1) log(cpc) values for robust estimation of mean
-concentrations over time of single metabolites at single experimental conditions.
+Employs a hierachical model that assumes a normal distribution of
+standardized (mean=0,sd=1) log(cpc) values for robust estimation of mean
+concentrations over time of single metabolites at single experimental
+conditions.
 }
 \examples{
+\dontrun{
+data("intra")
 fit_dynamics_model(intra)
+}
 
 }

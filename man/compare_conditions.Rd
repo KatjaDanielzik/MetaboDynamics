@@ -7,20 +7,32 @@
 compare_conditions(clusters, dynamics)
 }
 \arguments{
-\item{clusters}{a dataframe containing the dynamics and cluster IDs(column named "cluster") of clusters of similar dynamics, as well as a column "condition" specifying the experimental condtions to be compared.}
+\item{clusters}{a dataframe containing the dynamics and '
+cluster IDs(column named "cluster") of clusters of similar dynamics,
+as well as a column "condition" specifying the experimental condtions
+to be compared.}
 
-\item{dynamics}{vector specifying the column names of dataframe clusters that hold the dynamic information}
+\item{dynamics}{vector specifying the column names of dataframe clusters
+that hold the dynamic information}
 }
 \value{
-a list holding a 1) dataframe of estimates of the mean distance between
-clusters of different experimental conditions ("mean") and the standard deviation ("sigma")
+a list holding a 1) dataframe of estimates of the mean distance
+between #' clusters of different experimental conditions ("mean") and the
+standard deviation ("sigma")
 2) the model fit
 3) a ggplot2 object visualizing the cluster comparison
 }
 \description{
-Employs a Bayesian model that assumes a normal distribution of euclidean distances between dynamic vectors of two clusters that come from different experimental conditions to estimate the mean distance between clusters.
+Employs a Bayesian model that assumes a normal distribution of euclidean
+distances between dynamic vectors of two clusters that come from different
+experimental conditions to estimate the mean distance between clusters.
 }
 \examples{
-#' compare_conditions <- functions(clusters=cluster,dynamics=c("mu1_mean","mu2_mean","mu3_mean","mu4_mean"))
+\dontrun{
+compare_conditions <- functions(
+  clusters = cluster,
+  dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean")
+)
+}
 }
 \keyword{internal}

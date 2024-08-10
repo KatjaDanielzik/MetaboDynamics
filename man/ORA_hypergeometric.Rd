@@ -12,31 +12,42 @@ ORA_hypergeometric(
 )
 }
 \arguments{
-\item{background}{dataframe that contains which metabolites (represented as KEGG ID) are annotated to functional modules in general}
+\item{background}{dataframe that contains which metabolites
+(represented as KEGG ID) are annotated to functional modules in general}
 
-\item{annotations}{to which functional modules our experimental metabolites are annotated}
+\item{annotations}{to which functional modules our experimental metabolites
+are annotated}
 
-\item{clusters}{dataframe containing columns "metabolite","cluster" and a column specifying the experimental condition called "condition"}
+\item{clusters}{dataframe containing columns "metabolite","cluster" and a
+column specifying the experimental condition called "condition"}
 
-\item{tested_column}{column that is in background and annotations and on which the hypergeometric model shall be executed}
+\item{tested_column}{column that is in background and annotations and on
+which the hypergeometric model shall be executed}
 }
 \value{
-a list with a dataframe containing the ORA results and a plot of the ORA
+a list with a dataframe containing the ORA results and a plot of
+the ORA
 }
 \description{
-Testing the hypothesis that certain KEGG modules are over-represented in clusters of metabolites.
-A module is considered over-represented in a cluster the number of metabolites in a cluster being annotated to a functional module (n_obs)
-is higher than the expected number of metabolites in a cluster of this size being annotated to a functional module (n_theo).
-We can calculate the OvE (Observed versus Expected=n_obs/n_theo) and show the probabilites of these ratios.
-log(p(OvE))>0 indicates an over-representation of the functional module in the cluster, log(p(OvE))<0 an under-representation.
+Testing the hypothesis that certain KEGG modules are over-represented in
+clusters of metabolites.
+A module is considered over-represented in a cluster the number of
+metabolites in a cluster being annotated to a functional module (n_obs)
+is higher than the expected number of metabolites in a cluster of this size
+being annotated to a functional module (n_theo).
+We can calculate the OvE (Observed versus Expected=n_obs/n_theo) and show the
+probabilites of these ratios.
+log(p(OvE))>0 indicates an over-representation of the functional module in
+the cluster, log(p(OvE))<0 an under-representation.
 }
 \examples{
-#data("metabolite_modules")
-#data("modules_compounds")
-#head(metabolite_modules)
-#head(modules_compounds)
-#ORA_hyper <- ORA_hypergeometric(background=modules_compounds,
-#annotations=metabolite_modules,clusters=cluster,tested_column)
+\dontrun{
+data("metabolite_modules")
+data("modules_compounds")
+head(metabolite_modules)
+head(modules_compounds)
+ORA_hyper <- ORA_hypergeometric(background=modules_compounds,
+annotations=metabolite_modules,clusters=cluster,tested_column)}
 }
 \keyword{annotated}
 \keyword{are}
