@@ -25,7 +25,6 @@ different experimental conditions
 #' \dontrun{
 compare_metabolites <- functions(
   clusters = cluster
-)
-}
+)}
 }
 \keyword{internal}

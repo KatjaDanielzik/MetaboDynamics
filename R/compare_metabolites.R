@@ -20,8 +20,7 @@
 #' #' \dontrun{
 #' compare_metabolites <- functions(
 #'   clusters = cluster
-#' )
-#' }
+#' )}
 
 
 compare_metabolites <- function(clusters){
@@ -34,6 +33,9 @@ compare_metabolites <- function(clusters){
   temp_a <- NULL
   temp_b <- NULL
   id <- NULL
+  Jaccard <- NULL
+  cluster_a <- NULL
+  cluster_b <- NULL
 
   # return object
   comparison_metabolites <- list()
@@ -83,8 +85,8 @@ compare_metabolites <- function(clusters){
 
   comparison_metabolites[["plot_metabolite_comparison"]]<-
   ggplot(distances[distances$Var1<distances$Var2,],
-         aes(x=factor(cluster_b,level=paste0(x$condition,"_",x$cluster)),
-             y=factor(cluster_a,level=paste0(x$condition,"_",x$cluster)),fill=Jaccard))+
+         aes(x=factor(cluster_b,levels=paste0(x$condition,"_",x$cluster)),
+             y=factor(cluster_a,levels=paste0(x$condition,"_",x$cluster)),fill=Jaccard))+
     geom_tile(color="white")+
     theme_bw()+
     xlab("cluster_b")+
