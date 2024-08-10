@@ -22,9 +22,8 @@ Uses the Jaccard Index to compare metabolite names between clusters of
 different experimental conditions
 }
 \examples{
-#' \dontrun{
+\dontrun{
 compare_metabolites <- functions(
-  clusters = cluster
-)}
+  clusters = cluster)}
 }
 \keyword{internal}

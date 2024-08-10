@@ -28,9 +28,8 @@
 #' \dontrun{
 #' compare_dynamics <- functions(
 #'   clusters = cluster,
-#'   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean")
-#' )
-#' }
+#'   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"))}
+
 compare_dynamics <- function(clusters, dynamics) {
   # bind objects to function
   posterior_mu <- NULL

@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# MetaboDynamics
+# MetaboDynamics : developmental version
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -36,8 +36,10 @@ timepoint employing Bayesian models.
 
 ## Workflow
 
+For a worked example see Vignette.
+
 <figure>
-<img src="/man/figures/README-MetaboDynamics_pitch.png"
+<img src="/man/figures/README-MetaboDynamics-pitch.png"
 alt="Workflow" />
 <figcaption aria-hidden="true">Workflow</figcaption>
 </figure>

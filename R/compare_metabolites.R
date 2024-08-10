@@ -17,10 +17,9 @@
 #' @export
 #'
 #' @examples
-#' #' \dontrun{
+#' \dontrun{
 #' compare_metabolites <- functions(
-#'   clusters = cluster
-#' )}
+#'   clusters = cluster)}
 
 
 compare_metabolites <- function(clusters){

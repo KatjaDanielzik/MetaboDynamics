@@ -31,8 +31,6 @@ experimental conditions to estimate the mean distance between clusters.
 \dontrun{
 compare_dynamics <- functions(
   clusters = cluster,
-  dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean")
-)
-}
+  dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"))}
 }
 \keyword{internal}
