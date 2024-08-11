@@ -156,7 +156,7 @@ We get two major outputs:
 2) the dynamic profiles of each metabolites at each experimental condition
 
 ## 1) differences between two timepoints
-```{r,fig.align='center',out.width="100%"}
+```{r,fig.align='center',fig.dpi=150}
 # 1) the differences between two timepoints
 # set numer of timepoints
 estimates_dynamics[["plot_timepoint_differences"]]
@@ -170,7 +170,7 @@ concentrations between the two timepoints, if it is right of zero we have an
 increase in concentrations between timepoints. 
 
 ## 2) dynamic profiles
-```{r,fig.align='center',out.width="100%"}
+```{r,fig.align='center',fig.dpi=150}
 # 2) dynamic profiles
 estimates_dynamics[["plot_dynamics"]]
 ```
@@ -299,7 +299,7 @@ head(modules_compounds)
 ```
 
 For the functional analysis we employ a hypergeometric model:
-```{r,fig.align='center',out.width="100%"}
+```{r,fig.align='center',fig.dpi=150}
 ORA <- ORA_hypergeometric(background = modules_compounds, annotations = metabolite_modules, clusters = cluster, tested_column = "middle_hierachy")
 ORA[["plot_ORA"]]
 ORA <- ORA_hypergeometric(background = modules_compounds, annotations = metabolite_modules, clusters = cluster[cluster$condition == "0Gy", ], tested_column = "lower_hierachy")
@@ -314,7 +314,7 @@ dynamic cluster!
 ## dynamics 
 We can not only do over-representation analysis of KEGG-functional modules but
 also compare dynamic clusters across different experimental conditions.
-```{r}
+```{r,fig.aling='center',fig.dpi=150}
 comparison_dynamics <- compare_dynamics(clusters = cluster, dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"))
 comparison_dynamics[["plot_dynamic_comparison"]]
 ```
@@ -325,7 +325,7 @@ have high similiarity in dynamics. If we recall the ORA analysis this pair also
 2Gy_8 has less over-expression of Carbohydrate metabolism. 
 
 ## metabolites
-```{r}
+```{r,fig.aling='center',fig.dpi=150}
 comparison_metabolites <- compare_metabolites(clusters=cluster)
 comparison_metabolites[["plot_metabolite_comparison"]]
 ```
@@ -337,7 +337,7 @@ the dynamics differ between the two radiation doses.
 Can we facilitate visualization?
 
 ## combine both
-```{r}
+```{r,fig.aling='center',fig.dpi=150}
 dynamics <- comparison_dynamics[["estimates"]]
 metabolites <- comparison_metabolites[["Jaccard"]]
 temp <- left_join(dynamics,metabolites,by=c("cluster_a","cluster_b"))
