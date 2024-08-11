@@ -9,6 +9,13 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# setup package documentation
+```{r}
+use_package_doc()
+document()
+```
+
+
 # dependencies
 ```{r}
 use_package("stringr", "imports",min_version=TRUE) # min_version=TRUE sets to current version

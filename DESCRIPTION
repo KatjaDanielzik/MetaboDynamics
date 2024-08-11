@@ -4,6 +4,8 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Katja", "Danielzik", , "katja.danielzik@uni-due.de", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0009-0007-5021-6212"))
+URL: 
+BugReports: 
 Description: MetaboDynamics: framework of Bayesian models to analyze longitudinal metabolomics data
 License: GPL (>= 3)
 Encoding: UTF-8
