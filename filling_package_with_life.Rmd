@@ -9,6 +9,13 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# setup package documentation
+```{r}
+use_package_doc()
+document()
+```
+
+
 # dependencies
 ```{r}
 use_package("stringr", "imports",min_version=TRUE) # min_version=TRUE sets to current version
@@ -16,7 +23,6 @@ use_package("rstan","imports",min_version = TRUE)
 use_package("ggplot2","imports",min_version=TRUE)
 use_package("dplyr","imports",min_version=TRUE)
 use_package("tidyr","imports",min_version = TRUE)
-
 ```
 
 
@@ -36,6 +42,18 @@ use_data(intra)
 # write documentation
 promptData(intra)
 ```
+## model fit for Vignette building
+```{r}
+# skip posteriors to reduce data size
+diagnostics_dynamics <- diagnostics_dynamics["model_diagnostics"]
+use_data(diagnostics_dynamics,overwrite = TRUE)
+promptData(diagnostics_dynamics)
+estimates_dynamics <- estimates_dynamics[c("0Gy","2Gy","10Gy")]
+use_data(estimates_dynamics,overwrite=TRUE)
+promptData(estimates_dynamics)
+```
+
+
 ## KEGG-database 
 these files are summaries of the pull request from KEGG via KEGGREST
 ```{r}
@@ -84,6 +102,14 @@ document()
 ## OverRepresentationAnalysis with hypergeometric model
 ```{r}
 use_r("ORA_hypergeometric.R")
+document()
+```
+
+## compare_conditions
+```{r}
+use_r("compare_dynamics.R")
+document()
+use_r("compare_metabolites.R")
 document()
 ```
 

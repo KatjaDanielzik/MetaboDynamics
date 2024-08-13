@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# MetaboDynamics
+# MetaboDynamics : developmental version
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -44,5 +44,8 @@ MetaboDynamics allows longitudinal analysis over multiple timepoint employing
 Bayesian models.
 
 ## Workflow
-![Workflow](/man/figures/README-MetaboDynamics_pitch.png)
+
+For a worked example see Vignette.
+
+![Workflow](/man/figures/README-MetaboDynamics-pitch.png)
 

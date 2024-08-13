@@ -1,4 +1,4 @@
-#' Comparison of dynamic clusters across experimental conditions
+#' Comparison of dynamic between clusters of different experimental conditions
 #'
 #' Employs a Bayesian model that assumes a normal distribution of euclidean
 #' distances between dynamic vectors of two clusters that come from different
@@ -22,14 +22,15 @@
 #' 2) the model fit
 #' 3) a ggplot2 object visualizing the cluster comparison
 #'
+#' @export
+#'
 #' @examples
 #' \dontrun{
-#' compare_conditions <- functions(
+#' compare_dynamics <- functions(
 #'   clusters = cluster,
-#'   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean")
-#' )
-#' }
-compare_conditions <- function(clusters, dynamics) {
+#'   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"))}
+
+compare_dynamics <- function(clusters, dynamics) {
   # bind objects to function
   posterior_mu <- NULL
   posterior_sigma <- NULL
@@ -160,7 +161,7 @@ compare_conditions <- function(clusters, dynamics) {
   comparison[["estimates"]] <- posterior
 
   # visualization
-  comparison[["plot_comparison"]] <-
+  comparison[["plot_dynamic_comparison"]] <-
     ggplot(posterior[posterior$parameter == "mu", ], aes(x = cluster_b, y = cluster_a)) +
     geom_point(aes(col = 1 / mu_mean, size = ((1 / (`97.5%` - `2.5%`))))) +
     theme_bw() +
