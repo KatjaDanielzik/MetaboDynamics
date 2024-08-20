@@ -18,9 +18,9 @@ NOT include functional modules "Xenobiotics biodegradation", "Biosynthesis of ot
     \item{\code{...1}}{is a running ID of the dataframe row}
     \item{\code{module_id}}{the ID of the KEGG functional module}
     \item{\code{kegg_id}}{KEGG ID of a metabolite annotated to a functional module}
-    \item{\code{upper_hierachy}}{name of the highest hierachy level of module organisation}
-    \item{\code{middle_hierachy}}{name of the middle hierachy = functional module, p.e. "Amino acid metabolism"}
-    \item{\code{lower_hierachy}}{name of the lowest level of modules, this often contain only a couple pathways p.e. "Arginine and proline metabolism" }
+    \item{\code{upper_hierarchy}}{name of the highest hierachy level of module organisation}
+    \item{\code{middle_hierarchy}}{name of the middle hierachy = functional module, p.e. "Amino acid metabolism"}
+    \item{\code{lower_hierarchy}}{name of the lowest level of modules, this often contain only a couple pathways p.e. "Arginine and proline metabolism" }
   }
 }
 \details{

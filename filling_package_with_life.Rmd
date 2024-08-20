@@ -58,13 +58,16 @@ promptData(estimates_dynamics)
 these files are summaries of the pull request from KEGG via KEGGREST
 ```{r}
 # total background information
-modules_compounds  <- readr::read_csv("/media/home/5-1-package pipeline/data/modules_compounds.csv")
-devtools::use_data(modules_compounds)
-devtools::promptData(modules_compounds)
+modules_compounds  <- readr::read_csv("/media/home/5.1-package-pipeline/modules_compounds.csv")
+#correct spelling error
+colnames(modules_compounds) <- gsub("hierachy","hierarchy",colnames(modules_compounds))
+usethis::use_data(modules_compounds,overwrite=TRUE)
+promptData(modules_compounds)
 
 # experimental metabolites mapped to modules
-metabolite_modules <- readr::read_csv("/media/home/5-1-package pipeline/data/metabolite_modules.csv")
-use_data(metabolite_modules)
+metabolite_modules <- readr::read_csv("/media/home/5.1-package-pipeline/metabolite_modules.csv")
+colnames(metabolite_modules) <- gsub("hierachy","hierarchy",colnames(metabolite_modules))
+usethis::use_data(metabolite_modules,overwrite=TRUE)
 promptData(metabolite_modules)
 
 # suggest KEGGREST as package for developers to test the code or obtain own datasets

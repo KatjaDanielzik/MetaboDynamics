@@ -231,6 +231,7 @@ We get two major outputs:
   rm(i)
 
   # differences between timepoints
+  t< -4
   temp_t <- temp[, c(1:3, (6 * t + 7):(6 * t + 15))]
   temp_t <- temp_t %>% pivot_longer(
     cols = -c(condition, metabolite.ID, metabolite),
@@ -252,21 +253,22 @@ We get two major outputs:
     theme_bw() +
     ggtitle("differences between timepoints")
     
-  # png(file="delta_t.png",pointsize=60,width=20,height=10,res=1000,units="cm")
-  # ggplot(temp_t[temp_t$condition=="0Gy",], aes(y = as.numeric(mean), x = metabolite.ID, col = col)) +
-  #   geom_point() +
-  #   geom_errorbar(aes(ymin = lower, ymax = higher)) +
-  #   ylab("delta") +
-  #   scale_color_manual(
-  #     values = c("black", "green", "red"),
-  #     labels = c("0inCrI", "CrI>0", "CrI<0"), name = ""
-  #   ) +
-  #   geom_hline(yintercept = 0) +
-  #   facet_grid(rows = vars(timepoints), cols = vars(condition)) +
-  #   theme_bw() +
-  #   theme(axis.text.x = element_blank())+
-  #   ggtitle("differences between timepoints","mu[t2]-mu[t1]: mean and 95% HDI")
-  # dev.off()
+  png(file="delta_t.png",pointsize=60,width=20,height=10,res=1000,units="cm")
+  ggplot(temp_t[temp_t$condition=="0Gy",], aes(y = as.numeric(mean), x = metabolite.ID, col = col)) +
+    geom_point() +
+    geom_errorbar(aes(ymin = lower, ymax = higher)) +
+    ylab("delta") +
+    scale_color_manual(
+      values = c("black", "green", "red"),
+      labels = c("0inCrI", "CrI>0", "CrI<0"), name = ""
+    ) +
+    geom_hline(yintercept = 0,linetype="dashed") +
+    facet_grid(rows = vars(timepoints), cols = vars(condition)) +
+    theme_bw() +
+    guides(col="none")+
+    theme(axis.text.x = element_blank())+
+    ggtitle("differences between timepoints","mu[t2]-mu[t1]: mean and 95% HDI")
+  dev.off()
 
 ```
 
@@ -301,8 +303,22 @@ ggplot(temp_d, aes(
     theme(legend.position = "none") +
     facet_grid(rows = vars(condition)) +
     ggtitle("dynamics", "color=metabolite")
-  rm(temp, temp_t, temp_d)
 
+
+  png(file="dynamics_one_metabolite.png",pointsize=60,width=20,height=10,res=1000,units="cm")
+  ggplot(temp_d[temp_d$metabolite=="L-Arginine"&temp_d$condition=="2Gy",], aes(
+      x = as.factor(as.numeric(as.factor(timepoints))),
+      y = mean, group = metabolite.ID)) +
+    geom_line(col="red",lwd=1) +
+    xlab("time point") +
+    ylim(c(-1,1))+
+    ylab("deviation from mean concentration") +
+    theme_bw() +
+    theme(legend.position = "none") +
+    facet_grid(rows = vars(condition)) +
+    ggtitle("dynamic profile of L-Arginine")
+  dev.off()
+  rm(temp, temp_t, temp_d)
 ```
 
 
@@ -400,26 +416,23 @@ ggplot(temp, aes(
   theme_bw() +
   theme(legend.position = "none") +
   facet_grid(rows = vars(condition), cols = vars(cluster)) +
-<<<<<<< HEAD
   ggtitle("clustered dynamics", "panels=cluster ID")
 
-# png(file="dynamics.png",pointsize=60,width=20,height=10,res=1000,units="cm")
-# ggplot(temp[temp$condition=="2Gy",], aes(
-#   x = as.factor(as.numeric(as.factor(timepoint))),
-#   y = mu_mean, group = metabolite, col=metabolite
-# )) +
-#   geom_line() +
-#   xlab("timepoint") +
-#   ylab("estimated mean concentration") +
-#   theme_bw() +
-#   theme(legend.position = "none") +
-#   facet_grid(rows = vars(condition), cols = vars(cluster)) +
-#   ggtitle("clustered dynamics", "color=metabolite, panels=cluster ID")
-# dev.off()
+png(file="dynamics.png",pointsize=60,width=20,height=10,res=1000,units="cm")
+ggplot(data=temp[temp$condition=="2Gy"&temp$metabolite=="L-Arginine",],aes(x=as.numeric(as.factor(timepoint)),y=mu_mean,group=metabolite,col="red")) +
+  geom_line(data=temp[temp$condition=="2Gy",], aes(
+  x = as.factor(as.numeric(as.factor(timepoint))),
+  y = mu_mean, group = metabolite, col="black")) +
+ geom_line(lwd=1)+
+  xlab("timepoint") +
+  ylab("deviation from mean concentration") +
+  theme_bw() +
+  scale_color_manual(values=c("black"="black","red"="red"))+
+  theme(legend.position = "none") +
+  facet_grid(rows = vars(condition), cols = vars(cluster)) +
+  ggtitle("clustered dynamics", "red=L-Arginine, panels=cluster ID")
+dev.off()
 
-=======
-  ggtitle("clustered dynamics", "color=metabolite, panels=cluster ID")
->>>>>>> becaeaa3cccaa873c0e402e42aa180d09ce1d894
 rm(temp)
 ```
 
@@ -455,17 +468,20 @@ ORA[["plot_ORA"]]
 
 a_clusters <- ORA[["ORA"]]
 
-# png(file="ORA.png",pointsize=60,width=20,height=8,res=1000,units="cm")
-# ggplot(a_clusters[a_clusters$condition=="2Gy",],aes(x=log(OvE_gen),y=module_name))+
-#       geom_pointrange(aes(xmin=log(OvE_gen_lower),xmax=log(OvE_gen_higher)))+
-#       geom_point(aes(x=log(OvE_gen_median)),col="red")+
-#       geom_vline(xintercept=0)+
-#       theme_bw()+
-#       xlab("log(p(OvE))")+
-#       facet_grid(cols=vars(cluster),rows=vars(condition))+
-#       ggtitle("hypergeometric ORA","red=median, points=95% interquantile range,
-#               panels=clusterID")
-# dev.off()
+png(file="ORA.png",pointsize=60,width=20,height=8,res=1000,units="cm")
+a_clusters <- a_clusters%>%mutate(col=ifelse(log(OvE_gen_higher)<0,"ICR<0",ifelse(log(OvE_gen_lower)>0,"ICR>0","ICR includes 0")))
+ggplot(a_clusters[a_clusters$condition=="2Gy",],aes(x=log(OvE_gen),y=module_name,col=col))+
+      geom_errorbarh(aes(xmin=log(OvE_gen_lower),xmax=log(OvE_gen_higher)))+
+      geom_point(aes(x=log(OvE_gen_median)))+
+      geom_vline(xintercept=0,linetype="dashed")+
+      theme_bw()+
+      scale_color_manual(values=c("ICR includes 0"="black","ICR>0"="green"))+
+      xlab("log(p(OvE))")+
+      guides(col="none")+
+      facet_grid(cols=vars(cluster),rows=vars(condition))+
+      ggtitle("hypergeometric ORA","median and 95% interquantile range,
+              panels=clusterID")
+dev.off()
 
 ORA_lower <- ORA_hypergeometric(background = modules_compounds, annotations = metabolite_modules, clusters = cluster[cluster$condition == "0Gy", ], tested_column = "lower_hierachy")
 ORA_lower[["plot_ORA"]]
@@ -481,10 +497,7 @@ We can not only do over-representation analysis of KEGG-functional modules but
 also compare dynamic clusters across different experimental conditions.
 ```{r,fig.aling='center',fig.dpi=150}
 comparison_dynamics <- compare_dynamics(clusters = cluster, dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"))
-<<<<<<< HEAD
 
-=======
->>>>>>> becaeaa3cccaa873c0e402e42aa180d09ce1d894
 comparison_dynamics[["plot_dynamic_comparison"]]
 ```
 The bigger and brighter a point is the smaller is the mean distance between
@@ -518,21 +531,25 @@ ggplot(temp,aes(x=1/mu_mean,y=Jaccard))+
   xlab("dynamics similarity")+
   ylab("metabolite similarity")+
   ggtitle("comparison of clusters")
-<<<<<<< HEAD
 
-png(file="comparison.png",pointsize=60,width=10,height=10,res=1000,units="cm")
-ggplot(temp,aes(x=1/mu_mean,y=Jaccard))+
-  geom_point()+
-  #geom_point(aes(col=1/sigma_mean))+
-  theme_bw()+
-  geom_text(aes(label=ifelse(Jaccard>0.4&1/mu_mean<1.0,comparison,NA)),nudge_y=-0.03)+
-  #scale_color_viridis_c()+
-  xlab("dynamic similarity")+
-  ylab("metabolite similarity")+
-  ggtitle("comparison of clusters")
+
+
+x <- unique(temp[, "cluster_a"])
+temp<- temp%>%mutate(scale_Jaccard=scale(Jaccard))
+png(file="comparison.png",pointsize=60,width=12,height=12,res=1000,units="cm")
+    ggplot(temp, aes(x = cluster_b, y = cluster_a)) +
+    geom_point(aes(size = Jaccard, col = mu_mean)) +
+    theme_bw() +
+    scale_color_viridis_c(option = "magma") +
+    scale_x_discrete(limits =x) +
+    xlab("")+
+      ylab("")+
+    scale_y_discrete(limits = x) +
+      guides(col="none",size="none")+
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+    labs(col = "dynamic distance", size = "metabolite similarity")+
+    ggtitle("comparison of clusters")
 dev.off()
-=======
->>>>>>> becaeaa3cccaa873c0e402e42aa180d09ce1d894
 ```
 We can find two cluster pairs that are pretty similar in regards to their
 composing metabolites but dissimilar in regards to their dynamics. Their ORA

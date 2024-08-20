@@ -19,9 +19,9 @@ NOT include functional modules "Xenobiotics biodegradation", "Biosynthesis of ot
     \item{\code{KEGG}}{KEGG ID of the experimental metabolite}
     \item{\code{module_id}}{ID of the KEGG module to which the metabolite is annotated}
     \item{\code{module_name}}{name of the KEGG module to which the metabolite is annotated}
-    \item{\code{upper_hierachy}}{name of the highest hierachy level of module organisation}
-    \item{\code{middle_hierachy}}{name of the middle hierachy = functional module, p.e. "Amino acid metabolism"}
-    \item{\code{lower_hierachy}}{name of the lowest level of modules, this often contain only a couple pathways p.e. "Arginine and proline metabolism" }
+    \item{\code{upper_hierarchy}}{name of the highest hierachy level of module organisation}
+    \item{\code{middle_hierarchy}}{name of the middle hierachy = functional module, p.e. "Amino acid metabolism"}
+    \item{\code{lower_hierarchy}}{name of the lowest level of modules, this often contain only a couple pathways p.e. "Arginine and proline metabolism" }
   }
 }
 \details{
