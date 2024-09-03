@@ -1,0 +1,9 @@
+bibentry(
+  key = "MetaboDynamics"
+  bibtype  = "Maunal",
+  title    = "Framework of probabilistic models for the analyis of longitudinal metabolomics data",
+  author   = personList(as.person("Katja Danielzik",as.person("Simo Kitanovski"),as.person("Johann Matschke"), as.person("Daniel Hoffmann")))
+  note = "R package version 0.99.0",
+  year = "2024",
+  url = "https://github.com/KatjaDanielzik/MetaboDynamics"
+)
