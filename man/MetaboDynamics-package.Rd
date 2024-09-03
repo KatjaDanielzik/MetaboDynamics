@@ -6,7 +6,7 @@
 \alias{MetaboDynamics-package}
 \title{MetaboDynamics: Bayesian Analysis of longitudinal metabolomics data}
 \description{
-MetaboDynamics: framework of Bayesian models to analyze longitudinal metabolomics data
+MetaboDynamics is an R-package that provides a framework of Bayesian models to analyze longitudinal metabolomics data. It enables robust estimation of mean concentrations despite varying spread between timepoints and reports differences between timepoints as well as metabolite specific dynamic profiles that can be used for clustering. Probabilistic Over-representation analysis and comparison betweeen clusters of different experimental conditions.
 }
 \seealso{
 Useful links:

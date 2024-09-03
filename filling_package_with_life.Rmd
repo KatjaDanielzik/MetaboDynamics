@@ -116,3 +116,25 @@ use_r("compare_metabolites.R")
 document()
 ```
 
+# add citation
+```{r}
+usethis::use_citation() 
+```
+# add news
+```{r}
+usethis::use_news_md(open = rlang::is_interactive())
+```
+
+
+# Bioconductor tests
+```{r}
+#BiocManager::install("BiocCheck")
+BiocCheck::BiocCheck()
+```
+
+# add BiocViews terms
+```{r}
+#BiocManager::install("biocViews")
+biocViews::
+```
+

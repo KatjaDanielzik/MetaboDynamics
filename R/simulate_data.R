@@ -2,12 +2,12 @@
 set.seed(123)
 
 # Parameters
-n_features <- 100  # Number of features
-n_groups <- sample(6:8, 1)  # Number of groups (randomly choose between 6-8)
-n_time_points <- 4  # Number of time points
-n_replicates <- 3  # Number of replicates for all features and time points
-n_conditions <- 3  # Number of experimental conditions
-x_varying_groups <- sample(2:4, 1)  # Number of groups with varying dynamics across conditions
+n_features <- 100 # Number of features
+n_groups <- sample(6:8, 1) # Number of groups (randomly choose between 6-8)
+n_time_points <- 4 # Number of time points
+n_replicates <- 3 # Number of replicates for all features and time points
+n_conditions <- 3 # Number of experimental conditions
+x_varying_groups <- sample(2:4, 1) # Number of groups with varying dynamics across conditions
 
 # Generate group dynamics (base trends over time) for each condition
 group_dynamics <- list()
@@ -20,13 +20,13 @@ group_dynamics[[1]] <- lapply(1:n_groups, function(g) {
 })
 
 # Define varying dynamics for selected groups across other conditions
-varying_groups <- sample(1:n_groups, x_varying_groups, replace = FALSE)  # Randomly select groups to vary
+varying_groups <- sample(1:n_groups, x_varying_groups, replace = FALSE) # Randomly select groups to vary
 
 for (cond in 2:n_conditions) {
-  group_dynamics[[cond]] <- group_dynamics[[1]]  # Start with the base dynamics
+  group_dynamics[[cond]] <- group_dynamics[[1]] # Start with the base dynamics
   # Introduce different dynamics for the selected groups
   for (g in varying_groups) {
-    group_dynamics[[cond]][[g]] <- rnorm(n_time_points, mean = g * 2, sd = 1)  # Different trend for these groups
+    group_dynamics[[cond]][[g]] <- rnorm(n_time_points, mean = g * 2, sd = 1) # Different trend for these groups
   }
 }
 
@@ -45,7 +45,7 @@ for (feature in 1:n_features) {
   base_mean <- runif(1, min = 0.001, max = 1000)
 
   # Generate feature-specific variances for each time point
-  feature_variances <- runif(n_time_points, min = 0.1, max = 2)  # Random variances for each time point
+  feature_variances <- runif(n_time_points, min = 0.1, max = 2) # Random variances for each time point
 
   # Store data for each condition
   for (cond in 1:n_conditions) {
@@ -77,16 +77,19 @@ for (feature in 1:n_features) {
 simulated_data_df <- do.call(rbind, simulated_data)
 
 
-simulated_data_df <- simulated_data_df%>%group_by(Feature,Condition)%>%mutate(log_m=log10(Measurement),
-  m_scaled=(log_m-mean(log_m))/sd(log_m))
+simulated_data_df <- simulated_data_df %>%
+  group_by(Feature, Condition) %>%
+  mutate(
+    log_m = log10(Measurement),
+    m_scaled = (log_m - mean(log_m)) / sd(log_m)
+  )
 
-ggplot(simulated_data_df,aes(x=as.factor(TimePoint),y=log_m,group=Feature))+
-  geom_line(aes(col=Feature))+
-  guides(col="none")+
+ggplot(simulated_data_df, aes(x = as.factor(TimePoint), y = log_m, group = Feature)) +
+  geom_line(aes(col = Feature)) +
+  guides(col = "none") +
   facet_wrap(~Condition)
 
-ggplot(simulated_data_df,aes(x=as.factor(TimePoint),y=m_scaled,group=Feature))+
-  geom_line(aes(col=Feature))+
-  guides(col="none")+
+ggplot(simulated_data_df, aes(x = as.factor(TimePoint), y = m_scaled, group = Feature)) +
+  geom_line(aes(col = Feature)) +
+  guides(col = "none") +
   facet_wrap(~Condition)
-
