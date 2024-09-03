@@ -1,12 +1,12 @@
 Package: MetaboDynamics
 Title: Bayesian Analysis of longitudinal metabolomics data
-Version: 0.0.0.9000
+Version: 0.99.0
 Authors@R: 
-    person("Katja", "Danielzik", , "katja.danielzik@uni-due.de", role = c("aut", "cre"),
-           comment = c(ORCID = "https://orcid.org/0009-0007-5021-6212"))
+    person(given="Katja",family= "Danielzik", email="katja.danielzik@uni-due.de", role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0007-5021-6212"))
 URL: 
 BugReports: 
-Description: MetaboDynamics: framework of Bayesian models to analyze longitudinal metabolomics data
+Description: MetaboDynamics is an R-package that provides a framework of Bayesian models to analyze longitudinal metabolomics data. It enables robust estimation of mean concentrations despite varying spread between timepoints and reports differences between timepoints as well as metabolite specific dynamic profiles that can be used for clustering. Probabilistic Over-representation analysis and comparison betweeen clusters of different experimental conditions.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -28,8 +28,8 @@ Imports:
     tidyr (>= 1.3.1)
 VignetteBuilder: knitr
 Depends: 
-    R (>= 3.4.0)
-LazyData: true
+    R (>= 4.4.0)
+LazyData: false
 Biarch: true
 LinkingTo: 
     BH (>= 1.66.0),
