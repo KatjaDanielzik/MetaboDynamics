@@ -31,6 +31,6 @@ https://www.genome.jp/kegg/module.html
 }
 \examples{
 data("modules_compounds")
-unique(modules_compounds$middle_hierachy)
+unique(modules_compounds$middle_hierarchy)
 }
 \keyword{datasets}

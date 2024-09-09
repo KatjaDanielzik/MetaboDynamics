@@ -1,3 +1,27 @@
+\name{data_sim}
+\alias{data_sim}
+\docType{data}
+\title{
+A simulated data set
+}
+\description{
+A simulated data set of 98 metabolites. 3 replicate measurements of 4 time points
+and at 3 experimental conditions.
+}
+\usage{data("data_sim")}
+\format{
+  A data frame with 3528 observations on the following 7 variables.
+  \describe{
+    \item{\code{metabolite}}{column that specifies the metabolite name}
+    \item{\code{Condition}}{column that specifies the experimental condition}
+    \item{\code{TimePoint}}{column that specifies the observed time point}
+    \item{\code{Replicate}}{column that specifies the measurement replicate}
+    \item{\code{Measurement}}{column that specifies the metabolite concentration, p.e. from peak area/peak intensity}
+    \item{\code{log_m}}{log transformation of "Measurement"}
+    \item{\code{m_scaled}}{metabolite and Condition specific scaled (mean=0,sd=1) "log_m"}
+  }
+}
+\source{
 # load KEGG database for assignment of metabolite names:
 data("metabolite_modules")
 
@@ -95,10 +119,12 @@ for (feature in 1:n_features) {
   }
 }
 
+rm(base_mean,cond,feature,feature_means,feature_data,feature_to_group,feature_variances,
+   g,group,group_probs,metabolite_name,n_conditions,n_features,n_groups,n_replicates,
+   n_time_points,trend,varying_groups,x_varying_groups,available_metabolites,feature_data,group_dynamics,
+   group_probabilities,metabolite_candidates,simulated_data)
 # Combine all features and conditions into one data frame
 simulated_data_df <- do.call(rbind, simulated_data)
-
-
 
 
 simulated_data_df <- simulated_data_df %>%
@@ -107,19 +133,10 @@ simulated_data_df <- simulated_data_df %>%
     log_m = log10(Measurement),
     m_scaled = (log_m - mean(log_m)) / sd(log_m)
   )
+}
 
-library(ggplot2)
-ggplot(simulated_data_df, aes(x = as.factor(TimePoint), y = log_m, group = metabolite)) +
-  geom_line(aes(col = metabolite)) +
-  guides(col = "none") +
-  facet_wrap(~Condition)
-
-ggplot(simulated_data_df, aes(x = as.factor(TimePoint), y = m_scaled, group = metabolite)) +
-  geom_line(aes(col = metabolite)) +
-  guides(col = "none") +
-  facet_wrap(~Condition)
-
-ggplot(simulated_data_df[simulated_data_df$metabolite=="ATP",], aes(x = as.factor(TimePoint), y = m_scaled, group = metabolite)) +
-  geom_line(aes(col = metabolite)) +
-  guides(col = "none") +
-  facet_wrap(~Condition)
+\examples{
+data(data_sim)
+head(data_sim)
+}
+\keyword{datasets}

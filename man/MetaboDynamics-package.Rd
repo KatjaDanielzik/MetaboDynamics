@@ -11,23 +11,19 @@ MetaboDynamics is an R-package that provides a framework of probabilistic models
 \seealso{
 Useful links:
 \itemize{
-  \item \url{}
-  \item Report bugs at \url{}
+  \item \url{https://github.com/KatjaDanielzik/MetaboDynamics}
+  \item Report bugs at \url{https://github.com/KatjaDanielzik/MetaboDynamics/issues}
 }
 
 }
 \author{
 \strong{Maintainer}: Katja Danielzik \email{katja.danielzik@uni-due.de} (\href{https://orcid.org/0009-0007-5021-6212}{ORCID})
 
-Authors:
-\itemize{
-  \item Simo Kitanovski
-}
-
 Other contributors:
 \itemize{
-  \item Johann Matschke
-  \item Daniel Hoffmann
+  \item Simo Kitanovski [contributor]
+  \item Johann Matschke [contributor]
+  \item Daniel Hoffmann [contributor]
 }
 
 }
