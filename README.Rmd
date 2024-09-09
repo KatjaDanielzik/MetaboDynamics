@@ -62,5 +62,5 @@ experimental conditions.
 
 For a worked example see Vignette.
 
-![Workflow](man/figures/README-MetaboDynamics-pitch.png)
+![](man/figures/README-MetaboDynamics_pitch.png)
 
