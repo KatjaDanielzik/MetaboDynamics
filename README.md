@@ -37,7 +37,7 @@ probabilistic models:
 
 1)  A hierachical Bayesian model allows the robust estimation of means
     at every timepoint. Its outputs are A) differences between timepoint
-    for every metabolite,
+    for every metabolite
 
 <!-- -->
 
@@ -63,7 +63,6 @@ probabilistic models:
 For a worked example see Vignette.
 
 <figure>
-<img src="/man/figures/README-MetaboDynamics-pitch.png"
-alt="Workflow" />
+<img src="man/figures/README-MetaboDynamics-pitch.png" alt="Workflow" />
 <figcaption aria-hidden="true">Workflow</figcaption>
 </figure>

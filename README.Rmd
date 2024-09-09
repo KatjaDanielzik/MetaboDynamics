@@ -44,7 +44,7 @@ MetaboDynamics allows longitudinal analysis over multiple timepoints and
 experimental conditions employing 3 probabilistic models:
 
 1) A hierachical Bayesian model allows the robust estimation of means at every
-timepoint. Its outputs are A) differences between timepoint for every metabolite,
+timepoint. Its outputs are A) differences between timepoint for every metabolite
 B) metabolite specific dynamic profiles that can be used for clustering.
 
 2) Over-representation analysis of KEGG-functional modules in dynamics clusters
@@ -62,5 +62,5 @@ experimental conditions.
 
 For a worked example see Vignette.
 
-![Workflow](/man/figures/README-MetaboDynamics-pitch.png)
+![Workflow](man/figures/README-MetaboDynamics-pitch.png)
 
