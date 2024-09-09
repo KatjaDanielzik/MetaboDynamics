@@ -74,6 +74,7 @@ n_time_points <- 4 # Number of time points
 n_replicates <- 3 # Number of replicates for all features and time points
 n_conditions <- 3 # Number of experimental conditions
 x_varying_groups <- 4 # Number of groups with varying dynamics across conditions
+condition_names <- c("A","B","C")
 
 # Probability matrix for assigning metabolites from different database groups to dynamic groups
 # For simplicity, we assume equal probability; customize as needed
@@ -143,13 +144,13 @@ for (feature in 1:n_features) {
 
     feature_data <- data.frame(
       metabolite = metabolite_name, # Assign metabolite name here
-      Condition = paste0("Condition_", cond),
-      TimePoint = rep(1:n_time_points, each = n_replicates),
-      Replicate = rep(1:n_replicates, times = n_time_points)
+      condition = paste0(condition_names[[cond]]),
+      time = rep(1:n_time_points, each = n_replicates),
+      replicate = rep(1:n_replicates, times = n_time_points)
     )
 
     # Generate the actual data points with strictly positive concentrations
-    feature_data$Measurement <- unlist(lapply(1:n_time_points, function(t) {
+    feature_data$measurement <- unlist(lapply(1:n_time_points, function(t) {
       rlnorm(n_replicates, meanlog = log(feature_means[t]), sdlog = feature_variances[t])
     }))
 
@@ -157,41 +158,26 @@ for (feature in 1:n_features) {
   }
 }
 
-rm(base_mean,cond,feature,feature_means,feature_data,feature_to_group,feature_variances,
+rm(base_mean,cond,feature,feature_means,feature_to_group,feature_variances,
    g,group,group_probs,metabolite_name,n_conditions,n_features,n_groups,n_replicates,
    n_time_points,trend,varying_groups,x_varying_groups,available_metabolites,feature_data,group_dynamics,
-   group_probabilities,metabolite_candidates,simulated_data)
+   group_probabilities,metabolite_candidates,condition_names,metabolite_modules)
 # Combine all features and conditions into one data frame
 simulated_data_df <- do.call(rbind, simulated_data)
 
 
 simulated_data_df <- simulated_data_df %>%
-  group_by(metabolite, Condition) %>%
+  group_by(metabolite, condition) %>%
   mutate(
-    log_m = log10(Measurement),
+    log_m = log10(measurement),
     m_scaled = (log_m - mean(log_m)) / sd(log_m)
   )
 
-library(ggplot2)
-ggplot(simulated_data_df, aes(x = as.factor(TimePoint), y = log_m, group = metabolite)) +
-  geom_line(aes(col = metabolite)) +
-  guides(col = "none") +
-  facet_wrap(~Condition)
-
-ggplot(simulated_data_df, aes(x = as.factor(TimePoint), y = m_scaled, group = metabolite)) +
-  geom_line(aes(col = metabolite)) +
-  guides(col = "none") +
-  facet_wrap(~Condition)
-
-ggplot(simulated_data_df[simulated_data_df$metabolite=="ATP",], aes(x = as.factor(TimePoint), y = m_scaled, group = metabolite)) +
-  geom_line(aes(col = metabolite)) +
-  guides(col = "none") +
-  facet_wrap(~Condition)
 
 data_sim <- simulated_data_df
-rm(simulated_data_df)
-use_data(data_sim)
-promptData(data_sim)
+rm(simulated_data_df,simulated_data)
+use_data(data_sim,overwrite = TRUE)
+#promptData(data_sim)
 ```
 
 
@@ -279,5 +265,10 @@ add BiocView terms to Description file biocViews:term1,term2,term3
 # test examples
 ```{r}
 devtools::run_examples() 
+```
+# Vignette
+install package BiocStyle
+```{r}
+BiocManager::install("BiocStyle")
 ```
 

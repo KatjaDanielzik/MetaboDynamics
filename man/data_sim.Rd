@@ -14,10 +14,10 @@ experimental condition. 4 groups have varying dynamics between conditions.
   A data frame with 3528 observations on the following 7 variables.
   \describe{
     \item{\code{metabolite}}{column that specifies the metabolite name}
-    \item{\code{Condition}}{column that specifies the experimental condition}
-    \item{\code{TimePoint}}{column that specifies the observed time point}
-    \item{\code{Replicate}}{column that specifies the measurement replicate}
-    \item{\code{Measurement}}{column that specifies the metabolite concentration, p.e. from peak area/peak intensity}
+    \item{\code{condition}}{column that specifies the experimental condition}
+    \item{\code{time}}{column that specifies the observed time point}
+    \item{\code{replicate}}{column that specifies the measurement replicate}
+    \item{\code{measurement}}{column that specifies the metabolite concentration, p.e. from peak area/peak intensity}
     \item{\code{log_m}}{log transformation of "Measurement"}
     \item{\code{m_scaled}}{metabolite and Condition specific scaled (mean=0,sd=1) "log_m"}
   }
@@ -26,16 +26,17 @@ experimental condition. 4 groups have varying dynamics between conditions.
  \bold{Script used to create simulated data}
 
 # load KEGG database for assignment of metabolite names:
-
 data("metabolite_modules")
 
-library(dplyr)
+# metabolite_db <- metabolite_modules
+# Group <- middle_hierarchy
 
-# Parameters
+library(dplyr)
+# Parameters (as before)
 
 n_features <- 98
 
-n_groups <- 8 # Number of groups
+n_groups <- 8 # Number of groups (randomly choose between 6-8)
 
 n_time_points <- 4 # Number of time points
 
@@ -44,6 +45,8 @@ n_replicates <- 3 # Number of replicates for all features and time points
 n_conditions <- 3 # Number of experimental conditions
 
 x_varying_groups <- 4 # Number of groups with varying dynamics across conditions
+
+condition_names <- c("A","B","C")
 
 # Probability matrix for assigning metabolites from different database groups to dynamic groups
 # For simplicity, we assume equal probability; customize as needed
@@ -89,6 +92,7 @@ available_metabolites <- metabolite_modules # Copy of metabolite database to kee
 # Simulate data for each feature across all conditions
 
 for (feature in 1:n_features) {
+
   # Get the group for this feature
 
   group <- feature_to_group[feature]
@@ -129,14 +133,14 @@ for (feature in 1:n_features) {
 
     feature_data <- data.frame(
       metabolite = metabolite_name, # Assign metabolite name here
-      Condition = paste0("Condition_", cond),
-      TimePoint = rep(1:n_time_points, each = n_replicates),
-      Replicate = rep(1:n_replicates, times = n_time_points)
+      condition = paste0(condition_names[[cond]]),
+      time = rep(1:n_time_points, each = n_replicates),
+      replicate = rep(1:n_replicates, times = n_time_points)
     )
 
     # Generate the actual data points with strictly positive concentrations
 
-    feature_data$Measurement <- unlist(lapply(1:n_time_points, function(t) {
+    feature_data$measurement <- unlist(lapply(1:n_time_points, function(t) {
       rlnorm(n_replicates, meanlog = log(feature_means[t]), sdlog = feature_variances[t])
     }))
 
@@ -144,10 +148,10 @@ for (feature in 1:n_features) {
   }
 }
 
-rm(base_mean,cond,feature,feature_means,feature_data,feature_to_group,feature_variances,
+rm(base_mean,cond,feature,feature_means,feature_to_group,feature_variances,
    g,group,group_probs,metabolite_name,n_conditions,n_features,n_groups,n_replicates,
    n_time_points,trend,varying_groups,x_varying_groups,available_metabolites,feature_data,group_dynamics,
-   group_probabilities,metabolite_candidates,simulated_data)
+   group_probabilities,metabolite_candidates)
 
 # Combine all features and conditions into one data frame
 
@@ -155,11 +159,12 @@ simulated_data_df <- do.call(rbind, simulated_data)
 
 
 simulated_data_df <- simulated_data_df %>%
-  group_by(metabolite, Condition) %>%
+  group_by(metabolite, condition) %>%
   mutate(
-    log_m = log10(Measurement),
+    log_m = log10(measurement),
     m_scaled = (log_m - mean(log_m)) / sd(log_m)
   )
+
 }
 
 \examples{

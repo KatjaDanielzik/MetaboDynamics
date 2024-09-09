@@ -9,7 +9,7 @@ fit_dynamics_model(
   metabolite = "metabolite",
   time = "time",
   condition = "dose",
-  cpc = "log_cpc_stand",
+  scaled_measurement = "m_scaled",
   chains = 4,
   cores = 4,
   adapt_delta = 0.95,
@@ -29,7 +29,7 @@ time column is ordered from lowest to highest for the model to work}
 
 \item{condition}{column of "data" that contains the experimental conditions}
 
-\item{cpc}{column of "data" that contains the concentrations per cell,
+\item{scaled_measurement}{column of "data" that contains the concentrations per cell,
 centered and normalized per metabolite and experimental condition (mean=0, sd=1)}
 
 \item{chains}{how many Markov-Chains should be used for model fitting, use at
@@ -61,9 +61,12 @@ concentrations over time of single metabolites at single experimental
 conditions.
 }
 \examples{
-\dontrun{
-data("intra")
-fit_dynamics_model(intra)
-}
+data("data_sim")
+# only fit to one metabolite at one condition
+fits <- fit_dynamics_model(data_sim[data_sim$condition=="A"&data_sim$metabolite=="ATP",],
+scaled_measurement = "m_scaled", time="time",
+condition = "condition", max_treedepth = 14,
+adapt_delta = 0.999, iter = 4000, cores = 1)
+fits
 
 }

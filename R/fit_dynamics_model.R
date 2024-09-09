@@ -11,7 +11,7 @@
 #' @param time column of "time" that contains time as numeric, make sure your
 #' time column is ordered from lowest to highest for the model to work
 #' @param condition column of "data" that contains the experimental conditions
-#' @param cpc column of "data" that contains the concentrations per cell,
+#' @param scaled_measurement column of "data" that contains the concentrations per cell,
 #' centered and normalized per metabolite and experimental condition (mean=0, sd=1)
 #' @param cores how many cores should be used for model fitting, this
 #' parallelizes the model fitting and therefore speeds it up default=4
@@ -32,10 +32,13 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' data("intra")
-#' fit_dynamics_model(intra)
-#' }
+#' data("data_sim")
+#' # only fit to one metabolite at one condition
+#' fits <- fit_dynamics_model(data_sim[data_sim$condition=="A"&data_sim$metabolite=="ATP",],
+#' scaled_measurement = "m_scaled", time="time",
+#' condition = "condition", max_treedepth = 14,
+#' adapt_delta = 0.999, iter = 4000, cores = 1)
+#' fits
 #'
 #' @import methods
 #' @import Rcpp
@@ -46,7 +49,7 @@
 
 fit_dynamics_model <- function(data = intra, metabolite = "metabolite",
                                time = "time", condition = "dose",
-                               cpc = "log_cpc_stand", chains = 4, cores = 4,
+                               scaled_measurement = "m_scaled", chains = 4, cores = 4,
                                adapt_delta = 0.95, max_treedepth = 10,
                                iter = 2000, warmup = iter / 4) {
   # get unique experimental conditions
@@ -62,7 +65,7 @@ fit_dynamics_model <- function(data = intra, metabolite = "metabolite",
     fit <- rstan::sampling(
       object = stanmodels$m_ANOVA_partial_pooling,
       data = list(
-        y = temp[[cpc]],
+        y = temp[[scaled_measurement]],
         t = length(unique(temp[[time]])),
         M = length(unique(temp[[metabolite]])),
         N = nrow(temp),
