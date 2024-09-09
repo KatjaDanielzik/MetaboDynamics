@@ -1,32 +1,42 @@
-# Set seed for reproducibility
-set.seed(123)
+# load KEGG database for assignment of metabolite names:
+data("metabolite_modules")
 
-# Parameters
-n_features <- 100 # Number of features
-n_groups <- sample(6:8, 1) # Number of groups (randomly choose between 6-8)
+# metabolite_db <- metabolite_modules
+# Group <- middle_hierarchy
+
+library(dplyr)
+# Parameters (as before)
+n_features <- 98 # Number of features (max=98 for current mapping of metabolite to database)
+n_groups <- 8 # Number of groups (randomly choose between 6-8)
 n_time_points <- 4 # Number of time points
 n_replicates <- 3 # Number of replicates for all features and time points
 n_conditions <- 3 # Number of experimental conditions
-x_varying_groups <- sample(2:4, 1) # Number of groups with varying dynamics across conditions
+x_varying_groups <- 4 # Number of groups with varying dynamics across conditions
+
+# Probability matrix for assigning metabolites from different database groups to dynamic groups
+# For simplicity, we assume equal probability; customize as needed
+group_probabilities <- matrix(runif(n_groups * length(unique(metabolite_modules$middle_hierarchy))),
+                              nrow = n_groups,
+                              ncol = length(unique(metabolite_modules$middle_hierarchy)))
+
+
 
 # Generate group dynamics (base trends over time) for each condition
 group_dynamics <- list()
 
 # Define the base group dynamics for condition 1
 group_dynamics[[1]] <- lapply(1:n_groups, function(g) {
-  # Simulate a general trend for each group over time points
   trend <- rnorm(n_time_points, mean = g * 2, sd = 0.5)
   return(trend)
 })
 
 # Define varying dynamics for selected groups across other conditions
-varying_groups <- sample(1:n_groups, x_varying_groups, replace = FALSE) # Randomly select groups to vary
+varying_groups <- sample(1:n_groups, x_varying_groups, replace = FALSE)
 
 for (cond in 2:n_conditions) {
-  group_dynamics[[cond]] <- group_dynamics[[1]] # Start with the base dynamics
-  # Introduce different dynamics for the selected groups
+  group_dynamics[[cond]] <- group_dynamics[[1]]
   for (g in varying_groups) {
-    group_dynamics[[cond]][[g]] <- rnorm(n_time_points, mean = g * 2, sd = 1) # Different trend for these groups
+    group_dynamics[[cond]][[g]] <- rnorm(n_time_points, mean = g * 2, sd = 1)
   }
 }
 
@@ -36,28 +46,43 @@ feature_to_group <- sample(1:n_groups, n_features, replace = TRUE)
 # Initialize a list to store the simulated data
 simulated_data <- list()
 
+# Assign metabolite names to features
+available_metabolites <- metabolite_modules # Copy of metabolite database to keep track of unused names
+
 # Simulate data for each feature across all conditions
 for (feature in 1:n_features) {
   # Get the group for this feature
   group <- feature_to_group[feature]
 
+  # Determine probability of each metabolite database group for this dynamic group
+  group_probs <- group_probabilities[group, ]
+
+  # Subset the metabolite database for selection based on group probabilities
+  metabolite_candidates <- available_metabolites %>%
+    group_by(middle_hierarchy) %>%
+    mutate(Probability = group_probs[match(middle_hierarchy, unique(metabolite_modules$middle_hierarchy))]) %>%
+    ungroup() %>%
+    filter(metabolite %in% available_metabolites$metabolite) # Ensure the metabolite is still available
+
+  # Randomly sample a metabolite based on these probabilities
+  metabolite_name <- sample(metabolite_candidates$metabolite, 1, prob = metabolite_candidates$Probability)
+
+  # Remove this metabolite from available pool
+  available_metabolites <- available_metabolites[available_metabolites$metabolite != metabolite_name, ]
+
   # Generate a random base mean for this feature between 0.001 and 1000
   base_mean <- runif(1, min = 0.001, max = 1000)
 
   # Generate feature-specific variances for each time point
-  feature_variances <- runif(n_time_points, min = 0.1, max = 2) # Random variances for each time point
+  feature_variances <- runif(n_time_points, min = 0.1, max = 2)
 
   # Store data for each condition
   for (cond in 1:n_conditions) {
-    # Get the trend for this group in this condition
     trend <- group_dynamics[[cond]][[group]]
-
-    # Adjust group trend by base mean to set feature means
     feature_means <- base_mean * trend / max(abs(trend))
 
-    # Simulate measurements for each time point with replicates
     feature_data <- data.frame(
-      Feature = paste0("Feature_", feature),
+      metabolite = metabolite_name, # Assign metabolite name here
       Condition = paste0("Condition_", cond),
       TimePoint = rep(1:n_time_points, each = n_replicates),
       Replicate = rep(1:n_replicates, times = n_time_points)
@@ -68,7 +93,6 @@ for (feature in 1:n_features) {
       rlnorm(n_replicates, meanlog = log(feature_means[t]), sdlog = feature_variances[t])
     }))
 
-    # Store the data for this feature and condition
     simulated_data[[length(simulated_data) + 1]] <- feature_data
   }
 }
@@ -77,19 +101,27 @@ for (feature in 1:n_features) {
 simulated_data_df <- do.call(rbind, simulated_data)
 
 
+
+
 simulated_data_df <- simulated_data_df %>%
-  group_by(Feature, Condition) %>%
+  group_by(metabolite, Condition) %>%
   mutate(
     log_m = log10(Measurement),
     m_scaled = (log_m - mean(log_m)) / sd(log_m)
   )
 
-ggplot(simulated_data_df, aes(x = as.factor(TimePoint), y = log_m, group = Feature)) +
-  geom_line(aes(col = Feature)) +
+library(ggplot2)
+ggplot(simulated_data_df, aes(x = as.factor(TimePoint), y = log_m, group = metabolite)) +
+  geom_line(aes(col = metabolite)) +
   guides(col = "none") +
   facet_wrap(~Condition)
 
-ggplot(simulated_data_df, aes(x = as.factor(TimePoint), y = m_scaled, group = Feature)) +
-  geom_line(aes(col = Feature)) +
+ggplot(simulated_data_df, aes(x = as.factor(TimePoint), y = m_scaled, group = metabolite)) +
+  geom_line(aes(col = metabolite)) +
+  guides(col = "none") +
+  facet_wrap(~Condition)
+
+ggplot(simulated_data_df[simulated_data_df$metabolite=="ATP",], aes(x = as.factor(TimePoint), y = m_scaled, group = metabolite)) +
+  geom_line(aes(col = metabolite)) +
   guides(col = "none") +
   facet_wrap(~Condition)
