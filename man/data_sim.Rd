@@ -6,7 +6,8 @@ A simulated data set
 }
 \description{
 A simulated data set of 98 metabolites. 3 replicate measurements of 4 time points
-and at 3 experimental conditions.
+and at 3 experimental conditions. Metabolites are in 8 dynamics groups per
+experimental condition. 4 groups have varying dynamics between conditions.
 }
 \usage{data("data_sim")}
 \format{
@@ -22,37 +23,48 @@ and at 3 experimental conditions.
   }
 }
 \source{
+ \bold{Script used to create simulated data}
+
 # load KEGG database for assignment of metabolite names:
+
 data("metabolite_modules")
 
-# metabolite_db <- metabolite_modules
-# Group <- middle_hierarchy
-
 library(dplyr)
-# Parameters (as before)
-n_features <- 98 #sample(1:length(unique(metabolite_modules$metabolite)),1) # Number of features (max=98 for current mapping of metabolite to database)
-n_groups <- 8 # Number of groups (randomly choose between 6-8)
+
+# Parameters
+
+n_features <- 98
+
+n_groups <- 8 # Number of groups
+
 n_time_points <- 4 # Number of time points
+
 n_replicates <- 3 # Number of replicates for all features and time points
+
 n_conditions <- 3 # Number of experimental conditions
+
 x_varying_groups <- 4 # Number of groups with varying dynamics across conditions
 
 # Probability matrix for assigning metabolites from different database groups to dynamic groups
 # For simplicity, we assume equal probability; customize as needed
+
 group_probabilities <- matrix(runif(n_groups * length(unique(metabolite_modules$middle_hierarchy))),
                               nrow = n_groups,
                               ncol = length(unique(metabolite_modules$middle_hierarchy)))
 
 # Generate group dynamics (base trends over time) for each condition
+
 group_dynamics <- list()
 
 # Define the base group dynamics for condition 1
+
 group_dynamics[[1]] <- lapply(1:n_groups, function(g) {
   trend <- rnorm(n_time_points, mean = g * 2, sd = 0.5)
   return(trend)
 })
 
 # Define varying dynamics for selected groups across other conditions
+
 varying_groups <- sample(1:n_groups, x_varying_groups, replace = FALSE)
 
 for (cond in 2:n_conditions) {
@@ -63,23 +75,30 @@ for (cond in 2:n_conditions) {
 }
 
 # Assign each feature to a group
+
 feature_to_group <- sample(1:n_groups, n_features, replace = TRUE)
 
 # Initialize a list to store the simulated data
+
 simulated_data <- list()
 
 # Assign metabolite names to features
+
 available_metabolites <- metabolite_modules # Copy of metabolite database to keep track of unused names
 
 # Simulate data for each feature across all conditions
+
 for (feature in 1:n_features) {
   # Get the group for this feature
+
   group <- feature_to_group[feature]
 
   # Determine probability of each metabolite database group for this dynamic group
+
   group_probs <- group_probabilities[group, ]
 
   # Subset the metabolite database for selection based on group probabilities
+
   metabolite_candidates <- available_metabolites %>%
     group_by(middle_hierarchy) %>%
     mutate(Probability = group_probs[match(middle_hierarchy, unique(metabolite_modules$middle_hierarchy))]) %>%
@@ -87,18 +106,23 @@ for (feature in 1:n_features) {
     filter(metabolite %in% available_metabolites$metabolite) # Ensure the metabolite is still available
 
   # Randomly sample a metabolite based on these probabilities
+
   metabolite_name <- sample(metabolite_candidates$metabolite, 1, prob = metabolite_candidates$Probability)
 
   # Remove this metabolite from available pool
+
   available_metabolites <- available_metabolites[available_metabolites$metabolite != metabolite_name, ]
 
   # Generate a random base mean for this feature between 0.001 and 1000
+
   base_mean <- runif(1, min = 0.001, max = 1000)
 
   # Generate feature-specific variances for each time point
+
   feature_variances <- runif(n_time_points, min = 0.1, max = 2)
 
   # Store data for each condition
+
   for (cond in 1:n_conditions) {
     trend <- group_dynamics[[cond]][[group]]
     feature_means <- base_mean * trend / max(abs(trend))
@@ -111,6 +135,7 @@ for (feature in 1:n_features) {
     )
 
     # Generate the actual data points with strictly positive concentrations
+
     feature_data$Measurement <- unlist(lapply(1:n_time_points, function(t) {
       rlnorm(n_replicates, meanlog = log(feature_means[t]), sdlog = feature_variances[t])
     }))
@@ -123,7 +148,9 @@ rm(base_mean,cond,feature,feature_means,feature_data,feature_to_group,feature_va
    g,group,group_probs,metabolite_name,n_conditions,n_features,n_groups,n_replicates,
    n_time_points,trend,varying_groups,x_varying_groups,available_metabolites,feature_data,group_dynamics,
    group_probabilities,metabolite_candidates,simulated_data)
+
 # Combine all features and conditions into one data frame
+
 simulated_data_df <- do.call(rbind, simulated_data)
 
 
