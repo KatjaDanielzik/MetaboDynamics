@@ -2,13 +2,13 @@ Package: MetaboDynamics
 Title: Bayesian Analysis of longitudinal metabolomics data
 Version: 0.99.0
 Authors@R: 
-    person(given="Katja",family= "Danielzik", email="katja.danielzik@uni-due.de", role = c("aut", "cre"),
+    c(person(given="Katja",family= "Danielzik", email="katja.danielzik@uni-due.de", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0007-5021-6212")),
-    person(given="Simo",family="Kitanovski",role="aut"),
-    person(given="Johann",family="Matschke"),
-    person(given="Daniel",family="Hoffmann")
-URL: 
-BugReports: 
+    person(given="Simo",family="Kitanovski",role="ctb"),
+    person(given="Johann",family="Matschke",role="ctb"),
+    person(given="Daniel",family="Hoffmann",role="ctb"))
+URL: https://github.com/KatjaDanielzik/MetaboDynamics
+BugReports: https://github.com/KatjaDanielzik/MetaboDynamics/issues
 Description: MetaboDynamics is an R-package that provides a framework of probabilistic models to analyze longitudinal metabolomics data. It enables robust estimation of mean concentrations despite varying spread between timepoints and reports differences between timepoints as well as metabolite specific dynamic profiles that can be used for clustering. Probabilistic Over-representation analysis and comparison betweeen clusters of different experimental conditions.
 License: GPL (>= 3)
 Encoding: UTF-8
@@ -42,3 +42,4 @@ LinkingTo:
     rstan (>= 2.18.1),
     StanHeaders (>= 2.18.0)
 SystemRequirements: GNU make
+biocViews: c("Software","Metabolomics","Bayesian","FunctionalPrediction","MultipleComparison")

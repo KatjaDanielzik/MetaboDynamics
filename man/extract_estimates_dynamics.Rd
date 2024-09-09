@@ -13,7 +13,7 @@ extract_estimates_dynamics(
   iter = 2000,
   warmup = iter/4,
   chains = 4,
-  samples = 100
+  samples = 1
 )
 }
 \arguments{

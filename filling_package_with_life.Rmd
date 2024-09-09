@@ -135,6 +135,6 @@ BiocCheck::BiocCheck()
 # add BiocViews terms
 ```{r}
 #BiocManager::install("biocViews")
-biocViews::
+biocViews::recommendBiocViews("/media/home/MetaboDynamics")
 ```
 

@@ -1,5 +1,5 @@
 bibentry(
-  key = "MetaboDynamics"
+  key = "MetaboDynamics",
   bibtype  = "Manual",
   title    = "Framework of probabilistic models for the analyis of longitudinal metabolomics data",
   author   = personList(as.person("Katja Danielzik",as.person("Simo Kitanovski"),as.person("Johann Matschke"), as.person("Daniel Hoffmann")))

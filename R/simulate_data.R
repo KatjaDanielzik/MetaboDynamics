@@ -6,7 +6,7 @@ data("metabolite_modules")
 
 library(dplyr)
 # Parameters (as before)
-n_features <- 98 # Number of features (max=98 for current mapping of metabolite to database)
+n_features <- 98 #sample(1:length(unique(metabolite_modules$metabolite)),1) # Number of features (max=98 for current mapping of metabolite to database)
 n_groups <- 8 # Number of groups (randomly choose between 6-8)
 n_time_points <- 4 # Number of time points
 n_replicates <- 3 # Number of replicates for all features and time points
@@ -18,8 +18,6 @@ x_varying_groups <- 4 # Number of groups with varying dynamics across conditions
 group_probabilities <- matrix(runif(n_groups * length(unique(metabolite_modules$middle_hierarchy))),
                               nrow = n_groups,
                               ncol = length(unique(metabolite_modules$middle_hierarchy)))
-
-
 
 # Generate group dynamics (base trends over time) for each condition
 group_dynamics <- list()
