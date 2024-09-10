@@ -18,9 +18,10 @@
 #'
 #' @examples
 #' data("cluster")
-#' compare_metabolites <- functions(
+#' comparison <- compare_metabolites(
 #'   clusters = cluster
 #' )
+#' comparison[["plot_metabolite_comparison"]]
 
 compare_metabolites <- function(clusters) {
   # bind variables to function

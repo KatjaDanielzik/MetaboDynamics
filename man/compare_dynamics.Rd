@@ -29,9 +29,10 @@ experimental conditions to estimate the mean distance between clusters.
 }
 \examples{
 data("cluster")
-compare_dynamics <- functions(
+comparison <- compare_dynamics(
   clusters = cluster,
   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean")
 )
+comparison[["plot_dynamic_comparison"]]
 }
 \keyword{internal}
