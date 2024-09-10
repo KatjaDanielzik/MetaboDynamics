@@ -4,7 +4,7 @@
 \alias{compare_dynamics}
 \title{Comparison of dynamic between clusters of different experimental conditions}
 \usage{
-compare_dynamics(clusters, dynamics)
+compare_dynamics(clusters, dynamics, cores = 4)
 }
 \arguments{
 \item{clusters}{a dataframe containing the dynamics and '
@@ -14,6 +14,8 @@ to be compared.}
 
 \item{dynamics}{vector specifying the column names of dataframe clusters
 that hold the dynamic information}
+
+\item{cores}{on how many cores the Bayesian model should run}
 }
 \value{
 a list holding a 1) dataframe of estimates of the mean distance
@@ -31,7 +33,8 @@ experimental conditions to estimate the mean distance between clusters.
 data("cluster")
 comparison <- compare_dynamics(
   clusters = cluster,
-  dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean")
+  dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"),
+  cores = 1
 )
 comparison[["plot_dynamic_comparison"]]
 }

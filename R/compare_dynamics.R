@@ -10,6 +10,7 @@
 #' to be compared.
 #' @param dynamics vector specifying the column names of dataframe clusters
 #' that hold the dynamic information
+#' @param cores on how many cores the Bayesian model should run
 #'
 #' @importFrom stats dist
 #' @importFrom rstan sampling
@@ -28,11 +29,12 @@
 #' data("cluster")
 #' comparison <- compare_dynamics(
 #'   clusters = cluster,
-#'   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean")
+#'   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"),
+#'   cores = 1
 #' )
 #' comparison[["plot_dynamic_comparison"]]
 
-compare_dynamics <- function(clusters, dynamics) {
+compare_dynamics <- function(clusters, dynamics,cores=4) {
   # bind objects to function
   posterior_mu <- NULL
   posterior_sigma <- NULL
@@ -129,7 +131,7 @@ compare_dynamics <- function(clusters, dynamics) {
     iter = 2000,
     warmup = 500,
     algorithm = "NUTS",
-    cores = 4
+    cores = cores
   )
   rm(y_padded, N)
   comparison[["fit"]] <- fit
