@@ -1,8 +1,8 @@
-.Rproj
-src/MetaboDynamics.so
-src/RcppExports.so
-src/stanExports_m_Anova_partial.pooling.o
-src/stanExports_m_cluster_distances_padded.o
+MetaboDynamics.Rproj
+/src/MetaboDynamics.so
+/src/RcppExports.so
+/src/stanExports_m_Anova_partial.pooling.o
+/src/stanExports_m_cluster_distances_padded.o
 .Rproj.user
 .Rhistory
 .Rdata
