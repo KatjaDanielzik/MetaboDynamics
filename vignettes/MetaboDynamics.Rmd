@@ -1,18 +1,22 @@
 ---
-title: "MetaboDynamics"
-output: rmarkdown::html_vignette
+title: "MetaboDynamics: a worked example"
+package: MetaboDynamics
+author: "Katja Danielzik"
+
+output:
+  BiocStyle::html_document:
+    toc: true
+    toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{MetaboDynamics}
+  %\VignetteIndexEntry{1. MetaboDynamics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+```{r style, echo = FALSE, results = 'asis'}
+  BiocStyle::markdown()
 ```
+
 Here we want to show a complete workflow to analyze concentration tables.
 As example we have a data set of irradiated cancer cells lines that were observed
 over four timepoints.
@@ -31,164 +35,90 @@ library(tidyr)
 ```
 
 ## load data and plot data overview
-```{r,fig.align='center',fig.dpi=150}
-data("intra")
-ggplot(intra, aes(x = cpc)) +
+```{r,fig.wide=TRUE}
+data("data_sim")
+ggplot(data_sim, aes(x = measurement)) +
   geom_density() +
   theme_bw() +
-  facet_grid(cols = vars(time), rows = vars(dose)) +
-  ggtitle("raw data", "cpc values")
+  facet_grid(cols = vars(time), rows = vars(condition)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  ggtitle("raw data", "raw measurements")
 ```
-
-We can see that there are only measurements at 0h for the 0Gy dose. As this
-is the control before irradiation the 0h measurement also is valid for the 2Gy 
-and 10Gy group. Furthermore we can see that the cpc values are not distributed
-normally.
-So let's assign the 0h values also to 2Gy and 10 Gy and log-transform.
-```{r,fig.align='center',fig.dpi=150}
-# we are taking t=0h for every radiation dose
-# we will duplicate the measurements for 0h for 2Gy and 10Gy
-temp <- intra[intra$time == "0h", ]
-temp$dose <- "2Gy"
-temp2 <- temp
-temp2$dose <- "10Gy"
-intra <- rbind(intra, temp, temp2)
-rm(temp, temp2)
-intra <- intra %>% mutate(log_cpc = log10(cpc))
-
+We have a simulated data set of 98 metabolites with three measurement replicates
+at four time points (1-4) across 3 experimental conditions (A-B).
+The raw data is not distributed normally. So let's log-transform the values.
+In the integrated simulated dataset this is already done in the column "log_m".
+```{r,fig.wide=TRUE}
 # we standardize to a mean of zero and a standard deviation of one of log-transformed data
-ggplot(intra, aes(x = log_cpc)) +
+ggplot(data_sim, aes(x = log_m)) +
   geom_density() +
   theme_bw() +
-  facet_grid(cols = vars(time), rows = vars(dose)) +
-  ggtitle("data", "log(cpc) values")
+  facet_grid(cols = vars(time), rows = vars(condition)) +
+  ggtitle("data", "log-transformed values")
 ```
 
 That looks better. As we want to estimate the dynamics of every single 
 metabolite next let's think about what that means. We want to estimate the 
 deviations at every single time point from the metabolites mean over time. 
-```{r,fig.align='center',fig.dpi=150}
-# get time as numeric variable
-intra$time <- gsub("h", "", intra$time)
-intra$time <- as.numeric(intra$time)
-intra <- intra %>% arrange(as.numeric(time))
-ggplot(intra) +
-  geom_line(aes(x = as.numeric(as.factor(time)), y = log_cpc, col = metabolite)) +
+
+```{r,fig.wide=TRUE}
+ggplot(data_sim) +
+  geom_line(aes(x = time, y = log_m, col = metabolite)) +
   theme_bw() +
   xlab("timepoint") +
   theme(legend.position = "none") +
-  facet_grid(rows = vars(dose)) +
-  ggtitle("raw metabolite dynamics", "col=metabolite")
+  facet_grid(rows = vars(condition)) +
+  ggtitle("raw metabolite dynamics", "color=metabolite")
 ```
 
 As the concentrations of metabolites can differ by magnitudes from each other, 
 we standardize each metabolite at each radiation dose to a mean of zero and a 
-standard deviation of one. 
-```{r,fig.align='center',fig.dpi=150}
-intra <- intra %>%
-  group_by(dose, metabolite) %>%
-  mutate(log_cpc_stand = ((log_cpc - mean(log_cpc)) / sd(log_cpc)))
-ggplot(intra) +
+standard deviation of one. In the simulated data set the scaled measurements
+are in column "m_scaled".
+```{r,fig.wide=TRUE}
+ggplot(data_sim) +
   geom_line(aes(
-    x = as.numeric(as.factor(time)),
-    y = log_cpc_stand, col = metabolite
+    x = time,
+    y = m_scaled, col = metabolite
   )) +
   theme_bw() +
   xlab("timepoint") +
   theme(legend.position = "none") +
-  facet_grid(rows = vars(dose)) +
-  ggtitle("standardized dynamics", "col=metabolite")
+  facet_grid(rows = vars(condition)) +
+  ggtitle("standardized dynamics", "color=metabolite")
 ```
 
 Now we can finally model the dynamics.
-We have done the modeling beforehand, so that it does not take to much time
-during this Vignette. 
+This might take up to 10 minutes. 
 
 ## Model dynamics
-```{r,fig.align='center',fig.dpi=150}
-# # fit model
-# fits_dynamics <- fit_dynamics_model(
-#   data = intra, cpc = "log_cpc_stand",
-#   condition = "dose", max_treedepth = 14,
-#   adapt_delta = 0.999, iter = 4000, cores = 7)
+```{r,fig.wide=TRUE}
+# fit model
+fits_dynamics <- fit_dynamics_model(
+  data = data_sim, scaled_measurement = "m_scaled", time="time",
+  condition = "condition", max_treedepth = 14,
+  adapt_delta = 0.999, iter = 4000, cores = 7, chains=1)
 
-# # extract diagnostics
-# diagnostics_dynamics <- extract_diagnostics_dynamics(
-#   data = intra, iter = 4000,
-#   fits = fits_dynamics
-# )
-
-data("diagnostics_dynamics")
-# diagnostics_dynamics[["plot_divergences"]]
-# diagnostics_dynamics[["plot_treedepth_error"]]
-# diagnostics_dynamics[["plot_rhat"]]
-# diagnostics_dynamics[["plot_neff"]]
-
-# # PPCs can be accessed with
-# diagnostic_estimates[["plot_PPC_0Gy"]]
-# diagnostic_estimates[["plot_PPC_2Gy"]]
-# diagnostic_estimates[["plot_PPC_10Gy"]]
-```
-```{r,echo=FALSE}
-diagnostics_dynamics <- diagnostics_dynamics[["model_diagnostics"]]
-t <- 4
-ggplot(diagnostics_dynamics, aes(
-  x = condition,
-  y = as.numeric(divergences)
-)) +
-  geom_violin() +
-  xlab("condition") +
-  theme_bw() +
-  ylab("number of divergent transitions") +
-  ggtitle("diagnostics_dynamics", "divergent transitions?")
-ggplot(diagnostics_dynamics, aes(
-  x = condition,
-  y = as.numeric(treedepth_error)
-)) +
-  geom_violin() +
-  xlab("condition") +
-  theme_bw() +
-  ylab("number of exceeded treedepth") +
-  ggtitle("diagnostics_dynamics", "maximum treedepth exceeded?")
-temp <- diagnostics_dynamics %>% pivot_longer(
-  cols = 5:(5 - 1 + t),
-  names_to = "rhat.mu",
-  values_to = "rhat.value"
+# extract diagnostics
+diagnostics_dynamics <- extract_diagnostics_dynamics(
+  data = data_sim, iter = 4000, # make sure iter is the same as used for fitting
+                                # the dynamic model
+  scaled_measurement="m_scaled",       
+  fits = fits_dynamics
 )
-ggplot(temp, aes(
-  x = as.factor(as.numeric(as.factor(rhat.mu))),
-  y = as.numeric(rhat.value)
-)) +
-  geom_violin() +
-  theme_bw() +
-  facet_wrap(~condition) +
-  ylab("Rhat") +
-  xlab("timepoint") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  geom_hline(yintercept = 1.01, col = "red") +
-  ggtitle("diagnostics_dynamics", "Rhat < 1.01 ?")
-temp <- diagnostics_dynamics %>% pivot_longer(
-  cols = 9:(9 - 1 + t),
-  names_to = "neff.mu",
-  values_to = "neff.value"
-)
-ggplot(temp, aes(
-  x = as.factor(as.numeric(as.factor(neff.mu))),
-  y = as.numeric(neff.value)
-)) +
-  geom_violin() +
-  theme_bw() +
-  facet_wrap(~condition) +
-  ylab("number of effective samples") +
-  xlab("timepoint") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  geom_hline(yintercept = 100, col = "red") +
-  ggtitle("diagnostics_dynamics", "number of effective samples >100 ?")
+
+diagnostics_dynamics[["plot_divergences"]]
+diagnostics_dynamics[["plot_treedepth_error"]]
+diagnostics_dynamics[["plot_rhat"]]
+diagnostics_dynamics[["plot_neff"]]
+
+# PPCs can be accessed with
+diagnostics_dynamics[["plot_PPC_A"]]
+diagnostics_dynamics[["plot_PPC_B"]]
+diagnostics_dynamics[["plot_PPC_C"]]
 ```
 
-
-
-For our experimental dataset this might take up to 10 minutes per radiation dose
+For our simulated dataset with varying variances at each timepoint this might take up to 10 minutes per radiation dose
 depending on how many cores are used. 
 
 This returns a list of model fits that are named by the experimental condition
@@ -200,13 +130,12 @@ criteria.
 
 After checking the diagnostic criteria and the PPC we can extract the estimates:
 
-```{r,fig.align='center',fig.dpi=150}
+```{r,fig.wide=TRUE}
 # #extract estimates
-# estimates_dynamics <- extract_estimates_dynamics(
-#   data = intra, fits = fits_dynamics,
-#   iter = 4000
-# )
-data("estimates_dynamics")
+estimates_dynamics <- extract_estimates_dynamics(condition="condition",
+  data = data_sim, fits = fits_dynamics,samples=1,
+  iter = 4000
+)
 ```
 
 We get two major outputs:
@@ -215,62 +144,10 @@ We get two major outputs:
 2) the dynamic profiles of each metabolites at each experimental condition
 
 ## 1) differences between two timepoints
-```{r,fig.align='center',fig.dpi=150}
-# 1) the differences between two timepoints
-# set numer of timepoints
-# estimates_dynamics[["plot_timepoint_differences"]]
+```{r,fig.wide=TRUE}
+#1) the differences between two timepoints
+estimates_dynamics[["plot_timepoint_differences"]]
 ```
-```{r,echo=FALSE}
-# visualize
-temp <- estimates_dynamics[[1]]
-for (i in 2:length(names(estimates_dynamics))) {
-  temp <- rbind(temp, estimates_dynamics[[i]])
-}
-rm(i)
-
-# differences between timepoints
-t < -4
-temp_t <- temp[, c(1:3, (6 * t + 7):(6 * t + 15))]
-temp_t <- temp_t %>% pivot_longer(
-  cols = -c(condition, metabolite.ID, metabolite),
-  names_to = c("timepoints", ".value"), names_sep = "_"
-)
-temp_t <- temp_t %>% mutate(col = ifelse(higher < 0, "HDI>0",
-  ifelse(lower > 0, "HDI<0", "0inHDI")
-))
-ggplot(temp_t, aes(x = as.numeric(mean), y = metabolite, col = col)) +
-  geom_point() +
-  geom_errorbarh(aes(xmin = lower, xmax = higher)) +
-  xlab("delta") +
-  scale_color_manual(
-    values = c("black", "green", "red"),
-    labels = c("0inCrI", "CrI>0", "CrI<0"), name = ""
-  ) +
-  geom_vline(xintercept = 0) +
-  facet_grid(cols = vars(timepoints), rows = vars(condition)) +
-  theme_bw() +
-  ggtitle("differences between timepoints")
-
-png(file = "delta_t.png", pointsize = 60, width = 20, height = 10, res = 1000, units = "cm")
-ggplot(temp_t[temp_t$condition == "0Gy", ], aes(y = as.numeric(mean), x = metabolite.ID, col = col)) +
-  geom_point() +
-  geom_errorbar(aes(ymin = lower, ymax = higher)) +
-  ylab("delta") +
-  scale_color_manual(
-    values = c("black", "green", "red"),
-    labels = c("0inCrI", "CrI>0", "CrI<0"), name = ""
-  ) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  facet_grid(rows = vars(timepoints), cols = vars(condition)) +
-  theme_bw() +
-  guides(col = "none") +
-  theme(axis.text.x = element_blank()) +
-  ggtitle("differences between timepoints", "mu[t2]-mu[t1]: mean and 95% HDI")
-dev.off()
-```
-
-
-
 If the 95% highest density interval of the posterior does not include zero
 we can confidently stat that there is a difference in mean concentrations 
 between two timepoints. If the 95% HDI is left of zero we have a decrease in
@@ -278,48 +155,10 @@ concentrations between the two timepoints, if it is right of zero we have an
 increase in concentrations between timepoints. 
 
 ## 2) dynamic profiles
-```{r,fig.align='center',fig.dpi=150}
+```{r,fig.wide=TRUE}
 # 2) dynamic profiles
-# estimates_dynamics[["plot_dynamics"]]
+estimates_dynamics[["plot_dynamics"]]
 ```
-```{r,echo=FALSE}
-# dynamics
-temp_d <- temp[, c(1:3, 4:(t + 3))]
-temp_d <- temp_d %>% pivot_longer(
-  cols = -c(condition, metabolite.ID, metabolite),
-  names_to = c("timepoints", ".value"), names_sep = "_"
-)
-ggplot(temp_d, aes(
-  x = as.factor(as.numeric(as.factor(timepoints))),
-  y = mean, group = metabolite.ID, col = metabolite
-)) +
-  geom_line() +
-  xlab("timepoint") +
-  ylab("estimated mean concentration") +
-  theme_bw() +
-  theme(legend.position = "none") +
-  facet_grid(rows = vars(condition)) +
-  ggtitle("dynamics", "color=metabolite")
-
-
-png(file = "dynamics_one_metabolite.png", pointsize = 60, width = 20, height = 10, res = 1000, units = "cm")
-ggplot(temp_d[temp_d$metabolite == "L-Arginine" & temp_d$condition == "2Gy", ], aes(
-  x = as.factor(as.numeric(as.factor(timepoints))),
-  y = mean, group = metabolite.ID
-)) +
-  geom_line(col = "red", lwd = 1) +
-  xlab("time point") +
-  ylim(c(-1, 1)) +
-  ylab("deviation from mean concentration") +
-  theme_bw() +
-  theme(legend.position = "none") +
-  facet_grid(rows = vars(condition)) +
-  ggtitle("dynamic profile of L-Arginine")
-dev.off()
-rm(temp, temp_t, temp_d)
-```
-
-
 So we now have dynamic profiles of the metabolites at each radiation dose.
 What do we do with this?
 We could cluster these dynamics vectors, that we obtained (estimates_dynamics[,c("mu1.mean":"mut.mean)]) to see if we find groups of metabolites that
@@ -331,108 +170,108 @@ For the sake of demonstration we only show a rudimentary hierachical clustering
 with the number of optimal clusters determined beforehand with clustering 
 criteria in the package "factoextra".
 ```{r,echo=FALSE}
-# get distances between vectors
-dd_0Gy <- dist(
-  estimates_dynamics[["0Gy"]][, c(
-    "mu1_mean", "mu2_mean",
-    "mu3_mean", "mu4_mean"
-  )],
-  method = "euclidean"
-)
-# hierachical clustering
-clust <- hclust(dd_0Gy, method = "ward.D2")
-clust_cut <- cutree(clust, k = 7)
-# assing cluster ID to estimates
-clust_0Gy <- estimates_dynamics[["0Gy"]][, c(
-  "metabolite", "condition", "mu1_mean", "mu2_mean",
-  "mu3_mean", "mu4_mean"
-)]
-clust_0Gy$cluster <- clust_cut
-
-rm(dd_0Gy, clust, clust_cut)
-
-# get distances between vectors
-dd_2Gy <- dist(
-  estimates_dynamics[["2Gy"]][, c(
-    "mu1_mean", "mu2_mean",
-    "mu3_mean", "mu4_mean"
-  )],
-  method = "euclidean"
-)
-# hierachical clustering
-clust <- hclust(dd_2Gy, method = "ward.D2")
-clust_cut <- cutree(clust, k = 8)
-# assing cluster ID to estimates
-clust_2Gy <- estimates_dynamics[["2Gy"]][, c(
-  "metabolite", "condition", "mu1_mean", "mu2_mean",
-  "mu3_mean", "mu4_mean"
-)]
-clust_2Gy$cluster <- clust_cut
-
-rm(dd_2Gy, clust, clust_cut)
-
-# get distances between vectors
-dd_10Gy <- dist(
-  estimates_dynamics[["10Gy"]][, c(
-    "mu1_mean", "mu2_mean",
-    "mu3_mean", "mu4_mean"
-  )],
-  method = "euclidean"
-)
-# hierachical clustering
-clust <- hclust(dd_10Gy, method = "ward.D2")
-clust_cut <- cutree(clust, k = 8)
-# assing cluster ID to estimates
-clust_10Gy <- estimates_dynamics[["10Gy"]][, c(
-  "metabolite", "condition", "mu1_mean", "mu2_mean",
-  "mu3_mean", "mu4_mean"
-)]
-clust_10Gy$cluster <- clust_cut
-rm(dd_10Gy, clust, clust_cut)
-
-cluster <- rbind(clust_0Gy, clust_2Gy, clust_10Gy)
-rm(clust_0Gy, clust_2Gy, clust_10Gy)
+# # get distances between vectors
+# dd_0Gy <- dist(
+#   estimates_dynamics[["0Gy"]][, c(
+#     "mu1_mean", "mu2_mean",
+#     "mu3_mean", "mu4_mean"
+#   )],
+#   method = "euclidean"
+# )
+# # hierachical clustering
+# clust <- hclust(dd_0Gy, method = "ward.D2")
+# clust_cut <- cutree(clust, k = 7)
+# # assing cluster ID to estimates
+# clust_0Gy <- estimates_dynamics[["0Gy"]][, c(
+#   "metabolite", "condition", "mu1_mean", "mu2_mean",
+#   "mu3_mean", "mu4_mean"
+# )]
+# clust_0Gy$cluster <- clust_cut
+# 
+# rm(dd_0Gy, clust, clust_cut)
+# 
+# # get distances between vectors
+# dd_2Gy <- dist(
+#   estimates_dynamics[["2Gy"]][, c(
+#     "mu1_mean", "mu2_mean",
+#     "mu3_mean", "mu4_mean"
+#   )],
+#   method = "euclidean"
+# )
+# # hierachical clustering
+# clust <- hclust(dd_2Gy, method = "ward.D2")
+# clust_cut <- cutree(clust, k = 8)
+# # assing cluster ID to estimates
+# clust_2Gy <- estimates_dynamics[["2Gy"]][, c(
+#   "metabolite", "condition", "mu1_mean", "mu2_mean",
+#   "mu3_mean", "mu4_mean"
+# )]
+# clust_2Gy$cluster <- clust_cut
+# 
+# rm(dd_2Gy, clust, clust_cut)
+# 
+# # get distances between vectors
+# dd_10Gy <- dist(
+#   estimates_dynamics[["10Gy"]][, c(
+#     "mu1_mean", "mu2_mean",
+#     "mu3_mean", "mu4_mean"
+#   )],
+#   method = "euclidean"
+# )
+# # hierachical clustering
+# clust <- hclust(dd_10Gy, method = "ward.D2")
+# clust_cut <- cutree(clust, k = 8)
+# # assing cluster ID to estimates
+# clust_10Gy <- estimates_dynamics[["10Gy"]][, c(
+#   "metabolite", "condition", "mu1_mean", "mu2_mean",
+#   "mu3_mean", "mu4_mean"
+# )]
+# clust_10Gy$cluster <- clust_cut
+# rm(dd_10Gy, clust, clust_cut)
+# 
+# cluster <- rbind(clust_0Gy, clust_2Gy, clust_10Gy)
+# rm(clust_0Gy, clust_2Gy, clust_10Gy)
 ```
 
 We combine all clustering results in one dataframe that hold columns "metabolite",
 "condition", "mu1-t.mean" and "cluster". "Cluster" refers to the cluster ID
 of the metabolite.
 
-```{r,fig.align='center',fig.dpi=150}
-temp <- cluster
-temp <- temp %>% pivot_longer(
-  cols = c(mu1_mean, mu2_mean, mu3_mean, mu4_mean),
-  names_to = "timepoint", values_to = "mu_mean"
-)
-ggplot(temp, aes(
-  x = as.factor(as.numeric(as.factor(timepoint))),
-  y = mu_mean, group = metabolite
-)) +
-  geom_line() +
-  xlab("timepoint") +
-  ylab("estimated mean concentration") +
-  theme_bw() +
-  theme(legend.position = "none") +
-  facet_grid(rows = vars(condition), cols = vars(cluster)) +
-  ggtitle("clustered dynamics", "panels=cluster ID")
-
-png(file = "dynamics.png", pointsize = 60, width = 20, height = 10, res = 1000, units = "cm")
-ggplot(data = temp[temp$condition == "2Gy" & temp$metabolite == "L-Arginine", ], aes(x = as.numeric(as.factor(timepoint)), y = mu_mean, group = metabolite, col = "red")) +
-  geom_line(data = temp[temp$condition == "2Gy", ], aes(
-    x = as.factor(as.numeric(as.factor(timepoint))),
-    y = mu_mean, group = metabolite, col = "black"
-  )) +
-  geom_line(lwd = 1) +
-  xlab("timepoint") +
-  ylab("deviation from mean concentration") +
-  theme_bw() +
-  scale_color_manual(values = c("black" = "black", "red" = "red")) +
-  theme(legend.position = "none") +
-  facet_grid(rows = vars(condition), cols = vars(cluster)) +
-  ggtitle("clustered dynamics", "red=L-Arginine, panels=cluster ID")
-dev.off()
-
-rm(temp)
+```{r,fig.wide=TRUE}
+# temp <- cluster
+# temp <- temp %>% pivot_longer(
+#   cols = c(mu1_mean, mu2_mean, mu3_mean, mu4_mean),
+#   names_to = "timepoint", values_to = "mu_mean"
+# )
+# ggplot(temp, aes(
+#   x = as.factor(as.numeric(as.factor(timepoint))),
+#   y = mu_mean, group = metabolite
+# )) +
+#   geom_line() +
+#   xlab("timepoint") +
+#   ylab("estimated mean concentration") +
+#   theme_bw() +
+#   theme(legend.position = "none") +
+#   facet_grid(rows = vars(condition), cols = vars(cluster)) +
+#   ggtitle("clustered dynamics", "panels=cluster ID")
+# 
+# png(file = "dynamics.png", pointsize = 60, width = 20, height = 10, res = 1000, units = "cm")
+# ggplot(data = temp[temp$condition == "2Gy" & temp$metabolite == "L-Arginine", ], aes(x = as.numeric(as.factor(timepoint)), y = mu_mean, group = metabolite, col = "red")) +
+#   geom_line(data = temp[temp$condition == "2Gy", ], aes(
+#     x = as.factor(as.numeric(as.factor(timepoint))),
+#     y = mu_mean, group = metabolite, col = "black"
+#   )) +
+#   geom_line(lwd = 1) +
+#   xlab("timepoint") +
+#   ylab("deviation from mean concentration") +
+#   theme_bw() +
+#   scale_color_manual(values = c("black" = "black", "red" = "red")) +
+#   theme(legend.position = "none") +
+#   facet_grid(rows = vars(condition), cols = vars(cluster)) +
+#   ggtitle("clustered dynamics", "red=L-Arginine, panels=cluster ID")
+# dev.off()
+# 
+# rm(temp)
 ```
 
 
@@ -461,29 +300,29 @@ head(modules_compounds)
 ```
 
 For the functional analysis we employ a hypergeometric model:
-```{r,fig.align='center',fig.dpi=150}
-ORA <- ORA_hypergeometric(background = modules_compounds, annotations = metabolite_modules, clusters = cluster, tested_column = "middle_hierachy")
-ORA[["plot_ORA"]]
-
-a_clusters <- ORA[["ORA"]]
-
-png(file = "ORA.png", pointsize = 60, width = 20, height = 8, res = 1000, units = "cm")
-a_clusters <- a_clusters %>% mutate(col = ifelse(log(OvE_gen_higher) < 0, "ICR<0", ifelse(log(OvE_gen_lower) > 0, "ICR>0", "ICR includes 0")))
-ggplot(a_clusters[a_clusters$condition == "2Gy", ], aes(x = log(OvE_gen), y = module_name, col = col)) +
-  geom_errorbarh(aes(xmin = log(OvE_gen_lower), xmax = log(OvE_gen_higher))) +
-  geom_point(aes(x = log(OvE_gen_median))) +
-  geom_vline(xintercept = 0, linetype = "dashed") +
-  theme_bw() +
-  scale_color_manual(values = c("ICR includes 0" = "black", "ICR>0" = "green")) +
-  xlab("log(p(OvE))") +
-  guides(col = "none") +
-  facet_grid(cols = vars(cluster), rows = vars(condition)) +
-  ggtitle("hypergeometric ORA", "median and 95% interquantile range,
-              panels=clusterID")
-dev.off()
-
-ORA_lower <- ORA_hypergeometric(background = modules_compounds, annotations = metabolite_modules, clusters = cluster[cluster$condition == "0Gy", ], tested_column = "lower_hierachy")
-ORA_lower[["plot_ORA"]]
+```{r,fig.wide=TRUE}
+# ORA <- ORA_hypergeometric(background = modules_compounds, annotations = metabolite_modules, clusters = cluster, tested_column = "middle_hierachy")
+# ORA[["plot_ORA"]]
+# 
+# a_clusters <- ORA[["ORA"]]
+# 
+# png(file = "ORA.png", pointsize = 60, width = 20, height = 8, res = 1000, units = "cm")
+# a_clusters <- a_clusters %>% mutate(col = ifelse(log(OvE_gen_higher) < 0, "ICR<0", ifelse(log(OvE_gen_lower) > 0, "ICR>0", "ICR includes 0")))
+# ggplot(a_clusters[a_clusters$condition == "2Gy", ], aes(x = log(OvE_gen), y = module_name, col = col)) +
+#   geom_errorbarh(aes(xmin = log(OvE_gen_lower), xmax = log(OvE_gen_higher))) +
+#   geom_point(aes(x = log(OvE_gen_median))) +
+#   geom_vline(xintercept = 0, linetype = "dashed") +
+#   theme_bw() +
+#   scale_color_manual(values = c("ICR includes 0" = "black", "ICR>0" = "green")) +
+#   xlab("log(p(OvE))") +
+#   guides(col = "none") +
+#   facet_grid(cols = vars(cluster), rows = vars(condition)) +
+#   ggtitle("hypergeometric ORA", "median and 95% interquantile range,
+#               panels=clusterID")
+# dev.off()
+# 
+# ORA_lower <- ORA_hypergeometric(background = modules_compounds, annotations = metabolite_modules, clusters = cluster[cluster$condition == "0Gy", ], tested_column = "lower_hierachy")
+# ORA_lower[["plot_ORA"]]
 ```
 
 Great, we can now see which functional module is over- or under-represented in which
@@ -495,9 +334,9 @@ dynamic cluster!
 We can not only do over-representation analysis of KEGG-functional modules but
 also compare dynamic clusters across different experimental conditions.
 ```{r,fig.aling='center',fig.dpi=150}
-comparison_dynamics <- compare_dynamics(clusters = cluster, dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"))
-
-comparison_dynamics[["plot_dynamic_comparison"]]
+# comparison_dynamics <- compare_dynamics(clusters = cluster, dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"))
+# 
+# comparison_dynamics[["plot_dynamic_comparison"]]
 ```
 The bigger and brighter a point is the smaller is the mean distance between
 dynamic clusters and the smaller is the standard deviation. That means big bright
@@ -507,8 +346,8 @@ have high similiarity in dynamics. If we recall the ORA analysis this pair also
 
 ## metabolites
 ```{r,fig.aling='center',fig.dpi=150}
-comparison_metabolites <- compare_metabolites(clusters = cluster)
-comparison_metabolites[["plot_metabolite_comparison"]]
+# comparison_metabolites <- compare_metabolites(clusters = cluster)
+# comparison_metabolites[["plot_metabolite_comparison"]]
 ```
 We have two clusters that are very similar in their metabolite composition:
 10Gy_5 and 2Gy_6. If we compare that to the dynamic profiles and ORA analysis
@@ -519,36 +358,36 @@ Can we facilitate visualization?
 
 ## combine both
 ```{r,fig.aling='center',fig.dpi=150}
-dynamics <- comparison_dynamics[["estimates"]]
-metabolites <- comparison_metabolites[["Jaccard"]]
-temp <- left_join(dynamics, metabolites, by = c("cluster_a", "cluster_b"))
-ggplot(temp, aes(x = 1 / mu_mean, y = Jaccard)) +
-  geom_point(aes(col = 1 / sigma_mean)) +
-  theme_bw() +
-  geom_text(aes(label = ifelse(Jaccard > 0.4 & 1 / mu_mean < 1.0, comparison, NA)), nudge_y = -0.03) +
-  scale_color_viridis_c() +
-  xlab("dynamics similarity") +
-  ylab("metabolite similarity") +
-  ggtitle("comparison of clusters")
-
-
-
-x <- unique(temp[, "cluster_a"])
-temp <- temp %>% mutate(scale_Jaccard = scale(Jaccard))
-png(file = "comparison.png", pointsize = 60, width = 12, height = 12, res = 1000, units = "cm")
-ggplot(temp, aes(x = cluster_b, y = cluster_a)) +
-  geom_point(aes(size = Jaccard, col = mu_mean)) +
-  theme_bw() +
-  scale_color_viridis_c(option = "magma") +
-  scale_x_discrete(limits = x) +
-  xlab("") +
-  ylab("") +
-  scale_y_discrete(limits = x) +
-  guides(col = "none", size = "none") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  labs(col = "dynamic distance", size = "metabolite similarity") +
-  ggtitle("comparison of clusters")
-dev.off()
+# dynamics <- comparison_dynamics[["estimates"]]
+# metabolites <- comparison_metabolites[["Jaccard"]]
+# temp <- left_join(dynamics, metabolites, by = c("cluster_a", "cluster_b"))
+# ggplot(temp, aes(x = 1 / mu_mean, y = Jaccard)) +
+#   geom_point(aes(col = 1 / sigma_mean)) +
+#   theme_bw() +
+#   geom_text(aes(label = ifelse(Jaccard > 0.4 & 1 / mu_mean < 1.0, comparison, NA)), nudge_y = -0.03) +
+#   scale_color_viridis_c() +
+#   xlab("dynamics similarity") +
+#   ylab("metabolite similarity") +
+#   ggtitle("comparison of clusters")
+# 
+# 
+# 
+# x <- unique(temp[, "cluster_a"])
+# temp <- temp %>% mutate(scale_Jaccard = scale(Jaccard))
+# png(file = "comparison.png", pointsize = 60, width = 12, height = 12, res = 1000, units = "cm")
+# ggplot(temp, aes(x = cluster_b, y = cluster_a)) +
+#   geom_point(aes(size = Jaccard, col = mu_mean)) +
+#   theme_bw() +
+#   scale_color_viridis_c(option = "magma") +
+#   scale_x_discrete(limits = x) +
+#   xlab("") +
+#   ylab("") +
+#   scale_y_discrete(limits = x) +
+#   guides(col = "none", size = "none") +
+#   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+#   labs(col = "dynamic distance", size = "metabolite similarity") +
+#   ggtitle("comparison of clusters")
+# dev.off()
 ```
 We can find two cluster pairs that are pretty similar in regards to their
 composing metabolites but dissimilar in regards to their dynamics. Their ORA
