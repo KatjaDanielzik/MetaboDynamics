@@ -42,7 +42,7 @@
 #' )
 #' }
 ORA_hypergeometric <- function(background, annotations,
-                               clusters, tested_column = "middle_hierachy") {
+                               clusters, tested_column = "middle_hierarchy") {
   # return object
   ORA_hyper <- list()
 
@@ -116,7 +116,7 @@ ORA_hypergeometric <- function(background, annotations,
   }
 
   for (j in unique(clusters$condition)) {
-    temp1 <- left_join(mapped_m, clusters[clusters$condition == j, ],
+    temp1 <- left_join(mapped_m, clusters[clusters$condition == j,],
       by = "metabolite"
     )
     for (i in 1:length(unique(temp1$cluster))) {
@@ -178,7 +178,7 @@ ORA_hypergeometric <- function(background, annotations,
     "condition",
     "cluster",
     "total_in_cluster"
-  ))
+  ), relationship = "many-to-many")
   rm(series)
 
   # get probability of n_theo
@@ -214,20 +214,25 @@ ORA_hypergeometric <- function(background, annotations,
     OvE_gen_median = median(OvE_gen)
   )
 
+  # color code for visualization
+  a_clusters <- a_clusters %>% mutate(col = ifelse(log(OvE_gen_higher) < 0,
+                                                   "ICR<0",
+                                                   ifelse(log(OvE_gen_lower) > 0,
+                                                   "ICR>0", "ICR includes 0")))
 
   ORA_hyper[["ORA"]] <- a_clusters
   ORA_hyper[["plot_ORA"]] <- ggplot(
     a_clusters,
-    aes(x = log(OvE_gen), y = module_name)
-  ) +
-    geom_pointrange(aes(xmin = log(OvE_gen_lower), xmax = log(OvE_gen_higher))) +
-    geom_point(aes(x = log(OvE_gen_median)), col = "red") +
-    geom_vline(xintercept = 0) +
+    aes(x = log(OvE_gen), y = module_name, col = col)) +
+    geom_errorbarh(aes(xmin = log(OvE_gen_lower), xmax = log(OvE_gen_higher))) +
+    geom_point(aes(x = log(OvE_gen_median))) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
     theme_bw() +
+    scale_color_manual(values = c("ICR includes 0" = "black", "ICR>0" = "green","ICR<0"="red")) +
     xlab("log(p(OvE))") +
+    guides(col = "none") +
     facet_grid(cols = vars(cluster), rows = vars(condition)) +
-    ggtitle("hypergeometric ORA", "red=median, points=95% interquantile range,
-              panels=clusterID")
-
+    ggtitle("hypergeometric ORA",
+            "median and 95% interquantile range, panels=clusterID")
   return(ORA_hyper)
 }
