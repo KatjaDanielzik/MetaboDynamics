@@ -23,14 +23,16 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' data("intra")
-#'  only run after fit_dynamics_model(data = intra,
-#'  = "log_cpc_stand", condition = "dose", max_treedepth = 14,
-#' # adapt_delta = 0.999, iter = 4000, cores = 7): see Vignette and documentation
-#' # of function
-#' extract_estimates(data = intra, fits = fits_dynamics, iter = 4000)
-#' }
+#' data("data_sim")
+#' data <- data_sim[data_sim$condition=="A"&data_sim$metabolite=="ATP",]
+#' fits <- fit_dynamics_model(data=data,
+#' scaled_measurement = "m_scaled", time="time",
+#' condition = "condition", max_treedepth = 14,
+#' adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1)
+#' estimates <- extract_estimates_dynamics(data = data, fits = fits, iter = 4000,
+#' chains = 1, condition="condition")
+#' head(estimates)
+#'
 extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
                                        t = length(unique(data$time)),
                                        condition = "dose", fits, iter = 2000,
@@ -133,8 +135,8 @@ extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite))
 
     # get correct assignment of metabolites and metabolite.ID used in modelling
     metabolites <- as.data.frame(cbind(
-      metabolite = unique(intra$metabolite),
-      metabolite.ID = as.numeric(as.factor(intra$metabolite))
+      metabolite = unique(data$metabolite),
+      metabolite.ID = as.numeric(as.factor(unique(data$metabolite)))
     ))
 
     dynamics_log_cpc <- left_join(dynamics_log_cpc, metabolites,
@@ -147,10 +149,13 @@ extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite))
 
   # visualize
   temp <- dynamics[[1]]
+  # bind if multiple conditions are analyzed
+  if(length(names(dynamics))>1){
   for (i in 2:length(names(dynamics))) {
     temp <- rbind(temp, dynamics[[i]])
   }
   rm(i)
+  }
 
   # differences between timepoints
   temp_t <- temp[, c(1:3, (6 * t + 7):(6 * t + 15))]

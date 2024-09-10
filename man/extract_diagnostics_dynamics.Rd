@@ -62,7 +62,7 @@ scaled_measurement = "m_scaled", time="time",
 condition = "condition", max_treedepth = 14,
 adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1)
 diagnostics <- extract_diagnostics_dynamics(data=data, iter=4000,fits=fits,
-chains=1, scaled_measurement="m_scaled")
+chains = 1, scaled_measurement = "m_scaled")
 diagnostics[["plot_neff"]]
 diagnostics[["plot_rhat"]]
 }

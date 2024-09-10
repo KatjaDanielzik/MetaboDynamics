@@ -45,12 +45,14 @@ Extracts the mean concentrations (mu) at every timepoint from the dynamic model 
 Additionally samples from the posterior of mu can be drawn. This can be helpful if p.e. one wants to estimate the clustering precision. Lambda can be used for clustering algorithms such as VSClust that also take the variance into account.
 }
 \examples{
-\dontrun{
-data("intra")
- only run after fit_dynamics_model(data = intra,
- = "log_cpc_stand", condition = "dose", max_treedepth = 14,
-# adapt_delta = 0.999, iter = 4000, cores = 7): see Vignette and documentation
-# of function
-extract_estimates(data = intra, fits = fits_dynamics, iter = 4000)
-}
+data("data_sim")
+data <- data_sim[data_sim$condition=="A"&data_sim$metabolite=="ATP",]
+fits <- fit_dynamics_model(data=data,
+scaled_measurement = "m_scaled", time="time",
+condition = "condition", max_treedepth = 14,
+adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1)
+estimates <- extract_estimates_dynamics(data = data, fits = fits, iter = 4000,
+chains = 1, condition="condition")
+head(estimates)
+
 }
