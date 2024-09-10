@@ -51,7 +51,10 @@ condition_names <- c("A","B","C")
 # Probability matrix for assigning metabolites from different database groups to dynamic groups
 # For simplicity, we assume equal probability; customize as needed
 
-group_probabilities <- matrix(runif(n_groups * length(unique(metabolite_modules$middle_hierarchy))),
+group_probabilities <- matrix(c(0.8,rep(0.01,7), #amino acid metabolism
+                              rep(0.01,7),0.8, #nucleotide metabolism
+                              0.1,0.8,0.8,rep(0.1,5), # energy and carbohydrate metabolism
+                              runif(5 * length(unique(metabolite_modules$middle_hierarchy)))),
                               nrow = n_groups,
                               ncol = length(unique(metabolite_modules$middle_hierarchy)))
 

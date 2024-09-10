@@ -28,11 +28,10 @@ distances between dynamic vectors of two clusters that come from different
 experimental conditions to estimate the mean distance between clusters.
 }
 \examples{
-\dontrun{
+data("cluster")
 compare_dynamics <- functions(
   clusters = cluster,
   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean")
 )
-}
 }
 \keyword{internal}

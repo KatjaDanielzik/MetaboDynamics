@@ -17,11 +17,11 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' data("cluster")
 #' compare_metabolites <- functions(
 #'   clusters = cluster
 #' )
-#' }
+
 compare_metabolites <- function(clusters) {
   # bind variables to function
   x <- NULL
