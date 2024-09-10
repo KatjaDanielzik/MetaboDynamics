@@ -24,13 +24,17 @@
 #'
 #' @examples
 #' data("data_sim")
-#' data <- data_sim[data_sim$condition=="A"&data_sim$metabolite=="ATP",]
-#' fits <- fit_dynamics_model(data=data,
-#' scaled_measurement = "m_scaled", time="time",
-#' condition = "condition", max_treedepth = 14,
-#' adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1)
-#' estimates <- extract_estimates_dynamics(data = data, fits = fits, iter = 4000,
-#' chains = 1, condition="condition")
+#' data <- data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ]
+#' fits <- fit_dynamics_model(
+#'   data = data,
+#'   scaled_measurement = "m_scaled", time = "time",
+#'   condition = "condition", max_treedepth = 14,
+#'   adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1
+#' )
+#' estimates <- extract_estimates_dynamics(
+#'   data = data, fits = fits, iter = 4000,
+#'   chains = 1, condition = "condition"
+#' )
 #' head(estimates)
 #'
 extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
@@ -150,11 +154,11 @@ extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite))
   # visualize
   temp <- dynamics[[1]]
   # bind if multiple conditions are analyzed
-  if(length(names(dynamics))>1){
-  for (i in 2:length(names(dynamics))) {
-    temp <- rbind(temp, dynamics[[i]])
-  }
-  rm(i)
+  if (length(names(dynamics)) > 1) {
+    for (i in 2:length(names(dynamics))) {
+      temp <- rbind(temp, dynamics[[i]])
+    }
+    rm(i)
   }
 
   # differences between timepoints
@@ -175,10 +179,10 @@ extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite))
       values = c("black", "green", "red"),
       labels = c("0inCrI", "CrI>0", "CrI<0"), name = ""
     ) +
-    geom_hline(yintercept = 0,linetype="dashed") +
+    geom_hline(yintercept = 0, linetype = "dashed") +
     facet_grid(rows = vars(timepoints), cols = vars(condition)) +
     theme_bw() +
-    theme(axis.text.x=element_text(angle = -90, hjust = 0))+
+    theme(axis.text.x = element_text(angle = -90, hjust = 0)) +
     ggtitle("differences between timepoints")
 
   # dynamics

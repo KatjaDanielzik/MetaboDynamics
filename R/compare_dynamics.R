@@ -33,8 +33,7 @@
 #'   cores = 1
 #' )
 #' comparison[["plot_dynamic_comparison"]]
-
-compare_dynamics <- function(clusters, dynamics,cores=4) {
+compare_dynamics <- function(clusters, dynamics, cores = 4) {
   # bind objects to function
   posterior_mu <- NULL
   posterior_sigma <- NULL

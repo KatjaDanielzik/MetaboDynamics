@@ -35,17 +35,19 @@
 #' data("modules_compounds")
 #' data("metabolite_modules")
 #' # middly hierachy
-#' ORA <- ORA_hypergeometric(background = modules_compounds,
-#' annotations = metabolite_modules, clusters = cluster,
-#' tested_column = "middle_hierarchy")
+#' ORA <- ORA_hypergeometric(
+#'   background = modules_compounds,
+#'   annotations = metabolite_modules, clusters = cluster,
+#'   tested_column = "middle_hierarchy"
+#' )
 #' ORA[["plot_ORA"]]
 #' # lower hierachy
-#' ORA_lower <- ORA_hypergeometric(background = modules_compounds,
-#' annotations = metabolite_modules, clusters = cluster[cluster$condition=="A",],
-#' tested_column = "lower_hierarchy")
+#' ORA_lower <- ORA_hypergeometric(
+#'   background = modules_compounds,
+#'   annotations = metabolite_modules, clusters = cluster[cluster$condition == "A", ],
+#'   tested_column = "lower_hierarchy"
+#' )
 #' ORA_lower[["plot_ORA"]]
-
-
 ORA_hypergeometric <- function(background, annotations,
                                clusters, tested_column = "middle_hierarchy") {
   # return object
@@ -121,7 +123,7 @@ ORA_hypergeometric <- function(background, annotations,
   }
 
   for (j in unique(clusters$condition)) {
-    temp1 <- left_join(mapped_m, clusters[clusters$condition == j,],
+    temp1 <- left_join(mapped_m, clusters[clusters$condition == j, ],
       by = "metabolite"
     )
     for (i in 1:length(unique(temp1$cluster))) {
@@ -221,23 +223,28 @@ ORA_hypergeometric <- function(background, annotations,
 
   # color code for visualization
   a_clusters <- a_clusters %>% mutate(col = ifelse(log(OvE_gen_higher) < 0,
-                                                   "ICR<0",
-                                                   ifelse(log(OvE_gen_lower) > 0,
-                                                   "ICR>0", "ICR includes 0")))
+    "ICR<0",
+    ifelse(log(OvE_gen_lower) > 0,
+      "ICR>0", "ICR includes 0"
+    )
+  ))
 
   ORA_hyper[["ORA"]] <- a_clusters
   ORA_hyper[["plot_ORA"]] <- ggplot(
     a_clusters,
-    aes(x = log(OvE_gen), y = module_name, col = col)) +
+    aes(x = log(OvE_gen), y = module_name, col = col)
+  ) +
     geom_errorbarh(aes(xmin = log(OvE_gen_lower), xmax = log(OvE_gen_higher))) +
     geom_point(aes(x = log(OvE_gen_median))) +
     geom_vline(xintercept = 0, linetype = "dashed") +
     theme_bw() +
-    scale_color_manual(values = c("ICR includes 0" = "black", "ICR>0" = "green","ICR<0"="red")) +
+    scale_color_manual(values = c("ICR includes 0" = "black", "ICR>0" = "green", "ICR<0" = "red")) +
     xlab("log(p(OvE))") +
     guides(col = "none") +
     facet_grid(cols = vars(cluster), rows = vars(condition)) +
-    ggtitle("hypergeometric ORA",
-            "median and 95% interquantile range, panels=clusterID")
+    ggtitle(
+      "hypergeometric ORA",
+      "median and 95% interquantile range, panels=clusterID"
+    )
   return(ORA_hyper)
 }

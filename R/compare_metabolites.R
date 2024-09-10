@@ -22,7 +22,6 @@
 #'   clusters = cluster
 #' )
 #' comparison[["plot_metabolite_comparison"]]
-
 compare_metabolites <- function(clusters) {
   # bind variables to function
   x <- NULL
