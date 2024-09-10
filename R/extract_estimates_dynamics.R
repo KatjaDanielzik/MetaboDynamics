@@ -167,17 +167,18 @@ extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite))
     ifelse(lower > 0, "HDI<0", "0inHDI")
   ))
   dynamics[["plot_timepoint_differences"]] <-
-    ggplot(temp_t, aes(x = as.numeric(mean), y = metabolite, col = col)) +
+    ggplot(temp_t, aes(y = as.numeric(mean), x = metabolite, col = col)) +
     geom_point() +
-    geom_errorbarh(aes(xmin = lower, xmax = higher)) +
-    xlab("delta") +
+    geom_errorbar(aes(ymin = lower, ymax = higher)) +
+    ylab("delta") +
     scale_color_manual(
       values = c("black", "green", "red"),
       labels = c("0inCrI", "CrI>0", "CrI<0"), name = ""
     ) +
-    geom_vline(xintercept = 0) +
-    facet_grid(cols = vars(timepoints), rows = vars(condition)) +
+    geom_hline(yintercept = 0,linetype="dashed") +
+    facet_grid(rows = vars(timepoints), cols = vars(condition)) +
     theme_bw() +
+    theme(axis.text.x=element_text(angle = -90, hjust = 0))+
     ggtitle("differences between timepoints")
 
   # dynamics
