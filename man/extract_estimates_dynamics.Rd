@@ -8,6 +8,8 @@ extract_estimates_dynamics(
   data,
   M = length(unique(data$metabolite)),
   t = length(unique(data$time)),
+  metabolite = "metabolite",
+  kegg = "KEGG",
   condition = "dose",
   fits,
   iter = 2000,
@@ -22,6 +24,10 @@ extract_estimates_dynamics(
 \item{M}{number of metabolites, default requires a column in data named "metabolite"}
 
 \item{t}{number of unique timepoints in data, the default require a column named "time"}
+
+\item{metabolite}{column in "data" that contains the metabolite names}
+
+\item{kegg}{column in "data" that contains the KEGG IDs or other identifier of metabolites}
 
 \item{condition}{name of column in dataframe data that specifies the experimental condition, default requires a column named "dose"}
 
