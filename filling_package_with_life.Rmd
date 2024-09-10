@@ -78,7 +78,10 @@ condition_names <- c("A","B","C")
 
 # Probability matrix for assigning metabolites from different database groups to dynamic groups
 # For simplicity, we assume equal probability; customize as needed
-group_probabilities <- matrix(runif(n_groups * length(unique(metabolite_modules$middle_hierarchy))),
+group_probabilities <- matrix(c(0.8,rep(0.01,7), #amino acid metabolism
+                              rep(0.01,7),0.8, #nucleotide metabolism
+                              0.1,0.8,0.8,rep(0.1,5), # energy and carbohydrate metabolism
+                              runif(5 * length(unique(metabolite_modules$middle_hierarchy)))),
                               nrow = n_groups,
                               ncol = length(unique(metabolite_modules$middle_hierarchy)))
 
@@ -176,28 +179,76 @@ simulated_data_df <- simulated_data_df %>%
 
 data_sim <- simulated_data_df
 rm(simulated_data_df,simulated_data)
+
 use_data(data_sim,overwrite = TRUE)
 #promptData(data_sim)
 ```
 
+## cluster solution of simulated data
+```{r}
+# get distances between vectors
+dd_A <- dist(
+  estimates_dynamics[["A"]][, c(
+    "mu1_mean", "mu2_mean",
+    "mu3_mean", "mu4_mean"
+  )],
+  method = "euclidean"
+)
+# hierachical clustering
+clust <- hclust(dd_A, method = "ward.D2")
+clust_cut <- cutree(clust, k = 8)
+# assing cluster ID to estimates
+clust_A <- estimates_dynamics[["A"]][, c(
+  "metabolite", "condition", "mu1_mean", "mu2_mean",
+  "mu3_mean", "mu4_mean"
+)]
+clust_A$cluster <- clust_cut
 
-## intracellular concentrations
-```{r}
-intra <- read_csv("/media/home/5-1-package pipeline/data/intra_corrected_cell_counts.csv")
-# save as rda file
-use_data(intra)
-# write documentation
-promptData(intra)
-```
-## model fit for Vignette building
-```{r}
-# skip posteriors to reduce data size
-diagnostics_dynamics <- diagnostics_dynamics["model_diagnostics"]
-use_data(diagnostics_dynamics,overwrite = TRUE)
-promptData(diagnostics_dynamics)
-estimates_dynamics <- estimates_dynamics[c("0Gy","2Gy","10Gy")]
-use_data(estimates_dynamics,overwrite=TRUE)
-promptData(estimates_dynamics)
+rm(dd_A, clust, clust_cut)
+
+# get distances between vectors
+dd_B <- dist(
+  estimates_dynamics[["B"]][, c(
+    "mu1_mean", "mu2_mean",
+    "mu3_mean", "mu4_mean"
+  )],
+  method = "euclidean"
+)
+# hierachical clustering
+clust <- hclust(dd_B, method = "ward.D2")
+clust_cut <- cutree(clust, k = 8)
+# assing cluster ID to estimates
+clust_B <- estimates_dynamics[["B"]][, c(
+  "metabolite", "condition", "mu1_mean", "mu2_mean",
+  "mu3_mean", "mu4_mean"
+)]
+clust_B$cluster <- clust_cut
+
+rm(dd_B, clust, clust_cut)
+
+# get distances between vectors
+dd_C <- dist(
+  estimates_dynamics[["C"]][, c(
+    "mu1_mean", "mu2_mean",
+    "mu3_mean", "mu4_mean"
+  )],
+  method = "euclidean"
+)
+# hierachical clustering
+clust <- hclust(dd_C, method = "ward.D2")
+clust_cut <- cutree(clust, k = 8)
+# assing cluster ID to estimates
+clust_C <- estimates_dynamics[["C"]][, c(
+  "metabolite", "condition", "mu1_mean", "mu2_mean",
+  "mu3_mean", "mu4_mean"
+)]
+clust_C$cluster <- clust_cut
+rm(dd_C, clust, clust_cut)
+
+cluster <- rbind(clust_A, clust_B, clust_C)
+rm(clust_A, clust_B, clust_C)
+
+use_data(cluster,overwrite=TRUE)
 ```
 
 
