@@ -61,8 +61,8 @@ fits <- fit_dynamics_model(data=data,
 scaled_measurement = "m_scaled", time="time",
 condition = "condition", max_treedepth = 14,
 adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1)
-diagnostics <- extract_diagnostics_dynamics(data_sim, iter=4000,fits=fits,
+diagnostics <- extract_diagnostics_dynamics(data=data, iter=4000,fits=fits,
 chains=1, scaled_measurement="m_scaled")
-diagnostics[["plot_divergences"]]
-diagnostics[["plot_PPC_A"]]
+diagnostics[["plot_neff"]]
+diagnostics[["plot_rhat"]]
 }
