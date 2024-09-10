@@ -13,7 +13,7 @@ extract_diagnostics_dynamics(
   warmup = iter/4,
   chains = 4,
   fits,
-  cpc = "log_cpc_stand"
+  scaled_measurement = "m_scaled"
 )
 }
 \arguments{
@@ -34,7 +34,7 @@ extract_diagnostics_dynamics(
 \item{fits}{list of models for which diagnostics should be extracted, is the
 object that gets returned by fit_dynamics_model()}
 
-\item{cpc}{concentration values used to model fit, should be normalized by
+\item{scaled_measurement}{concentration values used to model fit, should be normalized by
 experimental condition and metabolite to mean of zero and standard deviation
 of one}
 }
@@ -53,13 +53,16 @@ information about experimental condition, number of divergent transitions
 and rhat and neff values for all timepoints
 }
 \examples{
-\dontrun{
-data("intra")
+data("data_sim")
 # only run after fit_dynamics_model(intra): see Vignette and documentation
 # of function
-extract_diagnostics_dynamics(
-  data = intra, max_treedepth = 14,
-  adapt_delta = 0.999, iter = 4000, fits = fits_dynamics
-)
-}
+data <- data_sim[data_sim$condition=="A"&data_sim$metabolite=="ATP",]
+fits <- fit_dynamics_model(data=data,
+scaled_measurement = "m_scaled", time="time",
+condition = "condition", max_treedepth = 14,
+adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1)
+diagnostics <- extract_diagnostics_dynamics(data_sim, iter=4000,fits=fits,
+chains=1, scaled_measurement="m_scaled")
+diagnostics[["plot_divergences"]]
+diagnostics[["plot_PPC_A"]]
 }

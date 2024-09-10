@@ -14,7 +14,7 @@
 #' @param warmup number of warmup iterations used for model fit
 #' @param iter number of iterations used for model fit
 #' @param chains number of chains used for model fit
-#' @param cpc concentration values used to model fit, should be normalized by
+#' @param scaled_measurement concentration values used to model fit, should be normalized by
 #' experimental condition and metabolite to mean of zero and standard deviation
 #' of one
 #'
@@ -30,20 +30,23 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' data("intra")
+#' data("data_sim")
 #' # only run after fit_dynamics_model(intra): see Vignette and documentation
 #' # of function
-#' extract_diagnostics_dynamics(
-#'   data = intra, max_treedepth = 14,
-#'   adapt_delta = 0.999, iter = 4000, fits = fits_dynamics
-#' )
-#' }
+#' data <- data_sim[data_sim$condition=="A"&data_sim$metabolite=="ATP",]
+#' fits <- fit_dynamics_model(data=data,
+#' scaled_measurement = "m_scaled", time="time",
+#' condition = "condition", max_treedepth = 14,
+#' adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1)
+#' diagnostics <- extract_diagnostics_dynamics(data_sim, iter=4000,fits=fits,
+#' chains=1, scaled_measurement="m_scaled")
+#' diagnostics[["plot_divergences"]]
+#' diagnostics[["plot_PPC_A"]]
 extract_diagnostics_dynamics <- function(data, N = nrow(data),
                                          M = length(unique(data$metabolite)),
                                          t = length(unique(data$time)),
                                          iter = 2000, warmup = iter / 4, chains = 4,
-                                         fits, cpc = "log_cpc_stand") {
+                                         fits, scaled_measurement = "m_scaled") {
   # create list to store all subsequent results
   list_diagnostics <- list()
 
@@ -122,7 +125,7 @@ extract_diagnostics_dynamics <- function(data, N = nrow(data),
     list_diagnostics[[paste0("plot_PCC_", i)]] <-
       ggplot(posterior, aes(x = time.ID)) +
       geom_violin(aes(y = posterior), scale = "count") +
-      geom_jitter(data = PPC, aes_string(x = "time.ID", y = cpc), width = 0.05) + # aes_string allows us to use predefined variables
+      geom_jitter(data = PPC, aes_string(x = "time.ID", y = scaled_measurement), width = 0.05) + # aes_string allows us to use predefined variables
       theme_bw() +
       ylim(-5, 5) + # we standardized data so we are not expecting much smaller or bigger values
       ggtitle(

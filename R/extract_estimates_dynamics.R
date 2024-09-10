@@ -25,8 +25,8 @@
 #' @examples
 #' \dontrun{
 #' data("intra")
-#' # only run after fit_dynamics_model(data = intra,
-#' # cpc = "log_cpc_stand", condition = "dose", max_treedepth = 14,
+#'  only run after fit_dynamics_model(data = intra,
+#'  = "log_cpc_stand", condition = "dose", max_treedepth = 14,
 #' # adapt_delta = 0.999, iter = 4000, cores = 7): see Vignette and documentation
 #' # of function
 #' extract_estimates(data = intra, fits = fits_dynamics, iter = 4000)
