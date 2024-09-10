@@ -31,16 +31,15 @@
 #' @importFrom stats rhyper
 #'
 #' @examples
-#' \dontrun{
-#' data("metabolite_modules")
-#' data("modules_compounds")
-#' head(metabolite_modules)
-#' head(modules_compounds)
-#' ORA_hyper <- ORA_hypergeometric(
-#'   background = modules_compounds,
-#'   annotations = metabolite_modules, clusters = cluster, tested_column
-#' )
-#' }
+#' data("cluster")
+#' # middly hierachy
+#' ORA <- ORA_hypergeometric(background = modules_compounds, annotations = metabolite_modules, clusters = cluster, tested_column = "middle_hierarchy")
+#' ORA[["plot_ORA"]]
+#' # lower hierachy
+#' ORA_lower <- ORA_hypergeometric(background = modules_compounds, annotations = metabolite_modules, clusters = cluster[cluster$condition=="A",], tested_column = "lower_hierarchy")
+#' ORA_lower[["plot_ORA"]]
+
+
 ORA_hypergeometric <- function(background, annotations,
                                clusters, tested_column = "middle_hierarchy") {
   # return object

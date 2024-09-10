@@ -8,7 +8,7 @@ ORA_hypergeometric(
   background,
   annotations,
   clusters,
-  tested_column = "middle_hierachy"
+  tested_column = "middle_hierarchy"
 )
 }
 \arguments{
