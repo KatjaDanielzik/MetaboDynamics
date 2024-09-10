@@ -56,13 +56,17 @@ and rhat and neff values for all timepoints
 data("data_sim")
 # only run after fit_dynamics_model(intra): see Vignette and documentation
 # of function
-data <- data_sim[data_sim$condition=="A"&data_sim$metabolite=="ATP",]
-fits <- fit_dynamics_model(data=data,
-scaled_measurement = "m_scaled", time="time",
-condition = "condition", max_treedepth = 14,
-adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1)
-diagnostics <- extract_diagnostics_dynamics(data=data, iter=4000,fits=fits,
-chains = 1, scaled_measurement = "m_scaled")
+data <- data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ]
+fits <- fit_dynamics_model(
+  data = data,
+  scaled_measurement = "m_scaled", time = "time",
+  condition = "condition", max_treedepth = 14,
+  adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1
+)
+diagnostics <- extract_diagnostics_dynamics(
+  data = data, iter = 4000, fits = fits,
+  chains = 1, scaled_measurement = "m_scaled"
+)
 diagnostics[["plot_neff"]]
 diagnostics[["plot_rhat"]]
 }

@@ -8,6 +8,8 @@
 #' clusters of similar dynamics,as well as a column "condition" specifying
 #' the experimental conditions
 #' to be compared
+#' @param metabolite column in "clusters" that specifies either metabolite name
+#' or KEGG ID or some other identifier
 #'
 #' @import ggplot2
 #'
@@ -22,7 +24,7 @@
 #'   clusters = cluster
 #' )
 #' comparison[["plot_metabolite_comparison"]]
-compare_metabolites <- function(clusters) {
+compare_metabolites <- function(clusters,metabolite="metabolite") {
   # bind variables to function
   x <- NULL
   distances <- NULL
@@ -68,8 +70,8 @@ compare_metabolites <- function(clusters) {
     b <- unlist(strsplit(b, "_"))
 
     # create dataframe which combines every row from a with every row from b
-    temp_a <- clusters[clusters$condition == a[1] & clusters$cluster == a[2], "metabolite"]
-    temp_b <- clusters[clusters$condition == b[1] & clusters$cluster == b[2], "metabolite"]
+    temp_a <- clusters[clusters$condition == a[1] & clusters$cluster == a[2], metabolite]
+    temp_b <- clusters[clusters$condition == b[1] & clusters$cluster == b[2], metabolite]
 
     # cat(k)
     # calculate Jaccard index

@@ -20,6 +20,7 @@ experimental condition. 4 groups have varying dynamics between conditions.
     \item{\code{measurement}}{column that specifies the metabolite concentration, p.e. from peak area/peak intensity}
     \item{\code{log_m}}{log transformation of "Measurement"}
     \item{\code{m_scaled}}{metabolite and Condition specific scaled (mean=0,sd=1) "log_m"}
+    \item{\code{KEGG}}{KEGG ID of metabolites}
   }
 }
 \source{
@@ -167,6 +168,11 @@ simulated_data_df <- simulated_data_df %>%
     log_m = log10(measurement),
     m_scaled = (log_m - mean(log_m)) / sd(log_m)
   )
+
+# add KEGG IDs
+name_map_HMDB_CAS <- readr::read_csv("name_map_HMDB_CAS.csv")
+data_sim <- dplyr::left_join(data_sim,name_map_HMDB_CAS[,c("Query","KEGG")],join_by("metabolite"=="Query"))
+
 
 }
 

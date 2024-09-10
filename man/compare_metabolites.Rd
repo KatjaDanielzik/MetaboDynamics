@@ -4,7 +4,7 @@
 \alias{compare_metabolites}
 \title{Comparison of metabolites between clusters of different experimental conditions}
 \usage{
-compare_metabolites(clusters)
+compare_metabolites(clusters, metabolite = "metabolite")
 }
 \arguments{
 \item{clusters}{a dataframe containing the columns "metabolite" specifying the
@@ -12,6 +12,9 @@ metabolite names to be compared and cluster IDs(column named "cluster") of
 clusters of similar dynamics,as well as a column "condition" specifying
 the experimental conditions
 to be compared}
+
+\item{metabolite}{column in "clusters" that specifies either metabolite name
+or KEGG ID or some other identifier}
 }
 \value{
 a list holding a 1) dataframe of Jaccard indices between clusters

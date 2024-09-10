@@ -42,7 +42,7 @@ extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite))
                                        condition = "dose", fits, iter = 2000,
                                        warmup = iter / 4, chains = 4, samples = 1) {
   # bind variables
-  dynamics_log_cpc <- NULL
+  dynamics_loc_cpc <- NULL
   temp_t <- NULL
   temp <- NULL
   metabolite.ID <- NULL

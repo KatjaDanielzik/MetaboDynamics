@@ -1,3 +1,5 @@
+how_to_create_a_package.Rmd
+filling_package_with_life.Rmd
 MetaboDynamics.Rproj
 /src/MetaboDynamics.so
 /src/RcppExports.so
@@ -9,6 +11,6 @@ MetaboDynamics.Rproj
 .httr-oauth
 .DS_Store
 .quarto
-inst/doc
+/inst/doc
 /doc/
 /Meta/

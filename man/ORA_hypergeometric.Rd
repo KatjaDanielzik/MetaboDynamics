@@ -45,14 +45,18 @@ data("cluster")
 data("modules_compounds")
 data("metabolite_modules")
 # middly hierachy
-ORA <- ORA_hypergeometric(background = modules_compounds,
-annotations = metabolite_modules, clusters = cluster,
-tested_column = "middle_hierarchy")
+ORA <- ORA_hypergeometric(
+  background = modules_compounds,
+  annotations = metabolite_modules, clusters = cluster,
+  tested_column = "middle_hierarchy"
+)
 ORA[["plot_ORA"]]
 # lower hierachy
-ORA_lower <- ORA_hypergeometric(background = modules_compounds,
-annotations = metabolite_modules, clusters = cluster[cluster$condition=="A",],
-tested_column = "lower_hierarchy")
+ORA_lower <- ORA_hypergeometric(
+  background = modules_compounds,
+  annotations = metabolite_modules, clusters = cluster[cluster$condition == "A", ],
+  tested_column = "lower_hierarchy"
+)
 ORA_lower[["plot_ORA"]]
 }
 \keyword{annotated}

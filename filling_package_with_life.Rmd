@@ -23,6 +23,8 @@ use_package("rstan","imports",min_version = TRUE)
 use_package("ggplot2","imports",min_version=TRUE)
 use_package("dplyr","imports",min_version=TRUE)
 use_package("tidyr","imports",min_version = TRUE)
+use_package("stringr","imports",min_version=TRUE)
+use_package("KEGGREST","imports",min_version = TRUE)
 ```
 
 
@@ -180,6 +182,10 @@ simulated_data_df <- simulated_data_df %>%
 data_sim <- simulated_data_df
 rm(simulated_data_df,simulated_data)
 
+# add KEGG IDs
+name_map_HMDB_CAS <- readr::read_csv("name_map_HMDB_CAS.csv")
+data_sim <- dplyr::left_join(data_sim,name_map_HMDB_CAS[,c("Query","KEGG")],join_by("metabolite"=="Query"))
+
 use_data(data_sim,overwrite = TRUE)
 #promptData(data_sim)
 ```
@@ -308,6 +314,7 @@ usethis::use_news_md(open = rlang::is_interactive())
 ```{r}
 #BiocManager::install("BiocCheck")
 BiocCheck::BiocCheck()
+BiocCheck::BiocCheckGitClone()
 ```
 
 # add BiocViews terms

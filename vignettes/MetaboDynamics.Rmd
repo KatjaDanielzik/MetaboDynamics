@@ -14,7 +14,7 @@ vignette: >
 ---
 
 ```{r style, echo = FALSE, results = 'asis'}
-  BiocStyle::markdown()
+BiocStyle::markdown()
 ```
 
 Here we want to show a complete workflow to analyze concentration tables.
@@ -42,7 +42,7 @@ ggplot(data_sim, aes(x = measurement)) +
   geom_density() +
   theme_bw() +
   facet_grid(cols = vars(time), rows = vars(condition)) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   ggtitle("raw data", "raw measurements")
 ```
 We have a simulated data set of 98 metabolites with three measurement replicates
@@ -118,16 +118,18 @@ criteria from the model fits.
 ```{r,fig.wide=TRUE}
 # fit model
 fits_dynamics <- fit_dynamics_model(
-  data = data_sim, scaled_measurement = "m_scaled", time="time",
+  data = data_sim, scaled_measurement = "m_scaled", time = "time",
   condition = "condition", max_treedepth = 14,
-  adapt_delta = 0.999, iter = 4000, cores = 7, chains = 4)
+  adapt_delta = 0.999, iter = 4000, cores = 7, chains = 4
+)
 
 # extract diagnostics
 diagnostics_dynamics <- extract_diagnostics_dynamics(
   data = data_sim, iter = 4000, # make sure iter is the same as used for fitting
-                                # the dynamic model
-  scaled_measurement = "m_scaled",       
-  fits = fits_dynamics, chains = 4)
+  # the dynamic model
+  scaled_measurement = "m_scaled",
+  fits = fits_dynamics, chains = 4
+)
 
 diagnostics_dynamics[["plot_divergences"]]
 diagnostics_dynamics[["plot_treedepth_error"]]
@@ -151,8 +153,9 @@ After checking the diagnostic criteria and the PPC we can extract the estimates:
 
 ```{r,fig.wide=TRUE}
 # #extract estimates
-estimates_dynamics <- extract_estimates_dynamics(condition="condition",
-  data = data_sim, fits = fits_dynamics,samples=1,
+estimates_dynamics <- extract_estimates_dynamics(
+  condition = "condition",
+  data = data_sim, fits = fits_dynamics, samples = 1,
   iter = 4000
 )
 ```
@@ -164,7 +167,7 @@ We get two major outputs:
 
 ## 1) differences between two timepoints
 ```{r,fig.wide=TRUE}
-#1) the differences between two timepoints
+# 1) the differences between two timepoints
 estimates_dynamics[["plot_timepoint_differences"]]
 ```
 If the 95% highest density interval of the posterior does not include zero
@@ -306,6 +309,29 @@ data("modules_compounds")
 help("modules_compounds")
 head(modules_compounds)
 ```
+We can also retrieve the necessary dataframes with:
+```{r}
+# ORA_dataframes <- get_ORA_dataframes(data = data_sim, kegg = "KEGG",
+#                                       metabolite_name = "metabolite")
+# metabolite_modules <- ORA_dataframes[["annotation"]]
+# modules_compounds <- ORA_dataframes[["background"]]
+```
+Here we have to keep in mind that not all KEGG modules are suitable for testing
+on every observed organism and experimental condition. For example the modules
+"Xenobiotics biodegradation","Biosynthesis of other secondary metabolites" and
+"Biosynthesis of terpenoids and polyketides" should not be analyzed in a human
+lung cancer cell line.
+```{r}
+# modules_compounds <- modules_compounds[-which(modules_compounds$middle_hierachy=="Xenobiotics biodegradation"),]
+# modules_compounds <- modules_compounds[-which(modules_compounds$middle_hierachy=="Biosynthesis of other secondary metabolites"),]
+# modules_compounds <- modules_compounds[-which(modules_compounds$middle_hierachy=="Biosynthesis of terpenoids and polyketides"),]
+# metabolite_modules <- metabolite_modules[-which(metabolite_modules$middle_hierachy=="Xenobiotics biodegradation"),]
+# metabolite_modules <- metabolite_modules[-which(metabolite_modules$middle_hierachy=="Biosynthesis of other secondary metabolites"),]
+# metabolite_modules <- metabolite_modules[-which(metabolite_modules$middle_hierachy=="Biosynthesis of terpenoids and polyketides"),]
+```
+
+
+
 
 For the functional analysis we employ a hypergeometric model. We consider a 
 functional module as over-expressed in a cluster if the 95% inter-quantile
@@ -317,18 +343,18 @@ being mapped to a module under the assumption of a hypergeometric distribution
 We apply the functional analysis to the middle and lower hierarchy of functional
 modules. 
 ```{r,fig.wide=TRUE}
+data("cluster")
 ORA <- ORA_hypergeometric(background = modules_compounds, annotations = metabolite_modules, clusters = cluster, tested_column = "middle_hierarchy")
 ORA[["plot_ORA"]]
 
-ORA_lower <- ORA_hypergeometric(background = modules_compounds, annotations = metabolite_modules, clusters = cluster[cluster$condition=="A",], tested_column = "lower_hierarchy")
+ORA_lower <- ORA_hypergeometric(background = modules_compounds, annotations = metabolite_modules, clusters = cluster[cluster$condition == "A", ], tested_column = "lower_hierarchy")
 ORA_lower[["plot_ORA"]]
 ```
 
 Great, we can now see which functional module is over- 
 (green points and error-bars) or under-represented (none in this example) in 
-which dynamics cluster! For instance in cluster 1 at all radiation doses the 
-modules "Energy metabolism", "Carbohydrate metabolism" and "Amino acid metabolism" 
-are over-represented. 
+which dynamics cluster! For instance in cluster 3 at condition A and C the 
+modules "Energy metabolism" and "Carbohydrate metabolism" are over-represented. 
 
 # Comparison of clusters of different experimental conditions
 
@@ -353,10 +379,8 @@ comparison_dynamics[["plot_dynamic_comparison"]]
 ```
 The bigger and brighter a point is the smaller is the mean distance between
 dynamic clusters and the smaller is the standard deviation. That means big bright
-moins indicate high dynamic similarity which small spread. Here C_5 and A_2
-have high similiarity in dynamics. If we recall the ORA analysis this pair also
-has an over-representation of nearly the same functional modules (Nucleotide,
-energy and amino acid metabolism).
+points indicate high dynamic similarity which small spread. Here B_8 and A_4
+have high similiarity in dynamics. 
 
 ## metabolites
 ```{r,fig.aling='center',fig.dpi=150}
@@ -364,7 +388,7 @@ comparison_metabolites <- compare_metabolites(clusters = cluster)
 comparison_metabolites[["plot_metabolite_comparison"]]
 ```
 We have two clusters that are very similar in their metabolite composition:
-B_8 and A_6. If we compare that to the dynamic profiles and ORA analysis
+C_6 and A_5. If we compare that to the dynamic profiles and ORA analysis
 we see that similar functional modules are over-expressed as expected BUT
 the dynamics differ between the two radiation doses. 
 
@@ -388,20 +412,21 @@ ggplot(temp, aes(x = 1 / mu_mean, y = Jaccard)) +
 x <- unique(temp[, "cluster_a"])
 temp <- temp %>% mutate(scale_Jaccard = scale(Jaccard))
 ggplot(temp, aes(x = cluster_b, y = cluster_a)) +
-  geom_point(aes(size = Jaccard, col = mu_mean)) +
-  theme_bw() +
-  scale_color_viridis_c(option = "magma") +
-  scale_x_discrete(limits = x) +
-  xlab("") +
-  ylab("") +
-  scale_y_discrete(limits = x) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  labs(col = "dynamic distance", size = "metabolite similarity") +
-  ggtitle("comparison of clusters")
+    geom_point(aes(size = Jaccard, col = mu_mean)) +
+    theme_bw() +
+    scale_color_viridis_c(option = "magma") +
+    scale_x_discrete(limits = x) +
+    xlab("") +
+    ylab("") +
+    scale_y_discrete(limits = x) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+    labs(col = "dynamic distance", size = "metabolite similarity") +
+    ggtitle("comparison of clusters")
 ```
 We can find two cluster pairs that are pretty similar in regards to their
 composing metabolites but dissimilar in regards to their dynamics. Their ORA
-profiles are quit similar as expected from the similar metabolite compositions. 
+profiles are quit similar as expected from the similar metabolite compositions but
+they show different dynamics between experimental conditions: B_7 and A_4
 
 ```{r}
 sessionInfo()
