@@ -18,6 +18,7 @@
 #' @export
 #' @importFrom KEGGREST keggGet
 #' @importFrom KEGGREST keggList
+#' @importFrom stats na.omit
 #' @import dplyr
 #' @import stringr
 #'
@@ -129,7 +130,7 @@ get_ORA_dataframes <- function(data, kegg = "KEGG",
     }
     }
     rm(i,temp,temp2,temp3)
-    rm(all_modules,organism_pathways)
+    rm(all_modules)
     modules_compounds <- modules_compounds[!is.na(modules_compounds$module_id),]
     ORA_dataframes[["background"]] <- modules_compounds
     rm(modules_compounds)

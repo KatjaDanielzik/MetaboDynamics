@@ -6,7 +6,6 @@
 #' @param data dataframe used for modeling
 #' @param M number of metabolites, default requires a column in data named "metabolite"
 #' @param t number of unique timepoints in data, the default require a column named "time"
-#' @param metabolite column in "data" that contains the metabolite names
 #' @param kegg column in "data" that contains the KEGG IDs or other identifier of metabolites
 #' @param condition name of column in dataframe data that specifies the experimental condition, default requires a column named "dose"
 #' @param fits lits of model fits for which estimates should be extracted
@@ -41,7 +40,6 @@
 #'
 extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
                                        t = length(unique(data$time)),
-                                       metabolite = "metabolite",
                                        kegg = "KEGG" ,
                                        condition = "dose", fits, iter = 2000,
                                        warmup = iter / 4, chains = 4, samples = 1) {
@@ -143,8 +141,8 @@ extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite))
 
     # get correct assignment of metabolites and metabolite.ID used in modelling
     metabolites <- as.data.frame(cbind(
-      metabolite = unique(data[[metabolite]]),
-      metabolite.ID = as.numeric(as.factor(unique(data[[metabolite]]))),
+      metabolite = unique(data$metabolite),
+      metabolite.ID = as.numeric(as.factor(unique(data$metabolite))),
       KEGG = unique(data[[kegg]])
     ))
 
