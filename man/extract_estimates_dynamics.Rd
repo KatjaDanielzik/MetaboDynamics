@@ -64,5 +64,5 @@ head(estimates)
 
 }
 \seealso{
-\link[=extract_diagnostics_dynamics]{fit_dynamics_model()}
+\code{\link[=fit_dynamics_model]{fit_dynamics_model()}}/\code{\link[=extract_diagnostics_dynamics]{extract_diagnostics_dynamics()}}
 }
