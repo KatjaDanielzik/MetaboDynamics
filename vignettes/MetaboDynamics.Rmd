@@ -34,7 +34,7 @@ library(dplyr)
 library(tidyr)
 ```
 
-## Load data and plot data overview
+# Load data and plot data overview
 ```{r,fig.wide=TRUE}
 data("data_sim")
 ggplot(data_sim, aes(x = measurement)) +
@@ -114,7 +114,7 @@ m = metabolite, c = experimental condition and t = time point ID:
 The code below shows how to fit the model and how to extract the diagnostic
 criteria from the model fits. 
 
-## Model dynamics
+# Model dynamics
 ```{r,fig.wide=TRUE}
 # fit model
 fits_dynamics <- fit_dynamics_model(
@@ -165,7 +165,7 @@ We get two major outputs:
 of each metabolite at each experimental condition
 2) the dynamic profiles of each metabolites at each experimental condition
 
-## 1) Differences between two timepoints
+## Differences between two timepoints
 ```{r,fig.wide=TRUE}
 # 1) the differences between two timepoints
 estimates_dynamics[["plot_timepoint_differences"]]
@@ -177,7 +177,7 @@ between two time points. If the 95% HDI lies below zero we likely have a
 decrease in concentrations between the two time points, if it is above zero we 
 likely have an increase in concentrations between time points. 
 
-## 2) Dynamic profiles
+## Dynamic profiles
 ```{r,fig.wide=TRUE}
 # 2) dynamic profiles
 estimates_dynamics[["plot_dynamics"]]
