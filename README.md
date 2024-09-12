@@ -60,6 +60,7 @@ probabilistic models:
 
 ## Workflow
 
-For a worked example see Vignette.
+For a worked example see Vignette (Folder /vignettes, file
+MetaboDynamics.html).
 
 ![](man/figures/README-MetaboDynamics_pitch.png)
