@@ -1,11 +1,11 @@
-#' Comparison of metabolites between clusters of different experimental conditions
+#' Comparison of metabolite sets between dynamics clusters of different experimental conditions
 #'
-#' Uses the Jaccard Index to compare metabolite names between clusters of
+#' Uses the Jaccard Index to compare metabolite names between dynamics clusters of
 #' different experimental conditions
 #'
 #' @param clusters a dataframe containing the columns "metabolite" specifying the
 #' metabolite names to be compared and cluster IDs(column named "cluster") of
-#' clusters of similar dynamics,as well as a column "condition" specifying
+#' clusters of similar dynamics, as well as a column "condition" specifying
 #' the experimental conditions
 #' to be compared
 #' @param metabolite column in "clusters" that specifies either metabolite name

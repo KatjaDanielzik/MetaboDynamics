@@ -1,17 +1,17 @@
 #' extract_estimates_dynamics
 #'
-#' Extracts the mean concentrations (mu) at every timepoint from the dynamic model fit as well as the 95% HDI. As well as the estimated standard deviation of metabolite concentrations at every time point (sigma) and the pooled standard deviation of every metabolite over all timepoints (lambda).
+#' Extracts the mean concentrations (mu) at every timepoint from the dynamics model fit, the 95% highest density interval (HDI), the estimated standard deviation of metabolite concentrations at every time point (sigma), and the pooled standard deviation of every metabolite over all timepoints (lambda).
 #' Additionally samples from the posterior of mu can be drawn. This can be helpful if p.e. one wants to estimate the clustering precision. Lambda can be used for clustering algorithms such as VSClust that also take the variance into account.
 #'
 #' @param data dataframe used for modeling
 #' @param M number of metabolites, default requires a column in data named "metabolite"
-#' @param t number of unique timepoints in data, the default require a column named "time"
+#' @param t number of unique timepoints in data, the default requires a column named "time"
 #' @param kegg column in "data" that contains the KEGG IDs or other identifier of metabolites
 #' @param condition name of column in dataframe data that specifies the experimental condition, default requires a column named "dose"
-#' @param fits lits of model fits for which estimates should be extracted
-#' @param iter how many iterations were used to fit the dynamic model
-#' @param warmup how many warm-up iterations were used to fit the dynamic model
-#' @param chains how many chains were used to fit the dynamic model
+#' @param fits list of model fits for which estimates should be extracted
+#' @param iter how many iterations were used to fit the dynamics model
+#' @param warmup how many warm-up iterations were used to fit the dynamics model
+#' @param chains how many chains were used to fit the dynamics model
 #' @param samples how many posterior samples should be drawn (p.e. for check of clustering precision)
 #'
 #' @import dplyr

@@ -1,16 +1,16 @@
-#' Comparison of dynamic between clusters of different experimental conditions
+#' Comparison of metabolite dynamics clusters under different experimental conditions
 #'
-#' Employs a Bayesian model that assumes a normal distribution of euclidean
-#' distances between dynamic vectors of two clusters that come from different
+#' Employs a Bayesian model that assumes a normal distribution of Euclidean
+#' distances between dynamics vectors (metabolite concentrations at different time points) of two clusters that come from different
 #' experimental conditions to estimate the mean distance between clusters.
 #'
 #' @param clusters a dataframe containing the dynamics and '
 #' cluster IDs(column named "cluster") of clusters of similar dynamics,
-#' as well as a column "condition" specifying the experimental condtions
+#' as well as a column "condition" specifying the experimental conditions
 #' to be compared.
 #' @param dynamics vector specifying the column names of dataframe clusters
-#' that hold the dynamic information
-#' @param cores on how many cores the Bayesian model should run
+#' that hold the dynamics information
+#' @param cores on how many cores the Bayesian model should be fitted
 #'
 #' @importFrom stats dist
 #' @importFrom rstan sampling
