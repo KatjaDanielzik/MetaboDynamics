@@ -2,20 +2,20 @@
 % Please edit documentation in R/compare_dynamics.R
 \name{compare_dynamics}
 \alias{compare_dynamics}
-\title{Comparison of dynamic between clusters of different experimental conditions}
+\title{Comparison of metabolite dynamics clusters under different experimental conditions}
 \usage{
 compare_dynamics(clusters, dynamics, cores = 4)
 }
 \arguments{
 \item{clusters}{a dataframe containing the dynamics and '
 cluster IDs(column named "cluster") of clusters of similar dynamics,
-as well as a column "condition" specifying the experimental condtions
+as well as a column "condition" specifying the experimental conditions
 to be compared.}
 
 \item{dynamics}{vector specifying the column names of dataframe clusters
-that hold the dynamic information}
+that hold the dynamics information}
 
-\item{cores}{on how many cores the Bayesian model should run}
+\item{cores}{on how many cores the Bayesian model should be fitted}
 }
 \value{
 a list holding a 1) dataframe of estimates of the mean distance
@@ -25,8 +25,8 @@ standard deviation ("sigma")
 3) a ggplot2 object visualizing the cluster comparison
 }
 \description{
-Employs a Bayesian model that assumes a normal distribution of euclidean
-distances between dynamic vectors of two clusters that come from different
+Employs a Bayesian model that assumes a normal distribution of Euclidean
+distances between dynamics vectors (metabolite concentrations at different time points) of two clusters that come from different
 experimental conditions to estimate the mean distance between clusters.
 }
 \examples{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/extract_diagnostics_dynamics.R
 \name{extract_diagnostics_dynamics}
 \alias{extract_diagnostics_dynamics}
-\title{Extracts diagnostic criteria from dynamics model}
+\title{Extracts diagnostic criteria from numeric fit of Bayesian model of dynamics}
 \usage{
 extract_diagnostics_dynamics(
   data,
@@ -19,7 +19,7 @@ extract_diagnostics_dynamics(
 \arguments{
 \item{data}{dataframe used to fit dynamics model}
 
-\item{N}{number of rows in used dataframe}
+\item{N}{number of rows in that dataframe}
 
 \item{M}{number of metabolites in experimental dataset}
 
@@ -47,10 +47,10 @@ contains necessary information for Posterior predictive check
 }
 \description{
 gathers number of divergences, rhat values, number of effective
-samples (n_eff) and provides plots for diagnostics criteria as well ad
-Posterior predictive checks. Dataframe "model_diagnostics" contains
+samples (n_eff) and provides plots for diagnostics criteria as well as
+posterior predictive checks. Dataframe "model_diagnostics" contains
 information about experimental condition, number of divergent transitions
-and rhat and neff values for all timepoints
+and rhat and neff values for all timepoints.
 }
 \examples{
 data("data_sim")

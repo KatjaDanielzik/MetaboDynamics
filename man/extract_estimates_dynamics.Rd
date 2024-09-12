@@ -22,19 +22,19 @@ extract_estimates_dynamics(
 
 \item{M}{number of metabolites, default requires a column in data named "metabolite"}
 
-\item{t}{number of unique timepoints in data, the default require a column named "time"}
+\item{t}{number of unique timepoints in data, the default requires a column named "time"}
 
 \item{kegg}{column in "data" that contains the KEGG IDs or other identifier of metabolites}
 
 \item{condition}{name of column in dataframe data that specifies the experimental condition, default requires a column named "dose"}
 
-\item{fits}{lits of model fits for which estimates should be extracted}
+\item{fits}{list of model fits for which estimates should be extracted}
 
-\item{iter}{how many iterations were used to fit the dynamic model}
+\item{iter}{how many iterations were used to fit the dynamics model}
 
-\item{warmup}{how many warm-up iterations were used to fit the dynamic model}
+\item{warmup}{how many warm-up iterations were used to fit the dynamics model}
 
-\item{chains}{how many chains were used to fit the dynamic model}
+\item{chains}{how many chains were used to fit the dynamics model}
 
 \item{samples}{how many posterior samples should be drawn (p.e. for check of clustering precision)}
 }
@@ -44,7 +44,7 @@ the estimates at the timepoints and samples from the posterior
 (number as specified in samples)
 }
 \description{
-Extracts the mean concentrations (mu) at every timepoint from the dynamic model fit as well as the 95\% HDI. As well as the estimated standard deviation of metabolite concentrations at every time point (sigma) and the pooled standard deviation of every metabolite over all timepoints (lambda).
+Extracts the mean concentrations (mu) at every timepoint from the dynamics model fit, the 95\% highest density interval (HDI), the estimated standard deviation of metabolite concentrations at every time point (sigma), and the pooled standard deviation of every metabolite over all timepoints (lambda).
 Additionally samples from the posterior of mu can be drawn. This can be helpful if p.e. one wants to estimate the clustering precision. Lambda can be used for clustering algorithms such as VSClust that also take the variance into account.
 }
 \examples{

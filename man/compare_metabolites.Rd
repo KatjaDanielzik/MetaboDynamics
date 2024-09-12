@@ -2,14 +2,14 @@
 % Please edit documentation in R/compare_metabolites.R
 \name{compare_metabolites}
 \alias{compare_metabolites}
-\title{Comparison of metabolites between clusters of different experimental conditions}
+\title{Comparison of metabolite sets between dynamics clusters of different experimental conditions}
 \usage{
 compare_metabolites(clusters, metabolite = "metabolite")
 }
 \arguments{
 \item{clusters}{a dataframe containing the columns "metabolite" specifying the
 metabolite names to be compared and cluster IDs(column named "cluster") of
-clusters of similar dynamics,as well as a column "condition" specifying
+clusters of similar dynamics, as well as a column "condition" specifying
 the experimental conditions
 to be compared}
 
@@ -21,7 +21,7 @@ a list holding a 1) dataframe of Jaccard indices between clusters
 2) a ggplot2 object visualizing the cluster comparison
 }
 \description{
-Uses the Jaccard Index to compare metabolite names between clusters of
+Uses the Jaccard Index to compare metabolite names between dynamics clusters of
 different experimental conditions
 }
 \examples{

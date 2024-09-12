@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_dynamics_model.R
 \name{fit_dynamics_model}
 \alias{fit_dynamics_model}
-\title{Fits dynamic model}
+\title{Fits dynamics model}
 \usage{
 fit_dynamics_model(
   data = intra,
@@ -20,7 +20,7 @@ fit_dynamics_model(
 }
 \arguments{
 \item{data}{concentration table containing the columns "metabolite",
-"condition", "cpc_stand" for default}
+"condition", "cpc_stand" by default}
 
 \item{metabolite}{column of "data" that contains the metabolite names or IDs}
 
@@ -35,28 +35,28 @@ centered and normalized per metabolite and experimental condition (mean=0, sd=1)
 \item{chains}{how many Markov-Chains should be used for model fitting, use at
 least two, default=4}
 
-\item{cores}{how many cores should be used for model fitting, this
-parallelizes the model fitting and therefore speeds it up default=4}
+\item{cores}{how many cores should be used for model fitting; this
+parallelizes the model fitting and therefore speeds it up; default=4}
 
 \item{adapt_delta}{target average acceptance probability, can be adapted if
 divergent transitions are reported, default is 0.95}
 
 \item{max_treedepth}{can be adapted if model throws warnings about hitting
-max_treedepth, warnings are mostly effeciency not validity concerns and
+max_treedepth, warnings are mostly efficiency not validity concerns and
 treedepth can be raised, default=10}
 
 \item{iter}{how many iterations are run, increasing might help with effective}
 
 \item{warmup}{how many iterations the model warms up for, increasing might
-facilitate efficiences, must be at least 25\% of ITER, default=iter/4}
+facilitate efficiency, must be at least 25\% of ITER, default=iter/4}
 }
 \value{
-returns a list of modelfits. One modelfit named fit_condition per
+returns a list of model fits. One model fit named fit_condition per
 experimental condition
 }
 \description{
-Employs a hierachical model that assumes a normal distribution of
-standardized (mean=0,sd=1) log(cpc) values for robust estimation of mean
+Employs a hierarchical model that assumes a normal distribution of
+standardized (mean=0, sd=1) log(cpc) (cpc = concentration per cell) values for robust estimation of mean
 concentrations over time of single metabolites at single experimental
 conditions.
 }

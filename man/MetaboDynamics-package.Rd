@@ -4,9 +4,9 @@
 \name{MetaboDynamics-package}
 \alias{MetaboDynamics}
 \alias{MetaboDynamics-package}
-\title{MetaboDynamics: Bayesian Analysis of longitudinal metabolomics data}
+\title{MetaboDynamics: Bayesian analysis of longitudinal metabolomics data}
 \description{
-MetaboDynamics is an R-package that provides a framework of probabilistic models to analyze longitudinal metabolomics data. It enables robust estimation of mean concentrations despite varying spread between timepoints and reports differences between timepoints as well as metabolite specific dynamic profiles that can be used for clustering. Probabilistic Over-representation analysis and comparison betweeen clusters of different experimental conditions.
+MetaboDynamics is an R-package that provides a framework of probabilistic models to analyze longitudinal metabolomics data. It enables robust estimation of mean concentrations despite varying spread between timepoints and reports differences between timepoints as well as metabolite specific dynamics profiles that can be used for identifying "dynamics clusters" of metabolites of similar dynamics. Provides probabilistic over-representation analysis and comparison betweeen clusters of different experimental conditions.
 }
 \seealso{
 Useful links:

@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_ORA_dataframes.R
 \name{get_ORA_dataframes}
 \alias{get_ORA_dataframes}
-\title{retrieve background and annotation information for over-representation analysis
+\title{Retrieve background and annotation information for over-representation analysis
 (ORA)}
 \usage{
 get_ORA_dataframes(
@@ -16,9 +16,9 @@ get_ORA_dataframes(
 \item{data}{data set to be analyzed with ORA. Must at least contain a column
 with KEGG IDs}
 
-\item{kegg}{column name of "data" which holds KEGG IDs}
+\item{kegg}{column name of "data" that holds KEGG IDs}
 
-\item{metabolite_name}{column name of "data" which holds metabolite names}
+\item{metabolite_name}{column name of "data" that holds metabolite names}
 
 \item{update_background}{logical. Should the background information be updated?
 If TRUE this may take some time.}
@@ -27,10 +27,10 @@ If TRUE this may take some time.}
 a list with dataframes "background" and "annotation" needed for ORA
 }
 \description{
-uses the package KEGGREST to retrieve background and annotation information
+Uses the package KEGGREST to retrieve background and annotation information
 needed for over-representation analysis. As KEGGREST only allows 10 queries
-per second this might take some time to run dependent on the size of the
-dataset and organism. Check afterwards if all functional modules are
+per second this might take some time to run, depending on the size of the
+dataset and organism. The user should check afterwards if all functional modules are
 applicable for the analysis of the dataset (p.e. organism, tissue).
 }
 \examples{
