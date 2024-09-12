@@ -17,13 +17,11 @@ vignette: >
 BiocStyle::markdown()
 ```
 
-This package was built to facilitate the analysis of longitudinal metabolomics
-data. Most tools only allow the comparison between two time points or
-experimental conditions and are using frequentist statistical methods.
-
-As example we have a data set of irradiated cancer cells lines that were observed over four timepoints.
+This package was developed to facilitate the analysis of longitudinal metabolomics data. Most tools only allow the comparison between two time points or experimental conditions and are using frequentist statistical methods.
 
 Here we want to show a complete workflow to analyze concentration tables.
+
+As an example we have a data set of irradiated cancer cells lines that were observed over four timepoints.
 
 ## Setup: load required packages
 ```{r setup}
