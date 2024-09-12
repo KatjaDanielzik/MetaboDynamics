@@ -17,17 +17,15 @@ vignette: >
 BiocStyle::markdown()
 ```
 
-Here we want to show a complete workflow to analyze concentration tables.
-As example we have a data set of irradiated cancer cells lines that were observed
-over four timepoints.
-
 This package was built to facilitate the analysis of longitudinal metabolomics
 data. Most tools only allow the comparison between two time points or
 experimental conditions and are using frequentist statistical methods.
 
+As example we have a data set of irradiated cancer cells lines that were observed over four timepoints.
+
 Here we want to show a complete workflow to analyze concentration tables.
 
-## setup: load required packages
+## Setup: load required packages
 ```{r setup}
 library(MetaboDynamics)
 library(ggplot2)
@@ -35,7 +33,7 @@ library(dplyr)
 library(tidyr)
 ```
 
-## load data and plot data overview
+## Load data and plot data overview
 ```{r,fig.wide=TRUE}
 data("data_sim")
 ggplot(data_sim, aes(x = measurement)) +
@@ -45,16 +43,14 @@ ggplot(data_sim, aes(x = measurement)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   ggtitle("raw data", "raw measurements")
 ```
-We have a simulated data set of 98 metabolites with three measurement replicates
-at four time points (1-4) across 3 experimental conditions (A-B).
+We have a simulated data set of 98 metabolites with three measurement replicates at four time points (1-4) across 3 experimental conditions (A-B).
 In the first step in this workflow we estimate the dynamics of every single 
 metabolite at every experimental condition (here: radiation dose).
 As metabolomics data is often noisy and we generally have few replicates due
 to high costs, a robust method is needed for the estimation of mean
 concentrations at every time point. For this we employ a Bayesian hierarchical 
 model that assumes normal distributions of log-transformed metabolite 
-concentrations. 
-The next plot shows the raw dynamics of single metabolites.
+concentrations. The next plot shows the raw dynamics of single metabolites.
 
 ```{r,fig.wide=TRUE}
 # we standardize to a mean of zero and a standard deviation of one of log-transformed data
@@ -78,11 +74,7 @@ ggplot(data_sim) +
   ggtitle("raw metabolite dynamics", "color=metabolite")
 ```
 We define dynamics as deviations at the observed time points from the 
-metabolite's mean concentration over time. 
-As the raw concentrations of metabolites can differ by orders of magnitudes from
-each other, and we want to be able to compare dynamics of metabolites with each
-other, we standardize each metabolite at each radiation dose to a mean of zero 
-and a standard deviation of one. In the simulated data set the scaled measurements
+metabolite's mean concentration. As the raw concentrations of metabolites can differ by orders of magnitude from each other, and we want to be able to compare dynamics of metabolites with each other, we standardize each metabolite at each radiation dose to a mean of zero and a standard deviation of one. In the simulated data set the scaled measurements
 are in column "m_scaled".
 ```{r,fig.wide=TRUE}
 ggplot(data_sim) +
@@ -97,12 +89,10 @@ ggplot(data_sim) +
   ggtitle("standardized dynamics", "color=metabolite")
 ```
 
-Now we can finally model the dynamics. This might take up to 10 minutes per
-experimental condition. 
+Now we can finally model the dynamics. This might take of the order of 10 minutes per experimental condition. 
 
-We employ a Bayesian hierarchical model with con= metabolite concentrations,
-m= metabolite, 
-c= experimental condition and t= time point ID:
+We employ a Bayesian hierarchical model with con = metabolite concentrations,
+m = metabolite, c = experimental condition and t = time point ID:
 
 \begin{align*}
 \log(con_{m,c,t})&\sim {\sf normal}(\mu_{m,c,t},\sigma_{m,c,t}) \\ 
@@ -144,10 +134,7 @@ diagnostics_dynamics[["plot_PCC_C"]]
 
 This returns a list of model fits that are named by the experimental condition
 ("A","B","C"). With extract_diagnostics_dynamics() we can extract all
-the diagnostic criteria of Bayesian models (rhat,neff,divergences,max_treedept)
-and visualize them. Additionally dataframes for visual Posterior predictive 
-checks (PPC) are prepared and Plots generated for the PPCs and diagnostic 
-criteria.
+the diagnostic criteria of MCMC runs to fit a Bayesian model (rhat, neff, divergences, max_treedepth) and visualize them. Additionally dataframes for visual Posterior predictive checks (PPC) are prepared and Plots generated for the PPCs and diagnostic criteria.
 
 After checking the diagnostic criteria and the PPC we can extract the estimates:
 
@@ -161,38 +148,29 @@ estimates_dynamics <- extract_estimates_dynamics(
 ```
 
 We get two major outputs:
-1) the estimation of concentration differences between two subsequent timepoints
-  of each metabolite at each experimental condition
+1) the estimation of concentration differences between two subsequent timepoints of each metabolite at each experimental condition
 2) the dynamic profiles of each metabolites at each experimental condition
 
-## 1) differences between two timepoints
+## 1) Differences between two timepoints
 ```{r,fig.wide=TRUE}
 # 1) the differences between two timepoints
 estimates_dynamics[["plot_timepoint_differences"]]
 ```
 If the 95% highest density interval of the posterior does not include zero
-we can confidently stat that there is a difference in mean concentrations 
-between two time points. If the 95% HDI is below zero we have a decrease in
-concentrations between the two time points, if it is above zero we have an
-increase in concentrations between time points. 
+we can rather credibly state that there is a difference in mean concentrations 
+between two time points. If the 95% HDI lies below zero we likely have a decrease in concentrations between the two time points, if it is above zero we likely have an increase in concentrations between time points. 
 
-## 2) dynamic profiles
+## 2) Dynamic profiles
 ```{r,fig.wide=TRUE}
 # 2) dynamic profiles
 estimates_dynamics[["plot_dynamics"]]
 ```
-So we now have dynamic profiles of the metabolites at each radiation dose.
-What do we do with this?
-We could cluster these dynamics vectors, that we obtained (estimates_dynamics[,c("mu1.mean":"mut.mean)]) to see if we find groups of metabolites that
+So we now have dynamic profiles of many metabolites at each radiation dose.
+We could now cluster these metabolite specific dynamics vectors (estimates_dynamics[,c("mu1.mean":"mut.mean)]) to see if groups of metabolites 
 have similar dynamics.
 
-
-# cluster dynamics
-For the sake of demonstration we only show a rudimentary hierachical clustering
-with the number of optimal clusters being the number of groups we used for 
-simulating the data (8). In a real life example optimal number of clusters
-can be determined by optimal clustering criteria such as Gap statistics and
-average silhouette. 
+# Cluster dynamics
+For the sake of demonstration we only show a rudimentary hierarchical clustering with the number of optimal clusters being the number of groups we used for simulating the data (8). In a real life example optimal number of clusters can be determined by optimal clustering criteria such as Gap statistics and average silhouette. 
 ```{r}
 # get distances between vectors
 dd_A <- dist(
@@ -222,10 +200,10 @@ dd_B <- dist(
   )],
   method = "euclidean"
 )
-# hierachical clustering
+# hierarchical clustering
 clust <- hclust(dd_B, method = "ward.D2")
 clust_cut <- cutree(clust, k = 8)
-# assing cluster ID to estimates
+# assigning cluster ID to estimates
 clust_B <- estimates_dynamics[["B"]][, c(
   "metabolite", "condition", "mu1_mean", "mu2_mean",
   "mu3_mean", "mu4_mean"
@@ -242,10 +220,10 @@ dd_C <- dist(
   )],
   method = "euclidean"
 )
-# hierachical clustering
+# hierarchical clustering
 clust <- hclust(dd_C, method = "ward.D2")
 clust_cut <- cutree(clust, k = 8)
-# assing cluster ID to estimates
+# assigning cluster ID to estimates
 clust_C <- estimates_dynamics[["C"]][, c(
   "metabolite", "condition", "mu1_mean", "mu2_mean",
   "mu3_mean", "mu4_mean"
@@ -257,9 +235,7 @@ cluster <- rbind(clust_A, clust_B, clust_C)
 rm(clust_A, clust_B, clust_C)
 ```
 
-We combine all clustering results in one dataframe that hold columns "metabolite",
-"condition", "mu1-t.mean" and "cluster". "Cluster" refers to the cluster ID
-of the metabolite.
+We combine all clustering results in one dataframe that hold columns "metabolite", "condition", "mu1-t.mean" and "cluster". "Cluster" refers to the cluster ID of the metabolite.
 
 ```{r,fig.wide=TRUE}
 temp <- cluster
@@ -283,24 +259,17 @@ rm(temp)
 ```
 
 As we can see metabolites show different dynamics in different experimental
-conditions.
-Can we quantify the biological function of these dynamics clusters?
+conditions. Can we quantify the biological function of these dynamics clusters?
 
 # Over-representation analysis of functional modules in dynamics clusters
 To quantify the possible biological function of these dynamics clusters we 
-retrieved from the KEGG-database the following information 
-(with package KEGGREST):
+retrieved from the KEGG-database the following information with package KEGGREST:
 1) to which functional modules our experimental metabolites are annotated and
 2) which metabolites are annotated to functional modules in general.
 
 The functional modules of the KEGG-database are organised in three hierarchies:
 upper, middle and lower. Here we will do functional analysis on the middle 
-hierarchy. 
-To facilitate analysis the data frames "metabolite_modules", which holds the 
-information about experimental metabolites, and "modules_compounds", which holds
-the information about which metabolites are in general annotated to functional 
-modules, were prepared. 
-We load both data sets and can inspect the documentation.
+hierarchy. To facilitate analysis the data frames "metabolite_modules", which holds the information about experimental metabolites, and "modules_compounds", which holds the information about which metabolites are in general annotated to functional modules, were prepared. We load both data sets and can inspect the documentation.
 ```{r}
 data("metabolite_modules")
 help("metabolite_modules")
@@ -330,18 +299,10 @@ lung cancer cell line.
 # metabolite_modules <- metabolite_modules[-which(metabolite_modules$middle_hierachy=="Biosynthesis of terpenoids and polyketides"),]
 ```
 
-
-
-
 For the functional analysis we employ a hypergeometric model. We consider a 
 functional module as over-expressed in a cluster if the 95% inter-quantile
-range (ICR) of the log-transformed probabilities of OvEs lies above
-zero. OvE refers to the ratio of observed metabolites in a cluster being mapped 
-to a functional module over the number of expected metabolites in a cluster 
-being mapped to a module under the assumption of a hypergeometric distribution
-(=drawing without replacement).
-We apply the functional analysis to the middle and lower hierarchy of functional
-modules. 
+range (ICR) of the log-transformed probabilities of OvEs (observed vs expected) lies above zero. OvE refers to the ratio of observed metabolites in a cluster being mapped to a functional module over the number of expected metabolites in a cluster being mapped to a module under the assumption of a hypergeometric distribution (=drawing without replacement).
+We apply the functional analysis to the middle and lower hierarchy of functional modules. 
 ```{r,fig.wide=TRUE}
 data("cluster")
 ORA <- ORA_hypergeometric(background = modules_compounds, annotations = metabolite_modules, clusters = cluster, tested_column = "middle_hierarchy")
@@ -351,21 +312,20 @@ ORA_lower <- ORA_hypergeometric(background = modules_compounds, annotations = me
 ORA_lower[["plot_ORA"]]
 ```
 
-Great, we can now see which functional module is over- 
-(green points and error-bars) or under-represented (none in this example) in 
+Great, we can now see which functional module is over- (green points and error-bars) or under-represented (none in this example) in 
 which dynamics cluster! For instance in cluster 3 at condition A and C the 
 modules "Energy metabolism" and "Carbohydrate metabolism" are over-represented. 
 
 # Comparison of clusters of different experimental conditions
 
-## dynamics 
+## Dynamics 
 We can not only do over-representation analysis of KEGG-functional modules but
 also compare dynamics clusters across different experimental conditions. For 
 this we employ a Bayesian model that estimates the mean difference as well as 
 the standard deviation of differences between dynamics clusters.
 
-dist= vector of pairwise euclidean distances between each dynamic vector of 
-cluster a and every dynamic vector of cluster b, ID= cluster pair ID
+dist = vector of pairwise euclidean distances between each dynamic vector of 
+cluster a and every dynamic vector of cluster b, ID = cluster pair ID
 \begin{align*}
 dist_{ID}&\sim {\sf normal}(\mu_{ID},\sigma_{ID}) \\
 \mu_{ID}&\sim {\sf normal^+}(0,2) \\
@@ -377,12 +337,10 @@ comparison_dynamics <- compare_dynamics(clusters = cluster, dynamics = c("mu1_me
 
 comparison_dynamics[["plot_dynamic_comparison"]]
 ```
-The bigger and brighter a point is the smaller is the mean distance between
-dynamic clusters and the smaller is the standard deviation. That means big bright
-points indicate high dynamic similarity which small spread. Here B_8 and A_4
-have high similiarity in dynamics. 
+The bigger and brighter a point, the smaller is the mean distance between
+dynamic clusters and the smaller is the standard deviation. That means big bright points indicate high dynamic similarity which small spread. Here B_8 and A_4 have high similiarity in dynamics. 
 
-## metabolites
+## Metabolites
 ```{r,fig.aling='center',fig.dpi=150}
 comparison_metabolites <- compare_metabolites(clusters = cluster)
 comparison_metabolites[["plot_metabolite_comparison"]]
@@ -394,7 +352,7 @@ the dynamics differ between the two radiation doses.
 
 Can we facilitate visualization?
 
-## combine both
+## Combine both
 ```{r,fig.aling='center',fig.dpi=150}
 dynamics <- comparison_dynamics[["estimates"]]
 metabolites <- comparison_metabolites[["Jaccard"]]
@@ -425,8 +383,7 @@ ggplot(temp, aes(x = cluster_b, y = cluster_a)) +
 ```
 We can find two cluster pairs that are pretty similar in regards to their
 composing metabolites but dissimilar in regards to their dynamics. Their ORA
-profiles are quit similar as expected from the similar metabolite compositions but
-they show different dynamics between experimental conditions: B_7 and A_4
+profiles are quite similar as expected from the similar metabolite compositions but they show different dynamics between experimental conditions: B_7 and A_4
 
 ```{r}
 sessionInfo()
