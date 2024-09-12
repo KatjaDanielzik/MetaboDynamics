@@ -14,6 +14,8 @@
 #' @param chains how many chains were used to fit the dynamics model
 #' @param samples how many posterior samples should be drawn (p.e. for check of clustering precision)
 #'
+#' @seealso [fit_dynamics_model()]/[extract_diagnostics_dynamics()]
+#'
 #' @import dplyr
 #' @import ggplot2
 #' @importFrom stats runif

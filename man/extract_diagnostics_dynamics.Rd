@@ -70,3 +70,6 @@ diagnostics <- extract_diagnostics_dynamics(
 diagnostics[["plot_neff"]]
 diagnostics[["plot_rhat"]]
 }
+\seealso{
+\link[=extract_estimates_dynamics]{fit_dynamics_model()}
+}

@@ -13,7 +13,9 @@
 #' @param metabolite_name column name of "data" that holds metabolite names
 #' @param update_background logical. Should the background information be updated?
 #' If TRUE this may take some time.
-#'
+#' 
+#' @seealso [ORA_hypergeometric()] 
+#' 
 #' @return a list with dataframes "background" and "annotation" needed for ORA
 #' @export
 #' @importFrom KEGGREST keggGet

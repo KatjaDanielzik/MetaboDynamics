@@ -63,3 +63,6 @@ estimates <- extract_estimates_dynamics(
 head(estimates)
 
 }
+\seealso{
+\link[=extract_diagnostics_dynamics]{fit_dynamics_model()}
+}

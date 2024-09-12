@@ -41,3 +41,6 @@ ORA_dataframes <- get_ORA_dataframes(data = data_sim[data_sim$metabolite=="ATP",
                                      update_background = FALSE)
 head(ORA_dataframes[["annotation"]])
 }
+\seealso{
+\code{\link[=ORA_hypergeometric]{ORA_hypergeometric()}}
+}

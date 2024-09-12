@@ -17,6 +17,8 @@
 #' @param scaled_measurement concentration values used to model fit, should be normalized by
 #' experimental condition and metabolite to mean of zero and standard deviation
 #' of one
+#' 
+#' @seealso [fit_dynamics_model()]/[extract_estimates_dynamics()]
 #'
 #' @import tidyr
 #' @import ggplot2

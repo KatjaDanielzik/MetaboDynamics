@@ -62,6 +62,7 @@ conditions.
 }
 \examples{
 data("data_sim")
+head(data_sim)
 # only fit to one metabolite at one condition
 # only one chain to shorten example run time -> use 4 chains in practice
 fits <- fit_dynamics_model(data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ],
@@ -71,4 +72,7 @@ fits <- fit_dynamics_model(data_sim[data_sim$condition == "A" & data_sim$metabol
 )
 fits
 
+}
+\seealso{
+\code{\link[=extract_diagnostics_dynamics]{extract_diagnostics_dynamics()}}/\code{\link[=extract_estimates_dynamics]{extract_estimates_dynamics()}}
 }

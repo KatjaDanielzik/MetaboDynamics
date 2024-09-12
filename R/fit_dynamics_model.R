@@ -27,12 +27,15 @@
 #' @param iter how many iterations are run, increasing might help with effective
 # sample size being to low, default=2000
 #'
+#' @seealso [extract_diagnostics_dynamics()]/[extract_estimates_dynamics()]
+#' 
 #' @return returns a list of model fits. One model fit named fit_condition per
 #' experimental condition
 #' @export
 #'
 #' @examples
 #' data("data_sim")
+#' head(data_sim)
 #' # only fit to one metabolite at one condition
 #' # only one chain to shorten example run time -> use 4 chains in practice
 #' fits <- fit_dynamics_model(data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ],

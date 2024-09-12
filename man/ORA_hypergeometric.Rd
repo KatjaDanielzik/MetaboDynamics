@@ -42,8 +42,11 @@ the cluster, log(p(OvE))<0 an under-representation.
 }
 \examples{
 data("cluster")
+head(cluster)
 data("modules_compounds")
+head(modules_compounds)
 data("metabolite_modules")
+head(metabolite_modules)
 # middly hierachy
 ORA <- ORA_hypergeometric(
   background = modules_compounds,
@@ -58,6 +61,10 @@ ORA_lower <- ORA_hypergeometric(
   tested_column = "lower_hierarchy"
 )
 ORA_lower[["plot_ORA"]]
+}
+\seealso{
+\code{\link[=get_ORA_dataframes]{get_ORA_dataframes()}} function to retrieve "background" and
+"annotation" data frames
 }
 \keyword{annotated}
 \keyword{are}
