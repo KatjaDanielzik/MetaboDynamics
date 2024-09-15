@@ -35,6 +35,17 @@ library(tidyr)
 ```
 
 # Load data and plot data overview
+
+We have a simulated data set of 98 metabolites with three measurement replicates 
+at four time points (1-4) across 3 experimental conditions (A-B).
+In the first step in this workflow we estimate the dynamics of every single 
+metabolite at every experimental condition (here: radiation dose).
+As metabolomics data is often noisy and we generally have few replicates due
+to high costs, a robust method is needed for the estimation of mean
+concentrations at every time point. For this we employ a Bayesian hierarchical 
+model that assumes normal distributions of log-transformed metabolite 
+concentrations. The next plot shows the raw data.
+
 ```{r,fig.wide=TRUE}
 data("data_sim")
 ggplot(data_sim, aes(x = measurement)) +
@@ -45,15 +56,8 @@ ggplot(data_sim, aes(x = measurement)) +
   ggtitle("raw data", "raw measurements")
 ```
 
-We have a simulated data set of 98 metabolites with three measurement replicates 
-at four time points (1-4) across 3 experimental conditions (A-B).
-In the first step in this workflow we estimate the dynamics of every single 
-metabolite at every experimental condition (here: radiation dose).
-As metabolomics data is often noisy and we generally have few replicates due
-to high costs, a robust method is needed for the estimation of mean
-concentrations at every time point. For this we employ a Bayesian hierarchical 
-model that assumes normal distributions of log-transformed metabolite 
-concentrations. The next plot shows the raw dynamics of single metabolites.
+The raw data is not distributed normally. So let's log-transform the values.
+In the integrated simulated dataset this is already done in the column "log_m".
 
 ```{r,fig.wide=TRUE}
 # we standardize to a mean of zero and a standard deviation of one of log-transformed data
@@ -64,8 +68,7 @@ ggplot(data_sim, aes(x = log_m)) +
   ggtitle("data", "log-transformed values")
 ```
 
-The raw data is not distributed normally. So let's log-transform the values.
-In the integrated simulated dataset this is already done in the column "log_m".
+The next plot shows the raw dynamics of single metabolites. 
 
 ```{r,fig.wide=TRUE}
 ggplot(data_sim) +
@@ -122,7 +125,16 @@ fits_dynamics <- fit_dynamics_model(
   condition = "condition", max_treedepth = 14,
   adapt_delta = 0.999, iter = 4000, cores = 7, chains = 4
 )
+```
 
+This returns a list of model fits that are named by the experimental condition
+("A","B","C"). With extract_diagnostics_dynamics() we can extract all
+the diagnostic criteria of MCMC runs to fit a Bayesian model (rhat, neff, 
+divergences, max_treedepth) and visualize them. Additionally data frames for 
+visual Posterior predictive checks (PPC) are prepared and Plots generated for 
+the PPCs and diagnostic criteria.
+
+```{r}
 # extract diagnostics
 diagnostics_dynamics <- extract_diagnostics_dynamics(
   data = data_sim, iter = 4000, # make sure iter is the same as used for fitting
@@ -141,13 +153,6 @@ diagnostics_dynamics[["plot_PCC_A"]]
 diagnostics_dynamics[["plot_PCC_B"]]
 diagnostics_dynamics[["plot_PCC_C"]]
 ```
-
-This returns a list of model fits that are named by the experimental condition
-("A","B","C"). With extract_diagnostics_dynamics() we can extract all
-the diagnostic criteria of MCMC runs to fit a Bayesian model (rhat, neff, 
-divergences, max_treedepth) and visualize them. Additionally data frames for 
-visual Posterior predictive checks (PPC) are prepared and Plots generated for 
-the PPCs and diagnostic criteria.
 
 After checking the diagnostic criteria and the PPC we can extract the estimates:
 
@@ -379,7 +384,9 @@ dist_{ID}&\sim {\sf normal}(\mu_{ID},\sigma_{ID}) \\
 \end{align*}
 
 ```{r,fig.aling='center',fig.dpi=150}
-comparison_dynamics <- compare_dynamics(clusters = cluster, dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"))
+comparison_dynamics <- compare_dynamics(clusters = cluster,
+                                        dynamics = c("mu1_mean", "mu2_mean",
+                                                     "mu3_mean", "mu4_mean"))
 
 comparison_dynamics[["plot_dynamic_comparison"]]
 ```
@@ -406,16 +413,6 @@ Can we facilitate visualization?
 dynamics <- comparison_dynamics[["estimates"]]
 metabolites <- comparison_metabolites[["Jaccard"]]
 temp <- left_join(dynamics, metabolites, by = c("cluster_a", "cluster_b"))
-ggplot(temp, aes(x = 1 / mu_mean, y = Jaccard)) +
-  geom_point(aes(col = 1 / sigma_mean)) +
-  theme_bw() +
-  scale_color_viridis_c() +
-  xlab("dynamics similarity") +
-  ylab("metabolite similarity") +
-  ggtitle("comparison of clusters")
-
-
-
 x <- unique(temp[, "cluster_a"])
 temp <- temp %>% mutate(scale_Jaccard = scale(Jaccard))
 ggplot(temp, aes(x = cluster_b, y = cluster_a)) +
