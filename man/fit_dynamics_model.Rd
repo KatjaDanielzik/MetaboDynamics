@@ -63,13 +63,12 @@ conditions.
 }
 \examples{
 data("data_sim")
-head(data_sim)
-# only fit to one metabolite at one condition
-# only one chain to shorten example run time -> use 4 chains in practice
-fits <- fit_dynamics_model(data=data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ],
-  scaled_measurement = "m_scaled", time = "time",
-  condition = "condition", max_treedepth = 14,
-  adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1
+data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim)
+data <- data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ]
+fits <- fit_dynamics_model(
+  data = data,
+  scaled_measurement = "m_scaled", condition = "condition", 
+  max_treedepth = 14, adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1
 )
 fits
 
