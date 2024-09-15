@@ -2,7 +2,7 @@
 \alias{metabolite_modules}
 \docType{data}
 \title{
-KEGG Query Results of experimental metabolites
+KEGG Query Results of experimental metabolites 
 }
 \description{
 Using the package KEGGREST (https://www.bioconductor.org/packages/release/bioc/html/KEGGREST.html) all experimental metabolites (see data("intra")) were queried with there KEGG-IDs and all functional modules recorded to which the metabolite is annotated in the KEGG-database.
@@ -30,8 +30,8 @@ script to obtain data is in R/metabolites_modules.R (last executed September 202
 \source{
 https://www.genome.jp/kegg/module.html
 }
-\examples{
-data("metabolite_modules")
-unique(metabolite_modules[metabolite_modules$metabolite=="ATP",]$module_name)
+\seealso{
+\link{data_sim}
 }
+
 \keyword{datasets}

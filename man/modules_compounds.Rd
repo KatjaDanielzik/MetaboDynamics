@@ -2,7 +2,7 @@
 \alias{modules_compounds}
 \docType{data}
 \title{
-KEGG Query Results Of Functional Modules
+Background KEGG Query Results Of Functional Modules
 }
 \description{
 Using the package KEGGREST (https://www.bioconductor.org/packages/release/bioc/html/KEGGREST.html) a list of all
@@ -28,9 +28,5 @@ script to obtain data is in R/modules_compounds.R (last executed September 2023)
 }
 \source{
 https://www.genome.jp/kegg/module.html
-}
-\examples{
-data("modules_compounds")
-unique(modules_compounds$middle_hierarchy)
 }
 \keyword{datasets}
