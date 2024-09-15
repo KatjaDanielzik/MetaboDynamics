@@ -18,11 +18,14 @@ KEGG IDs of metabolites that are assigned to functional modules}
 \item{annotations}{to which functional modules our experimental metabolites
 are assigned}
 
-\item{clusters}{dataframe containing columns "metabolite","cluster" and a
+\item{clusters}{dataframe containing columns "KEGG" specifying the KEGG
+identifiers of metabolites, "cluster" specifying the cluster ID of metabolites and a
 column specifying the experimental condition called "condition"}
 
 \item{tested_column}{column that is in background and annotations and on
 which the hypergeometric model will be executed}
+
+\item{kegg}{columname of "clusters" that specifying the KEGG IDs of metabolites}
 }
 \value{
 a list with a dataframe containing the ORA results and a plot of

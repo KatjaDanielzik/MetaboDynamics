@@ -13,6 +13,7 @@ hierachical clustering with 8 clusters (8 dynamic groups were simulated).
   A data frame with 294 observations on the following 7 variables.
   \describe{
     \item{\code{metabolite}}{Metabolite name as in data_sim}
+    \item{\code{KEGG}}{KEGG ID of "metabolite"}
     \item{\code{condition}}{Experimental condition as in data_sim}
     \item{\code{mu1_mean}}{estimated mean at time point 1}
     \item{\code{mu2_mean}}{estimated mean at time point 2}
@@ -100,6 +101,12 @@ rm(dd_C, clust, clust_cut)
 
 cluster <- rbind(clust_A, clust_B, clust_C)
 rm(clust_A, clust_B, clust_C)
+# join with KEGG IDs
+data(data_sim)
+data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim))
+cluster <- left_join(cluster,unique(data_sim[,c("metabolite","KEGG")]))
+cluster <- cluster%>%relocate("KEGG",.after="metabolite")
+
 }
 \examples{
 data(cluster)

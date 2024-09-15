@@ -16,8 +16,10 @@
 #' KEGG IDs of metabolites that are assigned to functional modules
 #' @param annotations to which functional modules our experimental metabolites
 #' are assigned
-#' @param clusters dataframe containing columns "metabolite","cluster" and a
+#' @param clusters dataframe containing columns "KEGG" specifying the KEGG 
+#' identifiers of metabolites, "cluster" specifying the cluster ID of metabolites and a
 #' column specifying the experimental condition called "condition"
+#' @param kegg columname of "clusters" that specifying the KEGG IDs of metabolites
 #' @param tested_column column that is in background and annotations and on
 #' which the hypergeometric model will be executed
 #
@@ -92,7 +94,8 @@ ORA_hypergeometric <- function(background, annotations,
   M <- unique(background[[tested_column]])
   ## get dataframe with only experimental metabolites that are mapped to
   # KEGG module
-  mapped_m <- annotations[annotations$KEGG %in% N, ]
+  mapped_m <- annotations[annotations$KEGG %in% N,]
+  mapped_m <- mapped_m[,-2]
 
   # internal helper function to retrieve annotated KEGG IDs of a module
   #' @keywords internal
@@ -127,8 +130,8 @@ ORA_hypergeometric <- function(background, annotations,
   }
 
   for (j in unique(clusters$condition)) {
-    temp1 <- left_join(mapped_m, clusters[clusters$condition == j, ],
-      by = "metabolite"
+    temp1 <- left_join(mapped_m, clusters[clusters$condition == j,],
+      by="KEGG" , relationship = "many-to-many"
     )
     for (i in 1:length(unique(temp1$cluster))) {
       temp <- temp1[temp1$cluster == i, ]
