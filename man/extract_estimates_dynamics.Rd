@@ -52,9 +52,8 @@ data("data_sim")
 data <- data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ]
 fits <- fit_dynamics_model(
   data = data,
-  scaled_measurement = "m_scaled", time = "time",
-  condition = "condition", max_treedepth = 14,
-  adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1
+  scaled_measurement = "m_scaled", condition = "condition", 
+  max_treedepth = 14, adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1
 )
 estimates <- extract_estimates_dynamics(
   data = data, fits = fits, iter = 4000,

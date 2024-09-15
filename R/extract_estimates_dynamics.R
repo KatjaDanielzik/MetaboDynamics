@@ -30,9 +30,8 @@
 #' data <- data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ]
 #' fits <- fit_dynamics_model(
 #'   data = data,
-#'   scaled_measurement = "m_scaled", time = "time",
-#'   condition = "condition", max_treedepth = 14,
-#'   adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1
+#'   scaled_measurement = "m_scaled", condition = "condition", 
+#'   max_treedepth = 14, adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1
 #' )
 #' estimates <- extract_estimates_dynamics(
 #'   data = data, fits = fits, iter = 4000,
@@ -42,8 +41,8 @@
 #'
 extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
                                        t = length(unique(data$time)),
-                                       kegg = "KEGG" ,
-                                       condition = "dose", fits, iter = 2000,
+                                       kegg = "KEGG" ,condition = "dose",
+                                       fits, iter = 2000,
                                        warmup = iter / 4, chains = 4, samples = 1) {
   # bind variables
   dynamics_loc_cpc <- NULL
