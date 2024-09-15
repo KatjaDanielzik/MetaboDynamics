@@ -39,7 +39,7 @@
 #' head(data_sim)
 #' # only fit to one metabolite at one condition
 #' # only one chain to shorten example run time -> use 4 chains in practice
-#' fits <- fit_dynamics_model(data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ],
+#' fits <- fit_dynamics_model(data=data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ],
 #'   scaled_measurement = "m_scaled", time = "time",
 #'   condition = "condition", max_treedepth = 14,
 #'   adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1
@@ -54,14 +54,14 @@
 #' @importFrom RcppParallel RcppParallelLibs
 #' @useDynLib MetaboDynamics
 
-fit_dynamics_model <- function(data = intra, metabolite = "metabolite",
+fit_dynamics_model <- function(data, metabolite = "metabolite",
                                time = "time", condition = "dose",
                                scaled_measurement = "m_scaled", chains = 4, cores = 4,
                                adapt_delta = 0.95, max_treedepth = 10,
                                iter = 2000, warmup = iter / 4) {
  
   # check input class and convert SummarizedExperiment to dataframe
-  if(class(data)=="SummarizedExperiment"){
+  if(is(data,"SummarizedExperiment")){
     data <- as.data.frame(SummarizedExperiment::colData(data))
   }
     
