@@ -10,7 +10,8 @@
 #' to be compared.
 #' @param dynamics vector specifying the column names of dataframe clusters
 #' that hold the dynamics information
-#' @param cores on how many cores the Bayesian model should be fitted
+#' @param cores how many cores should be used for model fitting; this
+#' parallelizes the model fitting and therefore speeds it up; default=4
 #'
 #' @importFrom stats dist
 #' @importFrom rstan sampling
