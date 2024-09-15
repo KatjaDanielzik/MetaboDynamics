@@ -108,8 +108,7 @@ cluster <- left_join(cluster,unique(data_sim[,c("metabolite","KEGG")]))
 cluster <- cluster%>%relocate("KEGG",.after="metabolite")
 
 }
-\examples{
-data(cluster)
-head(cluster)
+\seealso{
+\link{data_sim}
 }
 \keyword{datasets}

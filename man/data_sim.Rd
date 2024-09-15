@@ -35,6 +35,7 @@ data("metabolite_modules")
 # Group <- middle_hierarchy
 
 library(dplyr)
+library(SummarizedExperiment)
 # Parameters (as before)
 
 n_features <- 98
@@ -175,13 +176,9 @@ simulated_data_df <- simulated_data_df %>%
 name_map_HMDB_CAS <- readr::read_csv("name_map_HMDB_CAS.csv")
 data_sim <- dplyr::left_join(data_sim,name_map_HMDB_CAS[,c("Query","KEGG")],join_by("metabolite"=="Query"))
 
-# convert to SummarizedExperiment class (necessary Bioconductor dependencies)
-data_sim <- SummarizedExperiment::SummarizedExperiment(colData=data_sim)
 }
 
-\examples{
-data(data_sim)
-dataframe <- as.data.frame(SummarizedExperiment::colData(data_sim))
-head(data_sim)
+\seealso{
+\link{cluster}
 }
 \keyword{datasets}
