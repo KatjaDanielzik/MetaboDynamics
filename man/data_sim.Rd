@@ -8,6 +8,8 @@ A simulated data set
 A simulated data set of 98 metabolites. 3 replicate measurements of 4 time points
 and at 3 experimental conditions. Metabolites are in 8 dynamics groups per
 experimental condition. 4 groups have varying dynamics between conditions.
+Is represented as a SummarizedExperiment object (\linkS4class{SummarizedExperiment}).
+
 }
 \usage{data("data_sim")}
 \format{
@@ -178,6 +180,7 @@ data_sim <- dplyr::left_join(data_sim,name_map_HMDB_CAS[,c("Query","KEGG")],join
 
 \examples{
 data(data_sim)
+dataframe <- as.data.frame(SummarizedExperiment::colData(data_sim))
 head(data_sim)
 }
 \keyword{datasets}

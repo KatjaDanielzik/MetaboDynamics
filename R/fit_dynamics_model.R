@@ -6,7 +6,8 @@
 #' conditions.
 #'
 #' @param data concentration table containing the columns "metabolite",
-#' "condition", "cpc_stand" by default
+#' "condition", "cpc_stand" by default or colData of a SummarizedExperiment
+#' \linkS4class{SummarizedExperiment} object
 #' @param metabolite column of "data" that contains the metabolite names or IDs
 #' @param time column of "time" that contains time as numeric, make sure your
 #' time column is ordered from lowest to highest for the model to work
@@ -48,6 +49,7 @@
 #' @import methods
 #' @import Rcpp
 #' @importFrom rstan sampling
+#' @importFrom SummarizedExperiment colData
 #' @importFrom rstantools rstan_config
 #' @importFrom RcppParallel RcppParallelLibs
 #' @useDynLib MetaboDynamics
@@ -57,6 +59,13 @@ fit_dynamics_model <- function(data = intra, metabolite = "metabolite",
                                scaled_measurement = "m_scaled", chains = 4, cores = 4,
                                adapt_delta = 0.95, max_treedepth = 10,
                                iter = 2000, warmup = iter / 4) {
+ 
+  # check input class and convert SummarizedExperiment to dataframe
+  if(class(data)=="SummarizedExperiment"){
+    data <- as.data.frame(SummarizedExperiment::colData(data))
+  }
+    
+    
   # get unique experimental conditions
   conditions <- unique(data[[condition]])
   fits <- list()
