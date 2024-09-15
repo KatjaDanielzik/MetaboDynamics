@@ -28,7 +28,7 @@
 #'
 #' @examples
 #' data("data_sim")
-#' data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim)
+#' data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim))
 #' data <- data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ]
 #' fits <- fit_dynamics_model(
 #'   data = data,
