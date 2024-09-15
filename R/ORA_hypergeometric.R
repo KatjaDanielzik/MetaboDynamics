@@ -180,7 +180,7 @@ ORA_hypergeometric <- function(background, annotations,
 
   for (i in 1:nrow(temp)) {
     temp2 <- temp[i, ]
-    temp3 <- cbind(temp2, n_theo = seq(from = 1, to = 100))
+    temp3 <- cbind(temp2, n_theo = seq(from = 1, to = 100),row.names=NULL)
     series <- rbind(series, temp3)
   }
   rm(temp, temp2, temp3, i)
