@@ -29,7 +29,7 @@
 #' dataframe (named "model_diagnostics") and one dataframe per condition that
 #' contains necessary information for Posterior predictive check
 #' (named "PPC_condition"). Additionally plots for diagnostics and PPC named
-#' "plot_criteria" and "plot_PPC_condition".
+#' "plot_criteria" and "plot_PPC_condition" are returned.
 #' @export
 #'
 #' @examples
