@@ -20,13 +20,16 @@
 #' @export
 #' @importFrom KEGGREST keggGet
 #' @importFrom KEGGREST keggList
+#' @importFrom SummarizedExperiment colData
 #' @importFrom stats na.omit
 #' @import dplyr
 #' @import stringr
 #'
 #' @examples
 #' data(data_sim)
-#' ORA_dataframes <- get_ORA_dataframes(data = data_sim[data_sim$metabolite=="ATP",],
+#' #' data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim))
+#' data <- data_sim[data_sim$metabolite == "ATP", ]
+#' ORA_dataframes <- get_ORA_dataframes(data = data,
 #'                                      kegg = "KEGG",
 #'                                      metabolite_name = "metabolite",
 #'                                      update_background = FALSE)
@@ -35,6 +38,12 @@
 get_ORA_dataframes <- function(data, kegg = "KEGG",
                                metabolite_name = "metabolite",
                                update_background = FALSE){
+  
+    # check input class and convert SummarizedExperiment to dataframe
+    if(is(data,"SummarizedExperiment")){
+      data <- as.data.frame(SummarizedExperiment::colData(data))
+    }
+  
     # bind variables to function
     ORA_dataframes <- list()
     metabolite_modules <- NULL
@@ -42,6 +51,7 @@ get_ORA_dataframes <- function(data, kegg = "KEGG",
     temp <- NULL
     temp3 <- NULL
     modules_compounds <- NULL
+    
 
     # hand KEGG IDs to KEGGREST, KEGGREST can only do 10 queries at a time
     metabolite_modules <- unique(as.data.frame(cbind(metabolite=data[[metabolite_name]],
