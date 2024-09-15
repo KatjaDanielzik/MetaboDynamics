@@ -29,6 +29,7 @@ observed over four timepoints.
 ## Setup: load required packages
 ```{r setup}
 library(MetaboDynamics)
+library(SummarizedExperiment)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
@@ -40,6 +41,9 @@ We have a simulated data set of 98 metabolites with three measurement replicates
 at four time points (1-4) across 3 experimental conditions (A-B).
 In the first step in this workflow we estimate the dynamics of every single 
 metabolite at every experimental condition (here: radiation dose).
+
+The simulated data is represented as SummarizedExperiment object.
+
 As metabolomics data is often noisy and we generally have few replicates due
 to high costs, a robust method is needed for the estimation of mean
 concentrations at every time point. For this we employ a Bayesian hierarchical 
@@ -48,6 +52,8 @@ concentrations. The next plot shows the raw data.
 
 ```{r,fig.wide=TRUE}
 data("data_sim")
+# convert to dataframe
+data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim))
 ggplot(data_sim, aes(x = measurement)) +
   geom_density() +
   theme_bw() +
@@ -119,6 +125,8 @@ criteria from the model fits.
 
 # Model dynamics
 ```{r,fig.wide=TRUE}
+# we can hand a SummarizedExperiment object to the function
+data(data_sim)
 # fit model
 fits_dynamics <- fit_dynamics_model(
   data = data_sim, scaled_measurement = "m_scaled", time = "time",
