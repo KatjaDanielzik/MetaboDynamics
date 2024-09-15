@@ -23,10 +23,10 @@
 #' @param max_treedepth can be adapted if model throws warnings about hitting
 #' max_treedepth, warnings are mostly efficiency not validity concerns and
 #' treedepth can be raised, default=10
+#' @param iter how many iterations are run, increasing might help with effective
+#' sample size being to low, default=2000
 #' @param warmup how many iterations the model warms up for, increasing might
 #' facilitate efficiency, must be at least 25% of ITER, default=iter/4
-#' @param iter how many iterations are run, increasing might help with effective
-# sample size being to low, default=2000
 #'
 #' @seealso [extract_diagnostics_dynamics()]/[extract_estimates_dynamics()]
 #' 

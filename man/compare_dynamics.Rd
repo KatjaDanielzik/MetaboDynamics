@@ -15,7 +15,8 @@ to be compared.}
 \item{dynamics}{vector specifying the column names of dataframe clusters
 that hold the dynamics information}
 
-\item{cores}{on how many cores the Bayesian model should be fitted}
+\item{cores}{how many cores should be used for model fitting; this
+parallelizes the model fitting and therefore speeds it up; default=4}
 }
 \value{
 a list holding a 1) dataframe of estimates of the mean distance

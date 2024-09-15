@@ -46,7 +46,8 @@ divergent transitions are reported, default is 0.95}
 max_treedepth, warnings are mostly efficiency not validity concerns and
 treedepth can be raised, default=10}
 
-\item{iter}{how many iterations are run, increasing might help with effective}
+\item{iter}{how many iterations are run, increasing might help with effective
+sample size being to low, default=2000}
 
 \item{warmup}{how many iterations the model warms up for, increasing might
 facilitate efficiency, must be at least 25\% of ITER, default=iter/4}
