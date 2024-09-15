@@ -24,8 +24,6 @@ column specifying the experimental condition called "condition"}
 
 \item{tested_column}{column that is in background and annotations and on
 which the hypergeometric model will be executed}
-
-\item{kegg}{columname of "clusters" that specifying the KEGG IDs of metabolites}
 }
 \value{
 a list with a dataframe containing the ORA results and a plot of

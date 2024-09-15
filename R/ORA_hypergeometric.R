@@ -19,7 +19,6 @@
 #' @param clusters dataframe containing columns "KEGG" specifying the KEGG 
 #' identifiers of metabolites, "cluster" specifying the cluster ID of metabolites and a
 #' column specifying the experimental condition called "condition"
-#' @param kegg columname of "clusters" that specifying the KEGG IDs of metabolites
 #' @param tested_column column that is in background and annotations and on
 #' which the hypergeometric model will be executed
 #

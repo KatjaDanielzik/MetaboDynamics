@@ -19,6 +19,7 @@
 #' @import dplyr
 #' @import ggplot2
 #' @importFrom stats runif
+#' @importFrom SummarizedExperiment colData
 #'
 #' @return a list of dataframes (one per experimental condition) that contains
 #' the estimates at the timepoints and samples from the posterior
@@ -45,6 +46,12 @@ extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite))
                                        kegg = "KEGG" ,condition = "dose",
                                        fits, iter = 2000,
                                        warmup = iter / 4, chains = 4, samples = 1) {
+  
+  # check input class and convert SummarizedExperiment to dataframe
+  if(is(data,"SummarizedExperiment")){
+    data <- as.data.frame(SummarizedExperiment::colData(data))
+  }
+  
   # bind variables
   dynamics_loc_cpc <- NULL
   temp_t <- NULL

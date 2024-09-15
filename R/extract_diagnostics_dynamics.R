@@ -23,6 +23,7 @@
 #' @import tidyr
 #' @import ggplot2
 #' @import dplyr
+#' @importFrom SummarizedExperiment colData
 #'
 #' @return a list which contains diagnostics criteria of all conditions in a
 #' dataframe (named "model_diagnostics") and one dataframe per condition that
@@ -49,11 +50,18 @@
 #' )
 #' diagnostics[["plot_neff"]]
 #' diagnostics[["plot_rhat"]]
+
 extract_diagnostics_dynamics <- function(data, N = nrow(data),
                                          M = length(unique(data$metabolite)),
                                          t = length(unique(data$time)),
                                          iter = 2000, warmup = iter / 4, chains = 4,
                                          fits, scaled_measurement = "m_scaled") {
+  
+  # check input class and convert SummarizedExperiment to dataframe
+  if(is(data,"SummarizedExperiment")){
+    data <- as.data.frame(SummarizedExperiment::colData(data))
+  }
+  
   # create list to store all subsequent results
   list_diagnostics <- list()
 
