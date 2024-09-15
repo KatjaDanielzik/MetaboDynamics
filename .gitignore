@@ -2,9 +2,11 @@
 how_to_create_a_package.Rmd
 filling_package_with_life.Rmd
 MetaboDynamics.Rproj
+/vignettes/.build.timestamp
 /src/MetaboDynamics.so
 /src/RcppExports.so
-/src/stanExports_m_Anova_partial.pooling.o
+/src/RcppExports.so
+/src/stanExports_m_ANOVA_partial_pooling.o
 /src/stanExports_m_cluster_distances_padded.o
 .Rproj.user
 .Rhistory
