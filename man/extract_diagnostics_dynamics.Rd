@@ -43,7 +43,7 @@ a list which contains diagnostics criteria of all conditions in a
 dataframe (named "model_diagnostics") and one dataframe per condition that
 contains necessary information for Posterior predictive check
 (named "PPC_condition"). Additionally plots for diagnostics and PPC named
-"plot_criteria" and "plot_PPC_condition".
+"plot_criteria" and "plot_PPC_condition" are returned.
 }
 \description{
 gathers number of divergences, rhat values, number of effective

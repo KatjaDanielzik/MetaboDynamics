@@ -37,10 +37,12 @@ applicable for the analysis of the dataset (p.e. organism, tissue).
 data("data_sim")
 data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim))
 data <- data_sim[data_sim$metabolite == "ATP", ]
-ORA_dataframes <- get_ORA_dataframes(data = data,
-                                     kegg = "KEGG",
-                                     metabolite_name = "metabolite",
-                                     update_background = FALSE)
+ORA_dataframes <- get_ORA_dataframes(
+  data = data,
+  kegg = "KEGG",
+  metabolite_name = "metabolite",
+  update_background = FALSE
+)
 head(ORA_dataframes[["annotation"]])
 }
 \seealso{
