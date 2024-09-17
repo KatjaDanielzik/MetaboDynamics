@@ -22,6 +22,36 @@ You can install the development version of MetaboDynamics from
 ``` r
 # install.packages("devtools")
 devtools::install_github("KatjaDanielzik/MetaboDynamics")
+#> Using GitHub PAT from the git credential store.
+#> Downloading GitHub repo KatjaDanielzik/MetaboDynamics@HEAD
+#> distribut... (0.4.0 -> 0.5.0) [CRAN]
+#> Skipping 16 packages ahead of CRAN: zlibbioc, XVector, SparseArray, S4Arrays, IRanges, S4Vectors, MatrixGenerics, BiocGenerics, GenomeInfoDbData, GenomeInfoDb, DelayedArray, Biobase, GenomicRanges, Biostrings, SummarizedExperiment, KEGGREST
+#> Installing 1 packages: distributional
+#> Installing package into '/tmp/RtmpX0JL6A/temp_libpath13864d660c0e'
+#> (as 'lib' is unspecified)
+#> ── R CMD build ─────────────────────────────────────────────────────────────────
+#> * checking for file ‘/tmp/Rtmp2Bocfh/remotes4cd235763bd4/KatjaDanielzik-MetaboDynamics-35427e3e925acc4784b20de5fcddb69bd906339b/DESCRIPTION’ ... OK
+#> * preparing ‘MetaboDynamics’:
+#> * checking DESCRIPTION meta-information ... OK
+#> * cleaning src
+#> * checking for LF line-endings in source and make files and shell scripts
+#> * checking for empty or unneeded directories
+#> * looking to see if a ‘data/datalist’ file should be added
+#> * building ‘MetaboDynamics_0.99.0.tar.gz’
+#> Installing package into '/tmp/RtmpX0JL6A/temp_libpath13864d660c0e'
+#> (as 'lib' is unspecified)
+```
+
+or from Bioconductor with:
+
+``` r
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("MetaboDynamics")
 ```
 
 ## Overview
@@ -57,6 +87,11 @@ probabilistic models:
 ## Workflow
 
 For a worked example see Vignette (“devel” branch: folder /vignettes,
-file MetaboDynamics.html).
+file MetaboDynamics.html). or if installed:
+
+``` r
+browseVignettes("MetaboDynamics")
+#> No vignettes found by browseVignettes("MetaboDynamics")
+```
 
 ![](man/figures/README-MetaboDynamics_pitch.png)

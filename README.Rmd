@@ -29,9 +29,20 @@ under different biological conditions.
 
 You can install the development version of MetaboDynamics from [GitHub](https://github.com/) with:
 
-``` r
+``` {r}
 # install.packages("devtools")
 devtools::install_github("KatjaDanielzik/MetaboDynamics")
+```
+
+or from Bioconductor with:
+```{r,eval=FALSE}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("MetaboDynamics")
 ```
 
 ## Overview
@@ -60,5 +71,10 @@ similarities between experimental conditions.
 ## Workflow
 
 For a worked example see Vignette ("devel" branch: folder /vignettes, file MetaboDynamics.html).
+or if installed:
+```{r}
+browseVignettes("MetaboDynamics")
+```
+
 
 ![](man/figures/README-MetaboDynamics_pitch.png) 
