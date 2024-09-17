@@ -70,7 +70,7 @@ similarities between experimental conditions.
 
 ## Workflow
 
-For a worked example see Vignette ("devel" branch: folder /vignettes, file MetaboDynamics.html).
+For a worked example see Vignette ("devel" branch: folder /vignettes, file MetaboDynamics.html)
 or if installed:
 ```{r,eval=FALSE}
 browseVignettes("MetaboDynamics")
