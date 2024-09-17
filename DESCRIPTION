@@ -44,4 +44,4 @@ LinkingTo:
     rstan (>= 2.18.1),
     StanHeaders (>= 2.18.0)
 SystemRequirements: GNU make
-biocViews: Software,Metabolomics,Bayesian,FunctionalPrediction,MultipleComparison
+biocViews: Software,Metabolomics,Bayesian,FunctionalPrediction,MultipleComparison,KEGG

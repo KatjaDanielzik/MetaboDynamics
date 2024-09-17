@@ -17,7 +17,7 @@
 #' @param scaled_measurement concentration values used to model fit, should be normalized by
 #' experimental condition and metabolite to mean of zero and standard deviation
 #' of one
-#' 
+#'
 #' @seealso [fit_dynamics_model()]/[extract_estimates_dynamics()]
 #'
 #' @import tidyr
@@ -50,18 +50,16 @@
 #' )
 #' diagnostics[["plot_neff"]]
 #' diagnostics[["plot_rhat"]]
-
 extract_diagnostics_dynamics <- function(data, N = nrow(data),
                                          M = length(unique(data$metabolite)),
                                          t = length(unique(data$time)),
                                          iter = 2000, warmup = iter / 4, chains = 4,
                                          fits, scaled_measurement = "m_scaled") {
-  
   # check input class and convert SummarizedExperiment to dataframe
-  if(is(data,"SummarizedExperiment")){
+  if (is(data, "SummarizedExperiment")) {
     data <- as.data.frame(SummarizedExperiment::colData(data))
   }
-  
+
   # create list to store all subsequent results
   list_diagnostics <- list()
 

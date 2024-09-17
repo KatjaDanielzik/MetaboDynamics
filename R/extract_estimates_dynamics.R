@@ -32,7 +32,7 @@
 #' data <- data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ]
 #' fits <- fit_dynamics_model(
 #'   data = data,
-#'   scaled_measurement = "m_scaled", condition = "condition", 
+#'   scaled_measurement = "m_scaled", condition = "condition",
 #'   max_treedepth = 14, adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1
 #' )
 #' estimates <- extract_estimates_dynamics(
@@ -43,15 +43,14 @@
 #'
 extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
                                        t = length(unique(data$time)),
-                                       kegg = "KEGG" ,condition = "dose",
+                                       kegg = "KEGG", condition = "dose",
                                        fits, iter = 2000,
                                        warmup = iter / 4, chains = 4, samples = 1) {
-  
   # check input class and convert SummarizedExperiment to dataframe
-  if(is(data,"SummarizedExperiment")){
+  if (is(data, "SummarizedExperiment")) {
     data <- as.data.frame(SummarizedExperiment::colData(data))
   }
-  
+
   # bind variables
   dynamics_loc_cpc <- NULL
   temp_t <- NULL

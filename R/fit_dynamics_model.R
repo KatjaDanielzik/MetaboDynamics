@@ -29,7 +29,7 @@
 #' facilitate efficiency, must be at least 25% of ITER, default=iter/4
 #'
 #' @seealso [extract_diagnostics_dynamics()]/[extract_estimates_dynamics()]
-#' 
+#'
 #' @return returns a list of model fits. One model fit named fit_condition per
 #' experimental condition
 #' @export
@@ -40,7 +40,7 @@
 #' data <- data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ]
 #' fits <- fit_dynamics_model(
 #'   data = data,
-#'   scaled_measurement = "m_scaled", condition = "condition", 
+#'   scaled_measurement = "m_scaled", condition = "condition",
 #'   max_treedepth = 14, adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1
 #' )
 #' fits
@@ -58,13 +58,12 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
                                scaled_measurement = "m_scaled", chains = 4, cores = 4,
                                adapt_delta = 0.95, max_treedepth = 10,
                                iter = 2000, warmup = iter / 4) {
- 
   # check input class and convert SummarizedExperiment to dataframe
-  if(is(data,"SummarizedExperiment")){
+  if (is(data, "SummarizedExperiment")) {
     data <- as.data.frame(SummarizedExperiment::colData(data))
   }
-    
-    
+
+
   # get unique experimental conditions
   conditions <- unique(data[[condition]])
   fits <- list()

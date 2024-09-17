@@ -10,13 +10,13 @@
 #' probabilites of these ratios.
 #' log(p(OvE))>0 indicates an over-representation of the functional module in
 #' the cluster, log(p(OvE))<0 an under-representation.
-#' @seealso [get_ORA_dataframes()] function to retrieve "background" and 
+#' @seealso [get_ORA_dataframes()] function to retrieve "background" and
 #' "annotation" data frames
-#' @param background dataframe that contains 
+#' @param background dataframe that contains
 #' KEGG IDs of metabolites that are assigned to functional modules
 #' @param annotations to which functional modules our experimental metabolites
 #' are assigned
-#' @param clusters dataframe containing columns "KEGG" specifying the KEGG 
+#' @param clusters dataframe containing columns "KEGG" specifying the KEGG
 #' identifiers of metabolites, "cluster" specifying the cluster ID of metabolites and a
 #' column specifying the experimental condition called "condition"
 #' @param tested_column column that is in background and annotations and on
@@ -93,8 +93,8 @@ ORA_hypergeometric <- function(background, annotations,
   M <- unique(background[[tested_column]])
   ## get dataframe with only experimental metabolites that are mapped to
   # KEGG module
-  mapped_m <- annotations[annotations$KEGG %in% N,]
-  mapped_m <- mapped_m[,-2]
+  mapped_m <- annotations[annotations$KEGG %in% N, ]
+  mapped_m <- mapped_m[, -2]
 
   # internal helper function to retrieve annotated KEGG IDs of a module
   #' @keywords internal
@@ -129,8 +129,8 @@ ORA_hypergeometric <- function(background, annotations,
   }
 
   for (j in unique(clusters$condition)) {
-    temp1 <- left_join(mapped_m, clusters[clusters$condition == j,],
-      by="KEGG" , relationship = "many-to-many"
+    temp1 <- left_join(mapped_m, clusters[clusters$condition == j, ],
+      by = "KEGG", relationship = "many-to-many"
     )
     for (i in 1:length(unique(temp1$cluster))) {
       temp <- temp1[temp1$cluster == i, ]
@@ -182,7 +182,7 @@ ORA_hypergeometric <- function(background, annotations,
 
   for (i in 1:nrow(temp)) {
     temp2 <- temp[i, ]
-    temp3 <- cbind(temp2, n_theo = seq(from = 1, to = 100),row.names=NULL)
+    temp3 <- cbind(temp2, n_theo = seq(from = 1, to = 100), row.names = NULL)
     series <- rbind(series, temp3)
   }
   rm(temp, temp2, temp3, i)

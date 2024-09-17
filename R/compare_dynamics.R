@@ -34,24 +34,23 @@
 #'   cores = 1
 #' )
 #' comparison[["plot_dynamic_comparison"]]
-
 compare_dynamics <- function(clusters, dynamics, cores = 4) {
   # bind objects to function
-    posterior_mu <- NULL
-    posterior_sigma <- NULL
-    posterior <- NULL
-    distances <- NULL
-    id <- NULL
-    temp_a <- NULL
-    temp_b <- NULL
-    distance <- NULL
-    N <- NULL
-    y_padded <- NULL
-    cluster_b <- NULL
-    cluster_a <- NULL
-    mu_mean <- NULL
-    "97.5%" <- NULL
-    "2.5%" <- NULL
+  posterior_mu <- NULL
+  posterior_sigma <- NULL
+  posterior <- NULL
+  distances <- NULL
+  id <- NULL
+  temp_a <- NULL
+  temp_b <- NULL
+  distance <- NULL
+  N <- NULL
+  y_padded <- NULL
+  cluster_b <- NULL
+  cluster_a <- NULL
+  mu_mean <- NULL
+  "97.5%" <- NULL
+  "2.5%" <- NULL
 
 
   # return object
