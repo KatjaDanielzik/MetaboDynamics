@@ -69,7 +69,7 @@ probabilistic models:
 ## Workflow
 
 For a worked example see Vignette (“devel” branch: folder /vignettes,
-file MetaboDynamics.html) or if installed:
+file MetaboDynamics.html) or if package is installed:
 
 ``` r
 browseVignettes("MetaboDynamics")

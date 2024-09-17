@@ -71,7 +71,7 @@ similarities between experimental conditions.
 ## Workflow
 
 For a worked example see Vignette ("devel" branch: folder /vignettes, file MetaboDynamics.html)
-or if installed:
+or if package is installed:
 ```{r,eval=FALSE}
 browseVignettes("MetaboDynamics")
 ```
