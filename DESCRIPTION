@@ -3,7 +3,7 @@ Title: Bayesian analysis of longitudinal metabolomics data
 Version: 0.99.0
 Authors@R: 
     c(person(given="Katja",family= "Danielzik", email="katja.danielzik@uni-due.de", role = c("aut", "cre"),
-    comment=c(ORCID="0009-0007-5021-6212")), 
+    comment=c(ORCID="0009-0007-5021-6212")),
     person(given="Simo",family="Kitanovski",role="ctb"),
     person(given="Johann",family="Matschke",role="ctb"),
     person(given="Daniel",family="Hoffmann",role="ctb"))
