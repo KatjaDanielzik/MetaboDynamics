@@ -2,7 +2,5 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^README\.Rmd$
-^how_to_create_a_package.Rmd$
-^filling_package_with_life.Rmd$
 ^doc$
-^Meta$
+^Meta$ 
