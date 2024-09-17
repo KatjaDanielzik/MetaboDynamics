@@ -29,7 +29,7 @@ under different biological conditions.
 
 You can install the development version of MetaboDynamics from [GitHub](https://github.com/) with:
 
-``` {r}
+``` {r,eval=FALSE}
 # install.packages("devtools")
 devtools::install_github("KatjaDanielzik/MetaboDynamics")
 ```
@@ -72,7 +72,7 @@ similarities between experimental conditions.
 
 For a worked example see Vignette ("devel" branch: folder /vignettes, file MetaboDynamics.html).
 or if installed:
-```{r}
+```{r,eval=FALSE}
 browseVignettes("MetaboDynamics")
 ```
 
