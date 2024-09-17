@@ -358,15 +358,19 @@ modules.
 
 ```{r,fig.wide=TRUE}
 data("cluster")
-ORA <- ORA_hypergeometric(background = modules_compounds, 
-                          annotations = metabolite_modules, 
-                          clusters = cluster, tested_column = "middle_hierarchy")
+ORA <- ORA_hypergeometric(
+  background = modules_compounds,
+  annotations = metabolite_modules,
+  clusters = cluster, tested_column = "middle_hierarchy"
+)
 ORA[["plot_ORA"]]
 
-ORA_lower <- ORA_hypergeometric(background = modules_compounds, 
-                                annotations = metabolite_modules, 
-                                clusters = cluster[cluster$condition == "A", ], 
-                                tested_column = "lower_hierarchy")
+ORA_lower <- ORA_hypergeometric(
+  background = modules_compounds,
+  annotations = metabolite_modules,
+  clusters = cluster[cluster$condition == "A", ],
+  tested_column = "lower_hierarchy"
+)
 ORA_lower[["plot_ORA"]]
 ```
 
@@ -392,9 +396,13 @@ dist_{ID}&\sim {\sf normal}(\mu_{ID},\sigma_{ID}) \\
 \end{align*}
 
 ```{r,fig.aling='center',fig.dpi=150}
-comparison_dynamics <- compare_dynamics(clusters = cluster,
-                                        dynamics = c("mu1_mean", "mu2_mean",
-                                                     "mu3_mean", "mu4_mean"))
+comparison_dynamics <- compare_dynamics(
+  clusters = cluster,
+  dynamics = c(
+    "mu1_mean", "mu2_mean",
+    "mu3_mean", "mu4_mean"
+  )
+)
 
 comparison_dynamics[["plot_dynamic_comparison"]]
 ```
@@ -424,16 +432,16 @@ temp <- left_join(dynamics, metabolites, by = c("cluster_a", "cluster_b"))
 x <- unique(temp[, "cluster_a"])
 temp <- temp %>% mutate(scale_Jaccard = scale(Jaccard))
 ggplot(temp, aes(x = cluster_b, y = cluster_a)) +
-    geom_point(aes(size = Jaccard, col = mu_mean)) +
-    theme_bw() +
-    scale_color_viridis_c(option = "magma") +
-    scale_x_discrete(limits = x) +
-    xlab("") +
-    ylab("") +
-    scale_y_discrete(limits = x) +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-    labs(col = "dynamic distance", size = "metabolite similarity") +
-    ggtitle("comparison of clusters")
+  geom_point(aes(size = Jaccard, col = mu_mean)) +
+  theme_bw() +
+  scale_color_viridis_c(option = "magma") +
+  scale_x_discrete(limits = x) +
+  xlab("") +
+  ylab("") +
+  scale_y_discrete(limits = x) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  labs(col = "dynamic distance", size = "metabolite similarity") +
+  ggtitle("comparison of clusters")
 ```
 We can find two cluster pairs that are pretty similar in regards to their
 composing metabolites but dissimilar in regards to their dynamics. Their ORA
