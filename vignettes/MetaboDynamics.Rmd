@@ -109,6 +109,7 @@ ggplot(data_sim) +
   ggtitle("standardized dynamics", "color=metabolite")
 ```
 
+
 Now we can finally model the dynamics. This might take of the order of 10 minutes 
 per experimental condition. 
 
@@ -409,7 +410,8 @@ comparison_dynamics <- compare_dynamics(
   clusters = cluster,
   dynamics = c(
     "mu1_mean", "mu2_mean",
-    "mu3_mean", "mu4_mean"
+    "mu3_mean", "mu4_mean",
+    cores =1 # only set to 1 for vignette
   )
 )
 
