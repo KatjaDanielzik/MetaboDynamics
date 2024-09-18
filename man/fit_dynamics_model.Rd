@@ -20,7 +20,7 @@ fit_dynamics_model(
 }
 \arguments{
 \item{data}{concentration table containing the columns "metabolite",
-"condition", "cpc_stand" by default or colData of a SummarizedExperiment
+"condition", and "m_scaled" by default or colData of a SummarizedExperiment
 \linkS4class{SummarizedExperiment} object}
 
 \item{metabolite}{column of "data" that contains the metabolite names or IDs}
