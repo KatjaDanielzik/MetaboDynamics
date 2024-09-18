@@ -179,7 +179,7 @@ estimates_dynamics <- extract_estimates_dynamics(
   data = data_sim, fits = fits_dynamics, samples = 1,
   iter = 5000, # number of iterations used for model fitting
   chains = 2 # number of chains used for model fitting
-)
+) 
 ```
 
 We get two major outputs:
