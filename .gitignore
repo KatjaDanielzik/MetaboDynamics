@@ -1,4 +1,4 @@
-.gitignore
+.gitignore 
 MetaboDynamics.Rproj
 /vignettes/.build.timestamp
 /src/MetaboDynamics.so
@@ -7,6 +7,7 @@ MetaboDynamics.Rproj
 /src/stanExports_m_cluster_distances_padded.o
 .Rproj.user
 .Rhistory
+.Rbuildignore
 .Rdata
 .httr-oauth
 .DS_Store

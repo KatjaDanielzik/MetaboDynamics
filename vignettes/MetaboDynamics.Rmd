@@ -126,6 +126,7 @@ m = metabolite, c = experimental condition and t = time point ID:
 The code below shows how to fit the model and how to extract the diagnostic
 criteria from the model fits. 
 
+
 # Model dynamics
 ```{r,fig.wide=TRUE}
 # we can hand a SummarizedExperiment object to the function
@@ -453,6 +454,7 @@ ggplot(temp, aes(x = cluster_b, y = cluster_a)) +
   labs(col = "dynamic distance", size = "metabolite similarity") +
   ggtitle("comparison of clusters")
 ```
+
 We can find two cluster pairs that are pretty similar in regards to their
 composing metabolites but dissimilar in regards to their dynamics. Their ORA
 profiles are quite similar as expected from the similar metabolite compositions 

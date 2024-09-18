@@ -24,6 +24,18 @@ You can install the development version of MetaboDynamics from
 devtools::install_github("KatjaDanielzik/MetaboDynamics")
 ```
 
+or from Bioconductor with:
+
+``` r
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("MetaboDynamics")
+```
+
 ## Overview
 
 MetaboDynamics facilitates the analysis of longitudinal metabolomics
@@ -56,7 +68,11 @@ probabilistic models:
 
 ## Workflow
 
-For a worked example see Vignette (Folder /vignettes, file
-MetaboDynamics.html).
+For a worked example see Vignette (“devel” branch: folder /vignettes,
+file MetaboDynamics.html) or if package is installed:
+
+``` r
+browseVignettes("MetaboDynamics")
+```
 
 ![](man/figures/README-MetaboDynamics_pitch.png)
