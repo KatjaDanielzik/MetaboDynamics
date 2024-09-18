@@ -6,7 +6,7 @@
 #' conditions.
 #'
 #' @param data concentration table containing the columns "metabolite",
-#' "condition", "cpc_stand" by default or colData of a SummarizedExperiment
+#' "condition", "scaled_measurement" by default or colData of a SummarizedExperiment
 #' \linkS4class{SummarizedExperiment} object
 #' @param metabolite column of "data" that contains the metabolite names or IDs
 #' @param time column of "time" that contains time as numeric, make sure your
