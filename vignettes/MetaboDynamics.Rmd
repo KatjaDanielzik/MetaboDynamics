@@ -133,8 +133,11 @@ data(data_sim)
 # fit model
 fits_dynamics <- fit_dynamics_model(
   data = data_sim, scaled_measurement = "m_scaled", time = "time",
-  condition = "condition", max_treedepth = 14,
-  adapt_delta = 0.999, iter = 4000, cores = 4, chains = 4
+  condition = "condition", max_treedepth = 10,
+  adapt_delta = 0.9, # default 0.95
+  iter = 5000, 
+  cores = 1, 
+  chains = 2 # only set to 2 for vignette, default = 4
 )
 ```
 
@@ -148,10 +151,12 @@ the PPCs and diagnostic criteria.
 ```{r}
 # extract diagnostics
 diagnostics_dynamics <- extract_diagnostics_dynamics(
-  data = data_sim, iter = 4000, # make sure iter is the same as used for fitting
+  data = data_sim, 
+  iter = 5000, # number of iterations used for model fitting
   # the dynamic model
   scaled_measurement = "m_scaled",
-  fits = fits_dynamics, chains = 4
+  fits = fits_dynamics, 
+  chains = 2 # number of chains used for model fitting 
 )
 
 diagnostics_dynamics[["plot_divergences"]]
@@ -172,7 +177,8 @@ After checking the diagnostic criteria and the PPC we can extract the estimates:
 estimates_dynamics <- extract_estimates_dynamics(
   condition = "condition",
   data = data_sim, fits = fits_dynamics, samples = 1,
-  iter = 4000
+  iter = 5000, # number of iterations used for model fitting
+  chains = 2 # number of chains used for model fitting
 )
 ```
 
@@ -403,7 +409,8 @@ comparison_dynamics <- compare_dynamics(
   clusters = cluster,
   dynamics = c(
     "mu1_mean", "mu2_mean",
-    "mu3_mean", "mu4_mean"
+    "mu3_mean", "mu4_mean",
+    cores =1 # only set to 1 for vignette
   )
 )
 
