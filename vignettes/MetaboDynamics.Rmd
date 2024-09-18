@@ -78,7 +78,8 @@ The next plot shows the raw dynamics of single metabolites.
 
 ```{r,fig.wide=TRUE}
 ggplot(data_sim) +
-  geom_line(aes(x = time, y = log_m, col = metabolite)) +
+  geom_line(aes(x = time, y = log_m, col = metabolite, 
+                group = interaction(metabolite, replicate))) +
   theme_bw() +
   xlab("timepoint") +
   theme(legend.position = "none") +
@@ -98,7 +99,8 @@ are in column "m_scaled".
 ggplot(data_sim) +
   geom_line(aes(
     x = time,
-    y = m_scaled, col = metabolite
+    y = m_scaled, col = metabolite,
+    group = interaction(metabolite, replicate)
   )) +
   theme_bw() +
   xlab("timepoint") +
@@ -106,6 +108,7 @@ ggplot(data_sim) +
   facet_grid(rows = vars(condition)) +
   ggtitle("standardized dynamics", "color=metabolite")
 ```
+
 
 Now we can finally model the dynamics. This might take of the order of 10 minutes 
 per experimental condition. 
@@ -131,7 +134,7 @@ data(data_sim)
 fits_dynamics <- fit_dynamics_model(
   data = data_sim, scaled_measurement = "m_scaled", time = "time",
   condition = "condition", max_treedepth = 14,
-  adapt_delta = 0.999, iter = 4000, cores = 7, chains = 4
+  adapt_delta = 0.999, iter = 4000, cores = 4, chains = 4
 )
 ```
 
