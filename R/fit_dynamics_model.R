@@ -6,7 +6,6 @@
 #' conditions.
 #'
 #' @param data concentration table containing the columns "metabolite",
-devel
 #' "condition", and "m_scaled" by default or colData of a SummarizedExperiment
 
 #' "condition", and "m_scaled" by default or colData of a SummarizedExperiment
