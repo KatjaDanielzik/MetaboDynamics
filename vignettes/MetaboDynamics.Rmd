@@ -410,9 +410,8 @@ comparison_dynamics <- compare_dynamics(
   clusters = cluster,
   dynamics = c(
     "mu1_mean", "mu2_mean",
-    "mu3_mean", "mu4_mean",
-    cores =1 # only set to 1 for vignette
-  )
+    "mu3_mean", "mu4_mean"),
+    cores = 1 # only set to 1 for vignette
 )
 
 comparison_dynamics[["plot_dynamic_comparison"]]
