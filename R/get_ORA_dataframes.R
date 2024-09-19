@@ -63,7 +63,9 @@ get_ORA_dataframes <- function(data, kegg = "KEGG",
   for (i in unique(data[[kegg]])) {
     # only if there is a KEGG ID
     if (!is.na(i)) {
-      temp <- KEGGREST::keggGet(i)
+      cat(paste0(i," "))
+      # if KEGGREST runs into warnings the loop will brake
+      temp <- tryCatch(KEGGREST::keggGet(i), error=function(e) NULL)
       # only modules containing only human pathways
       temp <- as.data.frame(temp[[1]]$MODULE)
       # extract module id and name
@@ -93,7 +95,7 @@ get_ORA_dataframes <- function(data, kegg = "KEGG",
   ))
 
   for (i in unique(na.omit(metabolite_modules$module_id))) {
-    temp <- KEGGREST::keggGet(i)
+    temp <- tryCatch(KEGGREST::keggGet(i), error=function(e) NULL)
     # only select modules that only contain human pathways
     # entry Class is semicolon seperated in order of hierarchy
     temp <- strsplit(temp[[1]][["CLASS"]], ";")
@@ -137,7 +139,7 @@ get_ORA_dataframes <- function(data, kegg = "KEGG",
     for (i in all_modules$module_id)
     {
       # get kegg Entry of module
-      temp <- KEGGREST::keggGet(i)
+      temp <- tryCatch(KEGGREST::keggGet(i), error=function(e) NULL)
       # some module_ids contain information about complexes but not pathway modules
       # and only select modules where we get compound information
       if (rownames(as.data.frame(temp[[1]][["ENTRY"]])) == "Pathway" &
