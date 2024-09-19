@@ -63,7 +63,6 @@ get_ORA_dataframes <- function(data, kegg = "KEGG",
   for (i in unique(data[[kegg]])) {
     # only if there is a KEGG ID
     if (!is.na(i)) {
-      cat(paste0(i," "))
       # if KEGGREST runs into warnings the loop will brake
       temp <- tryCatch(KEGGREST::keggGet(i), error=function(e) NULL)
       # only modules containing only human pathways
