@@ -450,11 +450,11 @@ ggplot(temp, aes(x = cluster_b, y = cluster_a)) +
   ylab("") +
   scale_y_discrete(limits = x) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  labs(col = "dynamic distance", size = "metabolite similarity") +
+  labs(col = "dynamics distance", size = "metabolite similarity") +
   ggtitle("comparison of clusters")
 ```
 
-We can find two cluster pairs that are pretty similar in regards to their
+We can find a cluster pair that is pretty similar in regards to their
 composing metabolites but dissimilar in regards to their dynamics. Their ORA
 profiles are quite similar as expected from the similar metabolite compositions 
 but they show different dynamics between experimental conditions: B_7 and A_4
