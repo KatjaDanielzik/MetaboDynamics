@@ -439,7 +439,7 @@ Can we facilitate visualization?
 dynamics <- comparison_dynamics[["estimates"]]
 metabolites <- comparison_metabolites[["Jaccard"]]
 temp <- left_join(dynamics, metabolites, by = c("cluster_a", "cluster_b"))
-x <- unique(temp[, "cluster_a"])
+x <- unique(c(temp[,"cluster_a"],temp[, "cluster_b"]))
 temp <- temp %>% mutate(scale_Jaccard = scale(Jaccard))
 ggplot(temp, aes(x = cluster_b, y = cluster_a)) +
   geom_point(aes(size = Jaccard, col = mu_mean)) +
