@@ -94,7 +94,6 @@ ORA_hypergeometric <- function(background, annotations,
   ## get dataframe with only experimental metabolites that are mapped to
   # KEGG module
   mapped_m <- annotations[annotations$KEGG %in% N, ]
-  mapped_m <- mapped_m
 
   # internal helper function to retrieve annotated KEGG IDs of a module
   #' @keywords internal
