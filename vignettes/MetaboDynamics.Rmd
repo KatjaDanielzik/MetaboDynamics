@@ -131,11 +131,18 @@ criteria from the model fits.
 ```{r,fig.wide=TRUE}
 # we can hand a SummarizedExperiment object to the function
 data(data_sim)
+# we only use a subsection of the simulated data (1 condition and subsample of
+# the whole dataset) for demonstration purposes
+samples <- sample(unique(data_sim$metabolite),10)
+data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim))
+data_sim <- data_sim[data_sim$condition=="A",]
+data_sim <- data_sim[data_sim$metabolite%in%samples,]
+
 # fit model
 fits_dynamics <- fit_dynamics_model(
   data = data_sim, scaled_measurement = "m_scaled", time = "time",
   condition = "condition", max_treedepth = 10,
-  adapt_delta = 0.9, # default 0.95
+  adapt_delta = 0.95, # default 0.95
   iter = 5000, 
   cores = 1, 
   chains = 2 # only set to 2 for vignette, default = 4
@@ -167,8 +174,6 @@ diagnostics_dynamics[["plot_neff"]]
 
 # PPCs can be accessed with
 diagnostics_dynamics[["plot_PCC_A"]]
-diagnostics_dynamics[["plot_PCC_B"]]
-diagnostics_dynamics[["plot_PCC_C"]]
 ```
 
 After checking the diagnostic criteria and the PPC we can extract the estimates:
@@ -211,13 +216,14 @@ We could now cluster these metabolite specific dynamics vectors
 have similar dynamics.
 
 # Cluster dynamics
-For the sake of demonstration we only show a rudimentary hierarchical clustering
-with the number of optimal clusters being the number of groups we used for 
-simulating the data (8). In a real life example optimal number of clusters can
-be determined by optimal clustering criteria such as Gap statistics and average 
-silhouette. 
+For the sake of demonstration we use from here on a clustering result (data("cluster"))
+on the full simulated data set (data("data_sim")). In a real life example the 
+optimal number of clusters ("k") should be determined by optimal clustering
+criteria such as Gap statistics and average silhouette. 
+The code belows shows an example how the estimated dynamics profiles can be 
+used for clustering. 
 
-```{r}
+```{r,fig.wide=TRUE}
 # get distances between vectors
 dd_A <- dist(
   estimates_dynamics[["A"]][, c(
@@ -226,66 +232,25 @@ dd_A <- dist(
   )],
   method = "euclidean"
 )
-# hierachical clustering
+# hierarchical clustering
 clust <- hclust(dd_A, method = "ward.D2")
 clust_cut <- cutree(clust, k = 8)
-# assing cluster ID to estimates
+# adding cluster ID to estimates
 clust_A <- estimates_dynamics[["A"]][, c(
   "metabolite", "condition", "mu1_mean", "mu2_mean",
   "mu3_mean", "mu4_mean"
 )]
 clust_A$cluster <- clust_cut
-
+clust_A
 rm(dd_A, clust, clust_cut)
-
-# get distances between vectors
-dd_B <- dist(
-  estimates_dynamics[["B"]][, c(
-    "mu1_mean", "mu2_mean",
-    "mu3_mean", "mu4_mean"
-  )],
-  method = "euclidean"
-)
-# hierarchical clustering
-clust <- hclust(dd_B, method = "ward.D2")
-clust_cut <- cutree(clust, k = 8)
-# assigning cluster ID to estimates
-clust_B <- estimates_dynamics[["B"]][, c(
-  "metabolite", "condition", "mu1_mean", "mu2_mean",
-  "mu3_mean", "mu4_mean"
-)]
-clust_B$cluster <- clust_cut
-
-rm(dd_B, clust, clust_cut)
-
-# get distances between vectors
-dd_C <- dist(
-  estimates_dynamics[["C"]][, c(
-    "mu1_mean", "mu2_mean",
-    "mu3_mean", "mu4_mean"
-  )],
-  method = "euclidean"
-)
-# hierarchical clustering
-clust <- hclust(dd_C, method = "ward.D2")
-clust_cut <- cutree(clust, k = 8)
-# assigning cluster ID to estimates
-clust_C <- estimates_dynamics[["C"]][, c(
-  "metabolite", "condition", "mu1_mean", "mu2_mean",
-  "mu3_mean", "mu4_mean"
-)]
-clust_C$cluster <- clust_cut
-rm(dd_C, clust, clust_cut)
-
-cluster <- rbind(clust_A, clust_B, clust_C)
-rm(clust_A, clust_B, clust_C)
 ```
 
-We combine all clustering results in one dataframe that hold columns 
-"metabolite", "condition", "mu1-t.mean" and "cluster". "Cluster" refers to the 
-cluster ID of the metabolite.
+The dataset "cluster" holds the clustering results of the whole simulated 
+dataset data("data_sim"), with columns "metabolite", "condition", "mu1-t.mean"
+and "cluster". "Cluster" refers to the cluster ID of the metabolite.
 
 ```{r,fig.wide=TRUE}
+data("cluster")
 temp <- cluster
 temp <- temp %>% pivot_longer(
   cols = c(mu1_mean, mu2_mean, mu3_mean, mu4_mean),
@@ -420,7 +385,7 @@ comparison_dynamics[["plot_dynamic_comparison"]]
 The bigger and brighter a point, the smaller is the mean distance between
 dynamics clusters and the smaller is the standard deviation. That means big 
 bright points indicate high dynamic similarity which small spread. Here B_8 and
-A_4 have high similiarity in dynamics. 
+A_4 have high similarity in dynamics. 
 
 ## Metabolites
 ```{r,fig.aling='center',fig.dpi=150}
