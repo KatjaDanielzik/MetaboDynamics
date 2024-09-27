@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Danielzik"
+  given-names: "Katja"
+  orcid: "https://orcid.org/0009-0007-5021-6212"
+- family-names: "Kitanovski"
+  given-names: "Simo"
+  orcid: "https://orcid.org/0000-0003-2909-5376"
+- family-names: "Matschke"
+  given-names: "Johann"
+  orcid: "https://orcid.org/0000-0003-4878-8741"
+- family-names: "Hoffmann"
+  given-names: "Daniel"
+  orcid: "https://orcid.org/0000-0003-2973-7869"
+title: "MetaboDynamics: an R package for the probabilistic analysis of longitudinal metabolomics data"
+version: 0.99.1
+url: "https://github.com/KatjaDanielzik/MetaboDynamics"
