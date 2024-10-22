@@ -72,5 +72,5 @@ diagnostics[["plot_neff"]]
 diagnostics[["plot_rhat"]]
 }
 \seealso{
-\code{\link[=fit_dynamics_model]{fit_dynamics_model()}}/\code{\link[=extract_estimates_dynamics]{extract_estimates_dynamics()}}
+\code{\link[=fit_dynamics_model]{fit_dynamics_model()}}/\code{\link[=estimates_dynamics]{estimates_dynamics()}}
 }

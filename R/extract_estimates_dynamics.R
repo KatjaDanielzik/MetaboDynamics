@@ -1,4 +1,4 @@
-#' extract_estimates_dynamics
+#' Extracts parameter estimates from numeric fit of Bayesian model of dynamics
 #'
 #' Extracts the mean concentrations (mu) at every timepoint from the dynamics model fit, the 95% highest density interval (HDI), the estimated standard deviation of metabolite concentrations at every time point (sigma), and the pooled standard deviation of every metabolite over all timepoints (lambda).
 #' Additionally samples from the posterior of mu can be drawn. This can be helpful if p.e. one wants to estimate the clustering precision. Lambda can be used for clustering algorithms such as VSClust that also take the variance into account.
@@ -14,7 +14,7 @@
 #' @param chains how many chains were used to fit the dynamics model
 #' @param samples how many posterior samples should be drawn (p.e. for check of clustering precision)
 #'
-#' @seealso [fit_dynamics_model()]/[extract_diagnostics_dynamics()]
+#' @seealso [fit_dynamics_model()]/[diagnostics_dynamics()]
 #'
 #' @import dplyr
 #' @import ggplot2
@@ -35,13 +35,13 @@
 #'   scaled_measurement = "m_scaled", condition = "condition",
 #'   max_treedepth = 14, adapt_delta = 0.999, iter = 4000, cores = 1, chains = 1
 #' )
-#' estimates <- extract_estimates_dynamics(
+#' estimates <- estimates_dynamics(
 #'   data = data, fits = fits, iter = 4000,
 #'   chains = 1, condition = "condition"
 #' )
 #' head(estimates)
 #'
-extract_estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
+estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
                                        t = length(unique(data$time)),
                                        kegg = "KEGG", condition = "dose",
                                        fits, iter = 2000,

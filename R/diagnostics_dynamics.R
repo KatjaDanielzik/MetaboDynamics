@@ -18,7 +18,7 @@
 #' experimental condition and metabolite to mean of zero and standard deviation
 #' of one
 #'
-#' @seealso [fit_dynamics_model()]/[extract_estimates_dynamics()]
+#' @seealso [fit_dynamics_model()]/[estimates_dynamics()]
 #'
 #' @import tidyr
 #' @import ggplot2

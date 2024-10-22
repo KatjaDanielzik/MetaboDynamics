@@ -75,5 +75,5 @@ fits
 
 }
 \seealso{
-\code{\link[=extract_diagnostics_dynamics]{extract_diagnostics_dynamics()}}/\code{\link[=extract_estimates_dynamics]{extract_estimates_dynamics()}}
+\code{\link[=diagnostics_dynamics]{diagnostics_dynamics()}}/\code{\link[=estimates_dynamics]{estimates_dynamics()}}
 }

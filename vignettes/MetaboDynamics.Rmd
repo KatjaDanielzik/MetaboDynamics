@@ -192,7 +192,7 @@ After checking the diagnostic criteria and the PPC we can extract the estimates:
 
 ```{r,fig.wide=TRUE}
 # #extract estimates
-estimates_dynamics <- extract_estimates_dynamics(
+estimates_dynamics <- estimates_dynamics(
   condition = "condition",
   data = data_sim, fits = fits_dynamics, samples = 1,
   iter = 5000, # number of iterations used for model fitting

@@ -28,7 +28,7 @@
 #' @param warmup how many iterations the model warms up for, increasing might
 #' facilitate efficiency, must be at least 25% of ITER, default=iter/4
 #'
-#' @seealso [extract_diagnostics_dynamics()]/[extract_estimates_dynamics()]
+#' @seealso [diagnostics_dynamics()]/[estimates_dynamics()]
 #'
 #' @return returns a list of model fits. One model fit named fit_condition per
 #' experimental condition
