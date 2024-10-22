@@ -48,9 +48,9 @@ Extracts the mean concentrations (mu) at every timepoint from the dynamics model
 Additionally samples from the posterior of mu can be drawn. This can be helpful if p.e. one wants to estimate the clustering precision. Lambda can be used for clustering algorithms such as VSClust that also take the variance into account.
 }
 \examples{
-data("data_sim")
-data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim))
-data <- data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ]
+data("longitudinalMetabolomics")
+longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
+data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" & longitudinalMetabolomics$metabolite == "ATP", ]
 fits <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", condition = "condition",

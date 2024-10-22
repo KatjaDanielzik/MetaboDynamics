@@ -34,9 +34,9 @@ dataset and organism. The user should check afterwards if all functional modules
 applicable for the analysis of the dataset (p.e. organism, tissue).
 }
 \examples{
-data("data_sim")
-data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim))
-data <- data_sim[data_sim$metabolite == "ATP", ]
+data("longitudinalMetabolomics")
+longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
+data <- longitudinalMetabolomics[longitudinalMetabolomics$metabolite == "ATP", ]
 ORA_dataframes <- get_ORA_annotations(
   data = data,
   kegg = "KEGG",
