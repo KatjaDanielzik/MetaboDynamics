@@ -3,7 +3,7 @@
 #' Extracts the mean concentrations (mu) at every timepoint from the dynamics model fit, the 95% highest density interval (HDI), the estimated standard deviation of metabolite concentrations at every time point (sigma), and the pooled standard deviation of every metabolite over all timepoints (lambda).
 #' Additionally samples from the posterior of mu can be drawn. This can be helpful if p.e. one wants to estimate the clustering precision. Lambda can be used for clustering algorithms such as VSClust that also take the variance into account.
 #'
-#' @param data dataframe used for modeling
+#' @param data dataframe or colData of a SummarizedExperiment used for modeling
 #' @param M number of metabolites, default requires a column in data named "metabolite"
 #' @param t number of unique timepoints in data, the default requires a column named "time"
 #' @param kegg column in "data" that contains the KEGG IDs or other identifier of metabolites
