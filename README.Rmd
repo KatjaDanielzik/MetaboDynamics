@@ -30,7 +30,9 @@ under different biological conditions.
 You can install the development version of MetaboDynamics from [GitHub](https://github.com/) with:
 
 ``` {r,eval=FALSE}
-# install.packages("devtools")
+if (!require("devtools", quietly = TRUE))
+    install.packages("devtools")
+
 devtools::install_github("KatjaDanielzik/MetaboDynamics")
 ```
 
@@ -59,7 +61,8 @@ time point despite varying spread between time points. Its outputs are A) differ
 
 2) Over-representation analysis of KEGG-functional modules in dynamics clusters
 with a quantitative model that employs a hypergeometric distribution and reports
-probabilities of a functional module being over-represented in a cluster.
+probabilities of a functional module being over-represented in a cluster. Can
+also estimate under-representation of functional modules.
 
 3) Estimation of the distances between dynamics clusters under different
 experimental conditions with a Bayesian model that infers the mean pairwise

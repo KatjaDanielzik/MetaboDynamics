@@ -26,6 +26,18 @@ Here we want to show a complete workflow to analyze concentration tables.
 As an example we have a data set of irradiated cancer cells lines that were
 observed over four timepoints.
 
+# Installation
+MetaboDynamics can be installed from the devel branch of Bioconductor.
+```{r,eval=FALSE}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("MetaboDynamics")
+```
+
 ## Setup: load required packages
 ```{r setup}
 library(MetaboDynamics)
