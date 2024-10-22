@@ -110,7 +110,6 @@ ORA_hypergeometric <- function(background, annotations,
     # extract number of unique experimental metabolites in module
     a_b[i] <- length(unique(unlist(a_b_list[names(a_b_list)][M[i]])))
   }
-  rm(i, a_b_list)
 
 
   # retrieve cluster membership information of experimental metabolites
@@ -152,7 +151,6 @@ ORA_hypergeometric <- function(background, annotations,
       a_clusters <- rbind(a_clusters, temp_N)
     }
   }
-  rm(i, j, temp, temp_N, temp1, a, k, a_list, mapped_m)
   a_clusters <- a_clusters[!is.na(a_clusters$condition), ]
   a_clusters$module <- as.numeric(a_clusters$module)
 
@@ -160,11 +158,9 @@ ORA_hypergeometric <- function(background, annotations,
     module = as.numeric(1:length(M)),
     background_module = a_b, module_name = M
   ))
-  rm(M, N, N_b)
   test$module <- as.numeric(test$module)
   a_clusters <- left_join(a_clusters, test, by = "module")
   a_clusters$total_background <- sum(a_b)
-  rm(test, a_b)
 
 
   # hypergeometric test
@@ -184,14 +180,12 @@ ORA_hypergeometric <- function(background, annotations,
     temp3 <- cbind(temp2, n_theo = seq(from = 1, to = 100), row.names = NULL)
     series <- rbind(series, temp3)
   }
-  rm(temp, temp2, temp3, i)
   series <- series[-1, ]
   a_clusters <- left_join(a_clusters, series, by = join_by(
     "condition",
     "cluster",
     "total_in_cluster"
   ), relationship = "many-to-many")
-  rm(series)
 
   # get probability of n_theo
   # m= white balls in urn = metabolites in modules in background

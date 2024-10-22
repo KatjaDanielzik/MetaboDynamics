@@ -102,6 +102,4 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
   }
   # return list of fits
   return(fits)
-  # cleanup
-  rm(i, temp, conditions, fit, fits)
 }

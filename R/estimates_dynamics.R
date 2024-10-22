@@ -169,7 +169,6 @@ estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
     for (i in 2:length(names(dynamics))) {
       temp <- rbind(temp, dynamics[[i]])
     }
-    rm(i)
   }
 
   # differences between timepoints
@@ -214,8 +213,6 @@ estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
     theme(legend.position = "none") +
     facet_grid(rows = vars(condition)) +
     ggtitle("dynamics", "color=metabolite")
-  rm(temp, temp_t, temp_d)
 
   return(dynamics)
-  rm(pS, fit, i, mu_posterior, j, k, x, conditions, metabolites, dynamics_loc_cpc)
 }
