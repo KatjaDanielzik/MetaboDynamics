@@ -29,6 +29,15 @@ script to obtain data is in R/metabolites_modules.R (last executed September 202
 }
 \source{
 https://www.genome.jp/kegg/module.html
+data <- get_ORA_annotations(longitudinalMetabolomics,update_background=TRUE)
+modules_compunds <- get_ORA_annotations["annotations"]
+
+# we are working in a human lung cancer cell line
+# "Xenobiotics biodegradation" physiological only present in liver
+metabolite_modules <- metabolite_modules[-which(metabolite_modules$middle_hierachy == "Xenobiotics biodegradation"), ]
+metabolite_modules <- metabolite_modules[-which(metabolite_modules$middle_hierachy == "Biosynthesis of other secondary metabolites"), ]
+metabolite_modules <- metabolite_modules[-which(metabolite_modules$middle_hierachy == "Biosynthesis of terpenoids and polyketides"), ]
+
 }
 \seealso{
 \link{data_sim}
