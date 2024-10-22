@@ -100,7 +100,6 @@ compare_dynamics <- function(clusters, dynamics, cores = 4) {
       }
     }
   }
-  rm(i, j, k, id, temp_a, temp_b, a, b, distance)
 
   comparison[["distances"]] <- distances
 
@@ -133,7 +132,6 @@ compare_dynamics <- function(clusters, dynamics, cores = 4) {
     algorithm = "NUTS",
     cores = cores
   )
-  rm(y_padded, N)
   comparison[["fit"]] <- fit
 
   # prepare posterior for visualization
@@ -160,7 +158,6 @@ compare_dynamics <- function(clusters, dynamics, cores = 4) {
       split = "vs"
     )
   )[, 2]
-  rm(fit, posterior_mu, posterior_sigma)
 
   comparison[["estimates"]] <- posterior
 
@@ -178,6 +175,5 @@ compare_dynamics <- function(clusters, dynamics, cores = 4) {
       "similarity of dynamics in clusters",
       "estimated mean pairwise distance"
     )
-  rm(x)
   return(comparison)
 }

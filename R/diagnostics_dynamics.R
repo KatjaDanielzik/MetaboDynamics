@@ -76,7 +76,6 @@ diagnostics_dynamics <- function(data, N = nrow(data),
     "metabolite.ID", "condition",
     "divergences", "treedepth_error", names_d
   )
-  rm(i)
   # bind columns created in function to data frame
   log_cpc_stand <- NULL
   neff.mu <- NULL
@@ -114,7 +113,6 @@ diagnostics_dynamics <- function(data, N = nrow(data),
       )
       diagnostics_dynamics <- rbind(diagnostics_dynamics, temp)
     }
-    rm(m)
 
     # Posterior predictive check
     # turn y_rep from model fit into long format and add metabolite.ID and time.ID
@@ -152,7 +150,6 @@ diagnostics_dynamics <- function(data, N = nrow(data),
   diagnostics_dynamics <- diagnostics_dynamics[-1, ]
   list_diagnostics[["model_diagnostics"]] <- diagnostics_dynamics
   # cleanup
-  rm(i, fit, condition, n_eff, max_treedepth, divergences, rhat, PPC)
 
   # visualize
   list_diagnostics[["plot_divergences"]] <-
@@ -220,5 +217,4 @@ diagnostics_dynamics <- function(data, N = nrow(data),
   return(list_diagnostics)
 
   # cleanup
-  rm(temp)
 }
