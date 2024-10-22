@@ -2,8 +2,6 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -15,9 +13,6 @@ knitr::opts_chunk$set(
 
 # MetaboDynamics : developmental version
 
-<!-- badges: start -->
-<!-- badges: end -->
-
 MetaboDynamics provides a framework of Bayesian models for robust and easy
 analysis of longitudinal metabolomics Data. It takes concentration tables and 
 KEGG IDs of metabolites as input and provides robust estimation of mean 
@@ -26,7 +21,7 @@ comparison of clusters of metabolite dynamics patterns ("dynamics clusters")
 under different biological conditions.
 
 ## Installation
-
+MetaboDynamics was build on R 4.4 [cran](https://cran.r-project.org/).
 You can install the development version of MetaboDynamics from [GitHub](https://github.com/) with:
 
 ``` {r,eval=FALSE}

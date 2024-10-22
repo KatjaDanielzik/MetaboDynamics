@@ -1,10 +1,5 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # MetaboDynamics : developmental version
-
-<!-- badges: start -->
-<!-- badges: end -->
 
 MetaboDynamics provides a framework of Bayesian models for robust and
 easy analysis of longitudinal metabolomics Data. It takes concentration
@@ -16,11 +11,14 @@ conditions.
 
 ## Installation
 
+MetaboDynamics was build on R 4.4 [cran](https://cran.r-project.org/).
 You can install the development version of MetaboDynamics from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
+if (!require("devtools", quietly = TRUE))
+    install.packages("devtools")
+
 devtools::install_github("KatjaDanielzik/MetaboDynamics")
 ```
 
@@ -57,7 +55,8 @@ probabilistic models:
 2)  Over-representation analysis of KEGG-functional modules in dynamics
     clusters with a quantitative model that employs a hypergeometric
     distribution and reports probabilities of a functional module being
-    over-represented in a cluster.
+    over-represented in a cluster. Can also estimate
+    under-representation of functional modules.
 
 3)  Estimation of the distances between dynamics clusters under
     different experimental conditions with a Bayesian model that infers
