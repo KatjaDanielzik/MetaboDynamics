@@ -162,7 +162,7 @@ fits_dynamics <- fit_dynamics_model(
 ```
 
 This returns a list of model fits that are named by the experimental condition
-("A","B","C"). With extract_diagnostics_dynamics() we can extract all
+("A","B","C"). With extract_diagnostics() we can extract all
 the diagnostic criteria of MCMC runs to fit a Bayesian model (rhat, neff, 
 divergences, max_treedepth) and visualize them. Additionally data frames for 
 visual Posterior predictive checks (PPC) are prepared and Plots generated for 
@@ -170,7 +170,7 @@ the PPCs and diagnostic criteria.
 
 ```{r}
 # extract diagnostics
-diagnostics_dynamics <- extract_diagnostics_dynamics(
+diagnostics_dynamics <- extract_diagnostics(
   data = data_sim, 
   iter = 5000, # number of iterations used for model fitting
   # the dynamic model

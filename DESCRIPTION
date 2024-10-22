@@ -11,12 +11,12 @@ Authors@R:
 URL: https://github.com/KatjaDanielzik/MetaboDynamics
 BugReports: https://github.com/KatjaDanielzik/MetaboDynamics/issues
 Description: MetaboDynamics is an R-package that provides a framework of 
-probabilistic models to analyze longitudinal metabolomics data. It enables 
-robust estimation of mean concentrations despite varying spread between 
-timepoints and reports differences between timepoints as well as metabolite 
-specific dynamics profiles that can be used for identifying "dynamics clusters" 
-of metabolites of similar dynamics. Provides probabilistic over-representation 
-analysis and comparison betweeen clusters of different experimental conditions.
+  probabilistic models to analyze longitudinal metabolomics data. It enables 
+  robust estimation of mean concentrations despite varying spread between 
+  timepoints and reports differences between timepoints as well as metabolite 
+  specific dynamics profiles that can be used for identifying "dynamics clusters" 
+  of metabolites of similar dynamics. Provides probabilistic over-representation 
+  analysis and comparison betweeen clusters of different experimental conditions.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
