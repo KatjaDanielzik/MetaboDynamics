@@ -255,7 +255,6 @@ clust_A <- estimates_dynamics[["A"]][, c(
 )]
 clust_A$cluster <- clust_cut
 clust_A
-rm(dd_A, clust, clust_cut)
 ```
 
 The dataset "cluster" holds the clustering results of the whole simulated 
@@ -280,8 +279,6 @@ ggplot(temp, aes(
   theme(legend.position = "none") +
   facet_grid(rows = vars(condition), cols = vars(cluster)) +
   ggtitle("clustered dynamics", "panels=cluster ID")
-
-rm(temp)
 ```
 
 As we can see metabolites show different dynamics in different experimental
@@ -310,29 +307,11 @@ help("modules_compounds")
 head(modules_compounds)
 ```
 
-We can also retrieve the necessary dataframes with:
-
-```{r}
-# ORA_dataframes <- get_ORA_annotations(data = longitudinalMetabolomics, kegg = "KEGG",
-#                                       metabolite_name = "metabolite")
-# metabolite_modules <- ORA_dataframes[["annotation"]]
-# modules_compounds <- ORA_dataframes[["background"]]
-```
-
 Here we have to keep in mind that not all KEGG modules are suitable for testing
 on every observed organism and experimental condition. For example the modules
 "Xenobiotics biodegradation","Biosynthesis of other secondary metabolites" and
 "Biosynthesis of terpenoids and polyketides" should not be analyzed in a human
 lung cancer cell line.
-
-```{r}
-# modules_compounds <- modules_compounds[-which(modules_compounds$middle_hierachy=="Xenobiotics biodegradation"),]
-# modules_compounds <- modules_compounds[-which(modules_compounds$middle_hierachy=="Biosynthesis of other secondary metabolites"),]
-# modules_compounds <- modules_compounds[-which(modules_compounds$middle_hierachy=="Biosynthesis of terpenoids and polyketides"),]
-# metabolite_modules <- metabolite_modules[-which(metabolite_modules$middle_hierachy=="Xenobiotics biodegradation"),]
-# metabolite_modules <- metabolite_modules[-which(metabolite_modules$middle_hierachy=="Biosynthesis of other secondary metabolites"),]
-# metabolite_modules <- metabolite_modules[-which(metabolite_modules$middle_hierachy=="Biosynthesis of terpenoids and polyketides"),]
-```
 
 For the functional analysis we employ a hypergeometric model. We consider a 
 functional module as over-represented in a cluster if the 95% inter-quantile
