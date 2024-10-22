@@ -2,7 +2,7 @@
 \alias{cluster}
 \docType{data}
 \title{
-Clustering solution for data_sim
+Clustering solution for longitudinalMetabolomics
 }
 \description{
 The estimates from the dynamic model (fit_dynamics_model) were used for
@@ -12,9 +12,9 @@ hierachical clustering with 8 clusters (8 dynamic groups were simulated).
 \format{
   A data frame with 294 observations on the following 7 variables.
   \describe{
-    \item{\code{metabolite}}{Metabolite name as in data_sim}
+    \item{\code{metabolite}}{Metabolite name as in longitudinalMetabolomics}
     \item{\code{KEGG}}{KEGG ID of "metabolite"}
-    \item{\code{condition}}{Experimental condition as in data_sim}
+    \item{\code{condition}}{Experimental condition as in longitudinalMetabolomics}
     \item{\code{mu1_mean}}{estimated mean at time point 1}
     \item{\code{mu2_mean}}{estimated mean at time point 2}
     \item{\code{mu3_mean}}{estimated mean at time point 3}
@@ -102,13 +102,13 @@ rm(dd_C, clust, clust_cut)
 cluster <- rbind(clust_A, clust_B, clust_C)
 rm(clust_A, clust_B, clust_C)
 # join with KEGG IDs
-data(data_sim)
-data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim))
-cluster <- left_join(cluster,unique(data_sim[,c("metabolite","KEGG")]))
+data(longitudinalMetabolomics)
+longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
+cluster <- left_join(cluster,unique(longitudinalMetabolomics[,c("metabolite","KEGG")]))
 cluster <- cluster%>%relocate("KEGG",.after="metabolite")
 
 }
 \seealso{
-\link{data_sim}
+\link{longitudinalMetabolomics}
 }
 \keyword{datasets}
