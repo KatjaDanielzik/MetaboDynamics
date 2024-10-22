@@ -2,14 +2,21 @@ Package: MetaboDynamics
 Title: Bayesian analysis of longitudinal metabolomics data
 Version: 0.99.1 
 Authors@R: 
-    c(person(given="Katja",family= "Danielzik", email="katja.danielzik@uni-due.de", role = c("aut", "cre"),
+    c(person(given="Katja",family= "Danielzik", email="katja.danielzik@uni-due.de", 
+    role = c("aut", "cre"),
     comment=c(ORCID="0009-0007-5021-6212")),
     person(given="Simo",family="Kitanovski",role="ctb"),
     person(given="Johann",family="Matschke",role="ctb"),
     person(given="Daniel",family="Hoffmann",role="ctb"))
 URL: https://github.com/KatjaDanielzik/MetaboDynamics
 BugReports: https://github.com/KatjaDanielzik/MetaboDynamics/issues
-Description: MetaboDynamics is an R-package that provides a framework of probabilistic models to analyze longitudinal metabolomics data. It enables robust estimation of mean concentrations despite varying spread between timepoints and reports differences between timepoints as well as metabolite specific dynamics profiles that can be used for identifying "dynamics clusters" of metabolites of similar dynamics. Provides probabilistic over-representation analysis and comparison betweeen clusters of different experimental conditions.
+Description: MetaboDynamics is an R-package that provides a framework of 
+probabilistic models to analyze longitudinal metabolomics data. It enables 
+robust estimation of mean concentrations despite varying spread between 
+timepoints and reports differences between timepoints as well as metabolite 
+specific dynamics profiles that can be used for identifying "dynamics clusters" 
+of metabolites of similar dynamics. Provides probabilistic over-representation 
+analysis and comparison betweeen clusters of different experimental conditions.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -18,31 +25,30 @@ Suggests:
     knitr,
     rmarkdown,
     BiocStyle,
-    testthat (>= 3.0.0)
+    testthat
 Config/testthat/edition: 3
 Imports: 
-    dplyr (>= 1.1.4),
-    ggplot2 (>= 3.5.1),
-    KEGGREST (>= 1.44.1),
+    dplyr,
+    ggplot2,
+    KEGGREST,
     methods,
-    Rcpp (>= 0.12.0),
-    RcppParallel (>= 5.0.1),
-    rstan (>= 2.18.1),
-    rstantools (>= 2.4.0),
-    stringr (>= 1.5.1),
-    SummarizedExperiment (>= 1.34.0),
-    tidyr (>= 1.3.1)
+    Rcpp,
+    RcppParallel,
+    rstan,
+    rstantools,
+    stringr,
+    SummarizedExperiment,
+    tidyr
 VignetteBuilder: knitr
 Depends: 
     R (>= 4.4.0)
 LazyData: false
-Biarch: true
 LinkingTo: 
-    BH (>= 1.66.0),
-    Rcpp (>= 0.12.0),
-    RcppEigen (>= 0.3.3.3.0),
-    RcppParallel (>= 5.0.1),
-    rstan (>= 2.18.1),
-    StanHeaders (>= 2.18.0)
+    BH,
+    Rcpp,
+    RcppEigen,
+    RcppParallel,
+    rstan,
+    StanHeaders
 SystemRequirements: GNU make
 biocViews: Software,Metabolomics,Bayesian,FunctionalPrediction,MultipleComparison,KEGG
