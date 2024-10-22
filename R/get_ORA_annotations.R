@@ -83,7 +83,6 @@ get_ORA_annotations <- function(data, kegg = "KEGG",
     by = "KEGG",
     relationship = "many-to-many"
   )
-  rm(i, temp, temp2)
 
   # we also want the hierarchy of modules, so we hand the identified module ids
   # again to keggGet and extract the entries of $class
@@ -113,11 +112,9 @@ get_ORA_annotations <- function(data, kegg = "KEGG",
     by = "module_id",
     relationship = "many-to-many"
   )
-  rm(i, temp, temp2)
 
   metabolite_modules <- metabolite_modules[!is.na(metabolite_modules$module_id), ]
   ORA_dataframes[["annotation"]] <- metabolite_modules
-  rm(metabolite_modules)
 
   if (update_background == TRUE) {
     # background information of all metabolites in KEGG modules ####
@@ -159,11 +156,8 @@ get_ORA_annotations <- function(data, kegg = "KEGG",
         modules_compounds <- rbind(modules_compounds, temp3)
       }
     }
-    rm(i, temp, temp2, temp3)
-    rm(all_modules)
     modules_compounds <- modules_compounds[!is.na(modules_compounds$module_id), ]
     ORA_dataframes[["background"]] <- modules_compounds
-    rm(modules_compounds)
   }
   return(ORA_dataframes)
 }

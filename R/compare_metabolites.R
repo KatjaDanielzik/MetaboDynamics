@@ -77,7 +77,6 @@ compare_metabolites <- function(clusters, metabolite = "metabolite") {
     # calculate Jaccard index
     distances[i, ]$Jaccard <- similarity(temp_a, temp_b)
   }
-  rm(i, id, temp_a, temp_b, a, b)
 
   comparison_metabolites[["Jaccard"]] <- distances
 
