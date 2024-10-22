@@ -24,9 +24,6 @@ NOT include functional modules "Xenobiotics biodegradation", "Biosynthesis of ot
     \item{\code{lower_hierarchy}}{name of the lowest level of modules, this often contain only a couple pathways p.e. "Arginine and proline metabolism" }
   }
 }
-\details{
-script to obtain data is in R/metabolites_modules.R (last executed September 2023)
-}
 \source{
 https://www.genome.jp/kegg/module.html
 data <- get_ORA_annotations(longitudinalMetabolomics,update_background=TRUE)
@@ -40,7 +37,7 @@ metabolite_modules <- metabolite_modules[-which(metabolite_modules$middle_hierac
 
 }
 \seealso{
-\link{data_sim}
+\link{modules_compounds}
 }
 
 \keyword{datasets}

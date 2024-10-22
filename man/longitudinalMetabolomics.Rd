@@ -1,5 +1,5 @@
-\name{data_sim}
-\alias{data_sim}
+\name{longitudinalMetabolomics}
+\alias{longitudinalMetabolomics}
 \docType{data}
 \title{
 A simulated data set
@@ -11,7 +11,7 @@ experimental condition. 4 groups have varying dynamics between conditions.
 Is represented as a SummarizedExperiment object (\linkS4class{SummarizedExperiment}).
 
 }
-\usage{data("data_sim")}
+\usage{data("longitudinalMetabolomics")}
 \format{
   A data frame with 3528 observations on the following 7 variables.
   \describe{
@@ -174,7 +174,7 @@ simulated_data_df <- simulated_data_df %>%
 
 # add KEGG IDs
 name_map_HMDB_CAS <- readr::read_csv("name_map_HMDB_CAS.csv")
-longitudinalMetabolomics <- dplyr::left_join(data_sim,name_map_HMDB_CAS[,c("Query","KEGG")],join_by("metabolite"=="Query"))
+longitudinalMetabolomics <- dplyr::left_join(longitudinalMetabolomics,name_map_HMDB_CAS[,c("Query","KEGG")],join_by("metabolite"=="Query"))
 
 longitudinalMetabolomics <- SummarizedExperiment::SummarizedExperiment(colData=longitudinalMetabolomics)
 }
