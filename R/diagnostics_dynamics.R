@@ -33,11 +33,11 @@
 #' @export
 #'
 #' @examples
-#' data("data_sim")
+#' data("longitudinalMetabolomics")
 #' # only run after fit_dynamics_model(intra): see Vignette and documentation
 #' # of function
-#' data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim))
-#' data <- data_sim[data_sim$condition == "A" & data_sim$metabolite == "ATP", ]
+#' longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
+#' data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" & longitudinalMetabolomics$metabolite == "ATP", ]
 #' fits <- fit_dynamics_model(
 #'   data = data,
 #'   scaled_measurement = "m_scaled", time = "time",

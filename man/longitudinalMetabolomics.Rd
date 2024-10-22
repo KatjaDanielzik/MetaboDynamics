@@ -174,8 +174,9 @@ simulated_data_df <- simulated_data_df %>%
 
 # add KEGG IDs
 name_map_HMDB_CAS <- readr::read_csv("name_map_HMDB_CAS.csv")
-data_sim <- dplyr::left_join(data_sim,name_map_HMDB_CAS[,c("Query","KEGG")],join_by("metabolite"=="Query"))
+longitudinalMetabolomics <- dplyr::left_join(data_sim,name_map_HMDB_CAS[,c("Query","KEGG")],join_by("metabolite"=="Query"))
 
+longitudinalMetabolomics <- SummarizedExperiment::SummarizedExperiment(colData=longitudinalMetabolomics)
 }
 
 \seealso{

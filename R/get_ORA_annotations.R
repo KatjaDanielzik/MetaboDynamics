@@ -26,9 +26,9 @@
 #' @import stringr
 #'
 #' @examples
-#' data("data_sim")
-#' data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim))
-#' data <- data_sim[data_sim$metabolite == "ATP", ]
+#' data("longitudinalMetabolomics")
+#' longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
+#' data <- longitudinalMetabolomics[longitudinalMetabolomics$metabolite == "ATP", ]
 #' ORA_dataframes <- get_ORA_annotations(
 #'   data = data,
 #'   kegg = "KEGG",

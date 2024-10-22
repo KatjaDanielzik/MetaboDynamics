@@ -50,7 +50,7 @@ library(tidyr)
 
 # Load data and plot data overview
 
-We have a simulated data set of 98 metabolites with three measurement replicates 
+We have a simulated data (") set of 98 metabolites with three measurement replicates 
 at four time points (1-4) across 3 experimental conditions (A-B).
 In the first step in this workflow we estimate the dynamics of every single 
 metabolite at every experimental condition (here: radiation dose).
@@ -64,10 +64,10 @@ model that assumes normal distributions of log-transformed metabolite
 concentrations. The next plot shows the raw data.
 
 ```{r,fig.wide=TRUE}
-data("data_sim")
+data("longitudinalMetabolomics")
 # convert to dataframe
-data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim))
-ggplot(data_sim, aes(x = measurement)) +
+longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
+ggplot(longitudinalMetabolomics, aes(x = measurement)) +
   geom_density() +
   theme_bw() +
   facet_grid(cols = vars(time), rows = vars(condition)) +
@@ -80,7 +80,7 @@ In the integrated simulated dataset this is already done in the column "log_m".
 
 ```{r,fig.wide=TRUE}
 # we standardize to a mean of zero and a standard deviation of one of log-transformed data
-ggplot(data_sim, aes(x = log_m)) +
+ggplot(longitudinalMetabolomics, aes(x = log_m)) +
   geom_density() +
   theme_bw() +
   facet_grid(cols = vars(time), rows = vars(condition)) +
@@ -90,7 +90,7 @@ ggplot(data_sim, aes(x = log_m)) +
 The next plot shows the raw dynamics of single metabolites. 
 
 ```{r,fig.wide=TRUE}
-ggplot(data_sim) +
+ggplot(longitudinalMetabolomics) +
   geom_line(aes(x = time, y = log_m, col = metabolite, 
                 group = interaction(metabolite, replicate))) +
   theme_bw() +
@@ -109,7 +109,7 @@ simulated data set the scaled measurements
 are in column "m_scaled".
 
 ```{r,fig.wide=TRUE}
-ggplot(data_sim) +
+ggplot(longitudinalMetabolomics) +
   geom_line(aes(
     x = time,
     y = m_scaled, col = metabolite,
@@ -143,17 +143,17 @@ criteria from the model fits.
 # Model dynamics
 ```{r,fig.wide=TRUE}
 # we can hand a SummarizedExperiment object to the function
-data(data_sim)
+data(longitudinalMetabolomics)
 # we only use a subsection of the simulated data (1 condition and subsample of
 # the whole dataset) for demonstration purposes
-samples <- sample(unique(data_sim$metabolite),10)
-data_sim <- as.data.frame(SummarizedExperiment::colData(data_sim))
-data_sim <- data_sim[data_sim$condition=="A",]
-data_sim <- data_sim[data_sim$metabolite%in%samples,]
+samples <- sample(unique(longitudinalMetabolomics$metabolite),10)
+longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
+longitudinalMetabolomics <- longitudinalMetabolomics[longitudinalMetabolomics$condition=="A",]
+longitudinalMetabolomics <- longitudinalMetabolomics[longitudinalMetabolomics$metabolite%in%samples,]
 
 # fit model
 fits_dynamics <- fit_dynamics_model(
-  data = data_sim, scaled_measurement = "m_scaled", time = "time",
+  data = longitudinalMetabolomics, scaled_measurement = "m_scaled", time = "time",
   condition = "condition", max_treedepth = 10,
   adapt_delta = 0.95, # default 0.95
   iter = 5000, 
@@ -172,7 +172,7 @@ the PPCs and diagnostic criteria.
 ```{r}
 # extract diagnostics
 diagnostics_dynamics <- diagnostics_dynamics
-  data = data_sim, 
+  data = longitudinalMetabolomics, 
   iter = 5000, # number of iterations used for model fitting
   # the dynamic model
   scaled_measurement = "m_scaled",
@@ -195,7 +195,7 @@ After checking the diagnostic criteria and the PPC we can extract the estimates:
 # #extract estimates
 estimates_dynamics <- estimates_dynamics(
   condition = "condition",
-  data = data_sim, fits = fits_dynamics, samples = 1,
+  data = longitudinalMetabolomics, fits = fits_dynamics, samples = 1,
   iter = 5000, # number of iterations used for model fitting
   chains = 2 # number of chains used for model fitting
 ) 
@@ -230,7 +230,7 @@ have similar dynamics.
 
 # Cluster dynamics
 For the sake of demonstration we use from here on a clustering result (data("cluster"))
-on the full simulated data set (data("data_sim")). In a real life example the 
+on the full simulated data set (data("longitudinalMetabolomics")). In a real life example the 
 optimal number of clusters ("k") should be determined by optimal clustering
 criteria such as Gap statistics and average silhouette. 
 The code belows shows an example how the estimated dynamics profiles can be 
@@ -259,7 +259,7 @@ rm(dd_A, clust, clust_cut)
 ```
 
 The dataset "cluster" holds the clustering results of the whole simulated 
-dataset data("data_sim"), with columns "metabolite", "condition", "mu1-t.mean"
+dataset data("longitudinalMetabolomics"), with columns "metabolite", "condition", "mu1-t.mean"
 and "cluster". "Cluster" refers to the cluster ID of the metabolite.
 
 ```{r,fig.wide=TRUE}
@@ -313,7 +313,7 @@ head(modules_compounds)
 We can also retrieve the necessary dataframes with:
 
 ```{r}
-# ORA_dataframes <- get_ORA_annotations(data = data_sim, kegg = "KEGG",
+# ORA_dataframes <- get_ORA_annotations(data = longitudinalMetabolomics, kegg = "KEGG",
 #                                       metabolite_name = "metabolite")
 # metabolite_modules <- ORA_dataframes[["annotation"]]
 # modules_compounds <- ORA_dataframes[["background"]]
