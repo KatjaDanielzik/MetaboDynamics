@@ -17,7 +17,7 @@ diagnostics_dynamics(
 )
 }
 \arguments{
-\item{data}{dataframe used to fit dynamics model}
+\item{data}{dataframe or colData of a SummarizedExperiment used to fit dynamics model}
 
 \item{N}{number of rows in that dataframe}
 

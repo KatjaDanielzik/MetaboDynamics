@@ -18,7 +18,7 @@ estimates_dynamics(
 )
 }
 \arguments{
-\item{data}{dataframe or colData of a SummarizedExperiment used for modeling}
+\item{data}{dataframe or colData of a SummarizedExperiment used used to fit dynamics model}
 
 \item{M}{number of metabolites, default requires a column in data named "metabolite"}
 

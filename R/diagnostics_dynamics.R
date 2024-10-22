@@ -5,7 +5,7 @@
 #' posterior predictive checks. Dataframe "model_diagnostics" contains
 #' information about experimental condition, number of divergent transitions
 #' and rhat and neff values for all timepoints.
-#' @param data dataframe used to fit dynamics model
+#' @param data dataframe or colData of a SummarizedExperiment used to fit dynamics model
 #' @param N number of rows in that dataframe
 #' @param M number of metabolites in experimental dataset
 #' @param t number of timepoints in experimental dataset

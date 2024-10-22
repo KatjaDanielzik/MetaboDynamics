@@ -1,7 +1,7 @@
 ---
-title: "MetaboDynamics: a worked example"
+title: "MetaboDynamics: analyzing longitudinal metabolomics data with probabilistic models"
 package: MetaboDynamics
-author: "Katja Danielzik"
+author: "Katja Danielzik (katja.danielzik@uni-due.de)"
 
 output:
   BiocStyle::html_document:
@@ -17,6 +17,7 @@ vignette: >
 BiocStyle::markdown()
 ```
 
+# Background 
 This package was developed to facilitate the analysis of longitudinal 
 metabolomics data. Most tools only allow the comparison between two time points 
 or experimental conditions and are using frequentist statistical methods.
