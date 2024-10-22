@@ -312,7 +312,7 @@ head(modules_compounds)
 We can also retrieve the necessary dataframes with:
 
 ```{r}
-# ORA_dataframes <- get_ORA_dataframes(data = data_sim, kegg = "KEGG",
+# ORA_dataframes <- get_ORA_annotations(data = data_sim, kegg = "KEGG",
 #                                       metabolite_name = "metabolite")
 # metabolite_modules <- ORA_dataframes[["annotation"]]
 # modules_compounds <- ORA_dataframes[["background"]]
