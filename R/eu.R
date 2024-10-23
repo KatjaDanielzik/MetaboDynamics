@@ -1,5 +1,5 @@
 #' euclidean distance
-#'
+#' compare_dynamics()
 #' @param a a numeric vector
 #' @param b a numeric vector of same length as a
 #' @importFrom stats dist

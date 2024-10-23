@@ -1,5 +1,5 @@
 #' Jaccard Index: intersection/union
-#'
+#' compare_metabolites()
 #' @param a a vector
 #' @param b a vector
 #'
