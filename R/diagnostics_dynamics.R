@@ -37,7 +37,8 @@
 #' # only run after fit_dynamics_model(intra): see Vignette and documentation
 #' # of function
 #' longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
-#' data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" & longitudinalMetabolomics$metabolite == "ATP", ]
+#' data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" 
+#'         & longitudinalMetabolomics$metabolite == "ATP", ]
 #' fits <- fit_dynamics_model(
 #'   data = data,
 #'   scaled_measurement = "m_scaled", time = "time",

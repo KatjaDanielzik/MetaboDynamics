@@ -65,7 +65,8 @@ conditions.
 \examples{
 data("longitudinalMetabolomics")
 longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
-data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" & longitudinalMetabolomics$metabolite == "ATP", ]
+data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" 
+        & longitudinalMetabolomics$metabolite == "ATP", ]
 fits <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", condition = "condition",

@@ -37,7 +37,8 @@ metabolite_modules <- metabolite_modules[-which(metabolite_modules$middle_hierac
 
 }
 \seealso{
-\link{modules_compounds}/\code{\link[=get_ORA_annotation{get_ORA_annotation()}
+\link{modules_compounds}/ 
+\code{\link[=get_ORA_annotations]{get_ORA_annotations()}}
 }
 
 \keyword{datasets}
