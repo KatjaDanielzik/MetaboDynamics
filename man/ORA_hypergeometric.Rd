@@ -67,13 +67,3 @@ ORA_lower[["plot_ORA"]]
 \code{\link[=get_ORA_annotations]{get_ORA_annotations()}} function to retrieve "background" and
 "annotation" data frames
 }
-\keyword{annotated}
-\keyword{are}
-\keyword{experimental}
-\keyword{function}
-\keyword{helper}
-\keyword{internal}
-\keyword{metabolites}
-\keyword{modules}
-\keyword{retrieve}
-\keyword{to}

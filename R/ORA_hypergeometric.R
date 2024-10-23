@@ -95,12 +95,6 @@ ORA_hypergeometric <- function(background, annotations,
   # KEGG module
   mapped_m <- annotations[annotations$KEGG %in% N, ]
 
-  # internal helper function to retrieve annotated KEGG IDs of a module
-  #' @keywords internal
-  .get_module_background <- function(M) {
-    return(background[background[tested_column] == M, ]$kegg_id)
-  }
-
   # get list of Modules and corresponding KEGG IDs
   a_b_list <- sapply(M, .get_module_background)
   # extract number of unique background metabolites in module
@@ -119,13 +113,6 @@ ORA_hypergeometric <- function(background, annotations,
     "total_in_cluster", "hits_in_module"
   )
   ## get list of experimental metabolites in modules
-  #' internal helper function to retrieve modules experimental metabolites
-  #' are annotated to
-  #' @keywords internal
-  .get_module <- function(M) {
-    return(temp[temp[tested_column] == M, ]$KEGG)
-  }
-
   for (j in unique(clusters$condition)) {
     temp1 <- left_join(mapped_m, clusters[clusters$condition == j, ],
       by = "KEGG", relationship = "many-to-many"
