@@ -31,4 +31,3 @@ comparison <- compare_metabolites(
 )
 comparison[["plot_metabolite_comparison"]]
 }
-\keyword{internal}
