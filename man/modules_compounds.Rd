@@ -35,6 +35,6 @@ modules_compounds <- modules_compounds[-which(modules_compounds$middle_hierachy 
 modules_compounds <- modules_compounds[-which(modules_compounds$middle_hierachy == "Biosynthesis of terpenoids and polyketides"), ]
 }
 \seealso{
-\link{metabolite_modules}
+\link{metabolite_modules}/\code{\link[=get_ORA_annotation{get_ORA_annotation()}
 }
 \keyword{datasets}

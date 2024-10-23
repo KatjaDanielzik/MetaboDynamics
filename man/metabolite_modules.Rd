@@ -27,7 +27,7 @@ NOT include functional modules "Xenobiotics biodegradation", "Biosynthesis of ot
 \source{
 https://www.genome.jp/kegg/module.html
 data <- get_ORA_annotations(longitudinalMetabolomics,update_background=TRUE)
-modules_compunds <- get_ORA_annotations["annotations"]
+metabolite_modules <- get_ORA_annotations["annotations"]
 
 # we are working in a human lung cancer cell line
 # "Xenobiotics biodegradation" physiological only present in liver
@@ -37,7 +37,7 @@ metabolite_modules <- metabolite_modules[-which(metabolite_modules$middle_hierac
 
 }
 \seealso{
-\link{modules_compounds}
+\link{modules_compounds}/\code{\link[=get_ORA_annotation{get_ORA_annotation()}
 }
 
 \keyword{datasets}
