@@ -48,12 +48,6 @@ compare_dynamics <- function(clusters, dynamics, cores = 4) {
   distance <- NULL
   N <- NULL
   y_padded <- NULL
-  cluster_b <- NULL
-  cluster_a <- NULL
-  mu_mean <- NULL
-  "97.5%" <- NULL
-  "2.5%" <- NULL
-
 
   # return object
   comparison <- list()

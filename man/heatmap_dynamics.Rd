@@ -4,15 +4,17 @@
 \alias{heatmap_dynamics}
 \title{plot bubble heatmap from the numerical fit of compare_dynamics()}
 \usage{
-heatmap_dynamics(posterior, clusters)
+heatmap_dynamics(estimates, clusters)
 }
 \arguments{
+\item{estimates}{dataframe of estimates of the mean distance
+between #' clusters of different experimental conditions ("mean") and the
+standard deviation ("sigma")}
+
 \item{clusters}{a dataframe containing the dynamics and
 cluster IDs(column named "cluster") of clusters of similar dynamics,
 as well as a column "condition" specifying the experimental conditions
 to be compared.}
-
-\item{fit}{numerical fit of Bayesian model returned by compare_dynamics()}
 }
 \value{
 a bubble heatmap where the color of the bubble represents the similarity
@@ -24,14 +26,14 @@ low uncertainty.
 plot bubble heatmap from the numerical fit of compare_dynamics()
 }
 \examples{
-#' data("cluster")
+data("cluster")
 # fit model 
 comparison <- compare_dynamics(
   clusters = cluster,
   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"),
   cores = 1
 )
-plot <- heatmap_dynamics(comparison["estimates"],clusters=cluster)
+plot <- heatmap_dynamics(estimates=comparison[["estimates"]],clusters=cluster)
 plot
 }
 \seealso{

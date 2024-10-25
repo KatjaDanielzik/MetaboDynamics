@@ -1,6 +1,8 @@
 #' plot bubble heatmap from the numerical fit of compare_dynamics()
 #'
-#' @param fit numerical fit of Bayesian model returned by compare_dynamics()
+#' @param estimates dataframe of estimates of the mean distance
+#' between #' clusters of different experimental conditions ("mean") and the
+#' standard deviation ("sigma")
 #' @param clusters a dataframe containing the dynamics and 
 #' cluster IDs(column named "cluster") of clusters of similar dynamics,
 #' as well as a column "condition" specifying the experimental conditions
@@ -15,21 +17,28 @@
 #' @export
 #'
 #' @examples
-#' #' data("cluster")
+#' data("cluster")
 #' # fit model 
 #' comparison <- compare_dynamics(
 #'   clusters = cluster,
 #'   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"),
 #'   cores = 1
 #' )
-#' plot <- heatmap_dynamics(comparison["estimates"],clusters=cluster)
+#' plot <- heatmap_dynamics(estimates=comparison[["estimates"]],clusters=cluster)
 #' plot
 
 
-heatmap_dynamics <- function(posterior,clusters){
+heatmap_dynamics <- function(estimates,clusters){
+  
+  posterior <- estimates
   
   # bind objects to function
   plot <- NULL
+  cluster_b <- NULL
+  cluster_a <- NULL
+  mu_mean <- NULL
+  "97.5%" <- NULL
+  "2.5%" <- NULL
   
   # create matrix
   # how many do we have to compare ?
