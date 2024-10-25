@@ -7,7 +7,7 @@
 plot_ORA(ORA)
 }
 \arguments{
-\item{ORA}{result dataframe from}
+\item{ORA}{result dataframe from over-representation analysis with ORA_hypergeometric}
 }
 \value{
 a plot of the over-representation analysis
@@ -16,7 +16,7 @@ a plot of the over-representation analysis
 Plot results of over-representation analysis with ORA_hypergeometric()
 }
 \examples{
- data("cluster")
+data("cluster")
 head(cluster)
 data("modules_compounds")
 head(modules_compounds)
@@ -30,5 +30,5 @@ ORA <- ORA_hypergeometric(
 plot_ORA(ORA)
 }
 \seealso{
-\code{\link[=ORA_hypergeometric]{ORA_hypergeometric()}}
+function to do ORA \code{\link[=ORA_hypergeometric]{ORA_hypergeometric()}}
 }
