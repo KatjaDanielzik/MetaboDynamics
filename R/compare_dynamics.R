@@ -13,7 +13,6 @@
 #' @param cores how many cores should be used for model fitting; this
 #' parallelizes the model fitting and therefore speeds it up; default=4
 #'
-#' @importFrom stats dist
 #' @importFrom rstan sampling
 #' @importFrom rstan summary
 #' @import ggplot2
@@ -55,14 +54,6 @@ compare_dynamics <- function(clusters, dynamics, cores = 4) {
 
   # return object
   comparison <- list()
-
-  # helper function for distance matrix
-  #' @keywords internal
-  eu <- function(a, b) {
-    temp <- rbind(a, b)
-    dist <- stats::dist(temp, method = "euclidean")
-    return(dist)
-  }
 
   # create matrix
   # how many do we have to compare ?

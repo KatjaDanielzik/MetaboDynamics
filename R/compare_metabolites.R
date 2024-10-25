@@ -40,16 +40,6 @@ compare_metabolites <- function(clusters, metabolite = "metabolite") {
   # return object
   comparison_metabolites <- list()
 
-  # helper function for Jaccard Index
-  #' @keywords internal
-  similarity <- function(a, b) {
-    # intersection
-    intersec <- length(intersect(a, b))
-    # union=unique metabolites per set + intersection
-    sim <- intersec / sum((length(a) - intersec), (length(b) - intersec), intersec)
-    return(sim)
-  }
-
   # create comparison dataframe
   # how many do we have to compare ?
   x <- unique(clusters[, c("condition", "cluster")])
@@ -75,7 +65,7 @@ compare_metabolites <- function(clusters, metabolite = "metabolite") {
 
     # cat(k)
     # calculate Jaccard index
-    distances[i, ]$Jaccard <- similarity(temp_a, temp_b)
+    distances[i, ]$Jaccard <- .similarity(temp_a, temp_b)
   }
 
   comparison_metabolites[["Jaccard"]] <- distances
@@ -97,7 +87,7 @@ compare_metabolites <- function(clusters, metabolite = "metabolite") {
     ylab("cluster_a") +
     scale_fill_viridis_c(option = "viridis") +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-    ggtitle("similarity of metabolites in clusters", "metabolites=intersect/union of metabolites in cluster, label=condition+cluster ID")
+    ggtitle("similarity of metabolites in clusters", "metabolites=intersection/union of metabolites in cluster, label=condition+cluster ID")
 
   return(comparison_metabolites)
 }

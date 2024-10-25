@@ -53,6 +53,9 @@
 #'   tested_column = "lower_hierarchy"
 #' )
 #' ORA_lower[["plot_ORA"]]
+ 
+ 
+
 ORA_hypergeometric <- function(background, annotations,
                                clusters, tested_column = "middle_hierarchy") {
   # return object
@@ -94,8 +97,9 @@ ORA_hypergeometric <- function(background, annotations,
   ## get dataframe with only experimental metabolites that are mapped to
   # KEGG module
   mapped_m <- annotations[annotations$KEGG %in% N, ]
-
-  # internal helper function to retrieve annotated KEGG IDs of a module
+  
+  # function to retrieve background KEGG IDs of a module
+  # get_ORA_annotations()
   #' @keywords internal
   .get_module_background <- function(M) {
     return(background[background[tested_column] == M, ]$kegg_id)
@@ -118,14 +122,15 @@ ORA_hypergeometric <- function(background, annotations,
     "condition", "cluster", "module",
     "total_in_cluster", "hits_in_module"
   )
-  ## get list of experimental metabolites in modules
-  #' internal helper function to retrieve modules experimental metabolites
-  #' are annotated to
+  
+  # internal helper function to retrieve experimental KEGG IDs annotated to module
+  # get_ORA_annotations()
   #' @keywords internal
   .get_module <- function(M) {
     return(temp[temp[tested_column] == M, ]$KEGG)
   }
-
+  
+  ## get list of experimental metabolites in modules
   for (j in unique(clusters$condition)) {
     temp1 <- left_join(mapped_m, clusters[clusters$condition == j, ],
       by = "KEGG", relationship = "many-to-many"

@@ -39,4 +39,3 @@ comparison <- compare_dynamics(
 )
 comparison[["plot_dynamic_comparison"]]
 }
-\keyword{internal}
