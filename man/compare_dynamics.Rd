@@ -19,11 +19,10 @@ that hold the dynamics information}
 parallelizes the model fitting and therefore speeds it up; default=4}
 }
 \value{
-a list holding a 1) dataframe of estimates of the mean distance
+a list holding a 1) the model fit
+2) dataframe of estimates of the mean distance
 between #' clusters of different experimental conditions ("mean") and the
 standard deviation ("sigma")
-2) the model fit
-3) a ggplot2 object visualizing the cluster comparison
 }
 \description{
 Employs a Bayesian model that assumes a normal distribution of Euclidean
@@ -37,5 +36,9 @@ comparison <- compare_dynamics(
   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"),
   cores = 1
 )
-comparison[["plot_dynamic_comparison"]]
+comparison[["estimates"]]
+}
+\seealso{
+Visualization of estimates \code{\link[=heatmap_dynamics]{heatmap_dynamics()}}/
+compare metabolite composition of clusters \code{\link[=compare_metabolites]{compare_metabolites()}}
 }

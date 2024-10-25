@@ -17,11 +17,13 @@
 #' @importFrom rstan summary
 #' @import ggplot2
 #'
-#' @return a list holding a 1) dataframe of estimates of the mean distance
+#' @return a list holding a 1) the model fit
+#' 2) dataframe of estimates of the mean distance
 #' between #' clusters of different experimental conditions ("mean") and the
 #' standard deviation ("sigma")
-#' 2) the model fit
-#' 3) a ggplot2 object visualizing the cluster comparison
+#'
+#'@seealso Visualization of estimates [heatmap_dynamics()]/
+#' compare metabolite composition of clusters [compare_metabolites()]
 #'
 #' @export
 #'
@@ -32,7 +34,8 @@
 #'   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"),
 #'   cores = 1
 #' )
-#' comparison[["plot_dynamic_comparison"]]
+#' comparison[["estimates"]]
+
 compare_dynamics <- function(clusters, dynamics, cores = 4) {
   # bind objects to function
   posterior_mu <- NULL
@@ -152,19 +155,5 @@ compare_dynamics <- function(clusters, dynamics, cores = 4) {
 
   comparison[["estimates"]] <- posterior
 
-  # visualization
-  comparison[["plot_dynamic_comparison"]] <-
-    ggplot(posterior[posterior$parameter == "mu", ], aes(x = cluster_b, y = cluster_a)) +
-    geom_point(aes(col = 1 / mu_mean, size = ((1 / (`97.5%` - `2.5%`))))) +
-    theme_bw() +
-    scale_color_viridis_c(option = "viridis") +
-    scale_x_discrete(limits = paste0(x$condition, "_", x$cluster)) +
-    scale_y_discrete(limits = paste0(x$condition, "_", x$cluster)) +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-    labs(col = "1/estimated mean", size = "1/|CrI mean|") +
-    ggtitle(
-      "similarity of dynamics in clusters",
-      "estimated mean pairwise distance"
-    )
   return(comparison)
 }
