@@ -66,4 +66,5 @@ head(estimates)
 }
 \seealso{
 \code{\link[=fit_dynamics_model]{fit_dynamics_model()}}/\code{\link[=diagnostics_dynamics]{diagnostics_dynamics()}}
+Visualization of estimates with\code{\link[=plot_estimates]{plot_estimates()}}
 }

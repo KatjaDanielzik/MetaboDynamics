@@ -30,11 +30,12 @@ observed over four timepoints.
 # Installation
 MetaboDynamics can be installed from the devel branch of Bioconductor.
 ```{r,eval=FALSE}
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+if (!require("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
 
 # The following initializes usage of Bioc devel
-BiocManager::install(version='devel')
+BiocManager::install(version = "devel")
 
 BiocManager::install("MetaboDynamics")
 ```
@@ -91,8 +92,10 @@ The next plot shows the raw dynamics of single metabolites.
 
 ```{r,fig.wide=TRUE}
 ggplot(longitudinalMetabolomics) +
-  geom_line(aes(x = time, y = log_m, col = metabolite, 
-                group = interaction(metabolite, replicate))) +
+  geom_line(aes(
+    x = time, y = log_m, col = metabolite,
+    group = interaction(metabolite, replicate)
+  )) +
   theme_bw() +
   xlab("timepoint") +
   theme(legend.position = "none") +
@@ -146,18 +149,18 @@ criteria from the model fits.
 data(longitudinalMetabolomics)
 # we only use a subsection of the simulated data (1 condition and subsample of
 # the whole dataset) for demonstration purposes
-samples <- sample(unique(longitudinalMetabolomics$metabolite),10)
+samples <- sample(unique(longitudinalMetabolomics$metabolite), 10)
 longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
-longitudinalMetabolomics <- longitudinalMetabolomics[longitudinalMetabolomics$condition=="A",]
-longitudinalMetabolomics <- longitudinalMetabolomics[longitudinalMetabolomics$metabolite%in%samples,]
+longitudinalMetabolomics <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A", ]
+longitudinalMetabolomics <- longitudinalMetabolomics[longitudinalMetabolomics$metabolite %in% samples, ]
 
 # fit model
 fits_dynamics <- fit_dynamics_model(
   data = longitudinalMetabolomics, scaled_measurement = "m_scaled", time = "time",
   condition = "condition", max_treedepth = 10,
   adapt_delta = 0.95, # default 0.95
-  iter = 5000, 
-  cores = 1, 
+  iter = 5000,
+  cores = 1,
   chains = 2 # only set to 2 for vignette, default = 4
 )
 ```
@@ -171,33 +174,37 @@ the PPCs and diagnostic criteria.
 
 ```{r}
 # extract diagnostics
-diagnostics<- diagnostics_dynamics(
-  data = longitudinalMetabolomics, 
+diagnostics <- diagnostics_dynamics(
+  data = longitudinalMetabolomics,
   iter = 5000, # number of iterations used for model fitting
   # the dynamic model
   scaled_measurement = "m_scaled",
-  fits = fits_dynamics, 
-  chains = 2 # number of chains used for model fitting 
+  fits = fits_dynamics,
+  chains = 2 # number of chains used for model fitting
 )
 
-plot_diagnostics(diagnostics = diagnostics[["model_diagnostics"]],
-                 data = longitudinalMetabolomics)
+plot_diagnostics(
+  diagnostics = diagnostics[["model_diagnostics"]],
+  data = longitudinalMetabolomics
+)
 
 # PPCs can be accessed with
-plot_PPC(posterior = diagnostics[["PPC_A"]], data = longitudinalMetabolomics,
-         scaled_measurement = "m_scaled")
+plot_PPC(
+  posterior = diagnostics[["posterior_A"]], data = longitudinalMetabolomics,
+  scaled_measurement = "m_scaled"
+)
 ```
 
 After checking the diagnostic criteria and the PPC we can extract the estimates:
 
 ```{r,fig.wide=TRUE}
 # #extract estimates
-estimates_dynamics <- estimates_dynamics(
+estimates <- estimates_dynamics(
   condition = "condition",
   data = longitudinalMetabolomics, fits = fits_dynamics, samples = 1,
   iter = 5000, # number of iterations used for model fitting
   chains = 2 # number of chains used for model fitting
-) 
+)
 ```
 
 We get two major outputs:
@@ -208,7 +215,10 @@ of each metabolite at each experimental condition
 ## Differences between two timepoints
 ```{r,fig.wide=TRUE}
 # 1) the differences between two timepoints
-estimates_dynamics[["plot_timepoint_differences"]]
+plot_estimates(
+  estimates = estimates, data = longitudinalMetabolomics,
+  dynamics = FALSE
+)
 ```
 
 If the 95% highest density interval of the posterior does not include zero
@@ -220,7 +230,10 @@ likely have an increase in concentrations between time points.
 ## Dynamic profiles
 ```{r,fig.wide=TRUE}
 # 2) dynamic profiles
-estimates_dynamics[["plot_dynamics"]]
+plot_estimates(
+  estimates = estimates, data = longitudinalMetabolomics,
+  delta_t = FALSE
+)
 ```
 So we now have dynamic profiles of many metabolites at each radiation dose.
 We could now cluster these metabolite specific dynamics vectors 
@@ -366,11 +379,12 @@ comparison_dynamics <- compare_dynamics(
   clusters = cluster,
   dynamics = c(
     "mu1_mean", "mu2_mean",
-    "mu3_mean", "mu4_mean"),
-    cores = 1 # only set to 1 for vignette
+    "mu3_mean", "mu4_mean"
+  ),
+  cores = 1 # only set to 1 for vignette
 )
 
-heatmap_dynamics(estimates=comparison_dynamics[["estimates"]],clusters = cluster)
+heatmap_dynamics(estimates = comparison_dynamics[["estimates"]], clusters = cluster)
 ```
 
 The bigger and brighter a point, the smaller is the mean distance between
@@ -384,8 +398,10 @@ the Jaccard Index which is a metric for similarity of two vectors. Values near
 0 indicate low similarity, values near 1 high similarity.
 ```{r,fig.aling='center',fig.dpi=150}
 comparison_metabolites <- compare_metabolites(clusters = cluster)
-heatmap_metabolites(distances = comparison_metabolites[["Jaccard"]],
-                    clusters=cluster)
+heatmap_metabolites(
+  distances = comparison_metabolites[["Jaccard"]],
+  clusters = cluster
+)
 ```
 The brighter a tile, the higher is the similarity of two clusters in regard
 to their metabolite composition. 
@@ -401,7 +417,7 @@ Can we facilitate visualization?
 dynamics <- comparison_dynamics[["estimates"]]
 metabolites <- comparison_metabolites[["Jaccard"]]
 temp <- left_join(dynamics, metabolites, by = c("cluster_a", "cluster_b"))
-x <- unique(c(temp[,"cluster_a"],temp[, "cluster_b"]))
+x <- unique(c(temp[, "cluster_a"], temp[, "cluster_b"]))
 temp <- temp %>% mutate(scale_Jaccard = scale(Jaccard))
 ggplot(temp, aes(x = cluster_b, y = cluster_a)) +
   geom_point(aes(size = Jaccard, col = mu_mean)) +
