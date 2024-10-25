@@ -10,8 +10,9 @@
 #' probabilites of these ratios.
 #' log(p(OvE))>0 indicates an over-representation of the functional module in
 #' the cluster, log(p(OvE))<0 an under-representation.
-#' @seealso [get_ORA_annotations()] function to retrieve "background" and
-#' "annotation" data frames
+#' @seealso function to retrieve "background" and
+#' "annotation" data frames [get_ORA_annotations()] 
+#' plot results [plot_ORA()]
 #' @param background dataframe that contains
 #' KEGG IDs of metabolites that are assigned to functional modules
 #' @param annotations to which functional modules our experimental metabolites
