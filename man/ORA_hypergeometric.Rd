@@ -24,10 +24,16 @@ column specifying the experimental condition called "condition"}
 
 \item{tested_column}{column that is in background and annotations and on
 which the hypergeometric model will be executed}
+
+\item{M}{module name}
 }
 \value{
 a list with a dataframe containing the ORA results and a plot of
 the ORA
+
+KEGG IDs of background metabolites annotated to module
+
+KEGG IDs of experimental metabolites annotated to module
 }
 \description{
 Testing the hypothesis that certain KEGG modules are over-represented in
@@ -62,8 +68,21 @@ ORA_lower <- ORA_hypergeometric(
   tested_column = "lower_hierarchy"
 )
 ORA_lower[["plot_ORA"]]
+internal helper function to retrieve background KEGG IDs of a module
+get_ORA_annotations()
 }
 \seealso{
 \code{\link[=get_ORA_annotations]{get_ORA_annotations()}} function to retrieve "background" and
 "annotation" data frames
 }
+\keyword{IDs}
+\keyword{KEGG}
+\keyword{annotated}
+\keyword{experimental}
+\keyword{function}
+\keyword{get_ORA_annotations()}
+\keyword{helper}
+\keyword{internal}
+\keyword{module}
+\keyword{retrieve}
+\keyword{to}

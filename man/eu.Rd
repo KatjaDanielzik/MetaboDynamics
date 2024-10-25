@@ -2,7 +2,8 @@
 % Please edit documentation in R/eu.R
 \name{eu}
 \alias{eu}
-\title{euclidean distance}
+\title{euclidean distance
+compare_dynamics()}
 \usage{
 eu(a, b)
 }
@@ -16,5 +17,6 @@ euclidean distance between vectors
 }
 \description{
 euclidean distance
+compare_dynamics()
 }
 \keyword{internal}

@@ -2,7 +2,8 @@
 % Please edit documentation in R/similarity.R
 \name{.similarity}
 \alias{.similarity}
-\title{Jaccard Index: intersection/union}
+\title{Jaccard Index: intersection/union
+compare_metabolites()}
 \usage{
 .similarity(a, b)
 }
@@ -16,5 +17,6 @@ Jaccard Index of a and b
 }
 \description{
 Jaccard Index: intersection/union
+compare_metabolites()
 }
 \keyword{internal}

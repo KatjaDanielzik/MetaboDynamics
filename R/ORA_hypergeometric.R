@@ -94,6 +94,16 @@ ORA_hypergeometric <- function(background, annotations,
   ## get dataframe with only experimental metabolites that are mapped to
   # KEGG module
   mapped_m <- annotations[annotations$KEGG %in% N, ]
+  
+  #' internal helper function to retrieve background KEGG IDs of a module
+  #' get_ORA_annotations()
+  #' @param M module name
+  #'
+  #' @return KEGG IDs of background metabolites annotated to module
+  #' @keywords internal
+  .get_module_background <- function(M) {
+    return(background[background[tested_column] == M, ]$kegg_id)
+  }
 
   # get list of Modules and corresponding KEGG IDs
   a_b_list <- sapply(M, .get_module_background)
@@ -112,6 +122,17 @@ ORA_hypergeometric <- function(background, annotations,
     "condition", "cluster", "module",
     "total_in_cluster", "hits_in_module"
   )
+  
+  #' internal helper function to retrieve experimental KEGG IDs annotated to module
+  #' get_ORA_annotations()
+  #' @param M module name
+  #'
+  #' @return KEGG IDs of experimental metabolites annotated to module
+  #' @keywords internal
+  .get_module <- function(M) {
+    return(temp[temp[tested_column] == M, ]$KEGG)
+  }
+  
   ## get list of experimental metabolites in modules
   for (j in unique(clusters$condition)) {
     temp1 <- left_join(mapped_m, clusters[clusters$condition == j, ],
