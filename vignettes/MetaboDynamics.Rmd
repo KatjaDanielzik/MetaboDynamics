@@ -171,7 +171,7 @@ the PPCs and diagnostic criteria.
 
 ```{r}
 # extract diagnostics
-diagnostics_dynamics <- diagnostics_dynamics(
+diagnostics<- diagnostics_dynamics(
   data = longitudinalMetabolomics, 
   iter = 5000, # number of iterations used for model fitting
   # the dynamic model
@@ -180,13 +180,12 @@ diagnostics_dynamics <- diagnostics_dynamics(
   chains = 2 # number of chains used for model fitting 
 )
 
-diagnostics_dynamics[["plot_divergences"]]
-diagnostics_dynamics[["plot_treedepth_error"]]
-diagnostics_dynamics[["plot_rhat"]]
-diagnostics_dynamics[["plot_neff"]]
+plot_diagnostics(diagnostics = diagnostics[["model_diagnostics"]],
+                 data = longitudinalMetabolomics)
 
 # PPCs can be accessed with
-diagnostics_dynamics[["plot_PCC_A"]]
+plot_PPC(posterior = diagnostics[["PPC_A"]], data = longitudinalMetabolomics,
+         scaled_measurement = "m_scaled")
 ```
 
 After checking the diagnostic criteria and the PPC we can extract the estimates:
