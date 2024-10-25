@@ -146,10 +146,10 @@ criteria from the model fits.
 # Model dynamics
 ```{r,fig.wide=TRUE}
 # we can hand a SummarizedExperiment object to the function
-data(longitudinalMetabolomics)
+data("longitudinalMetabolomics")
 # we only use a subsection of the simulated data (1 condition and subsample of
 # the whole dataset) for demonstration purposes
-samples <- sample(unique(longitudinalMetabolomics$metabolite), 10)
+samples <- c("UMP","Taurine","Succinate","Phosphocreatine","PEP","Malic acid","L-Cystine","CMP","Citramalic acid","2-Aminomuconate")
 longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
 longitudinalMetabolomics <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A", ]
 longitudinalMetabolomics <- longitudinalMetabolomics[longitudinalMetabolomics$metabolite %in% samples, ]
@@ -221,7 +221,7 @@ plot_estimates(
 )
 ```
 
-If the 95% highest density interval of the posterior does not include zero
+If the 95% highest density interval (CrI) of the posterior does not include zero
 we can rather credibly state that there is a difference in mean concentrations 
 between two time points. If the 95% HDI lies below zero we likely have a
 decrease in concentrations between the two time points, if it is above zero we 
@@ -237,7 +237,7 @@ plot_estimates(
 ```
 So we now have dynamic profiles of many metabolites at each radiation dose.
 We could now cluster these metabolite specific dynamics vectors 
-(estimates_dynamics[,c("mu1.mean":"mut.mean)]) to see if groups of metabolites 
+(estimates[,c("mu1.mean":"mut.mean)]) to see if groups of metabolites 
 have similar dynamics.
 
 # Cluster dynamics
@@ -251,7 +251,7 @@ used for clustering.
 ```{r,fig.wide=TRUE}
 # get distances between vectors
 dd_A <- dist(
-  estimates_dynamics[["A"]][, c(
+  estimates[["A"]][, c(
     "mu1_mean", "mu2_mean",
     "mu3_mean", "mu4_mean"
   )],
@@ -261,7 +261,7 @@ dd_A <- dist(
 clust <- hclust(dd_A, method = "ward.D2")
 clust_cut <- cutree(clust, k = 8)
 # adding cluster ID to estimates
-clust_A <- estimates_dynamics[["A"]][, c(
+clust_A <- estimates[["A"]][, c(
   "metabolite", "condition", "mu1_mean", "mu2_mean",
   "mu3_mean", "mu4_mean"
 )]
