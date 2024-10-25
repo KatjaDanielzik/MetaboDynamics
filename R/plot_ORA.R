@@ -21,7 +21,18 @@
 #' plot_ORA(ORA)
 
 plot_ORA <- function(ORA){
-plot <- ggplot(ORA,
+  
+  # bind variables to function
+  OvE_gen <- NULL
+  module_name <- NULL
+  OvE_gen_lower <- NULL
+  OvE_gen_higher <- NULL
+  OvE_gen_median <- NULL
+  cluster <- NULL
+  condition <- NULL
+  
+  a_clusters <- ORA
+plot <- ggplot(a_clusters,
   aes(x = log(OvE_gen), y = module_name, col = col)
 ) +
   geom_errorbarh(aes(xmin = log(OvE_gen_lower), xmax = log(OvE_gen_higher))) +

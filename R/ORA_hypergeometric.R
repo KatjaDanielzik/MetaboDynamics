@@ -74,15 +74,15 @@ ORA_hypergeometric <- function(background, annotations,
   total_in_cluster <- NULL
   n_gen <- NULL
   n_obs <- NULL
-  OvE_gen <- NULL
   median <- NULL
+  module <- NULL
+  OvE_gen <- NULL
+  module_name <- NULL
   OvE_gen_lower <- NULL
   OvE_gen_higher <- NULL
   OvE_gen_median <- NULL
-  module <- NULL
-  module_name <- NULL
-  condition <- NULL
   cluster <- NULL
+  condition <- NULL
 
   # all unique metabolites in Background -> uniquely to avoid bias p.e.
   # for side-compounds
