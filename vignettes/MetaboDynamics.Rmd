@@ -371,7 +371,7 @@ comparison_dynamics <- compare_dynamics(
     cores = 1 # only set to 1 for vignette
 )
 
-comparison_dynamics[["plot_dynamic_comparison"]]
+heatmap_dynamics(estimates=comparison_dynamics[["estimates"]],clusters = cluster)
 ```
 
 The bigger and brighter a point, the smaller is the mean distance between
