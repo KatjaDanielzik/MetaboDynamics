@@ -12,7 +12,7 @@
 #' of two clusters in regards to their dynamics in the color and the size the
 #' uncertainty of the similarity. Big bright bubbles mean high similarity with
 #' low uncertainty.
-#' 
+#' @import ggplot2
 #' @seealso [compare_dynamics()]
 #' @export
 #'

@@ -12,7 +12,7 @@
 #' of two clusters in regards to their metabolite composition. The brighter
 #' the color the more similar the metabolite compositions.
 #' @export
-#'
+#' @import ggplot2
 #' @examples
 #' data("cluster")
 #' comparison <- compare_metabolites(

@@ -26,8 +26,7 @@ column specifying the experimental condition called "condition"}
 which the hypergeometric model will be executed}
 }
 \value{
-a list with a dataframe containing the ORA results and a plot of
-the ORA
+a dataframe containing the ORA results
 }
 \description{
 Testing the hypothesis that certain KEGG modules are over-represented in
@@ -54,14 +53,14 @@ ORA <- ORA_hypergeometric(
   annotations = metabolite_modules, clusters = cluster,
   tested_column = "middle_hierarchy"
 )
-ORA[["plot_ORA"]]
+head(ORA)
 # lower hierachy
 ORA_lower <- ORA_hypergeometric(
   background = modules_compounds,
   annotations = metabolite_modules, clusters = cluster[cluster$condition == "A", ],
   tested_column = "lower_hierarchy"
 )
-ORA_lower[["plot_ORA"]]
+head(ORA_lower)
 }
 \seealso{
 \code{\link[=get_ORA_annotations]{get_ORA_annotations()}} function to retrieve "background" and

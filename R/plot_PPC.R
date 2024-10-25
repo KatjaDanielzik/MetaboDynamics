@@ -8,6 +8,7 @@
 #' experimental condition and metabolite to mean of zero and standard deviation
 #' of one
 #' @return visual posterior predictive check
+#' @import ggplot2
 #' @export
 #' @seealso  parent function [diagnostics_dynamics()]
 #' visualization function for diagnostics [plot_diagnostics()]

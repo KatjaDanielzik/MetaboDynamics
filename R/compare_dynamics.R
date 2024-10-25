@@ -15,7 +15,6 @@
 #'
 #' @importFrom rstan sampling
 #' @importFrom rstan summary
-#' @import ggplot2
 #'
 #' @return a list holding a 1) the model fit
 #' 2) dataframe of estimates of the mean distance

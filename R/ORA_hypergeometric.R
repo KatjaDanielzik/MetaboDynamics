@@ -22,12 +22,10 @@
 #' @param tested_column column that is in background and annotations and on
 #' which the hypergeometric model will be executed
 #
-#' @return a list with a dataframe containing the ORA results and a plot of
-#' the ORA
+#' @return a dataframe containing the ORA results 
 #' @export
 #'
 #' @import dplyr
-#' @import ggplot2
 #' @importFrom stats median
 #' @importFrom stats quantile
 #' @importFrom stats rhyper
@@ -45,21 +43,19 @@
 #'   annotations = metabolite_modules, clusters = cluster,
 #'   tested_column = "middle_hierarchy"
 #' )
-#' ORA[["plot_ORA"]]
+#' head(ORA)
 #' # lower hierachy
 #' ORA_lower <- ORA_hypergeometric(
 #'   background = modules_compounds,
 #'   annotations = metabolite_modules, clusters = cluster[cluster$condition == "A", ],
 #'   tested_column = "lower_hierarchy"
 #' )
-#' ORA_lower[["plot_ORA"]]
+#' head(ORA_lower)
  
  
 
 ORA_hypergeometric <- function(background, annotations,
                                clusters, tested_column = "middle_hierarchy") {
-  # return object
-  ORA_hyper <- list()
 
   # attach new variables to function
   N_b <- NULL
@@ -232,23 +228,5 @@ ORA_hypergeometric <- function(background, annotations,
       "ICR>0", "ICR includes 0"
     )
   ))
-
-  ORA_hyper[["ORA"]] <- a_clusters
-  ORA_hyper[["plot_ORA"]] <- ggplot(
-    a_clusters,
-    aes(x = log(OvE_gen), y = module_name, col = col)
-  ) +
-    geom_errorbarh(aes(xmin = log(OvE_gen_lower), xmax = log(OvE_gen_higher))) +
-    geom_point(aes(x = log(OvE_gen_median))) +
-    geom_vline(xintercept = 0, linetype = "dashed") +
-    theme_bw() +
-    scale_color_manual(values = c("ICR includes 0" = "black", "ICR>0" = "green", "ICR<0" = "red")) +
-    xlab("log(p(OvE))") +
-    guides(col = "none") +
-    facet_grid(cols = vars(cluster), rows = vars(condition)) +
-    ggtitle(
-      "hypergeometric ORA",
-      "median and 95% interquantile range, panels=clusterID"
-    )
-  return(ORA_hyper)
+  return(a_clusters)
 }

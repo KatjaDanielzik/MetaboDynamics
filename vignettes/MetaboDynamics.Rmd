@@ -329,7 +329,7 @@ ORA <- ORA_hypergeometric(
   annotations = metabolite_modules,
   clusters = cluster, tested_column = "middle_hierarchy"
 )
-ORA[["plot_ORA"]]
+plot_ORA(ORA)
 
 ORA_lower <- ORA_hypergeometric(
   background = modules_compounds,
@@ -337,7 +337,7 @@ ORA_lower <- ORA_hypergeometric(
   clusters = cluster[cluster$condition == "A", ],
   tested_column = "lower_hierarchy"
 )
-ORA_lower[["plot_ORA"]]
+plot_ORA(ORA_lower)
 ```
 
 Great, we can now see which functional module is over- 
