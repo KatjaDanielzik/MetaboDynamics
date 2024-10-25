@@ -18,7 +18,6 @@ or KEGG ID or some other identifier}
 }
 \value{
 a list holding a 1) dataframe of Jaccard indices between clusters
-2) a ggplot2 object visualizing the cluster comparison
 }
 \description{
 Uses the Jaccard Index to compare metabolite names between dynamics clusters of
@@ -29,5 +28,9 @@ data("cluster")
 comparison <- compare_metabolites(
   clusters = cluster
 )
-comparison[["plot_metabolite_comparison"]]
+head(comparison[["Jaccard"]])
+}
+\seealso{
+Visualization of metabolite similarity \code{\link[=heatmap_metabolites]{heatmap_metabolites()}}/
+compare dynamics of clusters \code{\link[=compare_dynamics]{compare_dynamics()}}
 }

@@ -14,16 +14,19 @@
 #' @import ggplot2
 #'
 #' @return a list holding a 1) dataframe of Jaccard indices between clusters
-#' 2) a ggplot2 object visualizing the cluster comparison
 #'
 #' @export
+#' 
+#' @seealso Visualization of metabolite similarity [heatmap_metabolites()]/
+#' compare dynamics of clusters [compare_dynamics()]
 #'
 #' @examples
 #' data("cluster")
 #' comparison <- compare_metabolites(
 #'   clusters = cluster
 #' )
-#' comparison[["plot_metabolite_comparison"]]
+#' head(comparison[["Jaccard"]])
+
 compare_metabolites <- function(clusters, metabolite = "metabolite") {
   # bind variables to function
   x <- NULL
@@ -69,25 +72,5 @@ compare_metabolites <- function(clusters, metabolite = "metabolite") {
   }
 
   comparison_metabolites[["Jaccard"]] <- distances
-
-
-  # visualize
-
-  comparison_metabolites[["plot_metabolite_comparison"]] <-
-    ggplot(
-      distances[distances$Var1 < distances$Var2, ],
-      aes(
-        x = factor(cluster_b, levels = paste0(x$condition, "_", x$cluster)),
-        y = factor(cluster_a, levels = paste0(x$condition, "_", x$cluster)), fill = Jaccard
-      )
-    ) +
-    geom_tile(color = "white") +
-    theme_bw() +
-    xlab("cluster_b") +
-    ylab("cluster_a") +
-    scale_fill_viridis_c(option = "viridis") +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-    ggtitle("similarity of metabolites in clusters", "metabolites=intersection/union of metabolites in cluster, label=condition+cluster ID")
-
   return(comparison_metabolites)
 }
