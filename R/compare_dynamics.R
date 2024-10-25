@@ -34,7 +34,7 @@
 #'   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"),
 #'   cores = 1
 #' )
-#' comparison[["estimates"]]
+#' head(comparison[["estimates"]])
 
 compare_dynamics <- function(clusters, dynamics, cores = 4) {
   # bind objects to function

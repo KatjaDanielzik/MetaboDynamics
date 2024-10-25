@@ -17,7 +17,9 @@ diagnostics_dynamics(
 )
 }
 \arguments{
-\item{data}{dataframe or colData of a SummarizedExperiment used to fit dynamics model}
+\item{data}{dataframe or colData of a SummarizedExperiment used to fit dynamics model
+column of "time" that contains time as numeric, make sure your
+time column is ordered from lowest to highest for the model to work}
 
 \item{N}{number of rows in that dataframe}
 
@@ -42,8 +44,7 @@ of one}
 a list which contains diagnostics criteria of all conditions in a
 dataframe (named "model_diagnostics") and one dataframe per condition that
 contains necessary information for Posterior predictive check
-(named "PPC_condition"). Additionally plots for diagnostics and PPC named
-"plot_criteria" and "plot_PPC_condition" are returned.
+(named "PPC_condition").
 }
 \description{
 gathers number of divergences, rhat values, number of effective
@@ -69,9 +70,11 @@ diagnostics <- diagnostics_dynamics(
   data = data, iter = 4000, fits = fits,
   chains = 1, scaled_measurement = "m_scaled"
 )
-diagnostics[["plot_neff"]]
-diagnostics[["plot_rhat"]]
+head(diagnostics[["model_diagnostics"]])
+head(diagnostics[["posterior_A"]])
 }
 \seealso{
-\code{\link[=fit_dynamics_model]{fit_dynamics_model()}}/\code{\link[=estimates_dynamics]{estimates_dynamics()}}
+\code{\link[=estimates_dynamics]{estimates_dynamics()}}
+parent function \code{\link[=fit_dynamics_model]{fit_dynamics_model()}}
+visualization functions: \code{\link[=plot_diagnostics]{plot_diagnostics()}}/\code{\link[=plot_PPC]{plot_PPC()}}
 }

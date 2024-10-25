@@ -6,6 +6,8 @@
 #' information about experimental condition, number of divergent transitions
 #' and rhat and neff values for all timepoints.
 #' @param data dataframe or colData of a SummarizedExperiment used to fit dynamics model
+#' column of "time" that contains time as numeric, make sure your
+#' time column is ordered from lowest to highest for the model to work
 #' @param N number of rows in that dataframe
 #' @param M number of metabolites in experimental dataset
 #' @param t number of timepoints in experimental dataset
@@ -18,18 +20,18 @@
 #' experimental condition and metabolite to mean of zero and standard deviation
 #' of one
 #'
-#' @seealso [fit_dynamics_model()]/[estimates_dynamics()]
+#' @seealso [estimates_dynamics()]
+#' parent function [fit_dynamics_model()]
+#' visualization functions: [plot_diagnostics()]/[plot_PPC()]
 #'
 #' @import tidyr
-#' @import ggplot2
 #' @import dplyr
 #' @importFrom SummarizedExperiment colData
 #'
 #' @return a list which contains diagnostics criteria of all conditions in a
 #' dataframe (named "model_diagnostics") and one dataframe per condition that
 #' contains necessary information for Posterior predictive check
-#' (named "PPC_condition"). Additionally plots for diagnostics and PPC named
-#' "plot_criteria" and "plot_PPC_condition" are returned.
+#' (named "PPC_condition"). 
 #' @export
 #'
 #' @examples
@@ -49,8 +51,10 @@
 #'   data = data, iter = 4000, fits = fits,
 #'   chains = 1, scaled_measurement = "m_scaled"
 #' )
-#' diagnostics[["plot_neff"]]
-#' diagnostics[["plot_rhat"]]
+#' head(diagnostics[["model_diagnostics"]])
+#' head(diagnostics[["posterior_A"]])
+
+
 diagnostics_dynamics <- function(data, N = nrow(data),
                                          M = length(unique(data$metabolite)),
                                          t = length(unique(data$time)),
@@ -124,98 +128,11 @@ diagnostics_dynamics <- function(data, N = nrow(data),
     )
     posterior$metabolite.ID <- as.numeric(rep(rep(1:M, t), (iter - warmup) * chains))
     posterior$time.ID <- as.factor(rep(rep(1:t, each = M), (iter - warmup) * chains))
-
-    # assign metabolite and time id to data
-    PPC <- data
-    PPC$metabolite.ID <- as.numeric(as.factor(PPC$metabolite))
-    PPC$time.ID <- as.factor(as.numeric(as.factor(as.numeric(PPC$time))))
-
-
-    list_diagnostics[[paste0("posterior", i)]] <- posterior
-
-    # visualize PPC
-    list_diagnostics[[paste0("plot_PCC_", i)]] <-
-      ggplot(posterior, aes(x = time.ID)) +
-      geom_violin(aes(y = posterior), scale = "count") +
-      geom_jitter(data = PPC, aes_string(x = "time.ID", y = scaled_measurement), width = 0.05) + # aes_string allows us to use predefined variables
-      theme_bw() +
-      ylim(-5, 5) + # we standardized data so we are not expecting much smaller or bigger values
-      ggtitle(
-        paste0(
-          "Posterior predicitve check ", i,
-          ": points within violins?"
-        ),
-        "violins=posterior, points=data"
-      )
+  
+    list_diagnostics[[paste0("posterior_", i)]] <- posterior
   }
   diagnostics_dynamics <- diagnostics_dynamics[-1, ]
   list_diagnostics[["model_diagnostics"]] <- diagnostics_dynamics
-  # cleanup
-
-  # visualize
-  list_diagnostics[["plot_divergences"]] <-
-    ggplot2::ggplot(diagnostics_dynamics, aes(
-      x = condition,
-      y = as.numeric(divergences)
-    )) +
-    geom_violin() +
-    xlab("condition") +
-    theme_bw() +
-    ylab("number of divergent transitions") +
-    ggtitle("diagnostics_dynamics", "divergent transitions?")
-
-  list_diagnostics[["plot_treedepth_error"]] <-
-    ggplot2::ggplot(diagnostics_dynamics, aes(
-      x = condition,
-      y = as.numeric(treedepth_error)
-    )) +
-    geom_violin() +
-    xlab("condition") +
-    theme_bw() +
-    ylab("number of exceeded treedepth") +
-    ggtitle("diagnostics_dynamics", "maximum treedepth exceeded?")
-
-
-  temp <- diagnostics_dynamics %>% pivot_longer(
-    cols = 5:(5 - 1 + t),
-    names_to = "rhat.mu",
-    values_to = "rhat.value"
-  )
-  list_diagnostics[["plot_rhat"]] <-
-    ggplot2::ggplot(temp, aes(
-      x = as.factor(as.numeric(as.factor(rhat.mu))),
-      y = as.numeric(rhat.value)
-    )) +
-    geom_violin() +
-    theme_bw() +
-    facet_wrap(~condition) +
-    ylab("Rhat") +
-    xlab("timepoint") +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-    geom_hline(yintercept = 1.01, col = "red") +
-    ggtitle("diagnostics_dynamics", "Rhat < 1.01 ?")
-
-  # number of effective samples
-  temp <- diagnostics_dynamics %>% pivot_longer(
-    cols = 9:(9 - 1 + t),
-    names_to = "neff.mu",
-    values_to = "neff.value"
-  )
-  list_diagnostics[["plot_neff"]] <-
-    ggplot2::ggplot(temp, aes(
-      x = as.factor(as.numeric(as.factor(neff.mu))),
-      y = as.numeric(neff.value)
-    )) +
-    geom_violin() +
-    theme_bw() +
-    facet_wrap(~condition) +
-    ylab("number of effective samples") +
-    xlab("timepoint") +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-    geom_hline(yintercept = 100, col = "red") +
-    ggtitle("diagnostics_dynamics", "number of effective samples >100 ?")
 
   return(list_diagnostics)
-
-  # cleanup
 }

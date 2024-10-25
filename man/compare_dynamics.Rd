@@ -36,7 +36,7 @@ comparison <- compare_dynamics(
   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"),
   cores = 1
 )
-comparison[["estimates"]]
+head(comparison[["estimates"]])
 }
 \seealso{
 Visualization of estimates \code{\link[=heatmap_dynamics]{heatmap_dynamics()}}/
