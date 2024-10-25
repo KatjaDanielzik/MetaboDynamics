@@ -11,8 +11,6 @@
 #' @param metabolite column in "clusters" that specifies either metabolite name
 #' or KEGG ID or some other identifier
 #'
-#' @import ggplot2
-#'
 #' @return a list holding a 1) dataframe of Jaccard indices between clusters
 #'
 #' @export

@@ -17,7 +17,6 @@
 #' @seealso [fit_dynamics_model()]/[diagnostics_dynamics()]
 #'
 #' @import dplyr
-#' @import ggplot2
 #' @importFrom stats runif
 #' @importFrom SummarizedExperiment colData
 #'
