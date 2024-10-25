@@ -14,7 +14,7 @@
 #' @return a list holding a 1) dataframe of Jaccard indices between clusters
 #'
 #' @export
-#' 
+#'
 #' @seealso Visualization of metabolite similarity [heatmap_metabolites()]/
 #' compare dynamics of clusters [compare_dynamics()]
 #'
@@ -24,7 +24,6 @@
 #'   clusters = cluster
 #' )
 #' head(comparison[["Jaccard"]])
-
 compare_metabolites <- function(clusters, metabolite = "metabolite") {
   # bind variables to function
   x <- NULL

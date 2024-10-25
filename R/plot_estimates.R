@@ -14,8 +14,8 @@
 #' @examples
 #' data("longitudinalMetabolomics")
 #' longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
-#' data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" 
-#'    & longitudinalMetabolomics$metabolite == "ATP", ]
+#' data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" &
+#'   longitudinalMetabolomics$metabolite == "ATP", ]
 #' fits <- fit_dynamics_model(
 #'   data = data,
 #'   scaled_measurement = "m_scaled", condition = "condition",
@@ -25,11 +25,9 @@
 #'   data = data, fits = fits, iter = 4000,
 #'   chains = 1, condition = "condition"
 #' )
-#' plot_estimates(estimates = estimates, data = data, delta_t=TRUE)
-#' plot_estimates(estimates = estimates, data = data, dynamics=TRUE)
-
-plot_estimates <- function(estimates, data, delta_t=TRUE, dynamics=TRUE){
-
+#' plot_estimates(estimates = estimates, data = data, delta_t = TRUE)
+#' plot_estimates(estimates = estimates, data = data, dynamics = TRUE)
+plot_estimates <- function(estimates, data, delta_t = TRUE, dynamics = TRUE) {
   # bind variables to function
   condition <- NULL
   metabolite.ID <- NULL
@@ -37,63 +35,63 @@ plot_estimates <- function(estimates, data, delta_t=TRUE, dynamics=TRUE){
   higher <- NULL
   lower <- NULL
   timepoints <- NULL
-t <- length(unique(data$time))
-plots <- list()
+  t <- length(unique(data$time))
+  plots <- list()
 
-# visualize
-# bind if multiple conditions are analyzed
-temp <- estimates[[1]]
-if (length(names(estimates)) > 1) {
-  for (i in 2:length(names(estimates))) {
-    temp <- rbind(temp, estimates[[i]])
+  # visualize
+  # bind if multiple conditions are analyzed
+  temp <- estimates[[1]]
+  if (length(names(estimates)) > 1) {
+    for (i in 2:length(names(estimates))) {
+      temp <- rbind(temp, estimates[[i]])
+    }
   }
-}
 
-# differences between timepoints
-if(delta_t==TRUE){
-temp_t <- temp[, c(1:3, (6 * t + 7):(6 * t + 15))]
-temp_t <- temp_t %>% pivot_longer(
-  cols = -c(condition, metabolite.ID, metabolite),
-  names_to = c("timepoints", ".value"), names_sep = "_"
-)
-temp_t <- temp_t %>% mutate(col = ifelse(higher < 0, "HDI>0",
-                                         ifelse(lower > 0, "HDI<0", "0inHDI")
-))
-plots[["plot_timepoint_differences"]] <-
-  ggplot(temp_t, aes(y = as.numeric(mean), x = metabolite, col = col)) +
-  geom_point() +
-  geom_errorbar(aes(ymin = lower, ymax = higher)) +
-  ylab("delta") +
-  scale_color_manual(
-    values = c("black", "green", "red"),
-    labels = c("0inCrI", "CrI>0", "CrI<0"), name = ""
-  ) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  facet_grid(rows = vars(timepoints), cols = vars(condition)) +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = -90, hjust = 0)) +
-  ggtitle("differences between timepoints")
-}
+  # differences between timepoints
+  if (delta_t == TRUE) {
+    temp_t <- temp[, c(1:3, (6 * t + 7):(6 * t + 15))]
+    temp_t <- temp_t %>% pivot_longer(
+      cols = -c(condition, metabolite.ID, metabolite),
+      names_to = c("timepoints", ".value"), names_sep = "_"
+    )
+    temp_t <- temp_t %>% mutate(col = ifelse(higher < 0, "HDI>0",
+      ifelse(lower > 0, "HDI<0", "0inHDI")
+    ))
+    plots[["plot_timepoint_differences"]] <-
+      ggplot(temp_t, aes(y = as.numeric(mean), x = metabolite, col = col)) +
+      geom_point() +
+      geom_errorbar(aes(ymin = lower, ymax = higher)) +
+      ylab("delta") +
+      scale_color_manual(
+        values = c("black", "green", "red"),
+        labels = c("0inCrI", "CrI>0", "CrI<0"), name = ""
+      ) +
+      geom_hline(yintercept = 0, linetype = "dashed") +
+      facet_grid(rows = vars(timepoints), cols = vars(condition)) +
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = -90, hjust = 0)) +
+      ggtitle("differences between timepoints")
+  }
 
-# dynamics
-if(dynamics==TRUE){
-temp_d <- temp[, c(1:3, 4:(t + 3))]
-temp_d <- temp_d %>% pivot_longer(
-  cols = -c(condition, metabolite.ID, metabolite),
-  names_to = c("timepoints", ".value"), names_sep = "_"
-)
-plots[["plot_dynamics"]] <-
-  ggplot(temp_d, aes(
-    x = as.factor(as.numeric(as.factor(timepoints))),
-    y = mean, group = metabolite.ID, col = metabolite
-  )) +
-  geom_line() +
-  xlab("timepoint") +
-  ylab("estimated mean concentration") +
-  theme_bw() +
-  theme(legend.position = "none") +
-  facet_grid(rows = vars(condition)) +
-  ggtitle("dynamics", "color=metabolite")
-}
-return(plots)
+  # dynamics
+  if (dynamics == TRUE) {
+    temp_d <- temp[, c(1:3, 4:(t + 3))]
+    temp_d <- temp_d %>% pivot_longer(
+      cols = -c(condition, metabolite.ID, metabolite),
+      names_to = c("timepoints", ".value"), names_sep = "_"
+    )
+    plots[["plot_dynamics"]] <-
+      ggplot(temp_d, aes(
+        x = as.factor(as.numeric(as.factor(timepoints))),
+        y = mean, group = metabolite.ID, col = metabolite
+      )) +
+      geom_line() +
+      xlab("timepoint") +
+      ylab("estimated mean concentration") +
+      theme_bw() +
+      theme(legend.position = "none") +
+      facet_grid(rows = vars(condition)) +
+      ggtitle("dynamics", "color=metabolite")
+  }
+  return(plots)
 }

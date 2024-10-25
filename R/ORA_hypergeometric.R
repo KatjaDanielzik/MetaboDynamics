@@ -11,7 +11,7 @@
 #' log(p(OvE))>0 indicates an over-representation of the functional module in
 #' the cluster, log(p(OvE))<0 an under-representation.
 #' @seealso function to retrieve "background" and
-#' "annotation" data frames [get_ORA_annotations()] 
+#' "annotation" data frames [get_ORA_annotations()]
 #' plot results [plot_ORA()]
 #' @param background dataframe that contains
 #' KEGG IDs of metabolites that are assigned to functional modules
@@ -23,7 +23,7 @@
 #' @param tested_column column that is in background and annotations and on
 #' which the hypergeometric model will be executed
 #
-#' @return a dataframe containing the ORA results 
+#' @return a dataframe containing the ORA results
 #' @export
 #'
 #' @import dplyr
@@ -52,12 +52,8 @@
 #'   tested_column = "lower_hierarchy"
 #' )
 #' head(ORA_lower)
- 
- 
-
 ORA_hypergeometric <- function(background, annotations,
                                clusters, tested_column = "middle_hierarchy") {
-
   # attach new variables to function
   N_b <- NULL
   N <- NULL
@@ -94,7 +90,7 @@ ORA_hypergeometric <- function(background, annotations,
   ## get dataframe with only experimental metabolites that are mapped to
   # KEGG module
   mapped_m <- annotations[annotations$KEGG %in% N, ]
-  
+
   # function to retrieve background KEGG IDs of a module
   # get_ORA_annotations()
   #' @keywords internal
@@ -119,14 +115,14 @@ ORA_hypergeometric <- function(background, annotations,
     "condition", "cluster", "module",
     "total_in_cluster", "hits_in_module"
   )
-  
+
   # internal helper function to retrieve experimental KEGG IDs annotated to module
   # get_ORA_annotations()
   #' @keywords internal
   .get_module <- function(M) {
     return(temp[temp[tested_column] == M, ]$KEGG)
   }
-  
+
   ## get list of experimental metabolites in modules
   for (j in unique(clusters$condition)) {
     temp1 <- left_join(mapped_m, clusters[clusters$condition == j, ],

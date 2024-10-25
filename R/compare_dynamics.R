@@ -21,7 +21,7 @@
 #' between #' clusters of different experimental conditions ("mean") and the
 #' standard deviation ("sigma")
 #'
-#'@seealso Visualization of estimates [heatmap_dynamics()]/
+#' @seealso Visualization of estimates [heatmap_dynamics()]/
 #' compare metabolite composition of clusters [compare_metabolites()]
 #'
 #' @export
@@ -34,7 +34,6 @@
 #'   cores = 1
 #' )
 #' head(comparison[["estimates"]])
-
 compare_dynamics <- function(clusters, dynamics, cores = 4) {
   # bind objects to function
   posterior_mu <- NULL

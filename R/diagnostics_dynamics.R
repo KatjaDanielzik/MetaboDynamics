@@ -31,7 +31,7 @@
 #' @return a list which contains diagnostics criteria of all conditions in a
 #' dataframe (named "model_diagnostics") and one dataframe per condition that
 #' contains necessary information for Posterior predictive check
-#' (named "PPC_condition"). 
+#' (named "PPC_condition").
 #' @export
 #'
 #' @examples
@@ -39,8 +39,8 @@
 #' # only run after fit_dynamics_model(intra): see Vignette and documentation
 #' # of function
 #' longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
-#' data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" 
-#'         & longitudinalMetabolomics$metabolite == "ATP", ]
+#' data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" &
+#'   longitudinalMetabolomics$metabolite == "ATP", ]
 #' fits <- fit_dynamics_model(
 #'   data = data,
 #'   scaled_measurement = "m_scaled", time = "time",
@@ -53,13 +53,11 @@
 #' )
 #' head(diagnostics[["model_diagnostics"]])
 #' head(diagnostics[["posterior_A"]])
-
-
 diagnostics_dynamics <- function(data, N = nrow(data),
-                                         M = length(unique(data$metabolite)),
-                                         t = length(unique(data$time)),
-                                         iter = 2000, warmup = iter / 4, chains = 4,
-                                         fits, scaled_measurement = "m_scaled") {
+                                 M = length(unique(data$metabolite)),
+                                 t = length(unique(data$time)),
+                                 iter = 2000, warmup = iter / 4, chains = 4,
+                                 fits, scaled_measurement = "m_scaled") {
   # check input class and convert SummarizedExperiment to dataframe
   if (is(data, "SummarizedExperiment")) {
     data <- as.data.frame(SummarizedExperiment::colData(data))
@@ -128,7 +126,7 @@ diagnostics_dynamics <- function(data, N = nrow(data),
     )
     posterior$metabolite.ID <- as.numeric(rep(rep(1:M, t), (iter - warmup) * chains))
     posterior$time.ID <- as.factor(rep(rep(1:t, each = M), (iter - warmup) * chains))
-  
+
     list_diagnostics[[paste0("posterior_", i)]] <- posterior
   }
   diagnostics_dynamics <- diagnostics_dynamics[-1, ]
