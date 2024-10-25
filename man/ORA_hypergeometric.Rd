@@ -63,8 +63,7 @@ ORA_lower <- ORA_hypergeometric(
 head(ORA_lower)
 }
 \seealso{
-function to retrieve "background" and
-"annotation" data frames \code{\link[=get_ORA_annotations]{get_ORA_annotations()}}
-plot results \code{\link[=plot_ORA]{plot_ORA()}}
+\code{\link[=get_ORA_annotations]{get_ORA_annotations()}} function to retrieve "background" and
+"annotation" data frames
 }
 \keyword{internal}

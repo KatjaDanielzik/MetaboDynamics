@@ -1,13 +1,13 @@
 #' Plot results of over-representation analysis with ORA_hypergeometric()
 #'
-#' @param ORA result dataframe from over-representation analysis with ORA_hypergeometric
+#' @param ORA result dataframe from 
 #'
 #' @return a plot of the over-representation analysis 
 #' @export
 #' @import ggplot2
-#' @seealso function to do ORA [ORA_hypergeometric()]
+#' @seealso [ORA_hypergeometric()]
 #' @examples
-#' data("cluster")
+#'  data("cluster")
 #' head(cluster)
 #' data("modules_compounds")
 #' head(modules_compounds)
