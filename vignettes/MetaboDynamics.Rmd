@@ -380,11 +380,16 @@ bright points indicate high dynamic similarity which small spread. Here B_8 and
 A_4 have high similarity in dynamics. 
 
 ## Metabolites
+We can also compare metabolite composition of clusters. For this we employ
+the Jaccard Index which is a metric for similarity of two vectors. Values near
+0 indicate low similarity, values near 1 high similarity.
 ```{r,fig.aling='center',fig.dpi=150}
 comparison_metabolites <- compare_metabolites(clusters = cluster)
 comparison_metabolites[["plot_metabolite_comparison"]]
 ```
-We have two clusters that are very similar in their metabolite composition:
+The brighter a tile, the higher is the similarity of two clusters in regard
+to their metabolite composition. 
+We have two clusters that are similar in their metabolite composition:
 C_6 and A_5. If we compare that to the dynamics profiles and ORA analysis
 we see that similar functional modules are over-expressed as expected BUT
 the dynamics differ between the two radiation doses. 

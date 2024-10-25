@@ -79,3 +79,86 @@ fits_dynamics <- fit_dynamics_model(
   chains = 2 # only set to 2 for vignette, default = 4
 )
 
+## -----------------------------------------------------------------------------
+# extract diagnostics
+diagnostics_dynamics <- diagnostics_dynamics(
+  data = longitudinalMetabolomics, 
+  iter = 5000, # number of iterations used for model fitting
+  # the dynamic model
+  scaled_measurement = "m_scaled",
+  fits = fits_dynamics, 
+  chains = 2 # number of chains used for model fitting 
+)
+
+diagnostics_dynamics[["plot_divergences"]]
+diagnostics_dynamics[["plot_treedepth_error"]]
+diagnostics_dynamics[["plot_rhat"]]
+diagnostics_dynamics[["plot_neff"]]
+
+# PPCs can be accessed with
+diagnostics_dynamics[["plot_PCC_A"]]
+
+## ----fig.wide=TRUE------------------------------------------------------------
+# #extract estimates
+estimates_dynamics <- estimates_dynamics(
+  condition = "condition",
+  data = longitudinalMetabolomics, fits = fits_dynamics, samples = 1,
+  iter = 5000, # number of iterations used for model fitting
+  chains = 2 # number of chains used for model fitting
+) 
+
+## ----fig.wide=TRUE------------------------------------------------------------
+# 1) the differences between two timepoints
+estimates_dynamics[["plot_timepoint_differences"]]
+
+## ----fig.wide=TRUE------------------------------------------------------------
+# 2) dynamic profiles
+estimates_dynamics[["plot_dynamics"]]
+
+## ----fig.wide=TRUE------------------------------------------------------------
+# get distances between vectors
+dd_A <- dist(
+  estimates_dynamics[["A"]][, c(
+    "mu1_mean", "mu2_mean",
+    "mu3_mean", "mu4_mean"
+  )],
+  method = "euclidean"
+)
+# hierarchical clustering
+clust <- hclust(dd_A, method = "ward.D2")
+clust_cut <- cutree(clust, k = 8)
+# adding cluster ID to estimates
+clust_A <- estimates_dynamics[["A"]][, c(
+  "metabolite", "condition", "mu1_mean", "mu2_mean",
+  "mu3_mean", "mu4_mean"
+)]
+clust_A$cluster <- clust_cut
+clust_A
+
+## ----fig.wide=TRUE------------------------------------------------------------
+data("cluster")
+temp <- cluster
+temp <- temp %>% pivot_longer(
+  cols = c(mu1_mean, mu2_mean, mu3_mean, mu4_mean),
+  names_to = "timepoint", values_to = "mu_mean"
+)
+ggplot(temp, aes(
+  x = as.factor(as.numeric(as.factor(timepoint))),
+  y = mu_mean, group = metabolite
+)) +
+  geom_line() +
+  xlab("timepoint") +
+  ylab("estimated mean concentration") +
+  theme_bw() +
+  theme(legend.position = "none") +
+  facet_grid(rows = vars(condition), cols = vars(cluster)) +
+  ggtitle("clustered dynamics", "panels=cluster ID")
+
+## -----------------------------------------------------------------------------
+data("metabolite_modules")
+help("metabolite_modules")
+head(metabolite_modules)
+data("modules_compounds")
+help("modules_compounds")
+head(modules_compounds)
+
