@@ -6,7 +6,7 @@
 #' @return euclidean distance between vectors
 #' @keywords internal
 
-eu <- function(a, b) {
+.eu <- function(a, b) {
   temp <- rbind(a, b)
   dist <- stats::dist(temp, method = "euclidean")
   return(dist)
