@@ -39,6 +39,21 @@ plot_estimates <- function(estimates, data, delta_t = TRUE, dynamics = TRUE) {
   t <- length(unique(data$time))
   plots <- list()
 
+  # input checks
+  if (!is.data.frame(data)|inherits(data,"SummarizedExperiment")) 
+    stop("'data' must be a dataframe or colData of a SummarizedExperiment object")
+  # check input class and convert SummarizedExperiment to dataframe
+  if (is(data, "SummarizedExperiment")) {
+    data <- as.data.frame(SummarizedExperiment::colData(data))
+  }
+  if (!is.data.frame(estimates)) 
+    stop("'estimates' must be a dataframe obtained by estimates_dynamics()")
+  if (!is.logical(delta_t))
+    stop("'delta_t' must be either 'TRUE' or 'FALSE'")
+  if (!is.logical(dynamics))
+    stop("'dynamics' must be either 'TRUE' or 'FALSE'")
+  
+  
   # visualize
   # bind if multiple conditions are analyzed
   temp <- estimates[[1]]

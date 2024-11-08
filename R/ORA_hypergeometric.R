@@ -52,6 +52,7 @@
 #'   tested_column = "lower_hierarchy"
 #' )
 #' head(ORA_lower)
+
 ORA_hypergeometric <- function(background, annotations,
                                clusters, tested_column = "middle_hierarchy") {
   # attach new variables to function
@@ -79,7 +80,22 @@ ORA_hypergeometric <- function(background, annotations,
   OvE_gen_median <- NULL
   cluster <- NULL
   condition <- NULL
-
+  
+  
+  # input checks
+  if (!is.data.frame(background)) 
+    stop("'background' must be a dataframe obtained by get_ORA_annotations()")
+  if (!is.data.frame(annotations)) 
+    stop("'annotations' must be a dataframe obtained by get_ORA_annotations()")
+  if (!is.data.frame(clusters)) stop("'clusters' must be a dataframe")
+  if (!all(c("KEGG","cluster") %in% colnames(clusters)))
+    stop("'clusters' must contains columns 'KEGG' and 'cluster'")
+  if (!is.character(tested_column)) 
+    stop("'tested_column' must be a character vector")
+  if (!all(c("tested_column") %in% c(colnames(clusters),colnames(background),colnames(annotations))))
+    stop("'tested_column' must be a column of 'clusters', 'background' and 'annotations'")
+  
+  
   # all unique metabolites in Background -> uniquely to avoid bias p.e.
   # for side-compounds
   N_b <- unique(background$kegg_id)

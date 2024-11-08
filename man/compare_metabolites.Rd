@@ -7,8 +7,8 @@
 compare_metabolites(clusters, metabolite = "metabolite")
 }
 \arguments{
-\item{clusters}{a dataframe containing the columns "metabolite" specifying the
-metabolite names to be compared and cluster IDs(column named "cluster") of
+\item{clusters}{a dataframe or containing a column specifying the metabolite
+names to be compared and cluster IDs (column named "cluster") of
 clusters of similar dynamics, as well as a column "condition" specifying
 the experimental conditions
 to be compared}

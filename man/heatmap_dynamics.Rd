@@ -8,8 +8,8 @@ heatmap_dynamics(estimates, clusters)
 }
 \arguments{
 \item{estimates}{dataframe of estimates of the mean distance
-between #' clusters of different experimental conditions ("mean") and the
-standard deviation ("sigma")}
+between clusters of different experimental conditions ("mean") and the
+standard deviation ("sigma") obtain by function compare_dynamics()}
 
 \item{clusters}{a dataframe containing the dynamics and
 cluster IDs(column named "cluster") of clusters of similar dynamics,

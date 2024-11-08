@@ -18,7 +18,7 @@ estimates_dynamics(
 )
 }
 \arguments{
-\item{data}{dataframe or colData of a SummarizedExperiment used used to fit dynamics model}
+\item{data}{dataframe or colData of a SummarizedExperiment used used to fit dynamics model, must contain a column specifying KEGG IDs and column named "condition" specifiyng the experimental condition}
 
 \item{M}{number of metabolites, default requires a column in data named "metabolite"}
 

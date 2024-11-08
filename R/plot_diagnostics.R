@@ -3,6 +3,7 @@
 #' @param diagnostics dataframe containing diagnostics criteria from the numerical
 #' fit of Bayesian model of dynamics obtained by function diagnostics_dynamics()
 #' @param data dataframe or colData of a SummarizedExperiment used to fit dynamics model
+#' must contain column "time"
 #' @param divergences should number of divergent transitions be visualized?
 #' @param max_treedepth should number of exeeded maximum treedepth be visualized?
 #' @param Rhat should Rhat be visualized?
@@ -44,6 +45,27 @@ plot_diagnostics <- function(diagnostics, data, divergences = TRUE,
   condition <- NULL
   treedepth_error <- NULL
 
+  # input checks
+  if (!is.data.frame(data)|inherits(data,"SummarizedExperiment")) 
+    stop("'data' must be a dataframe or colData of a SummarizedExperiment object")
+  # check input class and convert SummarizedExperiment to dataframe
+  if (is(data, "SummarizedExperiment")) {
+    data <- as.data.frame(SummarizedExperiment::colData(data))
+  }
+  if (!is.data.frame(diagnostics)) 
+    stop("'diagnostics' must be a dataframe obtained by diagnostics_dynamics()")
+  if (!is.logical(divergences))
+    stop("'divergences' must be either 'TRUE' or 'FALSE'")
+  if (!is.logical(max_treedepth))
+    stop("'max_treedepth' must be either 'TRUE' or 'FALSE'")
+  if (!is.logical(Rhat))
+    stop("'Rhat' must be either 'TRUE' or 'FALSE'")
+  if (!is.logical(n_eff))
+    stop("'n_eff' must be either 'TRUE' or 'FALSE'")
+  if (!all(c("time") %in% colnames(data)))
+    stop("'data' must contain a column named 'time'")
+  
+  
   # input
   t <- length(unique(data$time))
   # vector for storage

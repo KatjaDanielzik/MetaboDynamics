@@ -17,7 +17,8 @@ plot_diagnostics(
 \item{diagnostics}{dataframe containing diagnostics criteria from the numerical
 fit of Bayesian model of dynamics obtained by function diagnostics_dynamics()}
 
-\item{data}{dataframe or colData of a SummarizedExperiment used to fit dynamics model}
+\item{data}{dataframe or colData of a SummarizedExperiment used to fit dynamics model
+must contain column "time"}
 
 \item{divergences}{should number of divergent transitions be visualized?}
 

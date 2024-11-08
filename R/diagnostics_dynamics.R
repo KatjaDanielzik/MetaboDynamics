@@ -63,6 +63,10 @@ diagnostics_dynamics <- function(data, N = nrow(data),
   # Input checks
   if (!is.data.frame(data)|inherits(data,"SummarizedExperiment")) 
       stop("'data' must be a dataframe or colData of a SummarizedExperiment object")
+  # check input class and convert SummarizedExperiment to dataframe
+  if (is(data, "SummarizedExperiment")) {
+    data <- as.data.frame(SummarizedExperiment::colData(data))
+    }
   if(!sapply(fits, function(x) inherits(x, "stanfit")))
     stop("'fits' must be a list of stanfit objects")
   if (!is.character(scaled_measurement)) 
@@ -74,10 +78,6 @@ diagnostics_dynamics <- function(data, N = nrow(data),
     stop("'N', 'M', 't', 'iter', 'warmup', and 'chains' must be positive integers")
   }
 
-  # check input class and convert SummarizedExperiment to dataframe
-  if (is(data, "SummarizedExperiment")) {
-    data <- as.data.frame(SummarizedExperiment::colData(data))
-    }
   
   # create list to store all subsequent results
   list_diagnostics <- list()

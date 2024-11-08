@@ -33,7 +33,7 @@ time column is ordered from lowest to highest for the model to work}
 
 \item{chains}{number of chains used for model fit}
 
-\item{fits}{list of models for which diagnostics should be extracted, is the
+\item{fits}{list of model fits for which diagnostics should be extracted, is the
 object that gets returned by fit_dynamics_model()}
 
 \item{scaled_measurement}{concentration values used to model fit, should be normalized by

@@ -13,7 +13,7 @@ get_ORA_annotations(
 )
 }
 \arguments{
-\item{data}{data set to be analyzed with ORA. Must at least contain a column
+\item{data}{data frame to be analyzed with ORA. Must at least contain a column
 with KEGG IDs}
 
 \item{kegg}{column name of "data" that holds KEGG IDs}

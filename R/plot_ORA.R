@@ -1,6 +1,6 @@
 #' Plot results of over-representation analysis with ORA_hypergeometric()
 #'
-#' @param ORA result dataframe from
+#' @param ORA result dataframe from ORA_hypergeometric()
 #'
 #' @return a plot of the over-representation analysis
 #' @export
@@ -28,6 +28,12 @@ plot_ORA <- function(ORA) {
   OvE_gen_median <- NULL
   cluster <- NULL
   condition <- NULL
+  
+  #input check
+  if (!is.data.frame(ORA)) 
+    stop("'ORA' must be a dataframe obtained by ORA_hypergeometric()")
+  
+  
 
   a_clusters <- ORA
   plot <- ggplot(

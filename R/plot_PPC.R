@@ -38,6 +38,21 @@ plot_PPC <- function(posterior, data, scaled_measurement) {
   
   # bind variables to function
   time.ID <- NULL
+  
+  # input checks
+  if (!is.data.frame(data)|inherits(data,"SummarizedExperiment")) 
+    stop("'data' must be a dataframe or colData of a SummarizedExperiment object")
+  # check input class and convert SummarizedExperiment to dataframe
+  if (is(data, "SummarizedExperiment")) {
+    data <- as.data.frame(SummarizedExperiment::colData(data))
+  }
+  if (!is.data.frame(posterior)) 
+    stop("'posterior' must be a dataframe obtained by diagnostics_dynamics()")
+  if (!is.character(scaled_measurement))
+    stop("'scaled_measurement' must be a character vector specifying a column name of data")
+  if (!scaled_measurement %in% colnames(data)) {
+    stop("'data' must contain a column named 'scaled_measurement'")
+  }
 
   # prepare data for PPC
   # assign metabolite and time id to data

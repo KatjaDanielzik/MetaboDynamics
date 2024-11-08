@@ -7,7 +7,7 @@
 plot_ORA(ORA)
 }
 \arguments{
-\item{ORA}{result dataframe from}
+\item{ORA}{result dataframe from ORA_hypergeometric()}
 }
 \value{
 a plot of the over-representation analysis
