@@ -29,7 +29,7 @@ data("cluster")
 comparison <- compare_metabolites(
   clusters = cluster
 )
-heatmap_metabolites(distances=comparison[["Jaccard"]],clusters=cluster)
+heatmap_metabolites(distances = comparison[["Jaccard"]], clusters = cluster)
 }
 \seealso{
 \code{\link[=compare_metabolites]{compare_metabolites()}}

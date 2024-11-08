@@ -27,13 +27,13 @@ plot bubble heatmap from the numerical fit of compare_dynamics()
 }
 \examples{
 data("cluster")
-# fit model 
+# fit model
 comparison <- compare_dynamics(
   clusters = cluster,
   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"),
   cores = 1
 )
-plot <- heatmap_dynamics(estimates=comparison[["estimates"]],clusters=cluster)
+plot <- heatmap_dynamics(estimates = comparison[["estimates"]], clusters = cluster)
 plot
 }
 \seealso{
