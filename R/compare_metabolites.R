@@ -3,8 +3,8 @@
 #' Uses the Jaccard Index to compare metabolite names between dynamics clusters of
 #' different experimental conditions
 #'
-#' @param clusters a dataframe containing the columns "metabolite" specifying the
-#' metabolite names to be compared and cluster IDs(column named "cluster") of
+#' @param clusters a dataframe or containing a column specifying the metabolite
+#' names to be compared and cluster IDs (column named "cluster") of
 #' clusters of similar dynamics, as well as a column "condition" specifying
 #' the experimental conditions
 #' to be compared
@@ -36,6 +36,17 @@ compare_metabolites <- function(clusters, metabolite = "metabolite") {
   Jaccard <- NULL
   cluster_a <- NULL
   cluster_b <- NULL
+  
+  # Input checks
+  if (!is.data.frame(clusters)) stop("'clusters' must be a dataframe")
+  if (!is.character(metabolite)) stop("'metabolite' must be a character vector")
+  if (!all(c("cluster") %in% colnames(clusters))) {
+    stop("'clusters' must contain a column named 'cluster'")
+  }
+  if (!all(c(metabolite) %in% colnames(clusters))) {
+    stop("'clusters' must contain a column containing
+         metabolite names as specified with metabolite= ")
+  }
 
   # return object
   comparison_metabolites <- list()
