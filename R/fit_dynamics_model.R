@@ -69,7 +69,7 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
   conditions <- unique(data[[condition]])
   fits <- list()
   # loop over conditions
-  for (i in 1:length(conditions)) {
+  for (i in seq_len(length(conditions))) {
     # subset dataframe
     temp <- data[data[[condition]] == conditions[i], ]
 

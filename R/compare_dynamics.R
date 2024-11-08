@@ -34,6 +34,7 @@
 #'   cores = 1
 #' )
 #' head(comparison[["estimates"]])
+
 compare_dynamics <- function(clusters, dynamics, cores = 4) {
   # bind objects to function
   posterior_mu <- NULL
@@ -55,8 +56,8 @@ compare_dynamics <- function(clusters, dynamics, cores = 4) {
   x <- unique(clusters[, c("condition", "cluster")])
 
   distances <- list()
-  for (i in 1:nrow(x)) {
-    for (j in 1:nrow(x)) {
+  for (i in seq_len(nrow(x))) {
+    for (j in seq_len(nrow(x))) {
       # fill in only half of the matrix to save computational time
       if (j > i) {
         # cat(i,j)
@@ -73,7 +74,7 @@ compare_dynamics <- function(clusters, dynamics, cores = 4) {
 
         distance <- data.frame(cbind(id, euclidean = NA))
         # iterate through every combination
-        for (k in 1:nrow(id)) {
+        for (k in seq_len(nrow(id))) {
           # cat(k)
           # calculate euclidean distance between vectors
           distance[k, ]$euclidean <- eu(temp_a[id$Var1[k], ], temp_b[id$Var2[k], ])
@@ -91,14 +92,14 @@ compare_dynamics <- function(clusters, dynamics, cores = 4) {
 
   # get number of observations
   N <- vector()
-  for (i in 1:length(names(distances)))
+  for (i in seq_len(length(names(distances))))
   {
     N[i] <- length(distances[[i]])
   }
   # because we have different vector lengths -> vector padding is needed
   # use as dummy value something that is far away from expected values
   y_padded <- matrix(1e6, nrow = length(names(distances)), ncol = max(N))
-  for (i in 1:length(names(distances))) {
+  for (i in seq_len(length(names(distances)))) {
     y_padded[i, 1:N[i]] <- distances[[i]]
   }
 
