@@ -1,8 +1,8 @@
 #' plot bubble heatmap from the numerical fit of compare_dynamics()
 #'
 #' @param estimates dataframe of estimates of the mean distance
-#' between #' clusters of different experimental conditions ("mean") and the
-#' standard deviation ("sigma")
+#' between clusters of different experimental conditions ("mean") and the
+#' standard deviation ("sigma") obtain by function compare_dynamics()
 #' @param clusters a dataframe containing the dynamics and
 #' cluster IDs(column named "cluster") of clusters of similar dynamics,
 #' as well as a column "condition" specifying the experimental conditions
@@ -26,6 +26,7 @@
 #' )
 #' plot <- heatmap_dynamics(estimates = comparison[["estimates"]], clusters = cluster)
 #' plot
+
 heatmap_dynamics <- function(estimates, clusters) {
   posterior <- estimates
 
@@ -36,7 +37,13 @@ heatmap_dynamics <- function(estimates, clusters) {
   mu_mean <- NULL
   "97.5%" <- NULL
   "2.5%" <- NULL
-
+  
+  # input checks
+  if (!is.data.frame(estimates)) 
+    stop("'estimates' must be a dataframe obtained by compare_dynamics()")
+  if (!is.data.frame(clusters)) 
+    stop("'clusters' must be a dataframe")
+  
   # create matrix
   # how many do we have to compare ?
   x <- unique(clusters[, c("condition", "cluster")])

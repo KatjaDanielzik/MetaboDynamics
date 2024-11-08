@@ -25,6 +25,12 @@ heatmap_metabolites <- function(distances, clusters) {
   Jaccard <- NULL
   cluster_a <- NULL
   cluster_b <- NULL
+  
+  # input checks
+  if (!is.data.frame(distances)) 
+    stop("'estimates' must be a dataframe obtained by compare_metabolites()")
+  if (!is.data.frame(clusters)) 
+    stop("'clusters' must be a dataframe")
 
   x <- unique(clusters[, c("condition", "cluster")])
 

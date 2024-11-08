@@ -7,7 +7,7 @@
 #' dataset and organism. The user should check afterwards if all functional modules are
 #' applicable for the analysis of the dataset (p.e. organism, tissue).
 #'
-#' @param data data set to be analyzed with ORA. Must at least contain a column
+#' @param data data frame to be analyzed with ORA. Must at least contain a column
 #'                      with KEGG IDs
 #' @param kegg column name of "data" that holds KEGG IDs
 #' @param metabolite_name column name of "data" that holds metabolite names
@@ -39,6 +39,19 @@
 get_ORA_annotations <- function(data, kegg = "KEGG",
                                 metabolite_name = "metabolite",
                                 update_background = FALSE) {
+  
+  # input checks
+  if (!is.logical(update_background))
+    stop("'update_background' must be either 'TRUE' or 'FALSE'")
+  if (!is.data.frame(data)|inherits(data,"SummarizedExperiment")) 
+    stop("'data' must be a dataframe or colData of a SummarizedExperiment object")
+  if (!is.character(kegg))
+    stop("'kegg' must be a character vector specifying a column name of data")
+  if(!is.character(metabolite_name))
+    stop("'metabolite_name' must be a character vector specifying a column name of data")
+  if (!all(c(kegg, metabolite_name) %in% colnames(data))) 
+    stop("'data' must contain columns named 'kegg', and 'metabolite_name'")
+  
   # check input class and convert SummarizedExperiment to dataframe
   if (is(data, "SummarizedExperiment")) {
     data <- as.data.frame(SummarizedExperiment::colData(data))

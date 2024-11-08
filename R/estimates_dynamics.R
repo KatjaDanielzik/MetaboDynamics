@@ -3,7 +3,7 @@
 #' Extracts the mean concentrations (mu) at every timepoint from the dynamics model fit, the 95% highest density interval (HDI), the estimated standard deviation of metabolite concentrations at every time point (sigma), and the pooled standard deviation of every metabolite over all timepoints (lambda).
 #' Additionally samples from the posterior of mu can be drawn. This can be helpful if p.e. one wants to estimate the clustering precision. Lambda can be used for clustering algorithms such as VSClust that also take the variance into account.
 #'
-#' @param data dataframe or colData of a SummarizedExperiment used used to fit dynamics model
+#' @param data dataframe or colData of a SummarizedExperiment used used to fit dynamics model, must contain a column specifying KEGG IDs and column named "condition" specifiyng the experimental condition
 #' @param M number of metabolites, default requires a column in data named "metabolite"
 #' @param t number of unique timepoints in data, the default requires a column named "time"
 #' @param kegg column in "data" that contains the KEGG IDs or other identifier of metabolites
@@ -47,10 +47,6 @@ estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
                                kegg = "KEGG", condition = "dose",
                                fits, iter = 2000,
                                warmup = iter / 4, chains = 4, samples = 1) {
-  # check input class and convert SummarizedExperiment to dataframe
-  if (is(data, "SummarizedExperiment")) {
-    data <- as.data.frame(SummarizedExperiment::colData(data))
-  }
 
   # bind variables
   dynamics_loc_cpc <- NULL
@@ -61,6 +57,25 @@ estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
   higher <- NULL
   lower <- NULL
   timepoints <- NULL
+  
+  # Input checks
+  if (!is.data.frame(data)&!inherits(data,"SummarizedExperiment")) 
+    stop("'data' must be a dataframe or colData of a SummarizedExperiment object")
+  if(!sapply(fits, function(x) inherits(x, "stanfit")))
+    stop("'fits' must be a list of stanfit objects")
+  if (!is.character(c(kegg,condition))) 
+    stop("'kegg' and 'condition' must be a character vector specifying a column name of data")
+  if (!all(c(kegg,condition) %in% colnames(valid_data))) {
+    stop("'data' must contain columns named 'condition' and 'kegg'")
+  }
+  if (!is.integer(c(N,M,t,warmup,iter,chains)>!c(N,M,t,warmup,iter,chains,samples)>0)) {
+    stop("'N', 'M', 't', 'iter', 'warmup', 'chains' and 'samples' must be positive integers")
+  }
+  
+  # check input class and convert SummarizedExperiment to dataframe
+  if (is(data, "SummarizedExperiment")) {
+    data <- as.data.frame(SummarizedExperiment::colData(data))
+  }
 
   conditions <- unique(data[[condition]])
 

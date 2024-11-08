@@ -35,6 +35,7 @@
 #'   scaled_measurement = "m_scaled"
 #' )
 plot_PPC <- function(posterior, data, scaled_measurement) {
+  
   # bind variables to function
   time.ID <- NULL
 

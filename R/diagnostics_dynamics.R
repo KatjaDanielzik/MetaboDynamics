@@ -11,7 +11,7 @@
 #' @param N number of rows in that dataframe
 #' @param M number of metabolites in experimental dataset
 #' @param t number of timepoints in experimental dataset
-#' @param fits list of models for which diagnostics should be extracted, is the
+#' @param fits list of model fits for which diagnostics should be extracted, is the
 #' object that gets returned by fit_dynamics_model()
 #' @param warmup number of warmup iterations used for model fit
 #' @param iter number of iterations used for model fit
@@ -53,16 +53,32 @@
 #' )
 #' head(diagnostics[["model_diagnostics"]])
 #' head(diagnostics[["posterior_A"]])
+
 diagnostics_dynamics <- function(data, N = nrow(data),
                                  M = length(unique(data$metabolite)),
                                  t = length(unique(data$time)),
                                  iter = 2000, warmup = iter / 4, chains = 4,
                                  fits, scaled_measurement = "m_scaled") {
+
+  # Input checks
+  if (!is.data.frame(data)|inherits(data,"SummarizedExperiment")) 
+      stop("'data' must be a dataframe or colData of a SummarizedExperiment object")
+  if(!sapply(fits, function(x) inherits(x, "stanfit")))
+    stop("'fits' must be a list of stanfit objects")
+  if (!is.character(scaled_measurement)) 
+    stop("'scaled_measurement' must be a character vector specifying a column name of data")
+  if (!all(c("time") %in% colnames(data))) {
+    stop("'data' must contain a column named 'time'")
+  }
+  if (!is.integer(c(N,M,t,warmup,iter,chains)|!c(N,M,t,warmup,iter,chains)>0)) {
+    stop("'N', 'M', 't', 'iter', 'warmup', and 'chains' must be positive integers")
+  }
+
   # check input class and convert SummarizedExperiment to dataframe
   if (is(data, "SummarizedExperiment")) {
     data <- as.data.frame(SummarizedExperiment::colData(data))
-  }
-
+    }
+  
   # create list to store all subsequent results
   list_diagnostics <- list()
 

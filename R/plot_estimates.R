@@ -28,6 +28,7 @@
 #' plot_estimates(estimates = estimates, data = data, delta_t = TRUE)
 #' plot_estimates(estimates = estimates, data = data, dynamics = TRUE)
 plot_estimates <- function(estimates, data, delta_t = TRUE, dynamics = TRUE) {
+  
   # bind variables to function
   condition <- NULL
   metabolite.ID <- NULL

@@ -59,11 +59,29 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
                                scaled_measurement = "m_scaled", chains = 4, cores = 4,
                                adapt_delta = 0.95, max_treedepth = 10,
                                iter = 2000, warmup = iter / 4) {
+
+  # Input checks
+  if (!is.data.frame(data)|inherits(data,"SummarizedExperiment")) 
+    stop("'data' must be a dataframe or colData of a SummarizedExperiment object")
+  if(!sapply(fits, function(x) inherits(x, "stanfit")))
+    stop("'fits' must be a list of stanfit objects")
+  if (!is.character(all(c(metabolite,time,condition,scaled_measurement)))) 
+    stop("'metabolite', 'time', 'condition', and 'scaled_measurement' must be a character vector specifying a column name of data")
+  if (!all(c(metabolite,time,condition,scaled_measurement) %in% colnames(data))) {
+    stop("'data' must contain columns named 'metabolite','time','condition', and 'scaled_measurement'")
+  }
+  if (!is.integer(c(warmup,iter,max_treedepth)|!c(warmup,iter,max_treedepth)>0)) {
+    stop("'iter', 'warmup', and 'max_treedepth' must be positive integers")
+  }
+  if (!is.numeric(adapt_delta)|!(adapt_delta>0&adapt_delta<1)) {
+    stop("adapt_delta must be numeric and in the range [0;1]")
+  }
+  
+  
   # check input class and convert SummarizedExperiment to dataframe
   if (is(data, "SummarizedExperiment")) {
     data <- as.data.frame(SummarizedExperiment::colData(data))
   }
-
 
   # get unique experimental conditions
   conditions <- unique(data[[condition]])
