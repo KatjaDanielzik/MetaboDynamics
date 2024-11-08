@@ -28,8 +28,8 @@ data("longitudinalMetabolomics")
 # only run after fit_dynamics_model(intra): see Vignette and documentation
 # of function
 longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
-data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" 
-        & longitudinalMetabolomics$metabolite == "ATP", ]
+data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" &
+  longitudinalMetabolomics$metabolite == "ATP", ]
 fits <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", time = "time",
@@ -40,8 +40,10 @@ diagnostics <- diagnostics_dynamics(
   data = data, iter = 4000, fits = fits,
   chains = 1, scaled_measurement = "m_scaled"
 )
-plot_PPC(posterior = diagnostics[["posterior_A"]], data = data, 
-scaled_measurement = "m_scaled")
+plot_PPC(
+  posterior = diagnostics[["posterior_A"]], data = data,
+  scaled_measurement = "m_scaled"
+)
 }
 \seealso{
 parent function \code{\link[=diagnostics_dynamics]{diagnostics_dynamics()}}

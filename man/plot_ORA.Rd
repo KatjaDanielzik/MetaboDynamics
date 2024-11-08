@@ -16,7 +16,7 @@ a plot of the over-representation analysis
 Plot results of over-representation analysis with ORA_hypergeometric()
 }
 \examples{
- data("cluster")
+data("cluster")
 head(cluster)
 data("modules_compounds")
 head(modules_compounds)

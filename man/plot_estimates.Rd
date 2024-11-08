@@ -27,8 +27,8 @@ Visualization of parameter estimates from numeric fit of Bayesian model of dynam
 \examples{
 data("longitudinalMetabolomics")
 longitudinalMetabolomics <- as.data.frame(SummarizedExperiment::colData(longitudinalMetabolomics))
-data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" 
-   & longitudinalMetabolomics$metabolite == "ATP", ]
+data <- longitudinalMetabolomics[longitudinalMetabolomics$condition == "A" &
+  longitudinalMetabolomics$metabolite == "ATP", ]
 fits <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", condition = "condition",
@@ -38,8 +38,8 @@ estimates <- estimates_dynamics(
   data = data, fits = fits, iter = 4000,
   chains = 1, condition = "condition"
 )
-plot_estimates(estimates = estimates, data = data, delta_t=TRUE)
-plot_estimates(estimates = estimates, data = data, dynamics=TRUE)
+plot_estimates(estimates = estimates, data = data, delta_t = TRUE)
+plot_estimates(estimates = estimates, data = data, dynamics = TRUE)
 }
 \seealso{
 \code{\link[=estimates_dynamics]{estimates_dynamics()}}
