@@ -69,7 +69,7 @@ diagnostics_dynamics <- function(data, N = nrow(data),
   # diagnostic criteria from model
   diagnostics_dynamics <- as.data.frame(matrix(ncol = 4 + 2 * t))
   names_d <- c()
-  for (i in 1:t) {
+  for (i in seq_len(t)) {
     names_d[i] <- paste0("rhat_mu", i, "_mean")
   }
   for (i in (t + 1):(2 * t)) {
@@ -100,7 +100,7 @@ diagnostics_dynamics <- function(data, N = nrow(data),
     condition <- i
 
     # gather in one dataframe
-    for (m in 1:M) {
+    for (m in seq_len(M)) {
       rhat_mu_mean <- as.data.frame(matrix(ncol = t))
       neff_mu_mean <- as.data.frame(matrix(ncol = t))
       start <- (m - 1) * t + 1

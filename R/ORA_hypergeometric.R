@@ -102,7 +102,7 @@ ORA_hypergeometric <- function(background, annotations,
   a_b_list <- sapply(M, .get_module_background)
   # extract number of unique background metabolites in module
   a_b <- c()
-  for (i in 1:length(M))
+  for (i in seq_len(length(M)))
   {
     # extract number of unique experimental metabolites in module
     a_b[i] <- length(unique(unlist(a_b_list[names(a_b_list)][M[i]])))
@@ -128,21 +128,21 @@ ORA_hypergeometric <- function(background, annotations,
     temp1 <- left_join(mapped_m, clusters[clusters$condition == j, ],
       by = "KEGG", relationship = "many-to-many"
     )
-    for (i in 1:length(unique(temp1$cluster))) {
+    for (i in seq_len(length(unique(temp1$cluster)))) {
       temp <- temp1[temp1$cluster == i, ]
       a_list <- sapply(M, .get_module)
       # vector of metabolites in this cluster sample
       N <- unique(temp$KEGG)
       ## extract number of unique metabolites
-      a <- c(1:length(M))
-      for (k in 1:length(M))
+      a <- seq_len(length(M))
+      for (k in seq_len(length(M)))
       {
         # extract number of unique experimental metabolites in module
         a[k] <- length(unique(unlist(a_list[names(a_list)][M[k]])))
       }
       temp_N <- as.data.frame(cbind(
         condition = j, cluster = i,
-        module = 1:length(M),
+        module = seq_len(length(M)),
         total_in_cluster = length(N),
         hits_in_module = a
       ))
@@ -153,7 +153,7 @@ ORA_hypergeometric <- function(background, annotations,
   a_clusters$module <- as.numeric(a_clusters$module)
 
   test <- as.data.frame(cbind(
-    module = as.numeric(1:length(M)),
+    module = as.numeric(seq_len(length(M))),
     background_module = a_b, module_name = M
   ))
   test$module <- as.numeric(test$module)
@@ -173,7 +173,7 @@ ORA_hypergeometric <- function(background, annotations,
   series <- as.data.frame(matrix(ncol = 4))
   colnames(series) <- c("condition", "cluster", "total_in_cluster", "n_theo")
 
-  for (i in 1:nrow(temp)) {
+  for (i in seq_len(nrow(temp))) {
     temp2 <- temp[i, ]
     temp3 <- cbind(temp2, n_theo = seq(from = 1, to = 100), row.names = NULL)
     series <- rbind(series, temp3)

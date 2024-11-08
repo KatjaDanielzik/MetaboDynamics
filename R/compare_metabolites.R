@@ -49,7 +49,7 @@ compare_metabolites <- function(clusters, metabolite = "metabolite") {
     Jaccard = rep(NA, nrow(id))
   )
 
-  for (i in 1:nrow(id)) {
+  for (i in seq_len(nrow(id))) {
     # fill in only half of the matrix to save computational time
     # recover condition and cluster, condition = a[1], cluster=a[2]
     a <- paste0(x[id[i, ]$Var1, 1], "_", x[id[i, ]$Var1, 2])

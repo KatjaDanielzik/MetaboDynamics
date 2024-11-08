@@ -84,34 +84,34 @@ estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
     mu_posterior <- as.matrix(fit)
 
 
-    for (m in 1:M) {
+    for (m in seq_len(M)) {
       # single loops to get reasonable order for clustering
-      for (j in 1:t) {
+      for (j in seq_len(t)) {
         # get means of estimated means at timepoints
         dynamics_log_cpc[m, paste0("mu", j, "_mean")] <-
           pS[paste0("mu[", m, ",", j, "]"), "mean"]
       }
-      for (j in 1:t) {
+      for (j in seq_len(t)) {
         # lower border of 95% CrI
         dynamics_log_cpc[m, paste0("mu", j, "_lower")] <-
           pS[paste0("mu[", m, ",", j, "]"), "2.5%"]
       }
-      for (j in 1:t) {
+      for (j in seq_len(t)) {
         # higher border of 95% CrI
         dynamics_log_cpc[m, paste0("mu", j, "_higher")] <-
           pS[paste0("mu[", m, ",", j, "]"), "97.5%"]
       }
-      for (j in 1:t) {
+      for (j in seq_len(t)) {
         # get means of sigma
         dynamics_log_cpc[m, paste0("sigma", j, "_mean")] <-
           pS[paste0("sigma[", m, ",", j, "]"), "mean"]
       }
-      for (j in 1:t) {
+      for (j in seq_len(t)) {
         # lower border of 95% CrI
         dynamics_log_cpc[m, paste0("sigma", j, "_lower")] <-
           pS[paste0("sigma[", m, ",", j, "]"), "2.5%"]
       }
-      for (j in 1:t) {
+      for (j in seq_len(t)) {
         # higher border of 95% CrI
         dynamics_log_cpc[m, paste0("sigma", j, "_higher")] <-
           pS[paste0("sigma[", m, ",", j, "]"), "97.5%"]
@@ -125,7 +125,7 @@ estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
 
       # delta mus
       # we have one less delta_mu than timepoints
-      for (j in 1:(t - 1))
+      for (j in seq_len((t - 1)))
       {
         # mean
         dynamics_log_cpc[m, paste0("delta", j, j + 1, "_mean")] <-
@@ -139,9 +139,9 @@ estimates_dynamics <- function(data, M = length(unique(data$metabolite)),
       }
 
 
-      for (k in 1:length(x))
+      for (k in seq_len(length(x)))
       {
-        for (j in 1:t) {
+        for (j in seq_len(t)) {
           dynamics_log_cpc[m, paste0("mu", j, "_sample", k)] <-
             mu_posterior[, paste0("mu[", m, ",", j, "]")][x[k]]
         }
