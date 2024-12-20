@@ -1,0 +1,56 @@
+Package: MetaboDynamics
+Title: Bayesian analysis of longitudinal metabolomics data
+Version: 0.99.16
+Authors@R: 
+    c(person(given="Katja",family= "Danielzik", email="katja.danielzik@uni-due.de", 
+    role = c("aut", "cre"),
+    comment=c(ORCID="0009-0007-5021-6212")),
+    person(given="Simo",family="Kitanovski",role="ctb"),
+    person(given="Johann",family="Matschke",role="ctb"),
+    person(given="Daniel",family="Hoffmann",role="ctb"))
+URL: https://github.com/KatjaDanielzik/MetaboDynamics
+BugReports: https://github.com/KatjaDanielzik/MetaboDynamics/issues
+Description: MetaboDynamics is an R-package that provides a framework of 
+  probabilistic models to analyze longitudinal metabolomics data. It enables 
+  robust estimation of mean concentrations despite varying spread between 
+  timepoints and reports differences between timepoints as well as metabolite 
+  specific dynamics profiles that can be used for identifying "dynamics clusters" 
+  of metabolites of similar dynamics. Provides probabilistic over-representation 
+  analysis and comparison betweeen clusters of different experimental conditions.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Suggests: 
+    knitr,
+    rmarkdown,
+    BiocStyle,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports: 
+    dplyr,
+    ggplot2,
+    KEGGREST,
+    methods,
+    Rcpp (>= 0.12.0),
+    RcppParallel (>= 5.0.1),
+    rstan (>= 2.18.1),
+    rstantools (>= 2.4.0),
+    S4Vectors,
+    stringr,
+    SummarizedExperiment,
+    tidyr
+VignetteBuilder: knitr
+Depends: 
+    R (>= 4.4.0)
+LazyData: false
+LinkingTo: 
+    BH (>= 1.66.0),
+    Rcpp (>= 0.12.0),
+    RcppEigen (>= 0.3.3.3.0),
+    RcppParallel (>= 5.0.1),
+    rstan (>= 2.18.1),
+    StanHeaders (>= 2.18.0)
+SystemRequirements: GNU make
+biocViews: Software,Metabolomics,Bayesian,FunctionalPrediction,MultipleComparison,KEGG
+Biarch: true
