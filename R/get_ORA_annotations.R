@@ -8,17 +8,17 @@
 #' applicable for the analysis of the dataset (p.e. organism, tissue).
 #'
 #' @param data data frame to be analyzed with ORA. Must at least contain a column
-#'                      with KEGG IDs or a SummarizedExperiment where the metabolite
+#'                      with KEGG IDs or a \link{SummarizedExperiment} where the metabolite
 #'                      names or IDs are stored in colData
 #' @param kegg column name of "data" that holds KEGG IDs
 #' @param metabolite_name column name of "data" that holds metabolite names
 #' @param update_background logical. Should the background information be updated?
 #' If TRUE this may take some time.
 #'
-#' @seealso [ORA_hypergeometric()]
+#' @seealso Dor over-representation analysis of KEGG functional modules [ORA_hypergeometric()]
 #'
 #' @return a list with dataframes "background" and "annotation" needed for ORA,
-#' if data is a SummarizedExperiment object annotations are stored in metadata(data)
+#' if data is a SummarizedExperiment \link{SummarizedExperiment} object annotations are stored in metadata(data)
 #' under "KEGG_annotations"
 #' @export
 #' @import SummarizedExperiment

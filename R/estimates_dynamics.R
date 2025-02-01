@@ -3,7 +3,7 @@
 #' Extracts the mean concentrations (mu) at every timepoint from the dynamics model fit, the 95% highest density interval (HDI), the estimated standard deviation of metabolite concentrations at every time point (sigma), and the pooled standard deviation of every metabolite over all timepoints (lambda).
 #' Additionally samples from the posterior of mu can be drawn. This can be helpful if p.e. one wants to estimate the clustering precision. Lambda can be used for clustering algorithms such as VSClust that also take the variance into account.
 #'
-#' @param data dataframe or colData of a SummarizedExperiment used used to fit dynamics model, must contain a column specifying KEGG IDs, column named "condition" specifiyng the experimental condition and a column named "time" specifying the timepoints.
+#' @param data dataframe or colData of a \link{SummarizedExperiment} used used to fit dynamics model, must contain a column specifying KEGG IDs, column named "condition" specifiyng the experimental condition and a column named "time" specifying the timepoints.
 #' If it is a SummarizedExperiment object the dynamic fits must be stores in metadata(data)
 #' under "dynamic_fits"
 #' @param assay of the SummarizedExperiment object that was used to fit the dynamics
@@ -18,8 +18,9 @@
 #' @param chains how many chains were used to fit the dynamics model
 #' @param samples how many posterior samples should be drawn (p.e. for check of clustering precision)
 #'
-#' @seealso [fit_dynamics_model()]/[diagnostics_dynamics()]
-#' Visualization of estimates with[plot_estimates()]
+#' @seealso Fit the dynamic model [fit_dynamics_model()].
+#' Diagnostics of the dynamic model [diagnostics_dynamics()]
+#' Visualization of estimates with [plot_estimates()]
 #'
 #' @import dplyr
 #' @importFrom stats runif

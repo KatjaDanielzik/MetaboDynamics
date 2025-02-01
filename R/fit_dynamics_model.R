@@ -7,8 +7,7 @@
 #'
 #' @param data concentration table with at least three replicate measurements per
 #' metabolites containing the columns "metabolite",
-#' "condition", and "m_scaled" by default or colData of a SummarizedExperiment
-#' \linkS4class{SummarizedExperiment} object
+#' "condition", and "m_scaled" by default or colData of a \link{SummarizedExperiment} object
 #' @param metabolite column of "data" that contains the metabolite names or IDs
 #' @param time column of "time" that contains time as numeric, make sure your
 #' time column is ordered from lowest to highest for the model to work
@@ -32,7 +31,9 @@
 #' @param warmup how many iterations the model warms up for, increasing might
 #' facilitate efficiency, must be at least 25% of ITER, default=iter/4
 #'
-#' @seealso [longitudinalMetabolomics]/[diagnostics_dynamics()]/[estimates_dynamics()]
+#' @seealso Example data set[longitudinalMetabolomics].
+#' Get model diagnostics [diagnostics_dynamics()]
+#' Get model estimates [estimates_dynamics()]
 #'
 #' @return returns a list of model fits. One model fit named "condition" per
 #' experimental condition. If input is a summarizedExperiment object the dynamic
