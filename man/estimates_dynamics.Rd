@@ -18,7 +18,7 @@ estimates_dynamics(
 )
 }
 \arguments{
-\item{data}{dataframe or colData of a SummarizedExperiment used used to fit dynamics model, must contain a column specifying KEGG IDs, column named "condition" specifiyng the experimental condition and a column named "time" specifying the timepoints.
+\item{data}{dataframe or colData of a \link{SummarizedExperiment} used used to fit dynamics model, must contain a column specifying KEGG IDs, column named "condition" specifiyng the experimental condition and a column named "time" specifying the timepoints.
 If it is a SummarizedExperiment object the dynamic fits must be stores in metadata(data)
 under "dynamic_fits"}
 
@@ -71,6 +71,7 @@ data <- estimates_dynamics(
 
 }
 \seealso{
-\code{\link[=fit_dynamics_model]{fit_dynamics_model()}}/\code{\link[=diagnostics_dynamics]{diagnostics_dynamics()}}
-Visualization of estimates with\code{\link[=plot_estimates]{plot_estimates()}}
+Fit the dynamic model \code{\link[=fit_dynamics_model]{fit_dynamics_model()}}.
+Diagnostics of the dynamic model \code{\link[=diagnostics_dynamics]{diagnostics_dynamics()}}
+Visualization of estimates with \code{\link[=plot_estimates]{plot_estimates()}}
 }

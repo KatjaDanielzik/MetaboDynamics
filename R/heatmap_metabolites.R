@@ -2,13 +2,13 @@
 #'
 #' @param distances dataframe of Jaccard indices between clusters obtained
 #' by function compare_metabolites(). If compare_metabolites() was executed on
-#' 'data' than this is stored in metadata(data) under "comparison_metabolites"
+#' as SummarizedExperiment or a \link{SummarizedExperiment}than this is stored in metadata(data) under "comparison_metabolites"
 #' @param data a dataframe containing the columns "metabolite" specifying the
 #' metabolite names to be compared and cluster IDs(column named "cluster") of
 #' clusters of similar dynamics, as well as a column "condition" specifying
 #' the experimental conditions
 #' to be compared
-#' @seealso [compare_metabolites()]
+#' @seealso Do calculations for comparison of metabolites between clusters [compare_metabolites()]
 #' @return a heatmap where the color of the tile represents the similarity
 #' of two clusters in regards to their metabolite composition. The brighter
 #' the color the more similar the metabolite compositions.
