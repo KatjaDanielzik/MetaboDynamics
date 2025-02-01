@@ -14,7 +14,7 @@ get_ORA_annotations(
 }
 \arguments{
 \item{data}{data frame to be analyzed with ORA. Must at least contain a column
-with KEGG IDs or a SummarizedExperiment where the metabolite
+with KEGG IDs or a \link{SummarizedExperiment} where the metabolite
 names or IDs are stored in colData}
 
 \item{kegg}{column name of "data" that holds KEGG IDs}
@@ -26,7 +26,7 @@ If TRUE this may take some time.}
 }
 \value{
 a list with dataframes "background" and "annotation" needed for ORA,
-if data is a SummarizedExperiment object annotations are stored in metadata(data)
+if data is a SummarizedExperiment \link{SummarizedExperiment} object annotations are stored in metadata(data)
 under "KEGG_annotations"
 }
 \description{
@@ -49,5 +49,5 @@ data <- get_ORA_annotations(
 S4Vectors::metadata(data)[["KEGG_annotations"]]
 }
 \seealso{
-\code{\link[=ORA_hypergeometric]{ORA_hypergeometric()}}
+Dor over-representation analysis of KEGG functional modules \code{\link[=ORA_hypergeometric]{ORA_hypergeometric()}}
 }

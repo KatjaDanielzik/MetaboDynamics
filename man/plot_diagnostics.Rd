@@ -15,10 +15,10 @@ plot_diagnostics(
 )
 }
 \arguments{
-\item{data}{dataframe or colData of a SummarizedExperiment used to fit dynamics model
+\item{data}{dataframe or colData of a \link{SummarizedExperiment} used to fit dynamics model
 must contain column "time"}
 
-\item{assay}{of the SummarizedExperiment object that was used to fit the dynamics
+\item{assay}{of the \link{SummarizedExperiment} object that was used to fit the dynamics
 model}
 
 \item{diagnostics}{dataframe containing diagnostics criteria from the numerical
@@ -57,5 +57,5 @@ plot_diagnostics(data = data, assay = "scaled_log")
 }
 \seealso{
 parent function \code{\link[=diagnostics_dynamics]{diagnostics_dynamics()}}
-visualization function for posterior predictive check /\code{\link[=plot_PPC]{plot_PPC()}}
+visualization function for posterior predictive check \code{\link[=plot_PPC]{plot_PPC()}}
 }

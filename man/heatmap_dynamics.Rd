@@ -18,7 +18,7 @@ standard deviation ("sigma") obtain by function compare_dynamics()}
 names to be compared and cluster IDs (column named "cluster") of
 clusters of similar dynamics, as well as a column "condition" specifying
 the experimental conditions.
-to be compared or a SummarizedExperiment storing the same information in
+to be compared or a \link{SummarizedExperiment} storing the same information in
 metadata(data) under "cluster"}
 }
 \value{
@@ -40,5 +40,5 @@ longitudinalMetabolomics <- compare_dynamics(
 heatmap_dynamics(data = longitudinalMetabolomics)
 }
 \seealso{
-\code{\link[=compare_dynamics]{compare_dynamics()}}
+Do calculations for comparison of dynamics between clusters \code{\link[=compare_dynamics]{compare_dynamics()}}
 }

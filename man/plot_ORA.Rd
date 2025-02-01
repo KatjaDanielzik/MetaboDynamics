@@ -7,7 +7,7 @@
 plot_ORA(data, tested_column = "middle_hierarchy")
 }
 \arguments{
-\item{data}{result dataframe from ORA_hypergeometric() or SummarizedExperiment
+\item{data}{result dataframe from ORA_hypergeometric() or \link{SummarizedExperiment}
 object where the ORA_hypergeometric() results are stored in metadata(data)
 under "ORA_tested_column"}
 
@@ -35,5 +35,5 @@ longitudinalMetabolomics <- ORA_hypergeometric(
 plot_ORA(longitudinalMetabolomics)
 }
 \seealso{
-\code{\link[=ORA_hypergeometric]{ORA_hypergeometric()}}
+do over-represenation analysis of KEGG functional modules \code{\link[=ORA_hypergeometric]{ORA_hypergeometric()}}
 }

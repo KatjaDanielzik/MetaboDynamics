@@ -12,7 +12,7 @@ heatmap_metabolites(
 \arguments{
 \item{distances}{dataframe of Jaccard indices between clusters obtained
 by function compare_metabolites(). If compare_metabolites() was executed on
-'data' than this is stored in metadata(data) under "comparison_metabolites"}
+as SummarizedExperiment or a \link{SummarizedExperiment}than this is stored in metadata(data) under "comparison_metabolites"}
 
 \item{data}{a dataframe containing the columns "metabolite" specifying the
 metabolite names to be compared and cluster IDs(column named "cluster") of
@@ -36,5 +36,5 @@ longitudinalMetabolomics <- compare_metabolites(
 heatmap_metabolites(data = longitudinalMetabolomics)
 }
 \seealso{
-\code{\link[=compare_metabolites]{compare_metabolites()}}
+Do calculations for comparison of metabolites between clusters \code{\link[=compare_metabolites]{compare_metabolites()}}
 }

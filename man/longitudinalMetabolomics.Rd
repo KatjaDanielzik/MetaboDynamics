@@ -14,7 +14,7 @@ log-transformed transformations in "log_con" and scaled log-transformed concentr
 in "scaled_log") and metabolite names, KEGG IDs,
 experimental conditions and clustering solutions per experimental condition 
 are stored in colData and timepoint specifications in rowData.
-(\linkS4class{SummarizedExperiment}).
+(\link{SummarizedExperiment}).
 
 }
 \usage{data("longitudinalMetabolomics")}
@@ -235,9 +235,57 @@ concentration observations at four time points and at three different biological
 conditions. Script to construct dataset can be seen with ?longitudinalMetabolomics"
 
 # add clustering solution 
+# get distances between vectors
+clust_A <- metadata(data)[["estimates_dynamics"]][["A"]]
+clust_A <- clust_A %>%
+  select(metabolite.ID, condition, time.ID, mu_mean) %>%
+  pivot_wider(id_cols = c(metabolite.ID, condition), names_from = time.ID, values_from = mu_mean)
+
+dist <- clust_A %>% select(-c(metabolite.ID, condition))
+dd_A <- dist(dist,
+  method = "euclidean"
+)
+# hierarchical clustering
+clust <- hclust(dd_A, method = "ward.D2")
+clust_cut <- cutree(clust, k = 8)
+# adding cluster ID to estimates
+clust_A$cluster <- clust_cut
+
+# get distances between vectors
+clust_B <- metadata(data)[["estimates_dynamics"]][["B"]]
+clust_B <- clust_B %>%
+  select(metabolite.ID, condition, time.ID, mu_mean) %>%
+  pivot_wider(id_cols = c(metabolite.ID, condition), names_from = time.ID, values_from = mu_mean)
+
+dist <- clust_B %>% select(-c(metabolite.ID, condition))
+dd_B <- dist(dist,
+  method = "euclidean"
+)
+# hierarchical clustering
+clust <- hclust(dd_B, method = "ward.D2")
+clust_cut <- cutree(clust, k = 8)
+# adding cluster ID to estimates
+clust_B$cluster <- clust_cut
+
+# get distances between vectors
+clust_C <- metadata(data)[["estimates_dynamics"]][["C"]]
+clust_C <- clust_C %>%
+  select(metabolite.ID, condition, time.ID, mu_mean) %>%
+  pivot_wider(id_cols = c(metabolite.ID, condition), names_from = time.ID, values_from = mu_mean)
+
+dist <- clust_C %>% select(-c(metabolite.ID, condition))
+dd_C <- dist(dist,
+  method = "euclidean"
+)
+# hierarchical clustering
+clust <- hclust(dd_C, method = "ward.D2")
+clust_cut <- cutree(clust, k = 8)
+# adding cluster ID to estimates
+clust_C$cluster <- clust_cut
+
+cluster <- rbind(clust_A,clust_B,clust_C)
+metadata(se)[["cluster"]] <- cluster
+
 }
 
-\seealso{
-\link{cluster}
-}
 \keyword{datasets}
