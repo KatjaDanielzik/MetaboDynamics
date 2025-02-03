@@ -22,7 +22,7 @@ if (!require("devtools", quietly = TRUE))
 devtools::install_github("KatjaDanielzik/MetaboDynamics")
 ```
 
-or from Bioconductor [Bioconductor] (https://bioconductor.org/) with:
+or from Bioconductor [Bioconductor](https://bioconductor.org/) with:
 
 ``` r
 if (!require("BiocManager", quietly = TRUE))
