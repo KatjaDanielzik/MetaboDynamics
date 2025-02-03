@@ -5,9 +5,12 @@ Authors@R:
     c(person(given="Katja",family= "Danielzik", email="katja.danielzik@uni-due.de", 
     role = c("aut", "cre"),
     comment=c(ORCID="0009-0007-5021-6212")),
-    person(given="Simo",family="Kitanovski",role="ctb"),
-    person(given="Johann",family="Matschke",role="ctb"),
-    person(given="Daniel",family="Hoffmann",role="ctb"))
+    person(given="Simo",family="Kitanovski",role="ctb",
+    comment=c(ORCID="0000-0003-2909-5376")),
+    person(given="Johann",family="Matschke",role="ctb",
+    comment=c(ORCID="0000-0003-4878-8741")),
+    person(given="Daniel",family="Hoffmann",role="ctb",
+    comment=c(ORCID="0000-0003-2973-7869")))
 URL: https://github.com/KatjaDanielzik/MetaboDynamics
 BugReports: https://github.com/KatjaDanielzik/MetaboDynamics/issues
 Description: MetaboDynamics is an R-package that provides a framework of 

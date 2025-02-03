@@ -1,5 +1,5 @@
 
-# MetaboDynamics : developmental version
+# MetaboDynamics:
 
 MetaboDynamics provides a framework of Bayesian models for robust and
 easy analysis of longitudinal metabolomics Data. It takes concentration
@@ -22,7 +22,8 @@ if (!require("devtools", quietly = TRUE))
 devtools::install_github("KatjaDanielzik/MetaboDynamics")
 ```
 
-or from Bioconductor [Bioconductor](https://bioconductor.org/) with:
+or soon (package has been accepted) 
+from Bioconductor [Bioconductor](https://bioconductor.org/) with:
 
 ``` r
 if (!require("BiocManager", quietly = TRUE))
@@ -67,8 +68,7 @@ probabilistic models:
 
 ## Workflow
 
-For a worked example see Vignette ("Bioconductor-submission” branch: folder /vignettes,
-file MetaboDynamics.html) or if package is installed:
+For a worked example see [Vignette](https://github.com/KatjaDanielzik/MetaboDynamics/tree/main/vignettes/) or if package is installed:
 
 ``` r
 browseVignettes("MetaboDynamics")
