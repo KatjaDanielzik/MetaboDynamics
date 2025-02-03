@@ -7,7 +7,7 @@
 #' names to be compared and cluster IDs (column named "cluster") of
 #' clusters of similar dynamics, as well as a column "condition" specifying
 #' the experimental conditions.
-#' to be compared or a SummarizedExperiment storing the same information in
+#' to be compared or a \link{SummarizedExperiment} storing the same information in
 #' metadata(data) under "cluster"
 #'
 #' @return a bubble heat map where the color of the bubble represents the similarity
@@ -17,7 +17,7 @@
 #' @import ggplot2
 #' @import SummarizedExperiment
 #' @importFrom S4Vectors metadata
-#' @seealso [compare_dynamics()]
+#' @seealso Do calculations for comparison of dynamics between clusters [compare_dynamics()]
 #' @export
 #'
 #' @examples

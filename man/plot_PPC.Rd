@@ -16,9 +16,9 @@ plot_PPC(
 contains necessary information for Posterior predictive check
 obtained by function diagnostics_dynamics()(named "PPC_condition")}
 
-\item{data}{dataframe or colData of a SummarizedExperiment used to fit dynamics model}
+\item{data}{dataframe or colData of a \link{SummarizedExperiment} used to fit dynamics model}
 
-\item{assay}{of the SummarizedExperiment object that was used to fit the dynamics
+\item{assay}{of the \link{SummarizedExperiment} object that was used to fit the dynamics
 model}
 
 \item{scaled_measurement}{column name of concentration values used to model fit, should be normalized by

@@ -11,7 +11,7 @@ compare_metabolites(data, metabolite = "metabolite")
 names to be compared and cluster IDs (column named "cluster") of
 clusters of similar dynamics, as well as a column "condition" specifying
 the experimental conditions.
-to be compared or a SummarizedExperiment storing the same information in
+to be compared or a \link{SummarizedExperiment}storing the same information in
 metadata(data) under "cluster"}
 
 \item{metabolite}{column in "data" that specifies either metabolite name
@@ -35,5 +35,5 @@ S4Vectors::metadata(longitudinalMetabolomics)[["comparison_metabolites"]]
 }
 \seealso{
 Visualization of metabolite similarity \code{\link[=heatmap_metabolites]{heatmap_metabolites()}}/
-compare dynamics of data \code{\link[=compare_dynamics]{compare_dynamics()}}
+compare dynamics of clusters \code{\link[=compare_dynamics]{compare_dynamics()}}
 }

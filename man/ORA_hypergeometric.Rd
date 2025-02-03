@@ -21,14 +21,15 @@ modules our experimental metabolites are annotated in KEGG}
 \item{data}{dataframe containing columns "KEGG" specifying the KEGG
 identifiers of metabolites, "cluster" specifying the cluster ID of metabolites and a
 column specifying the experimental condition called "condition" or if data
-is a SummarizedExperiment clustering solution must be stored in metadata(data)
+is a SummarizedExperiment or a \link{SummarizedExperiment} clustering
+solution must be stored in metadata(data)
 under "cluster"}
 
 \item{tested_column}{column that is in background and annotations and on
 which the hypergeometric model will be executed}
 }
 \value{
-a dataframe containing the ORA results or if data is SummarizedExperiment
+a dataframe containing the ORA results or if data is SummarizedExperiment \link{SummarizedExperiment}
 object the output is stored in metadata(data) under "ORA_tested_column"
 }
 \description{
@@ -60,6 +61,6 @@ S4Vectors::metadata(longitudinalMetabolomics)[["ORA_middle_hierarchy"]]
 }
 \seealso{
 function to retrieve "background" and
-"annotation" data frames \code{\link[=get_ORA_annotations]{get_ORA_annotations()}}
-plot results \code{\link[=plot_ORA]{plot_ORA()}}
+"annotation" data frames \code{\link[=get_ORA_annotations]{get_ORA_annotations()}}.
+Function to visualize ORA results \code{\link[=plot_ORA]{plot_ORA()}}
 }

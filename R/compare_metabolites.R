@@ -7,7 +7,7 @@
 #' names to be compared and cluster IDs (column named "cluster") of
 #' clusters of similar dynamics, as well as a column "condition" specifying
 #' the experimental conditions.
-#' to be compared or a SummarizedExperiment storing the same information in
+#' to be compared or a \link{SummarizedExperiment}storing the same information in
 #' metadata(data) under "cluster"
 #' @param metabolite column in "data" that specifies either metabolite name
 #' or KEGG ID or some other identifier
@@ -21,7 +21,7 @@
 #' @importFrom S4Vectors metadata
 #'
 #' @seealso Visualization of metabolite similarity [heatmap_metabolites()]/
-#' compare dynamics of data [compare_dynamics()]
+#' compare dynamics of clusters [compare_dynamics()]
 #'
 #' @examples
 #' data("longitudinalMetabolomics")

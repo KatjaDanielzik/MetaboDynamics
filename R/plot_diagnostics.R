@@ -2,9 +2,9 @@
 #'
 #' @param diagnostics dataframe containing diagnostics criteria from the numerical
 #' fit of Bayesian model of dynamics obtained by function diagnostics_dynamics()
-#' @param data dataframe or colData of a SummarizedExperiment used to fit dynamics model
+#' @param data dataframe or colData of a \link{SummarizedExperiment} used to fit dynamics model
 #' must contain column "time"
-#' @param assay of the SummarizedExperiment object that was used to fit the dynamics
+#' @param assay of the \link{SummarizedExperiment} object that was used to fit the dynamics
 #' model
 #' @param divergences should number of divergent transitions be visualized?
 #' @param max_treedepth should number of exeeded maximum treedepth be visualized?
@@ -14,7 +14,7 @@
 #' @return plots of diagnostic criteria of numerical fit of Bayesian model of
 #' dynamics
 #' @seealso  parent function [diagnostics_dynamics()]
-#' visualization function for posterior predictive check /[plot_PPC()]
+#' visualization function for posterior predictive check [plot_PPC()]
 #' @export
 #'
 #' @import ggplot2

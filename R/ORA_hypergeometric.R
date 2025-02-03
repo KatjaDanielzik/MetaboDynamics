@@ -11,8 +11,8 @@
 #' log(p(OvE))>0 indicates an over-representation of the functional module in
 #' the cluster, log(p(OvE))<0 an under-representation.
 #' @seealso function to retrieve "background" and
-#' "annotation" data frames [get_ORA_annotations()]
-#' plot results [plot_ORA()]
+#' "annotation" data frames [get_ORA_annotations()]. 
+#' Function to visualize ORA results [plot_ORA()]
 #' @param background dataframe that contains
 #' KEGG IDs of metabolites that are assigned to functional modules
 #' @param annotations dataframe tha contains information to which functional 
@@ -20,12 +20,13 @@
 #' @param data dataframe containing columns "KEGG" specifying the KEGG
 #' identifiers of metabolites, "cluster" specifying the cluster ID of metabolites and a
 #' column specifying the experimental condition called "condition" or if data
-#' is a SummarizedExperiment clustering solution must be stored in metadata(data)
+#' is a SummarizedExperiment or a \link{SummarizedExperiment} clustering 
+#' solution must be stored in metadata(data)
 #' under "cluster"
 #' @param tested_column column that is in background and annotations and on
 #' which the hypergeometric model will be executed
 #
-#' @return a dataframe containing the ORA results or if data is SummarizedExperiment
+#' @return a dataframe containing the ORA results or if data is SummarizedExperiment \link{SummarizedExperiment}
 #' object the output is stored in metadata(data) under "ORA_tested_column"
 #' @export
 #'

@@ -1,6 +1,6 @@
 #' Plot results of over-representation analysis with ORA_hypergeometric()
 #'
-#' @param data result dataframe from ORA_hypergeometric() or SummarizedExperiment
+#' @param data result dataframe from ORA_hypergeometric() or \link{SummarizedExperiment}
 #' object where the ORA_hypergeometric() results are stored in metadata(data)
 #' under "ORA_tested_column"
 #' @param tested_column KEGG module hierarchy level on which ORA was executed
@@ -8,7 +8,7 @@
 #' @export
 #' @import ggplot2
 #' @import dplyr
-#' @seealso [ORA_hypergeometric()]
+#' @seealso do over-represenation analysis of KEGG functional modules [ORA_hypergeometric()]
 #' @examples
 #' data("longitudinalMetabolomics")
 #' data("modules_compounds")
