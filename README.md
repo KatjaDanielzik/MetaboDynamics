@@ -14,7 +14,6 @@ conditions.
 MetaboDynamics was build on R 4.4 [cran](https://cran.r-project.org/).
 You can install the development version of MetaboDynamics from
 [GitHub](https://github.com/) with:
-
 ``` r
 if (!require("devtools", quietly = TRUE))
     install.packages("devtools")
