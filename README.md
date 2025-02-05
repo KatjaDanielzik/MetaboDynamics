@@ -70,7 +70,7 @@ probabilistic models:
 
 ## Workflow
 
-For a worked example see [Vignette](https://github.com/KatjaDanielzik/MetaboDynamics/blob/main/vignettes) or if package is installed:
+For a worked example see [Vignette](https://www.bioconductor.org/packages/devel/bioc/vignettes/MetaboDynamics/inst/doc/MetaboDynamics.html) or if package is installed:
 
 ``` r
 browseVignettes("MetaboDynamics")
