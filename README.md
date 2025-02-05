@@ -11,10 +11,10 @@ conditions.
 
 ## Installation
 
-MetaboDynamics was build on R 4.4 ([cran](https://cran.r-project.org/)) and
-accepted to Bioconductor. It will be soon available from [Bioconductor](https://bioconductor.org/) devel
-branch. 
-To install this package, start R and enter:
+MetaboDynamics is an R-package ([cran](https://cran.r-project.org/)) available
+from the [Bioconductor](https://www.bioconductor.org) "devel branch" https://www.bioconductor.org/packages/devel/bioc/html/MetaboDynamics.html 
+
+To install this package, start R (4.4) and enter:
 
 ``` r
 if (!require("BiocManager", quietly = TRUE))
@@ -25,7 +25,7 @@ BiocManager::install(version='devel')
 
 BiocManager::install("MetaboDynamics")
 ```
-You can install the developmental version of MetaboDynamics from
+You can install the development version of MetaboDynamics from
 [GitHub](https://github.com/) with:
 
 ``` r
