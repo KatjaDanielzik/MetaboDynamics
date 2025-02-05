@@ -3,7 +3,6 @@
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![](https://img.shields.io/badge/doi-10.18129/B9.bioc.MetaboDynamics%20-yellow.svg)](https://doi.org/10.18129/B9.bioc.MetaboDynamics )
 [![License: GPL](https://img.shields.io/badge/license-GPL-blue.svg)](https://cran.r-project.org/web/licenses/GPL)
-[![R build status](https://github.com/rossellhayes/ipa/workflows/R-CMD-check/badge.svg)](https://github.com/rossellhayes/ipa/actions)
 
 
 MetaboDynamics provides a framework of Bayesian models for robust and
