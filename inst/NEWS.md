@@ -4,4 +4,4 @@
 
 # Metabodynamics 0.99.18
 
-* Accepted to Bioconductor
+* Accepted to Bioconductor https://www.bioconductor.org/packages/devel/bioc/html/MetaboDynamics.html 
