@@ -19,7 +19,8 @@ Description: MetaboDynamics is an R-package that provides a framework of
   timepoints and reports differences between timepoints as well as metabolite 
   specific dynamics profiles that can be used for identifying "dynamics clusters" 
   of metabolites of similar dynamics. Provides probabilistic over-representation 
-  analysis and comparison betweeen clusters of different experimental conditions.
+  analysis of KEGG functional modules and pathways as well as comparison between
+  clusters of different experimental conditions.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
