@@ -37,6 +37,10 @@ compare_metabolites <- function(data, metabolite = "metabolite") {
   if (is(data, "SummarizedExperiment")) {
     data_df <- metadata(data)[["cluster"]]
   }
+  # convert potential tibbles into data frame
+  if(is(data,"tbl")){
+    data <- as.data.frame(data)
+  }
   if (is(data, "data.frame")) {
     data_df <- data
   }

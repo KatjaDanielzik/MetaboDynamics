@@ -74,6 +74,10 @@ estimates_dynamics <- function(data, assay = "scaled_log",
     )
     fits <- metadata(data)[["dynamic_fits"]]
   }
+  # convert potential tibbles into data frame
+  if(is(data,"tbl")){
+    data <- as.data.frame(data)
+  }
   if (is(data, "data.frame")) {
     data_df <- data
   }
