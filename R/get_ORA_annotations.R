@@ -55,6 +55,7 @@ get_ORA_annotations <- function(data, kegg = "KEGG",
   if (is(data, "SummarizedExperiment")) {
     data_df <- as.data.frame(colData(data))
   }
+  
   # convert potential tibbles into data frame
   if(is(data,"tbl")){
     data <- as.data.frame(data)

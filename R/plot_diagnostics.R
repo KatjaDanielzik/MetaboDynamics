@@ -68,6 +68,7 @@ plot_diagnostics <- function(
     )
     diagnostics <- metadata(data)[["diagnostics_dynamics"]][["model_diagnostics"]]
   }
+  
   # convert potential tibbles into data frame
   if(is(data,"tbl")){
     data <- as.data.frame(data)

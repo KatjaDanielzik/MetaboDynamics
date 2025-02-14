@@ -40,6 +40,7 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy") {
   if (is(data, "SummarizedExperiment")) {
     a_clusters <- metadata(data)[[paste0("ORA_", tested_column)]]
   }
+  
   # convert potential tibbles into data frame
   if(is(data,"tbl")){
     data <- as.data.frame(data)

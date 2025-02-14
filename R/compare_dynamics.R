@@ -53,8 +53,6 @@ compare_dynamics <- function(data, dynamics, cores = 4) {
   if(is(data,"tbl")){
     data <- as.data.frame(data)
   }
-  
-  
   if (is(data, "data.frame")) {
     data_df <- data
   }

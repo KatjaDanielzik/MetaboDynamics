@@ -93,6 +93,7 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
       values_to = scaled_measurement
     )
   }
+  
   # convert potential tibbles into data frame
   if(is(data,"tbl")){
     data <- as.data.frame(data)
