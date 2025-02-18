@@ -22,11 +22,19 @@ This package was developed to facilitate the analysis of longitudinal
 metabolomics data. Most tools only allow the comparison between two time points 
 or experimental conditions and are using frequentist statistical methods.
 
+As metabolomics data is often noisy and we generally have few replicates due
+to high costs, a robust method is needed for the estimation of mean
+concentrations at every time point. For this we employ a Bayesian hierarchical 
+model that assumes normal distributions of log-transformed metabolite 
+concentrations.
+
 Here we want to show a complete workflow to analyze concentration tables with 
 probabilistic models.
 
 # Installation
-MetaboDynamics can be installed from the devel branch of Bioconductor.
+MetaboDynamics can be installed from the devel branch of Bioconductor. Open R
+4.4 and execute the following code:
+
 ```{r,eval=FALSE}
 if (!require("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
@@ -49,23 +57,19 @@ library(tidyr)
 
 # Load data and plot data overview
 
-We have a simulated data (") set of 98 metabolites with three measurement replicates 
-at four time points (1-4) across 3 experimental conditions (A-B).
+We have a simulated data (called "longitudinalMetabolomics") set of 98 metabolites with 
+three measurement replicates at four time points (1-4) across 3 experimental conditions (A-B).
 In the first step in this workflow we estimate the dynamics of every single 
-metabolite at every experimental condition (here: radiation dose).
+metabolite at every experimental condition (p.e. radiation dose).
 
-The simulated data is represented as SummarizedExperiment object where 
+The simulated data is represented as [SummarizedExperiment](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) object where 
 concentration tables of each experimental condition are stored in assays 
 (raw concentrations in "concentrations", log-transformed transformations in 
 "log_con" and scaled log-transformed concentrations" in "scaled_log") and 
 metabolite names, KEGG IDs, experimental conditions and clustering solutions per
 experimental condition are stored in colData and timepoint specifications in rowData.
 
-As metabolomics data is often noisy and we generally have few replicates due
-to high costs, a robust method is needed for the estimation of mean
-concentrations at every time point. For this we employ a Bayesian hierarchical 
-model that assumes normal distributions of log-transformed metabolite 
-concentrations. The next plot shows the raw data.
+The next plot shows the raw data.
 
 ```{r,fig.wide=TRUE}
 data("longitudinalMetabolomics")
@@ -116,8 +120,9 @@ We define dynamics as deviations at the observed time points from the
 metabolite's mean concentration. As the raw concentrations of metabolites can 
 differ by orders of magnitude from each other, and we want to be able to compare
 dynamics of metabolites with each other, we standardize each metabolite at each
-radiation dose to a mean of zero and a standard deviation of one. In the 
-simulated data set the scaled measurements
+experimental condition to a mean of zero and a standard deviation of one. 
+
+In the simulated data set the scaled measurements
 are in column "m_scaled".
 
 ```{r,fig.wide=TRUE}
@@ -157,6 +162,9 @@ m = metabolite, c = experimental condition and t = time point ID:
 \lambda_{m,c}&\sim {\sf exponential}(2) 
 \end{align*}
 
+The hierarchical Bayesian model provides a balance between over- and under fitting
+of the model to the experimental data points.
+
 The code below shows how to fit the model and how to extract the diagnostic
 criteria from the model fits. 
 
@@ -188,7 +196,9 @@ data <- fit_dynamics_model(
 
 This returns a list of model fits that are named by the experimental condition
 ("A","B","C"). If data is a summarizedExperiment the fits are stored in 
-metadata(data)[["dynamic_fits"]]. With diagnostics_dynamics() we can extract all
+metadata(data)[["dynamic_fits"]]. 
+
+With diagnostics_dynamics() we can extract all
 the diagnostic criteria of MCMC runs to fit a Bayesian model (rhat, neff, 
 divergences, max_treedepth) and visualize them. If data is a SummarizedExperiment
 the diagnostics are stored in metadata(data)[["diagnostics_dynamics"]].
@@ -208,12 +218,20 @@ data <- diagnostics_dynamics(
 plot_diagnostics(
   data = data
 )
+```
 
+There should be no divergent transitions (number of divergent transitions=0)
+and the maximum treedepth should not be exceeded (number of exceeded treedepth=0).
+
+```{r}
 # PPCs can be accessed with
 plot_PPC(
   data = data
 )
 ```
+
+In the posterior predictive check all data points (black points) should lie
+within the posterior of the Bayesian model (violin).
 
 After checking the diagnostic criteria and the PPC we can extract the estimates:
 If data is a SummarizedExperiment
@@ -229,9 +247,9 @@ data <- estimates_dynamics(
 ```
 
 We get two major outputs:
-1) the estimation of concentration differences between two subsequent time points
+1. the estimation of concentration differences between two subsequent time points
 of each metabolite at each experimental condition
-2) the dynamic profiles of each metabolites at each experimental condition
+2. the dynamic profiles of each metabolites at each experimental condition
 
 ## Differences between two timepoints
 ```{r,fig.wide=TRUE}
@@ -258,7 +276,7 @@ plot_estimates(
 ```
 So we now have dynamic profiles of many metabolites at each radiation dose.
 We could now cluster these metabolite specific dynamics vectors 
-(estimates[,c("mu1.mean":"mut.mean)]) to see if groups of metabolites 
+(estimates[,c("mu1.mean":"mut.mean)]) to determine if groups of metabolites 
 have similar dynamics.
 
 # Cluster dynamics
@@ -318,15 +336,20 @@ conditions. Can we quantify the biological function of these dynamics clusters?
 # Over-representation analysis of functional modules in dynamics clusters
 To quantify the possible biological function of these dynamics clusters we 
 retrieved from the KEGG-database the following information with package KEGGREST:
-1) to which functional modules our experimental metabolites are annotated and
-2) which metabolites are annotated to functional modules in general.
+1. to which functional modules our experimental metabolites are annotated and
+2. which metabolites are annotated to functional modules in general.
 
 The functional modules of the KEGG-database are organised in three hierarchies:
-upper, middle and lower. Here we will do functional analysis on the middle 
+upper, middle and lower. Here we will conduct functional analysis on the middle 
 hierarchy. To facilitate analysis the data frames "metabolite_modules", which 
 holds the information about experimental metabolites, and "modules_compounds",
 which holds the information about which metabolites are in general annotated to
-functional modules, were prepared. We load both data sets and can inspect the
+functional modules, were prepared. The needed data frame for different sets
+of experimental metabolites can be retrieved with the function get_ORA_annotations.
+This function also allows to update the background KEGG information stored in 
+"modules_compounds".
+
+We load both data sets and can inspect the
 documentation.
 
 ```{r}
@@ -381,7 +404,7 @@ modules "Energy metabolism" and "Carbohydrate metabolism" are over-represented.
 # Comparison of clusters of different experimental conditions
 
 ## Dynamics 
-We can not only do over-representation analysis of KEGG-functional modules but
+We can not only conduct over-representation analysis of KEGG-functional modules but
 also compare dynamics clusters across different experimental conditions. For 
 this we employ a Bayesian model that estimates the mean difference as well as 
 the standard deviation of differences between dynamics clusters. If data is a 
@@ -403,6 +426,11 @@ longitudinalMetabolomics <- compare_dynamics(
   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"),
   cores = 1
 )
+```
+
+We can visualize the posterior estimates of the model with:
+
+```{r,fig.aling='center',fig.dpi=150}
 heatmap_dynamics(data = longitudinalMetabolomics)
 ```
 
@@ -416,7 +444,7 @@ We can also compare metabolite composition of clusters. For this we employ
 the Jaccard Index which is a metric for similarity of two vectors. Values near
 0 indicate low similarity, values near 1 high similarity. If data is a 
 SummarizedExperiment object the results of compare_metabolites are stored 
-in metadata(data)[["comparison_metabolites"]]
+in metadata(data)[["comparison_metabolites"]].
 ```{r,fig.aling='center',fig.dpi=150}
 longitudinalMetabolomics <- compare_metabolites(
   data = longitudinalMetabolomics
