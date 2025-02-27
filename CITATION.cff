@@ -13,6 +13,7 @@ authors:
 - family-names: "Hoffmann"
   given-names: "Daniel"
   orcid: "https://orcid.org/0000-0003-2973-7869"
-title: "MetaboDynamics: an R package for the probabilistic analysis of longitudinal metabolomics data"
-version: 0.99.17
-url: "https://github.com/KatjaDanielzik/MetaboDynamics"
+title: "MetaboDynamics: Bayesian analysis of longitudinal metabolomics data"
+version: 0.99.20
+DOI: 10.18129/B9.bioc.MetaboDynamics
+url: " https://bioconductor.org/packages/MetaboDynamics"
