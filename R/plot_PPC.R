@@ -3,8 +3,8 @@
 #' @param posterior a list of one dataframe per condition that
 #' contains necessary information for Posterior predictive check
 #' obtained by function diagnostics_dynamics()(named "PPC_condition")
-#' @param data dataframe or colData of a \link{SummarizedExperiment} used to fit dynamics model
-#' @param assay of the \link{SummarizedExperiment} object that was used to fit the dynamics
+#' @param data dataframe or colData of a \link[SummarizedExperiment]{SummarizedExperiment}  used to fit dynamics model
+#' @param assay of the \link[SummarizedExperiment]{SummarizedExperiment}  object that was used to fit the dynamics
 #' model
 #' @param scaled_measurement column name of concentration values used to model fit, should be normalized by
 #' experimental condition and metabolite to mean of zero and standard deviation

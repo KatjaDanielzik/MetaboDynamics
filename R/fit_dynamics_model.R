@@ -7,7 +7,7 @@
 #'
 #' @param data concentration table with at least three replicate measurements per
 #' metabolites containing the columns "metabolite",
-#' "condition", and "m_scaled" by default or colData of a \link{SummarizedExperiment} object
+#' "condition", and "m_scaled" by default or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
 #' @param metabolite column of "data" that contains the metabolite names or IDs
 #' @param time column of "time" that contains time as numeric, make sure your
 #' time column is ordered from lowest to highest for the model to work

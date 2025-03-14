@@ -14,7 +14,7 @@ diagnostics_dynamics(
 )
 }
 \arguments{
-\item{data}{dataframe or a SummarizedExperiment used to fit dynamics model
+\item{data}{dataframe or a \link[SummarizedExperiment]{SummarizedExperiment}  used to fit dynamics model
 column of "time" that contains time as numeric}
 
 \item{assay}{of the SummarizedExperiment object that was used to fit the dynamics

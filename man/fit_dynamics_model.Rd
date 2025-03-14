@@ -22,7 +22,7 @@ fit_dynamics_model(
 \arguments{
 \item{data}{concentration table with at least three replicate measurements per
 metabolites containing the columns "metabolite",
-"condition", and "m_scaled" by default or colData of a \link{SummarizedExperiment} object}
+"condition", and "m_scaled" by default or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object}
 
 \item{metabolite}{column of "data" that contains the metabolite names or IDs}
 

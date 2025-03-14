@@ -7,7 +7,7 @@
 plot_ORA(data, tested_column = "middle_hierarchy")
 }
 \arguments{
-\item{data}{result dataframe from ORA_hypergeometric() or \link{SummarizedExperiment}
+\item{data}{result dataframe from ORA_hypergeometric() or \link[SummarizedExperiment]{SummarizedExperiment}
 object where the ORA_hypergeometric() results are stored in metadata(data)
 under "ORA_tested_column"}
 

@@ -5,7 +5,7 @@
 #' posterior predictive checks. Dataframe "model_diagnostics" contains
 #' information about experimental condition, number of divergent transitions
 #' and rhat and neff values for all timepoints.
-#' @param data dataframe or a SummarizedExperiment used to fit dynamics model
+#' @param data dataframe or a \link[SummarizedExperiment]{SummarizedExperiment}  used to fit dynamics model
 #' column of "time" that contains time as numeric
 #' @param assay of the SummarizedExperiment object that was used to fit the dynamics
 #' model

@@ -15,10 +15,10 @@ plot_diagnostics(
 )
 }
 \arguments{
-\item{data}{dataframe or colData of a \link{SummarizedExperiment} used to fit dynamics model
+\item{data}{dataframe or colData of a \link[SummarizedExperiment]{SummarizedExperiment}  used to fit dynamics model
 must contain column "time"}
 
-\item{assay}{of the \link{SummarizedExperiment} object that was used to fit the dynamics
+\item{assay}{of the \link[SummarizedExperiment]{SummarizedExperiment} object that was used to fit the dynamics
 model}
 
 \item{diagnostics}{dataframe containing diagnostics criteria from the numerical

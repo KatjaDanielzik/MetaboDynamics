@@ -14,14 +14,14 @@ plot_estimates(
 )
 }
 \arguments{
-\item{data}{dataframe or \link{SummarizedExperiment} used used to fit dynamics model and extract the estimates}
+\item{data}{dataframe or \link[SummarizedExperiment]{SummarizedExperiment}  used used to fit dynamics model and extract the estimates}
 
 \item{estimates}{a list of dataframes (one per experimental condition) that contains
 the estimates at the timepoints and samples from the posterior generated
-by estimates_dynamics() or if data is a \link{SummarizedExperiment} estimates
+by estimates_dynamics() or if data is a \link[SummarizedExperiment]{SummarizedExperiment}  estimates
 must be stored in metadata(data) under "estimates_dynamics"}
 
-\item{assay}{of the \link{SummarizedExperiment} object that was used to fit the dynamics
+\item{assay}{of the \link[SummarizedExperiment]{SummarizedExperiment}  object that was used to fit the dynamics
 model}
 
 \item{time}{column in "data" that contains the time point identifiers}

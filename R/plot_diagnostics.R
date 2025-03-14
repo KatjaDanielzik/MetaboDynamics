@@ -2,9 +2,9 @@
 #'
 #' @param diagnostics dataframe containing diagnostics criteria from the numerical
 #' fit of Bayesian model of dynamics obtained by function diagnostics_dynamics()
-#' @param data dataframe or colData of a \link{SummarizedExperiment} used to fit dynamics model
+#' @param data dataframe or colData of a \link[SummarizedExperiment]{SummarizedExperiment}  used to fit dynamics model
 #' must contain column "time"
-#' @param assay of the \link{SummarizedExperiment} object that was used to fit the dynamics
+#' @param assay of the \link[SummarizedExperiment]{SummarizedExperiment} object that was used to fit the dynamics
 #' model
 #' @param divergences should number of divergent transitions be visualized?
 #' @param max_treedepth should number of exeeded maximum treedepth be visualized?

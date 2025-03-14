@@ -2,10 +2,10 @@
 #'
 #' @param estimates a list of dataframes (one per experimental condition) that contains
 #' the estimates at the timepoints and samples from the posterior generated
-#' by estimates_dynamics() or if data is a \link{SummarizedExperiment} estimates
+#' by estimates_dynamics() or if data is a \link[SummarizedExperiment]{SummarizedExperiment}  estimates
 #' must be stored in metadata(data) under "estimates_dynamics"
-#' @param data dataframe or \link{SummarizedExperiment} used used to fit dynamics model and extract the estimates
-#' @param assay of the \link{SummarizedExperiment} object that was used to fit the dynamics
+#' @param data dataframe or \link[SummarizedExperiment]{SummarizedExperiment}  used used to fit dynamics model and extract the estimates
+#' @param assay of the \link[SummarizedExperiment]{SummarizedExperiment}  object that was used to fit the dynamics
 #' model
 #' @param time column in "data" that contains the time point identifiers
 #' @param delta_t should differences between timepoints be plotted?

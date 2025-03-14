@@ -20,7 +20,7 @@
 #' @param data dataframe containing columns "KEGG" specifying the KEGG
 #' identifiers of metabolites, "cluster" specifying the cluster ID of metabolites and a
 #' column specifying the experimental condition called "condition" or if data
-#' is a SummarizedExperiment or a \link{SummarizedExperiment} clustering 
+#' is a SummarizedExperiment or a \link[SummarizedExperiment]{SummarizedExperiment} clustering 
 #' solution must be stored in metadata(data)
 #' under "cluster"
 #' @param tested_column column that is in background and annotations and on

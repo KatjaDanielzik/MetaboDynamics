@@ -2,7 +2,7 @@
 #'
 #' @param distances dataframe of Jaccard indices between clusters obtained
 #' by function compare_metabolites(). If compare_metabolites() was executed on
-#' as SummarizedExperiment or a \link{SummarizedExperiment}than this is stored in metadata(data) under "comparison_metabolites"
+#' as SummarizedExperiment or a \link[SummarizedExperiment]{SummarizedExperiment} than this is stored in metadata(data) under "comparison_metabolites"
 #' @param data a dataframe containing the columns "metabolite" specifying the
 #' metabolite names to be compared and cluster IDs(column named "cluster") of
 #' clusters of similar dynamics, as well as a column "condition" specifying

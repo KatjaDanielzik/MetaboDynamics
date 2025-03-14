@@ -1,6 +1,6 @@
 #' Plot results of over-representation analysis with ORA_hypergeometric()
 #'
-#' @param data result dataframe from ORA_hypergeometric() or \link{SummarizedExperiment}
+#' @param data result dataframe from ORA_hypergeometric() or \link[SummarizedExperiment]{SummarizedExperiment} 
 #' object where the ORA_hypergeometric() results are stored in metadata(data)
 #' under "ORA_tested_column"
 #' @param tested_column KEGG module hierarchy level on which ORA was executed
