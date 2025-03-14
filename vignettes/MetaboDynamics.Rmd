@@ -18,22 +18,31 @@ BiocStyle::markdown()
 ```
 
 # Background 
-This package was developed to facilitate the analysis of longitudinal 
-metabolomics data. Most tools only allow the comparison between two time points 
-or experimental conditions and are using frequentist statistical methods.
+Metabolomics data from longitudinal high-throughput experiments such as 
+untargeted LC-MS allows for insights into changes of metabolite concentrations
+over time. Most tools only allow the comparison between two time points 
+or experimental conditions and are using frequentist statistical methods. Additionally
+most tools are only able to analyze groups of metabolites on a pathway level
+potentially missing more general patterns of changes in the metabolism in 
+sparse data.
 
-As metabolomics data is often noisy and we generally have few replicates due
-to high costs, a robust method is needed for the estimation of mean
+Here I introduce MetaboDynamics, a workflow of probabilistic models for the
+analysis of longitudinal metabolomics data. 
+
+Mtabolomics data is often noisy and generally few replicates are available due
+to high costs. Therefore a robust method is needed for the estimation of mean
 concentrations at every time point. For this we employ a Bayesian hierarchical 
-model that assumes normal distributions of log-transformed metabolite 
-concentrations.
+model that balances between under-fitting (i.e. not learning as much as would be 
+possible for the data set) and over-fiiting.
 
-Here we want to show a complete workflow to analyze concentration tables with 
-probabilistic models.
+In this vignette I want to show a complete workflow to analyze longitudinal
+metabolomics data stored in concentration tables (i.e. features and metabolite
+concentration or peak intensities/area for multiple time points and experimental
+conditions).
 
 # Installation
 MetaboDynamics can be installed from the devel branch of Bioconductor. Open R
-4.4 and execute the following code:
+4.5 and execute the following code:
 
 ```{r,eval=FALSE}
 if (!require("BiocManager", quietly = TRUE)) {
@@ -57,22 +66,24 @@ library(tidyr)
 
 # Load data and plot data overview
 
-We have a simulated data (called "longitudinalMetabolomics") set of 98 metabolites with 
-three measurement replicates at four time points (1-4) across 3 experimental conditions (A-B).
-In the first step in this workflow we estimate the dynamics of every single 
-metabolite at every experimental condition (p.e. radiation dose).
+MetaboDynamics includes a simulated data set (called "longitudinalMetabolomics")
+of 98 metabolites with three replicates at four time points (1-4) across three 
+experimental conditions (A-C). It can be loaded with:
+
+```{r}
+data("longitudinalMetabolomics",package = "MetaboDynamics")
+```
 
 The simulated data is represented as [SummarizedExperiment](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) object where 
 concentration tables of each experimental condition are stored in assays 
 (raw concentrations in "concentrations", log-transformed transformations in 
-"log_con" and scaled log-transformed concentrations" in "scaled_log") and 
+"log_con" and scaled (mean=0, sd=1) log-transformed concentrations" in "scaled_log") and 
 metabolite names, KEGG IDs, experimental conditions and clustering solutions per
 experimental condition are stored in colData and timepoint specifications in rowData.
 
-The next plot shows the raw data.
+The next plot shows the raw metabolite concentrations.
 
 ```{r,fig.wide=TRUE}
-data("longitudinalMetabolomics")
 # convert to dataframe
 concentrations <- as.data.frame(cbind(
   as.data.frame(t(assays(longitudinalMetabolomics)$concentrations)),
@@ -83,14 +94,15 @@ concentrations <- concentrations %>% pivot_longer(
   values_to = "concentration"
 )
 ggplot(concentrations, aes(x = concentration)) +
-  geom_density() +
+  geom_freqpoly() +
   theme_bw() +
   facet_grid(cols = vars(time), rows = vars(condition)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   ggtitle("raw data", "raw measurements")
 ```
-
-The raw data is not distributed normally. So let's log-transform the values.
+In this plot I visualize the distribution of metabolite concentrations. We can
+see many observations with low concentrations  and few observations for higher
+concentrations. This raw data is not distributed normally. So let's log-transform the values.
 In the integrated simulated data set this is already done in the column "log_m".
 
 ```{r,fig.wide=TRUE}
@@ -101,7 +113,10 @@ ggplot(concentrations, aes(x = log(concentration))) +
   ggtitle("data", "log-transformed values")
 ```
 
-The next plot shows the raw dynamics of single metabolites. 
+We can see that the metabolite concentrations vary over magnitudes and are
+normally distributed after log-transformation. 
+
+The next plot shows the log-transformed dynamics of single metabolites. 
 
 ```{r,fig.wide=TRUE}
 ggplot(concentrations) +
@@ -115,11 +130,11 @@ ggplot(concentrations) +
   facet_grid(rows = vars(condition)) +
   ggtitle("raw metabolite dynamics", "color=metabolite")
 ```
-
-We define dynamics as deviations at the observed time points from the 
-metabolite's mean concentration. As the raw concentrations of metabolites can 
-differ by orders of magnitude from each other, and we want to be able to compare
-dynamics of metabolites with each other, we standardize each metabolite at each
+The dynamics profiles of single metabolites have intercepts (i.e. mean metabolite
+concentrations) that differ by magnitudes from each other. To be able to compare
+metabolites with each other which concentrations differ by magnitude we define 
+dynamics as deviations at the observed time points from the 
+metabolite's mean concentration. For this we standardize each metabolite at each
 experimental condition to a mean of zero and a standard deviation of one. 
 
 In the simulated data set the scaled measurements
@@ -143,6 +158,7 @@ ggplot(concentrations) +
     group = interaction(metabolite, replicate)
   )) +
   theme_bw() +
+  scale_color_viridis_d()+
   xlab("timepoint") +
   theme(legend.position = "none") +
   facet_grid(rows = vars(condition)) +
@@ -156,17 +172,22 @@ We employ a Bayesian hierarchical model with con = metabolite concentrations,
 m = metabolite, c = experimental condition and t = time point ID:
 
 \begin{align*}
-\log(con_{m,c,t})&\sim {\sf normal}(\mu_{m,c,t},\sigma_{m,c,t}) \\ 
+\log(con_{m,c,t})&\sim {\sf normal}(\mu_{m,c,t},\sigma_{m,c,t}) \\
 \mu_{m,c,t}&\sim {\sf normal}(0,2) \\
 \sigma_{m,c,t}&\sim {\sf exponential}(\lambda_{m,c}) \\
 \lambda_{m,c}&\sim {\sf exponential}(2) 
 \end{align*}
 
-The hierarchical Bayesian model provides a balance between over- and under fitting
-of the model to the experimental data points.
+This model assumes a normal distribution of log-transformed and scaled metabolite
+concentrations and estimates a mean \mu per metabolite and time point. The spread
+of the replicate measurements \sigma is also estimated per metabolite and time point
+but the \sigma of different time points inform each other (i.e are partially
+pooled) with the hierarchical structur of the hyper-parameter \lambda. 
+This partial pooling allows for the balance between over- and underfitting.
 
-The code below shows how to fit the model and how to extract the diagnostic
-criteria from the model fits. 
+The code below shows how to fit the Bayesian model with the function
+fit_dynamics_model(). Here we fit the dynamics model for a small subset of the
+simulated metabolites. 
 
 # Model dynamics
 ```{r,fig.wide=TRUE}
@@ -198,9 +219,15 @@ This returns a list of model fits that are named by the experimental condition
 ("A","B","C"). If data is a summarizedExperiment the fits are stored in 
 metadata(data)[["dynamic_fits"]]. 
 
+MetaboDynamics fits Bayesian models with MCMC (Markov Chain Monte Carlo) which
+returns a list of diagnostic criteria: rhat = R-hat convergence diagnostic (should be 1),
+neff = number of effective samples (should be above 100), divergences = number of
+divergent transitions (should be 0), max_treedepth = number of iterations that
+exceed maximum treedepth (should be 0). Hints on how to adjust parameters for
+fit_dynamics_model() can be found in the function documentation (?fit_dynamics_model).
+
 With diagnostics_dynamics() we can extract all
-the diagnostic criteria of MCMC runs to fit a Bayesian model (rhat, neff, 
-divergences, max_treedepth) and visualize them. If data is a SummarizedExperiment
+the diagnostic criteria of MCMC and visualize them. If data is a SummarizedExperiment
 the diagnostics are stored in metadata(data)[["diagnostics_dynamics"]].
 Additionally data frames for visual Posterior predictive checks (PPC) are 
 prepared and plots for the PPCs and diagnostic criteria can be generated with 
@@ -220,8 +247,13 @@ plot_diagnostics(
 )
 ```
 
-There should be no divergent transitions (number of divergent transitions=0)
-and the maximum treedepth should not be exceeded (number of exceeded treedepth=0).
+In this example we have zero divergent transitions, zero iterations exceeding
+maximum treedepth, Rhat values are consitently below 1.01 and the number of
+effective samples are comfortably above 100.
+
+The result of a Bayesian model (the posterior) should predict the experimental
+well. This can be checked with a posterior predictive check (PPC) in which
+the experimental data (points) should lie within the predictions (violins).
 
 ```{r}
 # PPCs can be accessed with
@@ -230,8 +262,7 @@ plot_PPC(
 )
 ```
 
-In the posterior predictive check all data points (black points) should lie
-within the posterior of the Bayesian model (violin).
+This example of a PPC is fine. 
 
 After checking the diagnostic criteria and the PPC we can extract the estimates:
 If data is a SummarizedExperiment
