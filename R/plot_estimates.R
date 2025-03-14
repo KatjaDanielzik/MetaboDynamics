@@ -68,6 +68,7 @@ plot_estimates <- function(data,
     )
     estimates <- metadata(data)[["estimates_dynamics"]]
   }
+  
   # convert potential tibbles into data frame
   if(is(data,"tbl")){
     data <- as.data.frame(data)

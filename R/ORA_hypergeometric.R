@@ -89,6 +89,7 @@ ORA_hypergeometric <- function(background = metadata(data)[["KEGG_annotations"]]
   if (is(data, "SummarizedExperiment")) {
     data_df <- metadata(data)[["cluster"]]
   }
+  
   # convert potential tibbles into data frame
   if(is(data,"tbl")){
     data <- as.data.frame(data)

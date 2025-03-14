@@ -39,6 +39,7 @@ heatmap_metabolites <- function(distances = metadata(data)[["comparison_metaboli
     distances <- metadata(data)[["comparison_metabolites"]]
     data_df <- metadata(data)[["cluster"]]
   }
+  
   # convert potential tibbles into data frame
   if(is(data,"tbl")){
     data <- as.data.frame(data)

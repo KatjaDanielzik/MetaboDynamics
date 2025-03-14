@@ -46,6 +46,7 @@ heatmap_dynamics <- function(estimates = metadata(data)[["comparison_dynamics"]]
     data_df <- metadata(data)[["cluster"]]
     estimates <- metadata(data)[["comparison_dynamics"]][["estimates"]]
   }
+  
   # convert potential tibbles into data frame
   if(is(data,"tbl")){
     data <- as.data.frame(data)
