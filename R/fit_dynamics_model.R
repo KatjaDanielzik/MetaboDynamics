@@ -84,12 +84,13 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
   }
   # check input class and convert SummarizedExperiment to dataframe
   if (is(data, "SummarizedExperiment")) {
+    t <- nrow(rowData(data))
     data_df <- as.data.frame(cbind(
       as.data.frame(t(assays(data)[[assay]])),
       as.data.frame(colData(data))
     ))
     data_df <- data_df %>% pivot_longer(
-      cols = seq_len(4), names_to = time,
+      cols = seq_len(t), names_to = time,
       values_to = scaled_measurement
     )
   }
@@ -100,6 +101,8 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
   if (is(data, "data.frame")) {
     data_df <- data
   }
+  # assign number of time points
+  t <- length(unique(data_df[[time]]))
 
   # check if all input variables are character vectors
   if (!all(vapply(list(metabolite, time, condition, scaled_measurement), is.character, logical(1)))) {
@@ -108,7 +111,8 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
   if (!all(c(metabolite, time, condition, scaled_measurement) %in% colnames(data_df))) {
     stop("'data' must contain columns named 'metabolite','time','condition', and 'scaled_measurement'")
   }
-
+  
+  
   # validate at least triplicate measurements
   # count replicates per metabolite, time and condition
   grouped_data <- data_df %>%
