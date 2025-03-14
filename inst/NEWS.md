@@ -8,4 +8,4 @@
 
 # MetaboDynamics 0.99.20
 
-* Bug fix: can now handle tibbles as input 
+* Bug fix: can now handle tibbles as input (along with data frames and summarizedExperiments)
