@@ -1,6 +1,6 @@
 Package: MetaboDynamics
 Title: Bayesian analysis of longitudinal metabolomics data
-Version: 0.99.21
+Version: 0.99.22
 Authors@R: 
     c(person(given="Katja",family= "Danielzik", email="katja.danielzik@uni-due.de", 
     role = c("aut", "cre"),
@@ -56,5 +56,5 @@ LinkingTo:
     rstan (>= 2.18.1),
     StanHeaders (>= 2.18.0)
 SystemRequirements: GNU make
-biocViews: Software,Metabolomics,Bayesian,FunctionalPrediction,MultipleComparison,KEGG
+biocViews: Software,Metabolomics,Bayesian,FunctionalPrediction,MultipleComparison,KEGG,Pathways
 Biarch: true

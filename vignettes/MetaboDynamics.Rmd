@@ -325,6 +325,7 @@ ggplot(temp, aes(
   xlab("timepoint") +
   ylab("estimated mean concentration") +
   theme_bw() +
+  ylim(-2,2)+
   theme(legend.position = "none") +
   facet_grid(rows = vars(condition), cols = vars(cluster)) +
   ggtitle("clustered dynamics", "panels=cluster ID")
