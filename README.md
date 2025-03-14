@@ -18,7 +18,7 @@ conditions.
 MetaboDynamics is an R-package ([cran](https://cran.r-project.org/)) available
 from the [Bioconductor](https://www.bioconductor.org) "devel branch" https://www.bioconductor.org/packages/devel/bioc/html/MetaboDynamics.html 
 
-To install this package, start R (4.4) and enter:
+To install this package, start R (>4.4) and enter:
 
 ``` r
 if (!require("BiocManager", quietly = TRUE))
