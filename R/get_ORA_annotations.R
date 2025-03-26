@@ -13,6 +13,7 @@
 #' @param kegg column name of "data" that holds KEGG IDs
 #' @param metabolite_name column name of "data" that holds metabolite names
 #' @param update_background logical. Should the background information be updated?
+#' Should be set to TRUE of this is the first time using this function.
 #' If TRUE this may take some time.
 #'
 #' @seealso Dor over-representation analysis of KEGG functional modules [ORA_hypergeometric()]
@@ -43,7 +44,7 @@
 #' S4Vectors::metadata(data)[["KEGG_annotations"]]
 get_ORA_annotations <- function(data, kegg = "KEGG",
                                 metabolite_name = "metabolite",
-                                update_background = FALSE) {
+                                update_background = TRUE) {
   # input checks
   if (!is.logical(update_background)) {
     stop("'update_background' must be either 'TRUE' or 'FALSE'")

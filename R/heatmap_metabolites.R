@@ -67,7 +67,9 @@ heatmap_metabolites <- function(distances = metadata(data)[["comparison_metaboli
     ylab("cluster_a") +
     scale_fill_viridis_c(option = "viridis") +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-    ggtitle("similarity of metabolites in clusters", "metabolites=intersection/union of metabolites in cluster, label=condition+cluster ID")
+    ggtitle("similarity of metabolites in clusters", 
+            "metabolites=intersection/union of metabolites in cluster,
+            label = condition + cluster ID")
 
   return(plot)
 }

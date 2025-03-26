@@ -67,7 +67,8 @@ heatmap_dynamics <- function(estimates = metadata(data)[["comparison_dynamics"]]
     labs(col = "1/estimated mean", size = "1/estimated sigma") +
     ggtitle(
       "similarity of dynamics in clusters",
-      "estimated mean pairwise euclidean distance"
+      "estimated mean pairwise euclidean distance,
+       label = condition + cluster ID"
     )
   return(plot)
 }

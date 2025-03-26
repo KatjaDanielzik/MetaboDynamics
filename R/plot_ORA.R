@@ -81,9 +81,11 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy") {
     geom_point(aes(x = log(as.numeric(OvE_gen_median)))) +
     geom_vline(xintercept = 0, linetype = "dashed") +
     theme_bw() +
-    scale_color_manual(values = c("ICR includes 0" = "black", "ICR>0" = "green", "ICR<0" = "red")) +
+    scale_color_manual(
+      values = c("black", "green", "red"),
+      labels = c("0 in ICR", "ICR>0", "ICR<0"), name = ""
+    )+
     xlab("log(p(OvE))") +
-    guides(col = "none") +
     facet_grid(cols = vars(cluster), rows = vars(condition)) +
     ggtitle(
       "hypergeometric ORA",

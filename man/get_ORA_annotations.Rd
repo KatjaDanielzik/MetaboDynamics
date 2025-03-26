@@ -9,7 +9,7 @@ get_ORA_annotations(
   data,
   kegg = "KEGG",
   metabolite_name = "metabolite",
-  update_background = FALSE
+  update_background = TRUE
 )
 }
 \arguments{
@@ -22,6 +22,7 @@ names or IDs are stored in colData}
 \item{metabolite_name}{column name of "data" that holds metabolite names}
 
 \item{update_background}{logical. Should the background information be updated?
+Should be set to TRUE of this is the first time using this function.
 If TRUE this may take some time.}
 }
 \value{

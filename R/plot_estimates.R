@@ -127,7 +127,9 @@ plot_estimates <- function(data,
       facet_grid(rows = vars(time.ID), cols = vars(condition)) +
       theme_bw() +
       theme(axis.text.x = element_text(angle = -90, hjust = 0)) +
-      ggtitle("differences between timepoints", "1= time point 2 - time point 1")
+      ggtitle("differences between timepoints",
+      "point = mean, errorbar = 95% highest density interval (CrI),
+       1 = time point 2 - time point 1")
   }
 
   # dynamics
@@ -139,12 +141,12 @@ plot_estimates <- function(data,
         y = mu_mean, group = metabolite.ID, col = metabolite
       )) +
       geom_line() +
-      xlab("timepoint") +
-      ylab("estimated mean concentration") +
+      xlab("time point") +
+      ylab("estimated deviation from mean concentration") +
       theme_bw() +
       theme(legend.position = "none") +
       facet_grid(rows = vars(condition)) +
-      ggtitle("dynamics", "color=metabolite")
+      ggtitle("dynamics", "color=metabolite, row labels = condition")
   }
   return(plots)
 }
