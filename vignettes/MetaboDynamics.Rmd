@@ -18,13 +18,13 @@ BiocStyle::markdown()
 ```
 
 # Background 
-Metabolomics data from longitudinal high-throughput experiments, such as untargeted Liquid Chromatography-Mass Spectrometry (LC-MS), allows for insights into changes of metabolite abundances over time. However, most existing tools are limited to comparing only two time points or experimental conditions, and they often rely on frequentist statistical methods. Additionally, most tools are only able to analyze groups of metabolites on a pathway level, potentially missing more general patterns of changes in the metabolism in sparse data.
+Metabolomics data from longitudinal high-throughput experiments, such as untargeted liquid chromatography-mass spectrometry (LC-MS), allows for insights into changes of metabolite abundances over time. However, most existing tools are limited to comparing only two time points or experimental conditions, and they often rely on frequentist statistical methods. Additionally, most tools are only able to analyze groups of metabolites on a pathway level, potentially missing more general patterns of changes in the metabolism in sparse data.
 
 Here, we introduce MetaboDynamics, a modular workflow of probabilistic models for the analysis of longitudinal metabolomics data. This package provides a flexible framework for analyzing longitudinal data, allowing users to model changes in metabolite abundances over time and identify patterns of interest.
 
 Metabolomics data is often noisy and limited by few replicates due to high costs. To address these challenges, we employ a Bayesian hierarchical model that balances between under-fitting and over-fitting. This model provides a robust method for estimating mean abundances at every time point, even with limited replicates.
 
-The MetaboDynamics workflow requires abundance tables as input, which can include metabolites and their observed abundances, LC-MS peak intensities or areas, normalized by biomass or cell number. The workflow can handle any number of time points, and the dynamics model requires at least three replicates. However, functions to compare clustered dynamics with each other do not require a certain number of replicates and can be applied with calculated mean abundances of e.g. two replicates.
+The MetaboDynamics workflow requires abundance tables as input, which can include metabolites and their observed abundances, LC-MS peak intensities or areas. The workflow can handle any number of time points, and the dynamics model requires at least three replicates. However, functions to compare clustered dynamics with each other do not require a certain number of replicates and can be applied with calculated mean abundances of e.g. two replicates.
 
 In this vignette, we will demonstrate how to use the MetaboDynamics package to analyze longitudinal metabolomics data, including data preprocessing, model fitting, and interpretation of results. We will show how to apply the package to a simulated dataset and how to visualize and interpret the results.
 
@@ -157,10 +157,10 @@ m = metabolite, c = experimental condition and t = time point ID:
 \end{align*}
 
 This model assumes a normal distribution of log-transformed and scaled metabolite
-abundances and estimates a mean \mu per metabolite and time point. The spread \sigma 
+abundances and estimates a mean $\mu$ per metabolite and time point. The spread $\sigma$ 
 of the replicate measurements is also estimated per metabolite and time point, 
-but the spread of different time points informs each other through the hierarchical
-structure of the hyper-parameter \lambda. This partial pooling allows for the
+but the spread of different time points inform each other through the hierarchical
+structure of the hyper-parameter $\lambda$. This partial pooling allows for the
 balance between over- and underfitting.
 
 The code below shows how to fit the Bayesian model with the function
@@ -202,14 +202,15 @@ returns a list of diagnostic criteria: rhat = R-hat convergence diagnostic (shou
 neff = number of effective samples (should be above 100), divergences = number of
 divergent transitions (should be 0), max_treedepth = number of iterations that
 exceed maximum treedepth (should be 0). Hints on how to adjust parameters for
-fit_dynamics_model() can be found in the function documentation (?fit_dynamics_model).
+fit_dynamics_model() can be found in the function documentation (type 
+"?fit_dynamics_model" in R console if MetaboDynamics is loaded).
 
 With diagnostics_dynamics() we can extract all
-the diagnostic criteria of MCMC and visualize them. If data is a SummarizedExperiment
-the diagnostics are stored in metadata(data)[["diagnostics_dynamics"]].
+the diagnostic criteria of the model fit and visualize them. If data is a 
+SummarizedExperiment object the diagnostics are stored in metadata(data)[["diagnostics_dynamics"]].
+The diagnostic criteria can be visualized with the function plot_diagnostics().
 Additionally data frames for visual Posterior predictive checks (PPC) are 
-prepared and plots for the PPCs and diagnostic criteria can be generated with 
-plot_PPC() and plot_diagnostics().
+prepared and the PPC can be visualized with the function plot_PPC().
 
 ```{r}
 # extract diagnostics
@@ -246,8 +247,8 @@ data points are consistent with the predicted distribution, suggesting that the
 model is a good fit to the data.
 
 After checking the diagnostic criteria and the PPC we can extract the estimates from the
-model fit usin the estimates_dynamics() function:
-If data is a SummarizedExperiment the estimates are stored in metadata(data)[["estimates_dynamics"]]
+model fit using the estimates_dynamics() function:
+If data is a SummarizedExperiment the estimates are stored in metadata(data)[["estimates_dynamics"]].
 
 
 ```{r,fig.wide=TRUE}
@@ -311,7 +312,7 @@ such as shifts in abundance over time, and to visualize the changes in abundance
 for each metabolite over the observed time interval. 
 
 To identify groups of metabolites that have similar dynamics we could now cluster these 
-metabolite specific dynamics vectors (estimates[,c("mu1.mean":"mut.mean)]) to 
+metabolite specific dynamics vectors (estimates[,"mu_mean"]) to 
 determine if groups of metabolites have similar dynamics.
 
 The estimates of the dynamics model are returned by the function estimates_dynamics() 
@@ -476,11 +477,11 @@ We can visualize the posterior estimates of the model with:
 heatmap_dynamics(data = longitudinalMetabolomics)
 ```
 This results in a bubble heat map where each cluster of all conditions (i.e.
-A_2 = cluster 2 of condition A) is compared with all clusters of all conditions.
+A_2 = cluster 2 of condition A) is compared with all clusters of every other condition.
 The comparison of clusters is reciprocal and therefore each comparison pair is 
 only visualized once. 
 The bigger and brighter a point, the smaller is the mean distance between
-dynamics clusters and the smaller is the standard deviation. That means big 
+dynamics clusters and the smaller is the standard deviation. That means that big 
 bright points indicate high dynamic similarity which small spread. Here B_8 and
 A_4 have high similarity in dynamics. 
 
