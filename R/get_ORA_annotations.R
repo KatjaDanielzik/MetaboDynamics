@@ -1,7 +1,7 @@
 #' Retrieve background and annotation information for over-representation analysis
 #' (ORA)
 #'
-#' Uses the package KEGGREST to retrieve background and annotation information
+#' Uses the package \link[KEGGREST]{KEGGREST} to retrieve background and annotation information
 #' needed for over-representation analysis. As KEGGREST only allows 10 queries
 #' per second this might take some time to run, depending on the size of the
 #' dataset and organism. The user should check afterwards if all functional modules are
@@ -16,7 +16,7 @@
 #' Should be set to TRUE of this is the first time using this function.
 #' If TRUE this may take some time.
 #'
-#' @seealso Dor over-representation analysis of KEGG functional modules [ORA_hypergeometric()]
+#' @seealso Do over-representation analysis of KEGG functional modules [ORA_hypergeometric()]
 #'
 #' @return a list with dataframes "background" and "annotation" needed for ORA,
 #' if data is a SummarizedExperiment \link[SummarizedExperiment]{SummarizedExperiment}  object annotations are stored in metadata(data)
