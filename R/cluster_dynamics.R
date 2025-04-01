@@ -52,7 +52,7 @@
 #' 
 cluster_dynamics <- function(data,distance="euclidean", 
                              agglomeration="ward.D2",
-                             minClusterSize=1, deepSplit=4){
+                             minClusterSize=1, deepSplit=2){
   
   # Input checks
   if (!is.data.frame(data) && !inherits(data, "SummarizedExperiment")) {
@@ -82,9 +82,9 @@ cluster_dynamics <- function(data,distance="euclidean",
   
   
 result <- lapply(data_df,function(data){
-    temp <- data%>%select(metabolite,time.ID,mu_mean)%>%pivot_wider(names_from = time.ID,values_from = mu_mean)
-    # get distance matrix from data without metabolite specification
-    dist <- dist(temp[,-1],method=distance)
+    temp <- data%>%select(metabolite,KEGG,condition,time.ID,mu_mean)%>%pivot_wider(names_from = time.ID,values_from = mu_mean)
+    # get distance matrix from data without metabolite,KEGG and condition specification
+    dist <- dist(temp[,-c(1:3)],method=distance)
     # convert dist to distance matrix and assign metabolite names
     dist <- as.matrix(dist)
     colnames(dist) <- unique(data$metabolite)
@@ -99,8 +99,7 @@ result <- lapply(data_df,function(data){
                               deepSplit = deepSplit)
     # assign clustering solution to data
     temp$cluster <- cutclust
-    data <- left_join(data,temp[,c("metabolite","cluster")],by="metabolite")
-    return(list(data=data,distance_matrix=dist,tree=clust))
+    return(list(data=temp,distance_matrix=dist,tree=clust))
   })
 
 # if input is a SummarizedExperiment object, store the fits in the metadata

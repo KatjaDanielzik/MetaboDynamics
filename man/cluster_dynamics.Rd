@@ -9,7 +9,7 @@ cluster_dynamics(
   distance = "euclidean",
   agglomeration = "ward.D2",
   minClusterSize = 1,
-  deepSplit = 4
+  deepSplit = 2
 )
 }
 \arguments{
