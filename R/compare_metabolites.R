@@ -36,6 +36,9 @@ compare_metabolites <- function(data, metabolite = "metabolite") {
   }
   if (is(data, "SummarizedExperiment")) {
     data_df <- metadata(data)[["cluster"]]
+    # bind listelements of clustering together that contain the dataframes
+    data_df <- do.call(rbind,lapply(data_df,function(l)l[["data"]]))
+    
   }
   # convert potential tibbles into data frame
   if(is(data,"tbl")){

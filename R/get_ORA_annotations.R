@@ -1,7 +1,7 @@
 #' Retrieve background and annotation information for over-representation analysis
 #' (ORA)
 #'
-#' Uses the package \link[KEGGREST]{KEGGREST} to retrieve background and annotation information
+#' Uses the package KEGGREST to retrieve background and annotation information
 #' needed for over-representation analysis. As KEGGREST only allows 10 queries
 #' per second this might take some time to run, depending on the size of the
 #' dataset and organism. The user should check afterwards if all functional modules are

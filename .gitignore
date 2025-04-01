@@ -9,3 +9,5 @@ src/*.cpp
 src/*.cc
 src/*.h
 *.Rproj
+doc/*
+Meta/*
