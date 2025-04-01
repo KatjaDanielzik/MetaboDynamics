@@ -234,58 +234,22 @@ metadata(se)[["data origin"]] <- "Simulated data of 98 metabolites with three
 concentration observations at four time points and at three different biological
 conditions. Script to construct dataset can be seen with ?longitudinalMetabolomics"
 
-# add clustering solution 
-# get distances between vectors
-clust_A <- metadata(data)[["estimates_dynamics"]][["A"]]
-clust_A <- clust_A %>%
-  select(metabolite.ID, condition, time.ID, mu_mean) %>%
-  pivot_wider(id_cols = c(metabolite.ID, condition), names_from = time.ID, values_from = mu_mean)
-
-dist <- clust_A %>% select(-c(metabolite.ID, condition))
-dd_A <- dist(dist,
-  method = "euclidean"
-)
-# hierarchical clustering
-clust <- hclust(dd_A, method = "ward.D2")
-clust_cut <- cutree(clust, k = 8)
-# adding cluster ID to estimates
-clust_A$cluster <- clust_cut
-
-# get distances between vectors
-clust_B <- metadata(data)[["estimates_dynamics"]][["B"]]
-clust_B <- clust_B %>%
-  select(metabolite.ID, condition, time.ID, mu_mean) %>%
-  pivot_wider(id_cols = c(metabolite.ID, condition), names_from = time.ID, values_from = mu_mean)
-
-dist <- clust_B %>% select(-c(metabolite.ID, condition))
-dd_B <- dist(dist,
-  method = "euclidean"
-)
-# hierarchical clustering
-clust <- hclust(dd_B, method = "ward.D2")
-clust_cut <- cutree(clust, k = 8)
-# adding cluster ID to estimates
-clust_B$cluster <- clust_cut
-
-# get distances between vectors
-clust_C <- metadata(data)[["estimates_dynamics"]][["C"]]
-clust_C <- clust_C %>%
-  select(metabolite.ID, condition, time.ID, mu_mean) %>%
-  pivot_wider(id_cols = c(metabolite.ID, condition), names_from = time.ID, values_from = mu_mean)
-
-dist <- clust_C %>% select(-c(metabolite.ID, condition))
-dd_C <- dist(dist,
-  method = "euclidean"
-)
-# hierarchical clustering
-clust <- hclust(dd_C, method = "ward.D2")
-clust_cut <- cutree(clust, k = 8)
-# adding cluster ID to estimates
-clust_C$cluster <- clust_cut
-
-cluster <- rbind(clust_A,clust_B,clust_C)
-metadata(se)[["cluster"]] <- cluster
-
+# 
+se <- fit_dynamics_model(se, scaled_measurement = "m_scaled",
+  assay = "scaled_log", time = "time",
+  condition = "condition", max_treedepth = 10,
+  adapt_delta = 0.95, # default 0.95
+  iter = 5000)
+  
+se <- estimates_dynamics(data = se, iter = 5000,
+  chains = 2, condition = "condition")
+  
+se <- cluster_dynamics(data=se,distance="euclidean", 
+                             agglomeration="ward.D2",
+                             minClusterSize=0, deepSplit=4)
+                             
+longitudinalMetabolomics <- se
+devtools::use_data(longitudinalMetabolomics)
 }
 
 \keyword{datasets}
