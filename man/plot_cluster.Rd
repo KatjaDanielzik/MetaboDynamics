@@ -14,5 +14,5 @@ visualize clustering solution of cluster_dynamics()
 }
 \examples{
  data("longitudinalMetabolomics")
- plot_cluster(longitudinalMetabolomics)
+ plot_cluster(longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A"])
 }
