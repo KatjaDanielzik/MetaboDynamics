@@ -12,31 +12,43 @@
 #'  
 #' @examples
 #'  data("longitudinalMetabolomics")
-#'  plot_cluster(longitudinalMetabolomics)
+#'  plot_cluster(longitudinalMetabolomics,dynamics=c("1","2","3","4"))
  
 
 plot_cluster <- function(data){
   
   # Input checks
   if (!inherits(data,"list") && !inherits(data, "SummarizedExperiment")) {
-    stop("'data' must be a list of dataframes or a SummarizedExperiment object
+    stop("'data' must be a list or a SummarizedExperiment object
          obtained by function cluster_dynamics()")
+  }
+  if(is(data,"list")){
+    lapply(data,function(data){
+      # check for dataframe format
+      if(!inherits(data,"list")){
+        stop("'data' must be a list of lists obtained by cluster_dynamics() if it is not a SummarizedExperiment object")
+      }
+    })
   }
   
   # Data transformation
   if (is(data, "SummarizedExperiment")) {
     data_df <- metadata(data)[["cluster"]]
   }
+  if (is(data, "list")) {
+    data_df <- data
+  }
   
 plots <- lapply(data_df,function(data){
+  dynamics <- data[["dynamics"]]
   # dendrogram
   dendro <- as.dendrogram(data[["tree"]])
   # get color identifier based on cluster membership of metabolite
   colors_to_use <- as.numeric(unique(data[["data"]][,c("metabolite","cluster")])$cluster)
   # order by dendrogram
   colors_to_use <- colors_to_use[order.dendrogram(dendro)]
-  dendro <- color_branches(dendro,col=colors_to_use)
-  dendro <- color_labels(dendro,col=colors_to_use)
+  dendro <- dendextend::color_branches(dendro,col=colors_to_use)
+  dendro <- dendextend::color_labels(dendro,col=colors_to_use)
   # get labels 
   labels <- data[["tree"]]
   par(cex=0.5)
@@ -45,11 +57,10 @@ plots <- lapply(data_df,function(data){
   title(main=paste0("Cluster Dendrogram dynamicTreeCut, method= ",
                     labels$method),ylab = paste0(labels$dist.method," distance"))
   dendrogram <- recordPlot()
-  result[["dendrogram"]] <- dendrogram
 
   # PCA plot
   data[["data"]]$cluster <- as.factor(data[["data"]]$cluster)
-  PCA <- prcomp(x=data[["data"]][,-c(1:3,8)])
+  PCA <- prcomp(x=data[["data"]][,dynamics])
   # store PCA result
   temp <- cbind(PCA[["x"]],data[["data"]])
   variance <- as.data.frame(summary(PCA)[["importance"]])
@@ -68,13 +79,13 @@ plots <- lapply(data_df,function(data){
   scale_color_viridis_d()+
   scale_fill_viridis_d()+
   ggtitle("Principal component analysis of clustering solution","color = cluster, points = metabolite")
-  result[["PCA_plot"]] <- PCA_plot
   
  return(list(dendrogram = dendrogram, PCA_plot = PCA_plot))
 })
 
 # plot dynamics as lineplots  
     temp <- do.call(rbind,lapply(data_df,function(l)l[["data"]]))
+    dynamics <- data_df[[1]][["dynamics"]]
     temp <- temp%>%pivot_longer(cols=dynamics,names_to = "time.h",values_to = "mean_log_cpc_scaled")
 
     lineplot <- ggplot(temp,aes(x=as.factor(as.numeric(time.h)),

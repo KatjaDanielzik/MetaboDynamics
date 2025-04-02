@@ -102,6 +102,8 @@ cluster_dynamics <- function(data,distance="euclidean",
   
 result <- lapply(data_df,function(data){
     temp <- data%>%select(metabolite,time.ID,mu_mean)%>%pivot_wider(names_from = time.ID,values_from = mu_mean)
+    # save dynamics columns
+    dynamics <- colnames(temp)[-1]
     # get distance matrix from data without metabolite,KEGG and condition specification
     dist <- dist(temp[,-1],method=distance)
     # convert dist to distance matrix and assign metabolite names
@@ -119,8 +121,9 @@ result <- lapply(data_df,function(data){
                               deepSplit = deepSplit)
     # assign clustering solution to data
     temp$cluster <- cutclust
-    data <- left_join(data,temp[,c("metabolite","cluster")],by="metabolite")
-    return(list(data=data,distance_matrix=dist,tree=clust))
+    data <- data%>%select(-c(time.ID,mu_mean))
+    temp <- left_join(temp,data,by="metabolite")
+    return(list(dynamics=dynamics, data=temp,distance_matrix=dist,tree=clust))
   })
 
 # if input is a SummarizedExperiment object, store the fits in the metadata
