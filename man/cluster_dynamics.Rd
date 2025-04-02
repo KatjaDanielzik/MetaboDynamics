@@ -42,7 +42,7 @@ matrix and hierarchical clustering needed as input for dynamicTreeCut
 \examples{
 data("longitudinalMetabolomics")
 data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-  longitudinalMetabolomics$metabolite \%in\% c("ATP","L-Alanine","GDP")]
+  longitudinalMetabolomics$metabolite \%in\% c("ATP", "L-Alanine", "GDP")]
 data <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", assay = "scaled_log",
@@ -54,7 +54,6 @@ data <- estimates_dynamics(
 )
 data <- cluster_dynamics(data)
 S4Vectors::metadata(data)[["cluster"]][["A"]][["data"]]
-
 
 }
 \seealso{

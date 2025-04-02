@@ -18,6 +18,6 @@ Additionally one plot visualizing the clustered dynamics over all conditions
 visualize clustering solution of cluster_dynamics()
 }
 \examples{
- data("longitudinalMetabolomics")
- plot_cluster(longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A"])
+data("longitudinalMetabolomics")
+plot_cluster(longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A"])
 }
