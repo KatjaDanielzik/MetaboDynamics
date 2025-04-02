@@ -31,7 +31,8 @@ plot_cluster <- function(data){
 plots <- lapply(data_df,function(data){
   # dendrogram
   dendro <- as.dendrogram(data[["tree"]])
-  colors_to_use <- as.numeric(data[["data"]]$cluster)
+  # get color identifier based on cluster membership of metabolite
+  colors_to_use <- as.numeric(unique(data[["data"]][,c("metabolite","cluster")])$cluster)
   # order by dendrogram
   colors_to_use <- colors_to_use[order.dendrogram(dendro)]
   dendro <- color_branches(dendro,col=colors_to_use)
@@ -42,7 +43,7 @@ plots <- lapply(data_df,function(data){
   plot(dendro)
   par(cex=1)
   title(main=paste0("Cluster Dendrogram dynamicTreeCut, method= ",
-                    labels$method),ylab = labels$dist.method)
+                    labels$method),ylab = paste0(labels$dist.method," distance"))
   dendrogram <- recordPlot()
   result[["dendrogram"]] <- dendrogram
 
