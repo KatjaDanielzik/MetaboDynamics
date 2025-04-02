@@ -12,7 +12,7 @@
 #'  
 #' @examples
 #'  data("longitudinalMetabolomics")
-#'  plot_cluster(longitudinalMetabolomics,dynamics=c("1","2","3","4"))
+#'  plot_cluster(longitudinalMetabolomics)
  
 
 plot_cluster <- function(data){

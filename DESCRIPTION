@@ -1,6 +1,6 @@
 Package: MetaboDynamics
 Title: Bayesian analysis of longitudinal metabolomics data
-Version: 0.99.23
+Version: 0.99.24
 Authors@R: 
   c(person(given="Katja",family= "Danielzik", email="katja.danielzik@uni-due.de", 
            role = c("aut", "cre"),
@@ -44,7 +44,8 @@ Imports:
   stringr,
   SummarizedExperiment,
   tidyr,
-  dynamicTreeCut
+  dynamicTreeCut,
+  dendextend
 VignetteBuilder: knitr
 Depends: 
   R (>= 4.4.0)
@@ -57,5 +58,5 @@ LinkingTo:
   rstan (>= 2.18.1),
   StanHeaders (>= 2.18.0)
 SystemRequirements: GNU make
-biocViews: Software,Metabolomics,Clustering,Bayesian,FunctionalPrediction,MultipleComparison,KEGG,Pathways,TimeCourse
+biocViews: Software,Metabolomics,Bayesian,FunctionalPrediction,MultipleComparison,KEGG,Pathways,TimeCourse
 Biarch: true

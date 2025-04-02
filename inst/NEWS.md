@@ -1,6 +1,6 @@
 # MetaboDynamics 0.99.24
 
-* Bug fix: estimates_dynamics handles nor differences between timepoints correctly
+* Bug fix: estimates_dynamics handles now differences between timepoints correctly
 * added functions: cluster_dynamics: convenient clustering function wrapper using dynamictreecut package
                     plot_cluster: cluster visualization
 
