@@ -74,9 +74,9 @@ estimates_dynamics <- function(data, assay = "scaled_log",
     )
     fits <- metadata(data)[["dynamic_fits"]]
   }
-  
+
   # convert potential tibbles into data frame
-  if(is(data,"tbl")){
+  if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
   if (is(data, "data.frame")) {
@@ -154,8 +154,8 @@ estimates_dynamics <- function(data, assay = "scaled_log",
 
     if (t > 1) {
       delta_mu_data <- data.frame(
-        metabolite.ID = rep(seq_len(M),t-1),
-        time.ID = rep(seq_len(t - 1), each=M), # one less delta_t than timepoints
+        metabolite.ID = rep(seq_len(M), t - 1),
+        time.ID = rep(seq_len(t - 1), each = M), # one less delta_t than timepoints
         delta_mu_mean = pS[delta_mu_indices_names, "mean"],
         delta_mu_lower = pS[delta_mu_indices_names, "2.5%"],
         delta_mu_higher = pS[delta_mu_indices_names, "97.5%"]

@@ -1,6 +1,6 @@
 #' Plot results of over-representation analysis with ORA_hypergeometric()
 #'
-#' @param data result dataframe from ORA_hypergeometric() or \link[SummarizedExperiment]{SummarizedExperiment} 
+#' @param data result dataframe from ORA_hypergeometric() or \link[SummarizedExperiment]{SummarizedExperiment}
 #' object where the ORA_hypergeometric() results are stored in metadata(data)
 #' under "ORA_tested_column"
 #' @param tested_column KEGG module hierarchy level on which ORA was executed
@@ -40,9 +40,9 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy") {
   if (is(data, "SummarizedExperiment")) {
     a_clusters <- metadata(data)[[paste0("ORA_", tested_column)]]
   }
-  
+
   # convert potential tibbles into data frame
-  if(is(data,"tbl")){
+  if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
   if (is(data, "data.frame")) {
@@ -84,7 +84,7 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy") {
     scale_color_manual(
       values = c("black", "green", "red"),
       labels = c("0 in ICR", "ICR>0", "ICR<0"), name = ""
-    )+
+    ) +
     xlab("log(p(OvE))") +
     facet_grid(cols = vars(cluster), rows = vars(condition)) +
     ggtitle(

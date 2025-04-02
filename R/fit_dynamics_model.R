@@ -94,9 +94,9 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
       values_to = scaled_measurement
     )
   }
-  
+
   # convert potential tibbles into data frame
-  if(is(data,"tbl")){
+  if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
   if (is(data, "data.frame")) {
@@ -112,8 +112,8 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
   if (!all(c(metabolite, time, condition, scaled_measurement) %in% colnames(data_df))) {
     stop("'data' must contain columns named 'metabolite','time','condition', and 'scaled_measurement'")
   }
-  
-  
+
+
   # validate at least triplicate measurements
   # count replicates per metabolite, time and condition
   grouped_data <- data_df %>%

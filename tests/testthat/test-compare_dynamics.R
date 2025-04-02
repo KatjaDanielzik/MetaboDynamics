@@ -64,5 +64,4 @@ test_that("compare_dynamics:output_checks", {
   # Number of comparisons
   n_expected <- choose(4, 2) # For 4 unique combinations (2 conditions à 2 clusters), 6 pairwise comparisons
   expect_equal(length(result$distances), n_expected)
-  
 })

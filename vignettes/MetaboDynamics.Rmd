@@ -32,7 +32,7 @@ In this vignette, we will demonstrate how to use the MetaboDynamics package to a
 ```{r setup}
 library(MetaboDynamics)
 library(SummarizedExperiment) # storing and manipulating simulated metabolomics data
-library(ggplot2) # visualization 
+library(ggplot2) # visualization
 library(dplyr) # data handling
 library(tidyr) # data handling
 ```
@@ -49,7 +49,7 @@ KEGG IDs, experimental conditions, and clustering solutions per experimental
 condition are stored in colData and rowData. To load the data, execute the following code:
 
 ```{r}
-data("longitudinalMetabolomics",package = "MetaboDynamics")
+data("longitudinalMetabolomics", package = "MetaboDynamics")
 ```
 
 The next plot shows the raw metabolite abundances.
@@ -80,7 +80,7 @@ In the integrated simulated data set this is already done in the column "log_m".
 ```{r,fig.wide=TRUE}
 ggplot(abundances, aes(x = abundance)) +
   geom_density() +
-  scale_x_log10()+
+  scale_x_log10() +
   theme_bw() +
   facet_grid(cols = vars(time), rows = vars(condition)) +
   ggtitle("data", "log-transformed values")
@@ -97,10 +97,10 @@ ggplot(abundances) +
     x = time, y = abundance, col = metabolite,
     group = interaction(metabolite, replicate)
   )) +
-  scale_y_log10()+
+  scale_y_log10() +
   theme_bw() +
   xlab("timepoint") +
-  scale_color_viridis_d()+
+  scale_color_viridis_d() +
   theme(legend.position = "none") +
   facet_grid(rows = vars(condition)) +
   ggtitle("raw metabolite dynamics", "color=metabolite")
@@ -134,7 +134,7 @@ ggplot(abundances) +
     group = interaction(metabolite, replicate)
   )) +
   theme_bw() +
-  scale_color_viridis_d()+
+  scale_color_viridis_d() +
   xlab("timepoint") +
   theme(legend.position = "none") +
   facet_grid(rows = vars(condition)) +
@@ -322,7 +322,7 @@ and can be accessed with:
 # get estimates
 estimates <- metadata(data)[["estimates_dynamics"]]
 # only show first rows of condition A
-estimates[["A"]][1:10,]
+estimates[["A"]][1:10, ]
 ```
 
 
@@ -375,7 +375,7 @@ ggplot(temp, aes(
   xlab("timepoint") +
   ylab("estimated difference from mean abundance") +
   theme_bw() +
-  ylim(-2,2)+
+  ylim(-2, 2) +
   theme(legend.position = "none") +
   facet_grid(rows = vars(condition), cols = vars(cluster)) +
   ggtitle("clustered dynamics", "panels=cluster ID")
@@ -524,7 +524,7 @@ ggplot(temp, aes(x = cluster_b, y = cluster_a)) +
   scale_y_discrete(limits = x) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   labs(col = "dynamics distance", size = "metabolite similarity") +
-  ggtitle("comparison of clusters","label = condition + cluster ID")
+  ggtitle("comparison of clusters", "label = condition + cluster ID")
 ```
 
 With this form of visualization we can easily spot clusters in which the

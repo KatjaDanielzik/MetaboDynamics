@@ -68,9 +68,9 @@ plot_estimates <- function(data,
     )
     estimates <- metadata(data)[["estimates_dynamics"]]
   }
-  
+
   # convert potential tibbles into data frame
-  if(is(data,"tbl")){
+  if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
   if (is(data, "data.frame")) {
@@ -127,9 +127,11 @@ plot_estimates <- function(data,
       facet_grid(rows = vars(time.ID), cols = vars(condition)) +
       theme_bw() +
       theme(axis.text.x = element_text(angle = -90, hjust = 0)) +
-      ggtitle("differences between timepoints",
-      "point = mean, errorbar = 95% highest density interval (CrI),
-       1 = time point 2 - time point 1")
+      ggtitle(
+        "differences between timepoints",
+        "point = mean, errorbar = 95% highest density interval (CrI),
+       1 = time point 2 - time point 1"
+      )
   }
 
   # dynamics

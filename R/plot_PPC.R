@@ -62,9 +62,9 @@ plot_PPC <- function(
     # only select posteriors
     posterior <- posterior[-1]
   }
-  
+
   # convert potential tibbles into data frame
-  if(is(data,"tbl")){
+  if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
   if (is(data, "data.frame")) {

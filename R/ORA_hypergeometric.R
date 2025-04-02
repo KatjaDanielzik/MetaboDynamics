@@ -11,16 +11,16 @@
 #' log(p(OvE))>0 indicates an over-representation of the functional module in
 #' the cluster, log(p(OvE))<0 an under-representation.
 #' @seealso function to retrieve "background" and
-#' "annotation" data frames [get_ORA_annotations()]. 
+#' "annotation" data frames [get_ORA_annotations()].
 #' Function to visualize ORA results [plot_ORA()]
 #' @param background dataframe that contains
 #' KEGG IDs of metabolites that are assigned to functional modules
-#' @param annotations dataframe tha contains information to which functional 
+#' @param annotations dataframe tha contains information to which functional
 #' modules our experimental metabolites are annotated in KEGG
 #' @param data dataframe containing columns "KEGG" specifying the KEGG
 #' identifiers of metabolites, "cluster" specifying the cluster ID of metabolites and a
 #' column specifying the experimental condition called "condition" or if data
-#' is a SummarizedExperiment or a \link[SummarizedExperiment]{SummarizedExperiment} clustering 
+#' is a SummarizedExperiment or a \link[SummarizedExperiment]{SummarizedExperiment} clustering
 #' solution must be stored in metadata(data)
 #' under "cluster"
 #' @param tested_column column that is in background and annotations and on
@@ -89,12 +89,11 @@ ORA_hypergeometric <- function(background = metadata(data)[["KEGG_annotations"]]
   if (is(data, "SummarizedExperiment")) {
     data_df <- metadata(data)[["cluster"]]
     # bind listelements of clustering together that contain the dataframes
-    data_df <- do.call(rbind,lapply(data_df,function(l)l[["data"]]))
-    
+    data_df <- do.call(rbind, lapply(data_df, function(l) l[["data"]]))
   }
-  
+
   # convert potential tibbles into data frame
-  if(is(data,"tbl")){
+  if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
   if (is(data, "data.frame")) {

@@ -39,11 +39,11 @@ heatmap_metabolites <- function(distances = metadata(data)[["comparison_metaboli
     distances <- metadata(data)[["comparison_metabolites"]]
     data_df <- metadata(data)[["cluster"]]
     # bind listelements of clustering together that contain the dataframes
-    data_df <- do.call(rbind,lapply(data_df,function(l)l[["data"]]))
+    data_df <- do.call(rbind, lapply(data_df, function(l) l[["data"]]))
   }
-  
+
   # convert potential tibbles into data frame
-  if(is(data,"tbl")){
+  if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
   if (is(data, "data.frame")) {
@@ -69,9 +69,11 @@ heatmap_metabolites <- function(distances = metadata(data)[["comparison_metaboli
     ylab("cluster_a") +
     scale_fill_viridis_c(option = "viridis") +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-    ggtitle("similarity of metabolites in clusters", 
-            "metabolites=intersection/union of metabolites in cluster,
-            label = condition + cluster ID")
+    ggtitle(
+      "similarity of metabolites in clusters",
+      "metabolites=intersection/union of metabolites in cluster,
+            label = condition + cluster ID"
+    )
 
   return(plot)
 }
