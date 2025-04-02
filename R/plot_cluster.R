@@ -12,7 +12,7 @@
 #'  
 #' @examples
 #'  data("longitudinalMetabolomics")
-#'  plot_cluster(longitudinalMetabolomics)
+#'  plot_cluster(longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A"])
  
 
 plot_cluster <- function(data){
