@@ -110,6 +110,7 @@ result <- lapply(data_df,function(data){
     rownames(dist) <- unique(data$metabolite)
     # get hierarchical clustering result
     clust <- hclust(as.dist(dist), method=agglomeration)
+    clust$dist.method <- distance
     # cut clustering results with dynamic tree cut
     cutclust <- cutreeDynamic(dendro = clust, # dendrogram from hierarchical clustering
                               distM=as.matrix(dist), # distance matrix for hybrid method
