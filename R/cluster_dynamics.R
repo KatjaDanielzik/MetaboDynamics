@@ -55,9 +55,11 @@ cluster_dynamics <- function(data,distance="euclidean",
                              minClusterSize=1, deepSplit=2){
   
   # Input checks
-  if (!is.data.frame(data) && !inherits(data, "SummarizedExperiment")) {
-    stop("'data' must be a dataframe or a SummarizedExperiment object")
+  if (!inherits(data,"list") && !inherits(data, "SummarizedExperiment")) {
+    stop("'data' must be a list of dataframes or a SummarizedExperiment object")
   }
+  
+  # Data transformation
   if (is(data, "SummarizedExperiment")) {
     data_df <- metadata(data)[["estimates_dynamics"]]
   }
@@ -71,9 +73,26 @@ cluster_dynamics <- function(data,distance="euclidean",
   if (is(data, "data.frame")) {
     data <- data
   }
+      # check for dataframe format
+     if(!is.data.frame(data)){
+    stop("'data' must be a list of dataframes if it is not a SummarizedExperiment object")
+    } 
+      # check for required column namess
+      if (!all(c("metabolite", "mu_mean","time.ID") %in% colnames(data))) {
+      stop("dataframes in 'data' must contain columns named 'metabolite', 'mu_mean' and 'time.ID'")
+    }
     })
     data_df <- data
   }
+  
+  # check for correct number of mu_mean for every time.ID and metabolite combination
+  lapply(data,function(data){
+    time_ids <- unique(data$time.ID)
+    metabolites <- unique(data$metabolite)
+    for (metabolite in metabolites) {
+      if (nrow(unique(data[data$metabolite == metabolite,])) != length(time_ids)) {
+        stop("dataframes in 'data' must have a mu_mean value for every time.ID per metabolite'")}
+  }})
   
   # attach variables to function
   metabolite <- NULL
@@ -82,9 +101,9 @@ cluster_dynamics <- function(data,distance="euclidean",
   
   
 result <- lapply(data_df,function(data){
-    temp <- data%>%select(metabolite,KEGG,condition,time.ID,mu_mean)%>%pivot_wider(names_from = time.ID,values_from = mu_mean)
+    temp <- data%>%select(metabolite,time.ID,mu_mean)%>%pivot_wider(names_from = time.ID,values_from = mu_mean)
     # get distance matrix from data without metabolite,KEGG and condition specification
-    dist <- dist(temp[,-c(1:3)],method=distance)
+    dist <- dist(temp[,-1],method=distance)
     # convert dist to distance matrix and assign metabolite names
     dist <- as.matrix(dist)
     colnames(dist) <- unique(data$metabolite)
@@ -99,7 +118,8 @@ result <- lapply(data_df,function(data){
                               deepSplit = deepSplit)
     # assign clustering solution to data
     temp$cluster <- cutclust
-    return(list(data=temp,distance_matrix=dist,tree=clust))
+    data <- left_join(data,temp[,c("metabolite","cluster")],by="metabolite")
+    return(list(data=data,distance_matrix=dist,tree=clust))
   })
 
 # if input is a SummarizedExperiment object, store the fits in the metadata
