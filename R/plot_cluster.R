@@ -12,6 +12,10 @@
 #' @importFrom dendextend color_labels
 #' @importFrom graphics par
 #' @importFrom graphics title
+#' 
+#' @returns a list of plots. Per experimental condition one dendrogram,
+#' colored by cluster and one visualization of PCA-analysis of the clustering solution.
+#' Additionally one plot visualizing the clustered dynamics over all conditions
 #'  
 #' @examples
 #'  data("longitudinalMetabolomics")

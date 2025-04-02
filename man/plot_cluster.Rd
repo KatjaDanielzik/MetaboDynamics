@@ -9,6 +9,11 @@ plot_cluster(data)
 \arguments{
 \item{data}{result of \code{\link[=cluster_dynamics]{cluster_dynamics()}} function}
 }
+\value{
+a list of plots. Per experimental condition one dendrogram,
+colored by cluster and one visualization of PCA-analysis of the clustering solution.
+Additionally one plot visualizing the clustered dynamics over all conditions
+}
 \description{
 visualize clustering solution of cluster_dynamics()
 }
