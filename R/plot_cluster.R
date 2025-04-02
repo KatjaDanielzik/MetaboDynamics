@@ -7,8 +7,11 @@
 #' @import tidyr
 #' @importFrom stats prcomp
 #' @importFrom stats as.dendrogram
+#' @importFrom stats order.dendrogram
 #' @importFrom dendextend color_branches
 #' @importFrom dendextend color_labels
+#' @importFrom graphics par
+#' @importFrom graphics title
 #'  
 #' @examples
 #'  data("longitudinalMetabolomics")
@@ -38,6 +41,15 @@ plot_cluster <- function(data){
   if (is(data, "list")) {
     data_df <- data
   }
+  
+  # bind variables
+  metabolite <- NULL
+  cluster <- NULL
+  condition <- NULL
+  PC1 <- NULL
+  PC2 <- NULL
+  mean_log_cpc_scaled <- NULL
+  time.h <- NULL
   
 plots <- lapply(data_df,function(data){
   dynamics <- data[["dynamics"]]

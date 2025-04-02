@@ -41,7 +41,7 @@
 #'   cores = 1
 #' )
 #' S4Vectors::metadata(longitudinalMetabolomics)[["comparison_dynamics"]]
-compare_dynamics <- function(data, dynamics, cores = 4) {
+compare_dynamics <- function(data, dynamics = metadata(data)[["cluster"]][[1]]$dynamics, cores = 4) {
   # Input checks
   if (!is.data.frame(data) && !inherits(data, "SummarizedExperiment")) {
     stop("'data' must be a dataframe or a SummarizedExperiment object")

@@ -4,7 +4,11 @@
 \alias{compare_dynamics}
 \title{Comparison of metabolite dynamics clusters under different experimental conditions}
 \usage{
-compare_dynamics(data, dynamics, cores = 4)
+compare_dynamics(
+  data,
+  dynamics = metadata(data)[["cluster"]][[1]]$dynamics,
+  cores = 4
+)
 }
 \arguments{
 \item{data}{a dataframe or containing a column specifying the metabolite
