@@ -38,6 +38,8 @@ heatmap_metabolites <- function(distances = metadata(data)[["comparison_metaboli
   if (is(data, "SummarizedExperiment")) {
     distances <- metadata(data)[["comparison_metabolites"]]
     data_df <- metadata(data)[["cluster"]]
+    # bind listelements of clustering together that contain the dataframes
+    data_df <- do.call(rbind,lapply(data_df,function(l)l[["data"]]))
   }
   
   # convert potential tibbles into data frame

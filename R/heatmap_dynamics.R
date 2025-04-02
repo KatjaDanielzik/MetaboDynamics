@@ -24,7 +24,7 @@
 #' data("longitudinalMetabolomics")
 #' longitudinalMetabolomics <- compare_dynamics(
 #'   data = longitudinalMetabolomics,
-#'   dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"),
+#'   dynamics = c("1", "2", "3", "4"),
 #'   cores = 1
 #' )
 #' heatmap_dynamics(data = longitudinalMetabolomics)
@@ -44,6 +44,8 @@ heatmap_dynamics <- function(estimates = metadata(data)[["comparison_dynamics"]]
   }
   if (is(data, "SummarizedExperiment")) {
     data_df <- metadata(data)[["cluster"]]
+    # bind listelements of clustering together that contain the dataframes
+    data_df <- do.call(rbind,lapply(data_df,function(l)l[["data"]]))
     estimates <- metadata(data)[["comparison_dynamics"]][["estimates"]]
   }
   

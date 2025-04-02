@@ -34,7 +34,7 @@ plot bubble heatmap from the numerical fit of compare_dynamics()
 data("longitudinalMetabolomics")
 longitudinalMetabolomics <- compare_dynamics(
   data = longitudinalMetabolomics,
-  dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"),
+  dynamics = c("1", "2", "3", "4"),
   cores = 1
 )
 heatmap_dynamics(data = longitudinalMetabolomics)
