@@ -86,7 +86,7 @@ cluster_dynamics <- function(data,distance="euclidean",
   }
   
   # check for correct number of mu_mean for every time.ID and metabolite combination
-  lapply(data,function(data){
+  lapply(data_df,function(data){
     time_ids <- unique(data$time.ID)
     metabolites <- unique(data$metabolite)
     for (metabolite in metabolites) {
