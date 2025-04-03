@@ -7,7 +7,7 @@
 #'
 #' @param data result of [estimates_dynamics()] (list of dataframes or SummarizedExperiment object)
 #' or a list of dataframes (one dataframe per condition, list elements must be named by condition) with columns which are named "metabolite",
-#' "mu_mean" (mean metabolite abundance) and "time.ID" (numerical, specifying the experimental time point)
+#' "mu_mean" (mean metabolite abundance log-transformed and standarized to a mean of zero and standard deviation of one per experimental condition and metabolite) and "time.ID" (numerical, specifying the experimental time point)
 #' @param distance distance method to be used as input for hierarchical clustering \link[stats]{dist}
 #' can be "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski"
 #' @param agglomeration agglomerative method to be used for hierarchical clustering \link[stats]{hclust}
@@ -52,6 +52,10 @@
 cluster_dynamics <- function(data, distance = "euclidean",
                              agglomeration = "ward.D2",
                              minClusterSize = 1, deepSplit = 2) {
+  message("Is your data normalized and standardized?
+          We recommend normalization by log-transformation.
+          Scaling and centering (mean=0, sd=1) should be metabolite and condition specific.")
+  
   # Input checks
   if (!inherits(data, "list") && !inherits(data, "SummarizedExperiment")) {
     stop("'data' must be a list of dataframes or a SummarizedExperiment object")
