@@ -10,6 +10,7 @@
 #' @importFrom stats order.dendrogram
 #' @importFrom dendextend color_branches
 #' @importFrom dendextend color_labels
+#' @importFrom grDevices recordPlot
 #' @importFrom graphics par
 #' @importFrom graphics title
 #'
@@ -17,10 +18,15 @@
 #' colored by cluster and one visualization of PCA-analysis of the clustering solution.
 #' Additionally one plot visualizing the clustered dynamics over all conditions
 #'
+#' @export
+#'
+#' @seealso [cluster_dynamics()]
+#'
 #' @examples
 #' data("longitudinalMetabolomics")
 #' plot_cluster(longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A"])
-plot_cluster <- function(data) {
+
+plot_cluster <- function(data){
   # Input checks
   if (!inherits(data, "list") && !inherits(data, "SummarizedExperiment")) {
     stop("'data' must be a list or a SummarizedExperiment object

@@ -21,3 +21,6 @@ visualize clustering solution of cluster_dynamics()
 data("longitudinalMetabolomics")
 plot_cluster(longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A"])
 }
+\seealso{
+\code{\link[=cluster_dynamics]{cluster_dynamics()}}
+}
