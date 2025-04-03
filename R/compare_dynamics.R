@@ -85,10 +85,10 @@ compare_dynamics <- function(data, dynamics = metadata(data)[["cluster"]][[1]]$d
     cond_clust_b <- unique_combinations[idx_b, ]
 
     # Subset the data for the two groups
-    group_a <- data_df[data_df$condition == cond_clust_a$condition &
-      data_df$cluster == cond_clust_a$cluster, dynamics]
-    group_b <- data_df[data_df$condition == cond_clust_b$condition &
-      data_df$cluster == cond_clust_b$cluster, dynamics]
+    group_a <- unique(data_df[data_df$condition == cond_clust_a$condition &
+      data_df$cluster == cond_clust_a$cluster, dynamics])
+    group_b <- unique(data_df[data_df$condition == cond_clust_b$condition &
+      data_df$cluster == cond_clust_b$cluster, dynamics])
 
     # Compute distances
     .calculate_distances(group_a, group_b, dynamics)
