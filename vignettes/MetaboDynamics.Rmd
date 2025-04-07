@@ -467,8 +467,8 @@ The comparison of clusters is reciprocal and therefore each comparison pair is
 only visualized once. 
 The bigger and brighter a point, the smaller is the mean distance between
 dynamics clusters and the smaller is the standard deviation. That means that big 
-bright points indicate high dynamic similarity which small spread. Here B_8 and
-A_4 have high similarity in dynamics. 
+bright points indicate high dynamic similarity which small spread. Here C_10 and
+A_10 have high similarity in dynamics. 
 
 ## Metabolites
 We can also compare metabolite composition of clusters. For this we employ
@@ -483,9 +483,12 @@ longitudinalMetabolomics <- compare_metabolites(
 heatmap_metabolites(data = longitudinalMetabolomics)
 ```
 The brighter a tile, the higher is the similarity of two clusters in regard
-to their metabolite composition. 
+to their metabolite composition. The comparison of clusters of one condition
+here always have a Jaccard Index of zero, as every metabolite is only assigned
+to one cluster per condition, hence there is no similarity between clusters
+of one experimental condition. 
 We have two clusters that are similar in their metabolite composition:
-C_6 and A_5. If we compare that to the dynamics profiles and ORA analysis
+C_4 and A_3. If we compare that to the dynamics profiles and ORA analysis
 we see that similar functional modules are over-expressed as expected BUT
 the dynamics differ between the two radiation doses. 
 
@@ -516,12 +519,12 @@ With this form of visualization we can easily spot clusters in which the
 experimental condition (e.g. kind of treatment/ dose of treatment) has the
 biggest effect. These clusters are similar in regards to their composing metabolites
 (i.e. big points)
-but dissimilar (i.e. bright color) in regards to their dynamics. In this example
-this is the cluster pair B_7 and A_4. Their ORA profiles are also quite similar 
+but dissimilar (i.e. bright color) in regards to their dynamics. Here this is 
+for example the cluster pair B_10 and A_5. Their ORA profiles are also quite similar 
 as expected from the similar metabolite compositions. 
 Clusters of metabolites that are not much affected by the experimental condition
 can be spotted by big (i.e. high metabolite similarity) black (i.e. low dissimilarity
-in dynamics) points, for example cluster pair C_6 and A_5
+in dynamics) points, for example cluster pair C_4 and A_3.
 
 ```{r}
 sessionInfo()
