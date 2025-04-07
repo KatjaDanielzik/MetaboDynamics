@@ -47,6 +47,10 @@ compare_metabolites <- function(data, metabolite = "metabolite") {
   if (is(data, "data.frame")) {
     data_df <- data
   }
+  if (is(data_df, "tbl")) {
+    data_df <- as.data.frame(data_df)
+  }
+  
   if (!is.character(metabolite)) stop("'metabolite' must be a character vector")
   if (!all(c("cluster") %in% colnames(data_df))) {
     stop("'data' must contain a column named 'cluster'")
@@ -55,6 +59,11 @@ compare_metabolites <- function(data, metabolite = "metabolite") {
     stop("'data' must contain a column containing
          metabolite names as specified with metabolite= ")
   }
+  
+  # order data_df according to condition and cluster
+  data_df$cluster <- as.numeric(data_df$cluster)
+  data_df <- data_df[order(data_df$condition,data_df$cluster),]
+  
 
   # Extract unique condition-cluster combinations
   unique_combinations <- unique(data_df[, c("condition", "cluster")])

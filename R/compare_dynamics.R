@@ -55,6 +55,9 @@ compare_dynamics <- function(data, dynamics = metadata(data)[["cluster"]][[1]]$d
   if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
+  if (is(data_df, "tbl")) {
+    data_df <- as.data.frame(data_df)
+  }
   if (is(data, "data.frame")) {
     data_df <- data
   }
@@ -67,6 +70,10 @@ compare_dynamics <- function(data, dynamics = metadata(data)[["cluster"]][[1]]$d
     stop("All specified 'dynamics' columns must exist in `data` dataframe")
   }
 
+  # order data_df according to condition and cluster
+  data_df$cluster <- as.numeric(data_df$cluster)
+  data_df <- data_df[order(data_df$condition,data_df$cluster),]
+  
   # Extract unique condition-cluster combinations
   unique_combinations <- unique(data_df[, c("condition", "cluster")])
   n_combinations <- nrow(unique_combinations)

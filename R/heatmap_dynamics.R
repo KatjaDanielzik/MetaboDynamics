@@ -53,6 +53,9 @@ heatmap_dynamics <- function(estimates = metadata(data)[["comparison_dynamics"]]
   if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
+  if (is(data_df, "tbl")) {
+    data_df <- as.data.frame(data_df)
+  }
   if (is(data, "data.frame")) {
     data_df <- data
   }
@@ -61,12 +64,17 @@ heatmap_dynamics <- function(estimates = metadata(data)[["comparison_dynamics"]]
   }
 
   # visualization
-  plot <- ggplot(estimates, aes(x = cluster_b, y = cluster_a)) +
+  x <- unique(data_df[order(data_df$condition,data_df$cluster), c("condition", "cluster")])
+  
+  plot <- ggplot(estimates, aes(x =  factor(cluster_b, levels = paste0(x$condition, "_", x$cluster)),
+                                y =  factor(cluster_a, levels = paste0(x$condition, "_", x$cluster)))) +
     geom_point(aes(col = 1 / mu_mean, size = ((1 / sigma_mean)))) +
     theme_bw() +
     scale_color_viridis_c(option = "viridis") +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
     labs(col = "1/estimated mean", size = "1/estimated sigma") +
+    xlab("cluster_b")+
+    ylab("cluster_a")+
     ggtitle(
       "similarity of dynamics in clusters",
       "estimated mean pairwise euclidean distance,
