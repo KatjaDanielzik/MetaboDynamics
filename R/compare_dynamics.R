@@ -55,11 +55,11 @@ compare_dynamics <- function(data, dynamics = metadata(data)[["cluster"]][[1]]$d
   if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
-  if (is(data_df, "tbl")) {
-    data_df <- as.data.frame(data_df)
-  }
   if (is(data, "data.frame")) {
     data_df <- data
+  }
+  if (is(data_df, "tbl")) {
+    data_df <- as.data.frame(data_df)
   }
   if (!is.character(dynamics)) stop("'dynamics' must be a character vector")
 

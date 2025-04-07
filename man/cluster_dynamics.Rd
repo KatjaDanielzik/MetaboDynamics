@@ -15,7 +15,7 @@ cluster_dynamics(
 \arguments{
 \item{data}{result of \code{\link[=estimates_dynamics]{estimates_dynamics()}} (list of dataframes or SummarizedExperiment object)
 or a list of dataframes (one dataframe per condition, list elements must be named by condition) with columns which are named "metabolite",
-"mu_mean" (mean metabolite abundance) and "time.ID" (numerical, specifying the experimental time point)}
+"mu_mean" (mean metabolite abundance log-transformed and standarized to a mean of zero and standard deviation of one per experimental condition and metabolite) and "time.ID" (numerical, specifying the experimental time point)}
 
 \item{distance}{distance method to be used as input for hierarchical clustering \link[stats]{dist}
 can be "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski"}
