@@ -41,7 +41,7 @@ are stored in metadata(data) "diagnostics_dynamics"
 \description{
 gathers number of divergences, rhat values, number of effective
 samples (n_eff) and provides plots for diagnostics criteria as well as
-posterior predictive checks. Dataframe "model_diagnostics" contains
+posterior predictive checks. Output dataframe "model_diagnostics" contains
 information about experimental condition, number of divergent transitions
 and rhat and neff values for all timepoints.
 }

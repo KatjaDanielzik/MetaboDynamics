@@ -18,7 +18,7 @@ estimates_dynamics(
 )
 }
 \arguments{
-\item{data}{dataframe or colData of a \link[SummarizedExperiment]{SummarizedExperiment}  used used to fit dynamics model, must contain a column specifying KEGG IDs, column named "condition" specifiyng the experimental condition and a column named "time" specifying the timepoints.
+\item{data}{data frame or colData of a \link[SummarizedExperiment]{SummarizedExperiment}  used used to fit dynamics model, must contain a column specifying KEGG IDs, column named "condition" specifiyng the experimental condition and a column named "time" specifying the timepoints.
 If it is a SummarizedExperiment object the dynamic fits must be stores in metadata(data)
 under "dynamic_fits"}
 
@@ -52,7 +52,7 @@ If data is a summarizedExperiment object the estimates are stored in
 metadata(data) under "estimates_dynamics"
 }
 \description{
-Extracts the mean concentrations (mu) at every timepoint from the dynamics model fit, the 95\% highest density interval (HDI), the estimated standard deviation of metabolite concentrations at every time point (sigma), and the pooled standard deviation of every metabolite over all timepoints (lambda).
+Extracts the mean concentrations (mu) at every time point from the dynamics model fit, the 95\% highest density interval (HDI), the estimated standard deviation of metabolite concentrations at every time point (sigma), and the pooled standard deviation of every metabolite over all timepoints (lambda).
 Additionally samples from the posterior of mu can be drawn. This can be helpful if p.e. one wants to estimate the clustering precision. Lambda can be used for clustering algorithms such as VSClust that also take the variance into account.
 }
 \examples{

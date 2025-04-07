@@ -21,7 +21,7 @@ fit_dynamics_model(
 }
 \arguments{
 \item{data}{concentration table with at least three replicate measurements per
-metabolites containing the columns "metabolite",
+metabolite containing the columns "metabolite",
 "condition", and "m_scaled" by default or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object}
 
 \item{metabolite}{column of "data" that contains the metabolite names or IDs}
@@ -64,7 +64,8 @@ fits are stored metadata(data) under "dynamic_fits"
 }
 \description{
 Employs a hierarchical model that assumes a normal distribution of
-standardized (mean=0, sd=1) log(cpc) (cpc = concentration per cell) values for robust estimation of mean
+standardized (mean=0, sd=1) log(cpc) (cpc = normalized metabolite abundance)
+values for robust estimation of mean
 concentrations over time of single metabolites at single experimental
 conditions.
 }
