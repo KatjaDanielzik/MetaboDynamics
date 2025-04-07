@@ -311,9 +311,6 @@ The dynamic profiles can be used to identify patterns and trends in the data,
 such as shifts in abundance over time, and to visualize the changes in abundance 
 for each metabolite over the observed time interval. 
 
-To identify groups of metabolites that have similar dynamics we could now cluster these 
-metabolite specific dynamics vectors (estimates[,"mu_mean"]) to 
-determine if groups of metabolites have similar dynamics.
 
 The estimates of the dynamics model are returned by the function estimates_dynamics() 
 and can be accessed with:
@@ -325,60 +322,49 @@ estimates <- metadata(data)[["estimates_dynamics"]]
 estimates[["A"]][1:10, ]
 ```
 
+To identify groups of metabolites that have similar dynamics we could now cluster these 
+metabolite specific dynamics vectors (estimates[,"mu_mean"]) to 
+determine if groups of metabolites have similar dynamics.
 
 # Cluster dynamics
-For the sake of demonstration we use from here on a clustering result (data("cluster"))
-on the full simulated data set (data("longitudinalMetabolomics")). In a real life example the 
-optimal number of clusters ("k") should be determined by optimal clustering
-criteria such as Gap statistics and average silhouette. Some clustering methods
+MetaboDynamics has a build-in wrapper function for clustering with the "hybrid"
+method of the package [dynamicTreeCut](https://cran.r-project.org/web/packages/dynamicTreeCut/index.html).
+An alternative would for example be to use a soft-clustering algorithm such
+as implemented in the Bioconductor package [Mfuzz](https://bioconductor.org/packages/release/bioc/html/Mfuzz.html).
+Some clustering methods
 also allow to use the overall variation (estimates[,"lamda_mean"]). Clustering precision
 could be calculated by using samples from the model posterior (i.e. specifying 
 "samples" in estimates_dynamics function) and comparing clustering solutions of
 the mean abundances with clustering solutions using the posterior samples 
 (estimates[,"mu_sample_n"]).
-The code below shows a very fundamental example of hierarchical clustering. 
+
+The code below shows how to use the cluster wrapper function cluster_dynamics
+on a SummarizedExperiment object where the dynamics estimates are stored in
+metadata(data)[["estimates_dynamics"]]. The function cluster_dynamics() also accepts lists
+of dataframes with calculated mean abundances of metabolites if less than
+three replicates (minimal requirement for fit_dynamics) are available. 
 
 ```{r,fig.wide=TRUE}
-# get distances between vectors
-clust_A <- metadata(data)[["estimates_dynamics"]][["A"]]
-clust_A <- clust_A %>%
-  select(metabolite.ID, condition, time.ID, mu_mean) %>%
-  pivot_wider(id_cols = c(metabolite.ID, condition), names_from = time.ID, values_from = mu_mean)
-
-dist <- clust_A %>% select(-c(metabolite.ID, condition))
-dd_A <- dist(dist,
-  method = "euclidean"
-)
-# hierarchical clustering
-clust <- hclust(dd_A, method = "ward.D2")
-clust_cut <- cutree(clust, k = 8)
-# adding cluster ID to estimates
-clust_A$cluster <- clust_cut
-clust_A
+data <- cluster_dynamics(data,
+                         deepSplit = 0) # low clustering sensitivity
 ```
 
-The clustering result for the whole simulated data set is stored in the metadata
-of the SummarizedExperiment object and can be accessed using the following code:
-
-```{r,fig.wide=TRUE}
-data <- metadata(longitudinalMetabolomics)[["cluster"]]
-temp <- data
-temp <- temp %>% pivot_longer(
-  cols = 4:7,
-  names_to = "timepoint", values_to = "mu_mean"
-)
-ggplot(temp, aes(
-  x = as.factor(as.numeric(as.factor(timepoint))),
-  y = mu_mean, group = metabolite
-)) +
-  geom_line() +
-  xlab("timepoint") +
-  ylab("estimated difference from mean abundance") +
-  theme_bw() +
-  ylim(-2, 2) +
-  theme(legend.position = "none") +
-  facet_grid(rows = vars(condition), cols = vars(cluster)) +
-  ggtitle("clustered dynamics", "panels=cluster ID")
+For the visualization of the clustering results we can use the function
+plot_cluster, which offers three different visualizations of the clustering
+results: 1) a dendrogram with color coding of the different clusters. 
+```{r}
+plot <- plot_cluster(data)
+```
+2) A Principal Component Analysis (PCA) of the clustering result
+```{r}
+plot[["A"]][["PCA_plot"]]
+```
+and 3) the visualization of the single metabolite dynamics within the different
+conditions. For the sake of demonstration we use from here on a clustering result (metaddata(longitudinalMetabolomics[[("cluster"))]]
+on the full simulated data set (data("longitudinalMetabolomics")). 
+```{r}
+plot <- plot_cluster(longitudinalMetabolomics)
+plot[["lineplot"]]
 ```
 
 We can identify different patterns (i.e. clusters) of metabolite dynamics and 
@@ -441,7 +427,7 @@ plot_ORA(data, tested_column = "middle_hierarchy")
 
 Great, we can now see which functional module is over- 
 (green points and error-bars) or under-represented (none in this example) in 
-which dynamics cluster! For instance in cluster 8 of condition B module
+which dynamics cluster! For instance in cluster 2 of condition A module
 "Nucleotide metabolism" over-represented. 
 
 # Comparison of clusters of different experimental conditions
@@ -466,7 +452,6 @@ dist_{ID}&\sim {\sf normal}(\mu_{ID},\sigma_{ID}) \\
 data("longitudinalMetabolomics")
 longitudinalMetabolomics <- compare_dynamics(
   data = longitudinalMetabolomics,
-  dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean"),
   cores = 1 # just set to 1 for vignette, set to 4 if possible
 )
 ```
@@ -535,7 +520,7 @@ but dissimilar (i.e. bright color) in regards to their dynamics. In this example
 this is the cluster pair B_7 and A_4. Their ORA profiles are also quite similar 
 as expected from the similar metabolite compositions. 
 Clusters of metabolites that are not much affected by the experimental condition
-can be spotted by big (i.e. high metabolite similaritey) black (i.e. low dissimilarity
+can be spotted by big (i.e. high metabolite similarity) black (i.e. low dissimilarity
 in dynamics) points, for example cluster pair C_6 and A_5
 
 ```{r}

@@ -53,11 +53,11 @@ heatmap_dynamics <- function(estimates = metadata(data)[["comparison_dynamics"]]
   if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
-  if (is(data_df, "tbl")) {
-    data_df <- as.data.frame(data_df)
-  }
   if (is(data, "data.frame")) {
     data_df <- data
+  }
+  if (is(data_df, "tbl")) {
+    data_df <- as.data.frame(data_df)
   }
   if (!is.data.frame(estimates)) {
     stop("'estimates' must be a dataframe obtained by compare_dynamics()")

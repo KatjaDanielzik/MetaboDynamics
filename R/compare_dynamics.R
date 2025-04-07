@@ -1,7 +1,8 @@
 #' Comparison of metabolite dynamics clusters under different experimental conditions
 #'
 #' Employs a Bayesian model that assumes a normal distribution of Euclidean
-#' distances between dynamics vectors (metabolite concentrations at different time points) of two clusters that come from different
+#' distances between dynamics vectors (metabolite abundances at different 
+#' time points) of two clusters that come from different
 #' experimental conditions to estimate the mean distance between clusters.
 #'
 #' @param data a dataframe or containing a column specifying the metabolite

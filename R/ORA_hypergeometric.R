@@ -7,7 +7,7 @@
 #' is higher than the expected number of metabolites in a cluster of this size
 #' being annotated to a functional module (n_theo).
 #' We can calculate the OvE (Observed versus Expected = n_obs/n_theo) and show the
-#' probabilites of these ratios.
+#' probabilities of these ratios.
 #' log(p(OvE))>0 indicates an over-representation of the functional module in
 #' the cluster, log(p(OvE))<0 an under-representation.
 #' @seealso function to retrieve "background" and

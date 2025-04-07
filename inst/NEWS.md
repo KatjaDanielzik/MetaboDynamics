@@ -1,3 +1,7 @@
+# MetaboDynamics 0.99.25
+* comparison of clusters including visualization now handles number of clusters >10 correctly
+* altered vignette including new clustering functions
+
 # MetaboDynamics 0.99.24
 
 * Bug fix: estimates_dynamics handles now differences between timepoints correctly
