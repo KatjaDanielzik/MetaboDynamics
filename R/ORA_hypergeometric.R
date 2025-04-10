@@ -10,13 +10,15 @@
 #' probabilities of these ratios.
 #' log(p(OvE))>0 indicates an over-representation of the functional module in
 #' the cluster, log(p(OvE))<0 an under-representation.
-#' @seealso function to retrieve "background" and
-#' "annotation" data frames [get_ORA_annotations()].
+#' @seealso 
 #' Function to visualize ORA results [plot_ORA()]
 #' @param background dataframe that contains
-#' KEGG IDs of metabolites that are assigned to functional modules
+#' KEGG IDs of metabolites that are assigned to functional modules, is incorporated
+#' in the package [modules_compounds]
 #' @param annotations dataframe tha contains information to which functional
-#' modules our experimental metabolites are annotated in KEGG
+#' modules our experimental metabolites are annotated in KEGG, can be constructed
+#' by filtering the provided KEGG background [modules_compounds] for the experimental
+#' metabolites
 #' @param data dataframe containing columns "KEGG" specifying the KEGG
 #' identifiers of metabolites, "cluster" specifying the cluster ID of metabolites and a
 #' column specifying the experimental condition called "condition" or if data
@@ -51,8 +53,9 @@
 #'   tested_column = "middle_hierarchy"
 #' )
 #' S4Vectors::metadata(longitudinalMetabolomics)[["ORA_middle_hierarchy"]]
-ORA_hypergeometric <- function(background = metadata(data)[["KEGG_annotations"]]$background,
-                               annotations = metadata(data)[["KEGG_annotations"]]$annotations,
+#' 
+ORA_hypergeometric <- function(background,
+                               annotations,
                                data, tested_column = "middle_hierarchy") {
   # attach new variables to function
   N_b <- NULL

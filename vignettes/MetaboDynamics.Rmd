@@ -381,9 +381,13 @@ The functional modules of the KEGG-database are organised in three hierarchies:
 upper, middle and lower. The middle hierarchy holds modules such as "Amino acid
 metabolism", the lower for example "branched chain amino acid metabolism". To 
 facilitate analysis the data frames "metabolite_modules", which 
-holds the information about experimental metabolites, and "modules_compounds",
+holds the information about the metabolites of the simulated data set, and "modules_compounds",
 which holds the information about which metabolites are in general annotated to
-functional modules, were prepared with MetaboDynamics function "get_ORA_annotations" (type "?get_ORA_annotations" in R to get to the help page).
+functional modules, were prepared. 
+
+To construct the needed annotation dataframe for your experimental dataset
+simply filter the "modules_compounds" dataset for your experimental metabolites'
+KEGG IDs.
 
 We load both data sets and can inspect the
 documentation.

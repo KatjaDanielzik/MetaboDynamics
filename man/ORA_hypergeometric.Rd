@@ -5,18 +5,21 @@
 \title{OverRepresentationAnalysis with a hypergeometric model}
 \usage{
 ORA_hypergeometric(
-  background = metadata(data)[["KEGG_annotations"]]$background,
-  annotations = metadata(data)[["KEGG_annotations"]]$annotations,
+  background,
+  annotations,
   data,
   tested_column = "middle_hierarchy"
 )
 }
 \arguments{
 \item{background}{dataframe that contains
-KEGG IDs of metabolites that are assigned to functional modules}
+KEGG IDs of metabolites that are assigned to functional modules, is incorporated
+in the package \link{modules_compounds}}
 
 \item{annotations}{dataframe tha contains information to which functional
-modules our experimental metabolites are annotated in KEGG}
+modules our experimental metabolites are annotated in KEGG, can be constructed
+by filtering the provided KEGG background \link{modules_compounds} for the experimental
+metabolites}
 
 \item{data}{dataframe containing columns "KEGG" specifying the KEGG
 identifiers of metabolites, "cluster" specifying the cluster ID of metabolites and a
@@ -58,9 +61,8 @@ longitudinalMetabolomics <- ORA_hypergeometric(
   tested_column = "middle_hierarchy"
 )
 S4Vectors::metadata(longitudinalMetabolomics)[["ORA_middle_hierarchy"]]
+
 }
 \seealso{
-function to retrieve "background" and
-"annotation" data frames \code{\link[=get_ORA_annotations]{get_ORA_annotations()}}.
 Function to visualize ORA results \code{\link[=plot_ORA]{plot_ORA()}}
 }

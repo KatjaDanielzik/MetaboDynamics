@@ -23,12 +23,9 @@ Using the package KEGGREST (https://www.bioconductor.org/packages/release/bioc/h
 }
 \source{
 https://www.genome.jp/kegg/module.html
-data <- get_ORA_annotations(longitudinalMetabolomics,update_background=TRUE)
-metabolite_modules <- get_ORA_annotations["annotations"]
 }
 \seealso{
-\link{modules_compounds}/ 
-\code{\link[=get_ORA_annotations]{get_ORA_annotations()}}
+\link{modules_compounds}
 }
 
 \keyword{datasets}

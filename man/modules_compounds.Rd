@@ -22,11 +22,8 @@ KEGG-modules (KeggList("module")) including their upper, middle and lower hierac
 }
 \source{
 https://www.genome.jp/kegg/module.html
-data <- get_ORA_annotations(longitudinalMetabolomics,update_background=TRUE)
-modules_compunds <- get_ORA_annotations["background"]
 }
 \seealso{
-\link{metabolite_modules}/ 
-\code{\link[=get_ORA_annotations]{get_ORA_annotations()}}
+\link{metabolite_modules}
 }
 \keyword{datasets}
