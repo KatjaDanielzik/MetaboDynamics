@@ -144,6 +144,7 @@ plot_estimates <- function(data,
       )) +
       geom_line() +
       xlab("time point") +
+      scale_color_viridis_d()+
       ylab("estimated deviation from mean concentration") +
       theme_bw() +
       theme(legend.position = "none") +
