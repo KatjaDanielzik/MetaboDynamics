@@ -26,7 +26,6 @@ To install MetaboDynamics, start R (4.5) and enter:
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-# The following initializes usage of Bioc devel
 BiocManager::install("MetaboDynamics")
 ```
 You can also install the development version (current bug fixes and added features
