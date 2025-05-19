@@ -45,7 +45,8 @@ Imports:
   SummarizedExperiment,
   tidyr,
   dynamicTreeCut,
-  dendextend
+  dendextend,
+  rlang
 VignetteBuilder: knitr
 Depends: 
   R (>= 4.4.0)

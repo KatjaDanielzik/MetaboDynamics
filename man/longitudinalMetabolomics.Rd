@@ -14,7 +14,7 @@ log-transformed transformations in "log_con" and scaled log-transformed concentr
 in "scaled_log") and metabolite names, KEGG IDs,
 experimental conditions and clustering solutions per experimental condition 
 are stored in colData and timepoint specifications in rowData.
-(\link{SummarizedExperiment}).
+(\link[SummarizedExperiment]{SummarizedExperiment}).
 
 }
 \usage{data("longitudinalMetabolomics")}

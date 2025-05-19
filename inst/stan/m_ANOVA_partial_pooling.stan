@@ -54,7 +54,7 @@ generated quantities {
   //calculate posterior prediction
 for (m in 1:M){
   for (i in 1:t){
-   y_rep[m,i]= student_t_rng(2,mu[m,i], sigma[m,i]);
+   y_rep[m,i]= normal_rng(mu[m,i], sigma[m,i]);
    }
   }
 
@@ -62,11 +62,11 @@ for (m in 1:M){
    lambda_prior=abs(exponential_rng(2));
    sigma_prior=abs(exponential_rng(lambda_prior));
    mu_prior=normal_rng(0,2);
-   y_prior=student_t_rng(2,mu_prior,sigma_prior);
+   y_prior=normal_rng(mu_prior,sigma_prior);
 
    //LOO
    for (n in 1:N){
-   log_lik[n] = student_t_lpdf(y[n]|2,mu[Me[n],X[n]],sigma[Me[n],X[n]]);
+   log_lik[n] = normal_lpdf(y[n]|mu[Me[n],X[n]],sigma[Me[n],X[n]]);
    }
 
    // calculate delta_mu

@@ -28,7 +28,7 @@
 #' @param tested_column column that is in background and annotations and on
 #' which the hypergeometric model will be executed
 #
-#' @return a dataframe containing the ORA results or if data is SummarizedExperiment \link{SummarizedExperiment}
+#' @return a dataframe containing the ORA results or if data is SummarizedExperiment \link[SummarizedExperiment]{SummarizedExperiment}
 #' object the output is stored in metadata(data) under "ORA_tested_column"
 #' @export
 #'

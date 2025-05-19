@@ -59,6 +59,7 @@
 #' @importFrom S4Vectors metadata
 #' @importFrom rstantools rstan_config
 #' @importFrom RcppParallel RcppParallelLibs
+#' @importFrom rlang as_name
 #' @useDynLib MetaboDynamics
 
 fit_dynamics_model <- function(data, metabolite = "metabolite",
@@ -113,18 +114,32 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
   if (!all(c(metabolite, time, condition, scaled_measurement) %in% colnames(data_df))) {
     stop("'data' must contain columns named 'metabolite','time','condition', and 'scaled_measurement'")
   }
-
-
+  
+  # convert character string of variables to variable useable by tidyverse
+  scaled_measurement <- as.symbol(scaled_measurement)
+  scaled_measurement <- enquo(scaled_measurement)
+  metabolite <- as.symbol(metabolite)
+  metabolite <- enquo(metabolite)
+  condition <- as.symbol(condition)
+  condition <- enquo(condition)
+  time <- as.symbol(time)
+  time <- enquo(time)
+  
   # validate at least triplicate measurements
   # count replicates per metabolite, time and condition
   grouped_data <- data_df %>%
-    group_by(metabolite, time, condition) %>%
+    group_by(!!metabolite, !!time, !!condition) %>%
     summarise(count = n())
   if (any(grouped_data$count < 3) == TRUE) {
     stop("Input must contain at least three measurements per metabolite,
       time and experimental condition.")
   }
-
+  
+  # convert variable names back to character string
+  time <- as_name(time)
+  condition <- as_name(condition)
+  metabolite <- as_name(metabolite)
+  scaled_measurement <- as_name(scaled_measurement)
   # split data into a list of data frames, where each data frame corresponds to
   # a unique experimental condition
   data_split <- split(data_df, data_df[[condition]])
