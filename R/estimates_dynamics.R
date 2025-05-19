@@ -11,7 +11,7 @@
 #' @param kegg column in "data" that contains the KEGG IDs or other identifier of metabolites
 #' @param condition name of column in dataframe data that specifies the experimental condition
 #' @param time column in "data" that contains the time point identifiers
-#' @param condition name of column in dataframe data that specifies the experimental condition
+#' @param metabolite column of "data" that contains the metabolite names or IDs
 #' @param fits list of model fits for which estimates should be extracted
 #' @param iter how many iterations were used to fit the dynamics model
 #' @param warmup how many warm-up iterations were used to fit the dynamics model
@@ -54,6 +54,7 @@
 #'
 estimates_dynamics <- function(data, assay = "scaled_log",
                                kegg = "KEGG", condition = "condition", time = "time",
+                               metabolite = "metabolite",
                                fits = metadata(data)[["dynamic_fits"]],
                                iter = 2000, warmup = iter / 4, chains = 4,
                                samples = 1) {
@@ -96,7 +97,7 @@ estimates_dynamics <- function(data, assay = "scaled_log",
     stop("'iter', 'warmup', 'chains', and 'samples' must be positive integers")
   }
 
-  M <- length(unique(data_df$metabolite))
+  M <- length(unique(data_df[[metabolite]]))
   t <- length(unique(data_df[[time]]))
   # Unique conditions
   conditions <- unique(data[[condition]])

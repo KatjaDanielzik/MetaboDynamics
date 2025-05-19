@@ -5,8 +5,10 @@
 #' posterior predictive checks. Output dataframe "model_diagnostics" contains
 #' information about experimental condition, number of divergent transitions
 #' and rhat and neff values for all timepoints.
-#' @param data dataframe or a \link[SummarizedExperiment]{SummarizedExperiment}  used to fit dynamics model
-#' column of "time" that contains time as numeric
+#' @param data dataframe or a \link[SummarizedExperiment]{SummarizedExperiment} used to fit dynamics model
+#' column of "time" that contains time must be numeric, has to contain columns
+#' speciying the metabolite named "metabolite", and column speciying the time
+#' point named "time", a column named "condition" must specify the experimental condition. 
 #' @param assay of the SummarizedExperiment object that was used to fit the dynamics
 #' model
 #' @param fits list of model fits for which diagnostics should be extracted, is the
@@ -71,7 +73,6 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
       values_to = "scaled_measurement"
     )
     fits <- metadata(data)[["dynamic_fits"]]
-    # read out number of metabolites and time points
   }
 
   # convert potential tibbles into data frame
@@ -81,6 +82,7 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
   if (is(data, "data.frame")) {
     data_df <- data
   }
+  # read out number of metabolites and time points
   M <- length(unique(data_df$metabolite))
   N <- nrow(data_df)
   t <- length(unique(data_df$time))

@@ -10,6 +10,7 @@ estimates_dynamics(
   kegg = "KEGG",
   condition = "condition",
   time = "time",
+  metabolite = "metabolite",
   fits = metadata(data)[["dynamic_fits"]],
   iter = 2000,
   warmup = iter/4,
@@ -30,6 +31,8 @@ model}
 \item{condition}{name of column in dataframe data that specifies the experimental condition}
 
 \item{time}{column in "data" that contains the time point identifiers}
+
+\item{metabolite}{column of "data" that contains the metabolite names or IDs}
 
 \item{fits}{list of model fits for which estimates should be extracted}
 
