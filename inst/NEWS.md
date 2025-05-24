@@ -1,3 +1,12 @@
+# MetaboDynamics 1.0.2
+bug fix: minor issue in vignette causing build error 
+
+# MetaboDynamics 1.0.1
+bug fix: fit_dynamics_model was failing to handle custom variable names as input
+
+# MetaboDynamics 1.0.0
+Bioconductor release 3.21
+
 # MetaboDynamics 0.99.26
 * deprecate function get_ORA_annotations, needed data for ORA_hypergeometric
 is included in package ("modules_compounds")
