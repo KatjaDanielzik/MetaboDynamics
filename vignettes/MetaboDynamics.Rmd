@@ -134,7 +134,7 @@ ggplot(abundances) +
   theme_bw() +
   scale_color_viridis_d() +
   xlab("timepoint") +
-  ylab("deviation from mean abundance")
+  ylab("deviation from mean abundance") +
   theme(legend.position = "none") +
   facet_grid(rows = vars(condition)) +
   ggtitle("standardized dynamics", "color=metabolite")
