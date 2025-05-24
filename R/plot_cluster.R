@@ -93,7 +93,7 @@ plot_cluster <- function(data){
       ) + # transparency of filling
       geom_point(aes(shape = cluster)) +
       # add enough shapes
-      scale_shape_manual(values = 1:nlevels(temp$cluster)) +
+      scale_shape_manual(values = seq_len(nlevels(temp$cluster))) +
       theme_bw() +
       # add axis labels with proportion of variance
       xlab(paste0("PC1 (", round(variance$PC1[2], digits = 3) * 100, "%)")) +

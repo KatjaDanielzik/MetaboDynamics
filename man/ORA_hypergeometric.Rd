@@ -32,7 +32,7 @@ under "cluster"}
 which the hypergeometric model will be executed}
 }
 \value{
-a dataframe containing the ORA results or if data is SummarizedExperiment \link{SummarizedExperiment}
+a dataframe containing the ORA results or if data is SummarizedExperiment \link[SummarizedExperiment]{SummarizedExperiment}
 object the output is stored in metadata(data) under "ORA_tested_column"
 }
 \description{
