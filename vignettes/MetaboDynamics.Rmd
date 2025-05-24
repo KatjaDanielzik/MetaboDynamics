@@ -134,9 +134,9 @@ ggplot(abundances) +
   theme_bw() +
   scale_color_viridis_d() +
   xlab("timepoint") +
-  ylab("deviation from mean abundance")
-  theme(legend.position = "none") +
+  ylab("deviation from mean abundance")+
   facet_grid(rows = vars(condition)) +
+  theme(legend.position = "none") +
   ggtitle("standardized dynamics", "color=metabolite")
 ```
 
@@ -365,8 +365,9 @@ conditions. For the sake of demonstration we use from here on a clustering resul
 on the full simulated data set (data("longitudinalMetabolomics")). 
 
 ```{r}
-plot <- plot_cluster(longitudinalMetabolomics)
+plot_cluster(longitudinalMetabolomics)
 plot[["lineplot"]]
+
 ```
 
 We can identify different patterns (i.e. clusters) of metabolite dynamics and 
@@ -520,6 +521,7 @@ ggplot(temp, aes(x = cluster_b, y = cluster_a)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   labs(col = "dynamics distance", size = "metabolite similarity") +
   ggtitle("comparison of clusters", "label = condition + cluster ID")
+
 ```
 
 With this form of visualization we can easily spot clusters in which the
