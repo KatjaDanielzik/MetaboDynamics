@@ -45,7 +45,12 @@ replicates at four time points (1-4) across three experimental conditions (A-C).
 The data set is represented as a [SummarizedExperiment](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) object, where the abundance tables of each experimental condition are stored in assays (raw abundances in "concentrations", log-transformed transformations in 
 "log_con" and scaled (mean=0, sd=1) log-transformed abundances" in "scaled_log"), and the metabolite names, 
 KEGG IDs, experimental conditions, and clustering solutions per experimental 
-condition are stored in colData and rowData. To load the data, execute the following code:
+condition are stored in colData and rowData. 
+
+If you have a data frame as input and do not want to convert to a SummarizedExperiment object
+please see Vignette "using MetaboDynamics with data frames" as guidance. 
+
+To load the data, execute the following code:
 
 ```{r}
 data("longitudinalMetabolomics", package = "MetaboDynamics")

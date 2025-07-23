@@ -190,7 +190,7 @@ ORA_hypergeometric <- function(background,
   # generate random numbers from hypergeometric distribution using lapply()
   a_clusters <- a_clusters %>%
     group_by(condition, cluster, !!tested_column) %>%
-    mutate(n_gen = list(rhyper(100,
+    mutate(n_gen = list(rhyper(1e4,
       m = background_module,
       n = total_background - background_module,
       k = total_in_cluster
