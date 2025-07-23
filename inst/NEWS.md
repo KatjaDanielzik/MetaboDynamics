@@ -1,4 +1,7 @@
 
+# MetaboDynamics 1.1.2
+contains a vignette describing the package workflow with a data frame input
+
 # MetaboDynamics 1.0.2
 Minor bug fix in vignette that caused errors in package checks
 
