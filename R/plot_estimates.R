@@ -145,11 +145,11 @@ plot_estimates <- function(data,
       geom_line() +
       xlab("time point") +
       scale_color_viridis_d()+
-      ylab("estimated deviation from mean concentration") +
+      ylab("estimated deviation from mean abundance") +
       theme_bw() +
       theme(legend.position = "none") +
       facet_grid(rows = vars(condition)) +
-      ggtitle("dynamics", "color=metabolite, row labels = condition")
+      ggtitle("dynamics", "color = metabolite, row label = condition")
   }
   return(plots)
 }

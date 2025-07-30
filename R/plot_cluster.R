@@ -120,12 +120,12 @@ plot_cluster <- function(data){
     theme_bw() +
     facet_grid(cols = vars(cluster), rows = vars(condition)) +
     xlab("time point") +
-    ylab("deviation from mean") +
+    ylab("estimated deviation from mean abundance") +
     ylim(c(-2.5, 2.5)) +
     guides(col = "none") +
     scale_colour_viridis_d() +
     ggtitle("clustered dynamics", "line = metabolite, color = metabolite,
-              panels = cluster, rows = condition")
+              panels = cluster, row label = condition")
   plots[["lineplot"]] <- lineplot
 
   return(plots)
