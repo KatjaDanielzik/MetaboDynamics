@@ -163,7 +163,7 @@ ORA_hypergeometric <- function(background,
     summarise(background_module = n_distinct(KEGG))
   a_clusters <- left_join(a_clusters, background_module, join_by(!!tested_column))
   # total metabolites in background
-  a_clusters$total_background <- as.numeric(background %>% summarise(total = n_distinct(KEGG)))
+  a_clusters$total_background <- as.numeric(n_distinct(background$KEGG))
 
   ## generate column with values from 0-total_in_cluster (N) = theoretical possible
   # number of hits in module:
