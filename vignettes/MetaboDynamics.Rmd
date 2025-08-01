@@ -28,6 +28,13 @@ The MetaboDynamics workflow requires abundance tables as input, which can includ
 
 In this vignette, I will demonstrate how to use the MetaboDynamics package to analyze longitudinal metabolomics data, including data preprocessing, model fitting, and interpretation of results. We will show how to apply the package to a simulated data set and how to visualize and interpret the results.
 
+# Data requirements
+
+The minimal requirements are triplicates of (relative) metabolite abundances at a minimum of two time points and at least one experimental condition. There is no minimum number of metabolites required.
+
+Metabolite abundances have to be adequately normalized. For example normalization to cell counts in cell culture.
+The expected scaling is explained in the following workflow. 
+
 # Setup: load required packages
 ```{r setup}
 library(MetaboDynamics)

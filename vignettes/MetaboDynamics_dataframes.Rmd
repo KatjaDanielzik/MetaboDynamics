@@ -31,9 +31,8 @@ library(tidyr) # data handling
 ```
 
 # Load data
-
 The MetaboDynamics package also includes a simulated example data set in a data frame format. 
-Please note, that although both datasets were simulated with the same code different seeds were used so that the results can deviate from each other.
+Please note, that although both data sets were simulated with the same code different seeds were used so that the results can deviate from each other.
 To load the data set in data frame format, execute the following code:
 
 ```{r}
@@ -55,7 +54,7 @@ head(data)
 The measured metabolites are stored in column "metabolite", time points are specified in column "time", and column "condition" specifies the experimental condition.
 
 The required log-transformed and scaled (per metabolite and condition to a mean of 0 and sd of 1) metabolite abundances are stored
-in column "m_scaled". The function Fit_dynamics_model() allows to specify other column names for metabolite, time points, condition and scaled measurement. 
+in column "m_scaled". The function fit_dynamics_model() allows to specify other column names for metabolite, time points, condition and scaled measurement. 
 
 First we will fit the dynamics model and extract the diagnostics:
 
@@ -95,19 +94,19 @@ diagnostics <- # when using a data frame as input diagnostics have to be stored 
 That returns a list with elements [["model_diagnostics"]] which holds a summary
 of the model diagnostics and the extracted posterior estimates for all conditions. 
 
-To visualize the diagnostics the following code is used:
+To visualize the diagnostics the following code can be used:
 ```{r}
 plot_diagnostics(
   data = data, # data frame used to fit the dynamics model
   diagnostics = diagnostics[["model_diagnostics"]] # summary of diagnostics
 )
 ```
-In this case the diagnostics are all fine: The model fitting did not result in 
-divergent transitions, the maximum treedepth was not exceeded, Rhat values were
+In this case the diagnostics are all indicating a sane model fit: The model fitting did not result in 
+divergent transitions, the maximum tree depth was not exceeded, Rhat values were
 below 1.01 and number of effective samples exceeded 100. 
 
 # Extract estimates and visualize results
-The extract the estimates one has to specify again the data, list of fits and number of iterations and chains used to fit the model. Additionally is is possible to specify the columns in which metabolite names, experimental conditions and time points are stored. This is equivalent to the fit_dynamics_model function.
+To extract the estimates one has to specify again the data, list of fits and number of iterations and chains used to fit the model. Additionally is is possible to specify the columns in which metabolite names, experimental conditions and time points are stored. This is equivalent to the fit_dynamics_model function.
 
 Additionally one can specify how many samples should be drawn from the posterior
 to for example test clustering performance. 
@@ -125,11 +124,10 @@ estimates <- # estimates have to be stored in a separate object when using data 
     time = "time",
     samples = 1 # 1 sample from posterior taken
   )
-  
 ```
 
 This returns a list containing the estimates for every experimental condition.
-The estimates can be visulized in two ways by the following code:
+The estimates can be visualized in two ways by the following code:
 
 ```{r}
 # only visualize differences between time points
@@ -144,18 +142,19 @@ plot_estimates(data = data,
                delta_t = FALSE, 
                dynamics = TRUE) # choose to visualize the dynamics 
 ```
+
 # Clustering dynamics
 
-To cluster the dynamics we need either the estimates from the dynamics model (stored in object "estimates")
-or a data frame in which the means of less then triplicate measurements are stored in a column named "mu_mean", categorical time points are stored in ascending order in column "time.ID" and experimental conditions in a column named "condition".
+To cluster the dynamics we need either the estimates from the dynamics model (stored in object "estimates") 
+or a data frame in which the means of measurements are stored in a column named "mu_mean", categorical time points are stored in ascending order in column "time.ID" and experimental conditions in a column named "condition".
 
-The following shows the needed data frame format for the clustering function:
+The following chunk of code shows the needed data frame format for the clustering function:
 
 ```{r}
 head(estimates)
 ```
 
-With the estimates obtained with the estimates_dynamics function we can cluster 
+With the output from the estimates_dynamics function we can cluster 
 metabolite dynamics per experimental condition. 
 
 ```{r}
@@ -170,7 +169,7 @@ cluster <- # clustering results have to be stored in separate object when using 
 ```
 
 To visualize the clustering results we can use the function plot_cluster which
-returns a list. One element "lineplot" which visualizes the metabolite dynamics in each cluster for every condition:
+returns a list of plots. The list element "lineplot" visualizes the metabolite dynamics in each cluster for every condition:
 
 ```{r}
 plots <- plot_cluster(cluster)
@@ -179,6 +178,7 @@ plots[["lineplot"]]
 
 Additionally we can visualize for every experimental condition the dendrogram
 and a Principal component analysis of the clustering solution. 
+
 ```{r}
 # For condition A
 plots[["A"]]
@@ -186,7 +186,7 @@ plots[["A"]]
 
 # Over-Representation Analysis (ORA)
 To conduct the over-representation analysis KEGG IDs of the experimental metabolites are needed.
-Additionally information on all metabolites that are stored in the KEGG database is needed. This information is stored in the dataset "modules_compounds". To apply ORA to a specific dataset a second dataset "metabolite_modules" is needed that can be obtained by filtering "modules_compounds" for the experimental metabolites.
+Additionally, information on all metabolites that are stored in the KEGG database is needed. This KEGG background information is stored in the data set "modules_compounds". To apply ORA to a specific dataset a second dataset "metabolite_modules" is needed that can be obtained by filtering "modules_compounds" for the experimental metabolites.
 
 The clustering result also needs to be converted from a list to a single data frame.
 
@@ -207,7 +207,7 @@ cluster_data <- rbind(cluster[["A"]][["data"]],
 ```
 
 The over-representation analysis and visualization can be achieved with the
-following code
+following code: 
 
 ```{r}
 ora <- # store ORA result to separate object when using data frames as input
