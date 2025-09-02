@@ -1,3 +1,5 @@
+# MetaboDynamics 1.1.4
+- differences between time points are now ordered and return is a list of plots 
 
 # MetaboDynamics 1.1.2
 contains a vignette describing the package workflow with a data frame input

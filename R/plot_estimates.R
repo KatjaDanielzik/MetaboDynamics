@@ -104,35 +104,53 @@ plot_estimates <- function(data,
   if (delta_t == TRUE) {
     if (t < 2) {
       stop("differences between timepoints can only be plotted if
-                 dataset contains more than two time points")
+                 dataset contains more than one time point")
     }
     temp_t <- temp %>% select(
       metabolite, condition, metabolite.ID, time.ID, delta_mu_mean, delta_mu_lower,
       delta_mu_higher
     )
-    temp_t <- temp_t %>% mutate(col = ifelse(delta_mu_higher < 0, "HDI>0",
-      ifelse(delta_mu_lower > 0, "HDI<0", "0inHDI")
+    temp_t <- temp_t %>% mutate(col = ifelse(delta_mu_higher < 0, "CrI<0",
+      ifelse(delta_mu_lower > 0, "CrI>0", "0inCrI")
     ))
 
-    plots[["plot_timepoint_differences"]] <-
-      ggplot(temp_t[which(!is.na(temp_t$delta_mu_mean)), ], aes(y = delta_mu_mean, x = metabolite, col = col)) +
+
+    
+    plots_delta_t <- list()
+    for (j in unique(temp_t$condition)){
+    for (i in unique(temp_t$time.ID)){
+    
+      if(i!=max(temp_t$time.ID)){
+      temp_plot <- temp_t%>%filter(time.ID==i&condition==j)%>%
+        group_by(condition,time.ID)%>%
+        arrange(delta_mu_mean)%>%
+        mutate(.r=row_number())%>%
+        drop_na(delta_mu_mean)%>%
+        mutate(delta_t=paste0("timepoint ",i+1,"- timepoint ",i))
+      
+      plots_delta_t[[paste0(i,"_",j)]] <- ggplot(temp_plot,aes(y = delta_mu_mean,x = .r,col = col)) +
       geom_point() +
       geom_errorbar(aes(ymin = delta_mu_lower, ymax = delta_mu_higher)) +
       ylab("delta") +
       scale_color_manual(
-        values = c("black", "green", "red"),
-        labels = c("0inCrI", "CrI>0", "CrI<0"), name = ""
+        values = c("0inCrI"="black", "CrI>0"="green", "CrI<0"="red")
       ) +
       geom_hline(yintercept = 0, linetype = "dashed") +
-      facet_grid(rows = vars(time.ID), cols = vars(condition)) +
       theme_bw() +
+      xlab("metabolite")+
+      scale_x_continuous(breaks=temp_plot$.r,labels = temp_plot$metabolite)+
+      facet_grid(rows = vars(delta_t), cols = vars(condition)) +
       theme(axis.text.x = element_text(angle = -90, hjust = 0)) +
       ggtitle(
         "differences between timepoints",
-        "point = mean, errorbar = 95% highest density interval (CrI),
-       1 = time point 2 - time point 1"
+        "point = mean, errorbar = 95% highest density interval (CrI)"
       )
+      }
+    }
+    }
+  plots[["plot_timepoint_differences"]] <- plots_delta_t
   }
+  
 
   # dynamics
   if (dynamics == TRUE) {

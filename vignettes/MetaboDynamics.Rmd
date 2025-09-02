@@ -277,11 +277,10 @@ experimental condition.
 
 ## Differences between two time points
 
-In the following plot the column label "A" indicates the experimental condition.
-The row labels "1", "2" and "3" indicate the differences between subsequent
-time points. "1" is the difference between time point 1 and 2. "2" between
-time point 2 and 3 and "3" between time point 3 and 4. The metabolites are on 
-the x-axis and the estimated abundance differences ("delta") are on the y-axis. 
+In the following plots the column label "A" indicates the experimental condition.
+The row labels "timepoint 2 - timepoint 1". The metabolites are ordered on 
+the x-axis according to the estimated mean differences between time points and the
+estimated abundance differences ("delta") are on the y-axis. 
 
 ```{r,fig.wide=TRUE}
 # 1) the differences between two timepoints
@@ -297,8 +296,8 @@ of the parameter (i.e. in this case the differences in abundances between time p
 means that with 95% probability the desired values lies within the range of the 
 error bars. 
 If the 95% CrI lies below zero, we can conclude that there is a decrease in 
-abundance between the two subsequent time points (e.g. PEP between time point 3 
-and 4, red error bar). If the 95% CrI lies above zero, we can conclude that there
+abundance between the two subsequent time points (e.g. PEP between time point 1 
+and 2, red error bar). If the 95% CrI lies above zero, we can conclude that there
 is an increase in abundance between the two subsequent time points (e.g. 
 2-Amminomuconate between time point 2 and 3). If the 95% CrI contains zero, we
 cannot conclude that there is a difference in abundance between the two time points.
