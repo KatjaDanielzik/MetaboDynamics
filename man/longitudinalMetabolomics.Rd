@@ -31,7 +31,6 @@ are stored in colData and timepoint specifications in rowData.
 }
 \source{
  \bold{Script used to create simulated data}
-
 # load KEGG database for assignment of metabolite names:
 data("metabolite_modules")
 
@@ -40,6 +39,7 @@ data("metabolite_modules")
 
 library(dplyr)
 library(SummarizedExperiment)
+library(tidyverse)
 # Parameters (as before)
 
 n_features <- 98
@@ -60,9 +60,9 @@ condition_names <- c("A","B","C")
 # For simplicity, we assume equal probability; customize as needed
 
 group_probabilities <- matrix(c(0.8,rep(0.01,7), #amino acid metabolism
-                              rep(0.01,7),0.8, #nucleotide metabolism
-                              0.1,0.8,0.8,rep(0.1,5), # energy and carbohydrate metabolism
-                              runif(5 * length(unique(metabolite_modules$middle_hierarchy)))),
+                                rep(0.01,7),0.8, #nucleotide metabolism
+                                0.1,0.8,0.8,rep(0.1,5), # energy and carbohydrate metabolism
+                                runif(5 * length(unique(metabolite_modules$middle_hierarchy)))),
                               nrow = n_groups,
                               ncol = length(unique(metabolite_modules$middle_hierarchy)))
 
@@ -103,58 +103,58 @@ available_metabolites <- metabolite_modules # Copy of metabolite database to kee
 # Simulate data for each feature across all conditions
 
 for (feature in 1:n_features) {
-
+  
   # Get the group for this feature
-
+  
   group <- feature_to_group[feature]
-
+  
   # Determine probability of each metabolite database group for this dynamic group
-
+  
   group_probs <- group_probabilities[group, ]
-
+  
   # Subset the metabolite database for selection based on group probabilities
-
+  
   metabolite_candidates <- available_metabolites %>%
     group_by(middle_hierarchy) %>%
     mutate(Probability = group_probs[match(middle_hierarchy, unique(metabolite_modules$middle_hierarchy))]) %>%
     ungroup() %>%
     filter(metabolite %in% available_metabolites$metabolite) # Ensure the metabolite is still available
-
+  
   # Randomly sample a metabolite based on these probabilities
-
+  
   metabolite_name <- sample(metabolite_candidates$metabolite, 1, prob = metabolite_candidates$Probability)
-
+  
   # Remove this metabolite from available pool
-
+  
   available_metabolites <- available_metabolites[available_metabolites$metabolite != metabolite_name, ]
-
+  
   # Generate a random base mean for this feature between 0.001 and 1000
-
-  base_mean <- runif(1, min = 0.001, max = 1000)
-
+  
+  base_mean <- runif(1, min = 0.1, max = 1e5)
+  
   # Generate feature-specific variances for each time point
-
+  
   feature_variances <- runif(n_time_points, min = 0.1, max = 2)
-
+  
   # Store data for each condition
-
+  
   for (cond in 1:n_conditions) {
     trend <- group_dynamics[[cond]][[group]]
     feature_means <- base_mean * trend / max(abs(trend))
-
+    
     feature_data <- data.frame(
       metabolite = metabolite_name, # Assign metabolite name here
       condition = paste0(condition_names[[cond]]),
       time = rep(1:n_time_points, each = n_replicates),
       replicate = rep(1:n_replicates, times = n_time_points)
     )
-
+    
     # Generate the actual data points with strictly positive concentrations
-
+    
     feature_data$measurement <- unlist(lapply(1:n_time_points, function(t) {
       rlnorm(n_replicates, meanlog = log(feature_means[t]), sdlog = feature_variances[t])
     }))
-
+    
     simulated_data[[length(simulated_data) + 1]] <- feature_data
   }
 }
@@ -178,40 +178,49 @@ simulated_data_df <- simulated_data_df %>%
 
 # add KEGG IDs
 name_map_HMDB_CAS <- readr::read_csv("name_map_HMDB_CAS.csv")
-longitudinalMetabolomics <- dplyr::left_join(longitudinalMetabolomics,name_map_HMDB_CAS[,c("Query","KEGG")],join_by("metabolite"=="Query"))
+longitudinalMetabolomics <- dplyr::left_join(simulated_data_df,name_map_HMDB_CAS[,c("Query","KEGG")],join_by("metabolite"=="Query"))
 
 ## concentrations
-  temp <- longitudinalMetabolomics
-  temp <- temp%>%
-    select(condition,metabolite,KEGG,time,measurement,replicate)%>%
-    pivot_wider(id_cols=c(condition,metabolite,KEGG,replicate),
-                names_from = time,
-                values_from = measurement)
-concentrations <- temp%>%select(-c(condition,metabolite,KEGG,replicate))
+temp <- longitudinalMetabolomics
+temp <- temp%>%
+  select(condition,metabolite,KEGG,time,measurement,replicate)%>%
+  pivot_wider(id_cols=c(condition,metabolite,KEGG,replicate),
+              names_from = time,
+              values_from = measurement)
+concentrations <- temp%>%ungroup%>%select(-c(condition,metabolite,KEGG,replicate))
 ## transform matrix so that conditions are in columns to facilitate access
 ## with colData -> se[,se$condition="A"]
 concentrations <- t(as.matrix(concentrations))
 row.names(concentrations) <- NULL
 # prepare log_transformed data
-temp <- data
+temp <- longitudinalMetabolomics
 temp <- temp%>%
   select(condition,metabolite,KEGG,time,log_m,replicate)%>%
   pivot_wider(id_cols=c(condition,metabolite,KEGG,replicate),
               names_from = time,
               values_from = log_m)
-log_con <- temp%>%select(-c(condition,metabolite,KEGG,replicate))
+log_con <- temp%>%ungroup%>%select(-c(condition,metabolite,KEGG,replicate))
 log_con <- t(as.matrix(log_con))
 row.names(log_con) <- NULL
 # prepare scaled log_transformed data
-temp <- data
+temp <- longitudinalMetabolomics
 temp <- temp%>%
   select(condition,metabolite,KEGG,time,m_scaled,replicate)%>%
   pivot_wider(id_cols=c(condition,metabolite,KEGG,replicate),
               names_from = time,
               values_from = m_scaled)
-scaled_log <- temp%>%select(-c(condition,metabolite,KEGG,replicate))
+scaled_log <- temp%>%ungroup%>%select(-c(condition,metabolite,KEGG,replicate))
 scaled_log <- t(as.matrix(scaled_log))
 row.names(scaled_log) <- NULL
+
+# simulate cell counts
+## I am assuming that all cell counts are from a poisson distribution with the same
+## location parameter (not the case for real life applications). One parameter is just used to show application of the dynamics model including cell counts
+
+counts <- rbind(rpois(ncol(concentrations),1e5),
+                rpois(ncol(concentrations),1e5),
+                rpois(ncol(concentrations),1e5),
+                rpois(ncol(concentrations),1e5))  # 882 columns, three entries for same metabolite, four time points
 
 # prepare row and colData ####
 row_data <- DataFrame(time_points=c("time_point_1","time_point_2","time_point_3",
@@ -221,7 +230,8 @@ col_data <- DataFrame(condition=temp$condition,metabolite=temp$metabolite,
 
 se <- SummarizedExperiment(assays=SimpleList(concentrations=concentrations,
                                              log_con=log_con,
-                                             scaled_log=scaled_log),
+                                             scaled_log=scaled_log,
+                                             cell_counts = counts),
                            rowData = row_data,
                            colData = col_data)
 # set row and colnames ####
@@ -234,22 +244,25 @@ metadata(se)[["data origin"]] <- "Simulated data of 98 metabolites with three
 concentration observations at four time points and at three different biological
 conditions. Script to construct dataset can be seen with ?longitudinalMetabolomics"
 
-# 
-se <- fit_dynamics_model(se, scaled_measurement = "m_scaled",
-  assay = "scaled_log", time = "time",
-  condition = "condition", max_treedepth = 10,
-  adapt_delta = 0.95, # default 0.95
-  iter = 5000)
-  
-se <- estimates_dynamics(data = se, iter = 5000,
-  chains = 2, condition = "condition")
-  
-se <- cluster_dynamics(data=se,distance="euclidean", 
-                             agglomeration="ward.D2",
-                             minClusterSize=0, deepSplit=4)
-                             
+data <- se
+data <- fit_dynamics_model(
+  data = data,
+  scaled_measurement = "m_scaled", assay = "scaled_log",
+  max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 4, chains = 4
+)
+
+data <- estimates_dynamics(
+  data = data, iter = 2000,
+  chains = 4, condition = "condition"
+)
+data <- cluster_dynamics(data)
+
+# save shortened analysis in metadata of se
+metadata(se)[["estimates_dynamics"]] <- metadata(data)[["estimates_dynamics"]]
+metadata(se)[["cluster"]] <- metadata(data)[["cluster"]]
+
 longitudinalMetabolomics <- se
-devtools::use_data(longitudinalMetabolomics)
+usethis::use_data(longitudinalMetabolomics,overwrite = TRUE)
 }
 
 \keyword{datasets}

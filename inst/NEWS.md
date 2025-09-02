@@ -1,3 +1,7 @@
+# MetaboDynamics 1.1.5
+- internal adding of ANOVA model with euclidean distance estimation between doses and ANOVA model that integrates cell count uncertainty
+- internal adding of simulated cell counts to data("longitudinalMetabolomics")
+
 # MetaboDynamics 1.1.4
 - differences between time points are now ordered and return is a list of plots 
 
