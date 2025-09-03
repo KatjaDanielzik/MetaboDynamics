@@ -50,6 +50,7 @@ plot_estimates <- function(data,
   mu_higher <- NULL
   mu_lower <- NULL
   timepoints <- NULL
+  r <- NULL
 
   # Input checks
   if (!is.data.frame(data) & !inherits(data, "SummarizedExperiment")) {
@@ -124,11 +125,11 @@ plot_estimates <- function(data,
       temp_plot <- temp_t%>%filter(time.ID==i&condition==j)%>%
         group_by(condition,time.ID)%>%
         arrange(delta_mu_mean)%>%
-        mutate(.r=row_number())%>%
+        mutate(r=row_number())%>%
         drop_na(delta_mu_mean)%>%
         mutate(delta_t=paste0("timepoint ",i+1,"- timepoint ",i))
       
-      plots_delta_t[[paste0(i,"_",j)]] <- ggplot(temp_plot,aes(y = delta_mu_mean,x = .r,col = col)) +
+      plots_delta_t[[paste0(i,"_",j)]] <- ggplot(temp_plot,aes(y = delta_mu_mean,x = r,col = col)) +
       geom_point() +
       geom_errorbar(aes(ymin = delta_mu_lower, ymax = delta_mu_higher)) +
       ylab("delta") +
@@ -138,7 +139,7 @@ plot_estimates <- function(data,
       geom_hline(yintercept = 0, linetype = "dashed") +
       theme_bw() +
       xlab("metabolite")+
-      scale_x_continuous(breaks=temp_plot$.r,labels = temp_plot$metabolite)+
+      scale_x_continuous(breaks=temp_plot$r,labels = temp_plot$metabolite)+
       facet_grid(rows = vars(delta_t), cols = vars(condition)) +
       theme(axis.text.x = element_text(angle = -90, hjust = 0)) +
       ggtitle(

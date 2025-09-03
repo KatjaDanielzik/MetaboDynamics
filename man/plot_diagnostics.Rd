@@ -51,9 +51,10 @@ data <- fit_dynamics_model(
 data <- diagnostics_dynamics(
   data = data, assay = "scaled_log",
   iter = 2000, chains = 1,
-  fits = metadata(data)[["dynamic_fits"]]
+  fit = metadata(data)[["dynamic_fit"]]
 )
 plot_diagnostics(data = data, assay = "scaled_log")
+
 }
 \seealso{
 parent function \code{\link[=diagnostics_dynamics]{diagnostics_dynamics()}}
