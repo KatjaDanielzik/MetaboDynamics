@@ -12,7 +12,7 @@ plot_PPC(
 )
 }
 \arguments{
-\item{posterior}{a list of one dataframe per condition that
+\item{posterior}{a dataframe that
 contains necessary information for Posterior predictive check
 obtained by function diagnostics_dynamics()(named "PPC_condition")}
 
@@ -34,7 +34,7 @@ Plots posterior predictive check of numerical fit of Bayesian dynamics model
 \examples{
 data("longitudinalMetabolomics")
 data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-  longitudinalMetabolomics$metabolite \%in\% c("ATP", "ADP")]
+                                   longitudinalMetabolomics$metabolite \%in\% c("ATP", "ADP")]
 data <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", assay = "scaled_log",
@@ -43,7 +43,7 @@ data <- fit_dynamics_model(
 data <- diagnostics_dynamics(
   data = data, assay = "scaled_log",
   iter = 2000, chains = 1,
-  fits = metadata(data)[["dynamic_fits"]]
+  fit = metadata(data)[["dynamic_fit"]]
 )
 plot_PPC(
   data = data, assay = "scaled_log"
