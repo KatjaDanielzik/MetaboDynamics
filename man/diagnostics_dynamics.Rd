@@ -10,13 +10,13 @@ diagnostics_dynamics(
   iter = 2000,
   warmup = iter/4,
   chains = 4,
-  fits = metadata(data)[["dynamic_fits"]]
+  fit = metadata(data)[["dynamic_fit"]]
 )
 }
 \arguments{
 \item{data}{dataframe or a \link[SummarizedExperiment]{SummarizedExperiment} used to fit dynamics model
 column of "time" that contains time must be numeric, has to contain columns
-speciying the metabolite named "metabolite", and column speciying the time
+specifying the metabolite named "metabolite", and column specifiying the time
 point named "time", a column named "condition" must specify the experimental condition.}
 
 \item{assay}{of the SummarizedExperiment object that was used to fit the dynamics
@@ -28,10 +28,10 @@ model}
 
 \item{chains}{number of chains used for model fit}
 
-\item{fits}{list of model fits for which diagnostics should be extracted, is the
-object that gets returned by fit_dynamics_model(), or if a summarizedExperiment
+\item{fit}{model fit for which diagnostics should be extracted, is the
+object that gets returned by fit_dynamics_model(), or if a SummarizedExperiment
 object the results of fit_dynamics_model() are stored in metadata(data) under
-"dynamic_fits"}
+"dynamic_fit"}
 }
 \value{
 a list which contains diagnostics criteria of all conditions in a
@@ -49,20 +49,21 @@ and rhat and neff values for all timepoints.
 }
 \examples{
 data("longitudinalMetabolomics")
-data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-  longitudinalMetabolomics$metabolite == "ATP"]
+data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition \%in\% c("A","B") &
+                                  longitudinalMetabolomics$metabolite =="ATP"]
 data <- fit_dynamics_model(
-  data = data,
-  scaled_measurement = "m_scaled", assay = "scaled_log",
-  max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
+ data = data,
+ scaled_measurement = "m_scaled", assay = "scaled_log",
+ max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
 )
 data <- diagnostics_dynamics(
-  data = data, assay = "scaled_log",
-  iter = 2000, chains = 1,
-  fits = metadata(data)[["dynamic_fits"]]
+ data = data, assay = "scaled_log",
+ iter = 2000, chains = 1,
+ fit = metadata(data)[["dynamic_fit"]]
 )
 S4Vectors::metadata(data)[["diagnostics_dynamics"]][["model_diagnostics"]]
-S4Vectors::metadata(data)[["diagnostics_dynamics"]][["posterior_A"]]
+S4Vectors::metadata(data)[["diagnostics_dynamics"]][["posterior"]]
+
 }
 \seealso{
 \code{\link[=estimates_dynamics]{estimates_dynamics()}}

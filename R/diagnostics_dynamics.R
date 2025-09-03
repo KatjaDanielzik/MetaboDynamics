@@ -7,14 +7,14 @@
 #' and rhat and neff values for all timepoints.
 #' @param data dataframe or a \link[SummarizedExperiment]{SummarizedExperiment} used to fit dynamics model
 #' column of "time" that contains time must be numeric, has to contain columns
-#' speciying the metabolite named "metabolite", and column speciying the time
+#' specifying the metabolite named "metabolite", and column specifiying the time
 #' point named "time", a column named "condition" must specify the experimental condition. 
 #' @param assay of the SummarizedExperiment object that was used to fit the dynamics
 #' model
-#' @param fits list of model fits for which diagnostics should be extracted, is the
-#' object that gets returned by fit_dynamics_model(), or if a summarizedExperiment
+#' @param fit model fit for which diagnostics should be extracted, is the
+#' object that gets returned by fit_dynamics_model(), or if a SummarizedExperiment
 #' object the results of fit_dynamics_model() are stored in metadata(data) under
-#' "dynamic_fits"
+#' "dynamic_fit"
 #' @param warmup number of warmup iterations used for model fit
 #' @param iter number of iterations used for model fit
 #' @param chains number of chains used for model fit
@@ -37,24 +37,26 @@
 #' @export
 #'
 #' @examples
-#' data("longitudinalMetabolomics")
-#' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-#'   longitudinalMetabolomics$metabolite == "ATP"]
-#' data <- fit_dynamics_model(
-#'   data = data,
-#'   scaled_measurement = "m_scaled", assay = "scaled_log",
-#'   max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
-#' )
-#' data <- diagnostics_dynamics(
-#'   data = data, assay = "scaled_log",
-#'   iter = 2000, chains = 1,
-#'   fits = metadata(data)[["dynamic_fits"]]
-#' )
-#' S4Vectors::metadata(data)[["diagnostics_dynamics"]][["model_diagnostics"]]
-#' S4Vectors::metadata(data)[["diagnostics_dynamics"]][["posterior_A"]]
+#'data("longitudinalMetabolomics")
+#'data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in% c("A","B") &
+#'                                   longitudinalMetabolomics$metabolite =="ATP"]
+#'data <- fit_dynamics_model(
+#'  data = data,
+#'  scaled_measurement = "m_scaled", assay = "scaled_log",
+#'  max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
+#')
+#'data <- diagnostics_dynamics(
+#'  data = data, assay = "scaled_log",
+#'  iter = 2000, chains = 1,
+#'  fit = metadata(data)[["dynamic_fit"]]
+#')
+#'S4Vectors::metadata(data)[["diagnostics_dynamics"]][["model_diagnostics"]]
+#'S4Vectors::metadata(data)[["diagnostics_dynamics"]][["posterior"]]
+#' 
+
 diagnostics_dynamics <- function(data, assay = "scaled_log",
                                  iter = 2000, warmup = iter / 4, chains = 4,
-                                 fits = metadata(data)[["dynamic_fits"]]) {
+                                 fit = metadata(data)[["dynamic_fit"]]) {
   # binding of variables to function
   . <- NULL
   # Input checks
@@ -72,7 +74,7 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
       cols = seq_len(t), names_to = "time",
       values_to = "scaled_measurement"
     )
-    fits <- metadata(data)[["dynamic_fits"]]
+    fit <- metadata(data)[["dynamic_fit"]]
   }
 
   # convert potential tibbles into data frame
@@ -86,9 +88,11 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
   M <- length(unique(data_df$metabolite))
   N <- nrow(data_df)
   t <- length(unique(data_df$time))
+  C <- length(unique(data_df$condition))
+  
   # check if all elements of fits are stanfit objects
-  if (!all(vapply(fits, function(x) inherits(x, "stanfit"), logical(1)))) {
-    stop("'fits' must be a list of stanfit objects")
+  if (!inherits(fit, "stanfit")) {
+    stop("'fit' must be a stanfit object")
   }
   if (!all(c("time") %in% colnames(data_df))) {
     stop("'data' must contain a column named 'time'")
@@ -105,10 +109,6 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
     "treedepth_error", rhat_cols, neff_cols
   )
 
-  # Extract diagnostics for all fits
-  diagnostics <- lapply(names(fits), function(fit_name) {
-    fit <- fits[[fit_name]]
-
     # Extract model diagnostics
     divergences <- rstan::get_num_divergent(fit)
     treedepth_errors <- rstan::get_num_max_treedepth(fit)
@@ -120,35 +120,30 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
 
     # Create data frame with all diagnostics
     diag_data <- data.frame(
-      metabolite.ID = seq_len(M),
-      condition = fit_name,
+      metabolite.ID = rep(seq_len(M),each=C),
+      condition = rep(unique(data_df$condition),M),
       divergences = divergences,
       treedepth_error = treedepth_errors
     )
     # only extract rhat and n_eff for mu
     start <- 1
-    end <- (M * t)
+    end <- M*t*C
     diag_data <- cbind(
       diag_data,
       matrix(rhat[start:end],
-        ncol = t, byrow = TRUE,
+        nrow = C*M, byrow = TRUE,
         dimnames = list(NULL, rhat_cols)
       ),
       matrix(n_eff[start:end],
-        ncol = t, byrow = TRUE,
+        nrow = C*M, byrow = TRUE,
         dimnames = list(NULL, neff_cols)
       )
     )
-    diag_data
-  })
 
-  # Combine diagnostics into one data frame
-  diagnostics_df <- do.call(dplyr::bind_rows, diagnostics)
-  colnames(diagnostics_df) <- diag_colnames
-
+  draws <- (iter-warmup)*chains
+  # if model without cell counts y_rep else maven_rep (raw metabolite concentrations rep)
+  if(fit@model_name=="m_ANOVA_partial_pooling_euclidean_distance"){
   # Posterior predictive checks for all fits
-  posterior_list <- lapply(names(fits), function(fit_name) {
-    fit <- fits[[fit_name]]
     posterior <- as.data.frame(fit, pars = "y_rep") %>%
       pivot_longer(
         cols = everything(),
@@ -156,17 +151,28 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
         values_to = "posterior"
       ) %>%
       mutate(
-        metabolite.ID = rep(seq_len(M), each = t, length.out = nrow(.)),
-        time.ID = rep(seq_len(t), M, length.out = nrow(.))
-      )
-    setNames(list(posterior), paste0("posterior_", fit_name))
-  })
+        metabolite.ID = rep(as.numeric(as.factor(data_df$metabolite)),draws),
+        time.ID = rep(as.numeric(as.factor(data_df$time)),draws),
+        condition = rep(data_df$condition,draws))
+  }
+  
+  if(fit@model_name=="m_ANOVA_partial_pooling_cell_counts_euclidean_distance"){
+    # Posterior predictive checks for all fits
+    posterior <- as.data.frame(fit, pars = "maven_rep") %>%
+      pivot_longer(
+        cols = everything(),
+        names_to = "parameter",
+        values_to = "posterior"
+      ) %>%
+      mutate(
+        metabolite.ID = rep(as.numeric(as.factor(data_df$metabolite)),draws),
+        time.ID = rep(as.numeric(as.factor(data_df$time)),draws),
+        condition = rep(data_df$condition,draws))
+  }
+  
 
   # Combine diagnostics and posterior predictive checks
-  result <- c(
-    list(model_diagnostics = diagnostics_df),
-    do.call(c, posterior_list)
-  )
+  result <- list(model_diagnostics = diag_data,posterior = posterior)
 
   # if input is a SummarizedExperiment object, store the fits in the metadata
   if (is(data, "SummarizedExperiment")) {

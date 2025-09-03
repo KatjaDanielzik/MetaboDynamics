@@ -47,11 +47,11 @@ transformed parameters {
   }
 
   // Apply z-transformation
-  real z_log_cpc[M,t,D];
+  real mu[M,t,D];
   for (m in 1:M) {
     for (d in 1:D) {
       for (i in 1:t) {
-          z_log_cpc[m, i, d] = (log_cpc[m, i, d] - mean_log_cpc[m, d]) / sd_log_cpc[m, d];
+          mu[m, i, d] = (log_cpc[m, i, d] - mean_log_cpc[m, d]) / sd_log_cpc[m, d];
       }
     }
   }
@@ -97,8 +97,8 @@ generated quantities {
   real log_lik[N + Nc];
 
   // differences between time points and euclidean distances between z-scaled vectors
-  real z_delta_mu[M,t-1,D];
-  real z_euclidean_distance[M,D,D]; # euclidean distance between metabolite and cell line specific longitudinal vectors of different doses
+  real delta_mu[M,t-1,D];
+  real euclidean_distance[M,D,D]; # euclidean distance between metabolite and cell line specific longitudinal vectors of different doses
 
   // Prior predictive check
   real mu_counts_prior = exponential_rng(1/1e6);
@@ -134,7 +134,7 @@ generated quantities {
   for (m in 1:M) {
     for (i in 2:t) {
       for (d in 1:D) {
-          z_delta_mu[m,i-1,d] = z_log_cpc[m,i,d] - z_log_cpc[m,i-1,d];
+          delta_mu[m,i-1,d] = mu[m,i,d] - mu[m,i-1,d];
       }
     }
   }
@@ -144,14 +144,14 @@ generated quantities {
   for (m in 1:M) {
     for (d1 in 1:D) {
       for (d2 in 1:D) {
-        if (d1 != d2) {
-            vector[t] z_log_cpc_d1;
-            vector[t] z_log_cpc_d2;
-            z_log_cpc_d1 = to_vector(z_log_cpc[m,:,d1]); # time point length vectors per metabolite dose and cell line
-            z_log_cpc_d2 = to_vector(z_log_cpc[m,:,d2]);
-            z_euclidean_distance[m,d1,d2] = distance(z_log_cpc_d1,z_log_cpc_d2); # euclidean distance between vectors
+        if (d1 < d2) {
+            vector[t] mu_d1;
+            vector[t] mu_d2;
+            mu_d1 = to_vector(mu[m,:,d1]); # time point length vectors per metabolite dose and cell line
+            mu_d2 = to_vector(mu[m,:,d2]);
+            euclidean_distance[m,d1,d2] = distance(mu_d1,mu_d2); # euclidean distance between vectors
           } else {
-            z_euclidean_distance[m,d1,d2] = 0;
+            euclidean_distance[m,d1,d2] = 0;
           }
         }
       }
