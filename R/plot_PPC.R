@@ -1,6 +1,6 @@
 #' Plots posterior predictive check of numerical fit of Bayesian dynamics model
 #'
-#' @param posterior a list of one dataframe per condition that
+#' @param posterior a dataframe that
 #' contains necessary information for Posterior predictive check
 #' obtained by function diagnostics_dynamics()(named "PPC_condition")
 #' @param data dataframe or colData of a \link[SummarizedExperiment]{SummarizedExperiment}  used to fit dynamics model
@@ -21,7 +21,7 @@
 #' @examples
 #' data("longitudinalMetabolomics")
 #' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-#'   longitudinalMetabolomics$metabolite %in% c("ATP", "ADP")]
+#'                                    longitudinalMetabolomics$metabolite %in% c("ATP", "ADP")]
 #' data <- fit_dynamics_model(
 #'   data = data,
 #'   scaled_measurement = "m_scaled", assay = "scaled_log",
@@ -30,11 +30,12 @@
 #' data <- diagnostics_dynamics(
 #'   data = data, assay = "scaled_log",
 #'   iter = 2000, chains = 1,
-#'   fits = metadata(data)[["dynamic_fits"]]
+#'   fit = metadata(data)[["dynamic_fit"]]
 #' )
 #' plot_PPC(
 #'   data = data, assay = "scaled_log"
 #' )
+
 plot_PPC <- function(
     posterior = metadata(data)[["diagnostics_dynamics"]],
     data, assay = "scaled_log",
@@ -60,18 +61,21 @@ plot_PPC <- function(
     )
     posterior <- metadata(data)[["diagnostics_dynamics"]]
     # only select posteriors
-    posterior <- posterior[-1]
+    posterior <- posterior[-1][[1]]
   }
 
   # convert potential tibbles into data frame
   if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
+  if (is(posterior, "tbl")) {
+    posterior <- as.data.frame(posterior)
+  }
   if (is(data, "data.frame")) {
     data_df <- data
   }
-  if (!inherits(posterior, "list")) {
-    stop("'posterior' must be a list obtained by diagnostics_dynamics()")
+  if (!inherits(posterior, "data.frame")) {
+    stop("'posterior' must be a data frame obtained by diagnostics_dynamics()")
   }
   if (!is.character(scaled_measurement)) {
     stop("'scaled_measurement' must be a character vector specifying a column name of data")
@@ -92,15 +96,14 @@ plot_PPC <- function(
 
 
   # plot for every experimental condition
-  plots <- list()
-  for (i in names(posterior)) {
-    plots[[i]] <-
-      ggplot(posterior[[i]], aes(x = as.factor(time.ID))) +
+  plot<-
+      ggplot(posterior, aes(x = as.factor(time.ID))) +
       geom_violin(aes(y = posterior, x = as.factor(time.ID)), scale = "count") +
       geom_jitter(data = PPC, aes(x = as.factor(time.ID), y = !!scaled_measurement), width = 0.05) + # aes_string allows us to use predefined variables
       theme_bw() +
       ylim(-5, 5) + # we standardized data so we are not expecting much smaller or bigger values
       xlab("time point") +
+      facet_wrap(~condition)+
       ggtitle(
         paste0(
           "Posterior predicitve check ",
@@ -108,6 +111,6 @@ plot_PPC <- function(
         ),
         "violins=posterior, points=data"
       )
-  }
-  return(plots)
+
+  return(plot)
 }

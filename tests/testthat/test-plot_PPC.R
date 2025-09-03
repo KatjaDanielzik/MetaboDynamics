@@ -7,18 +7,18 @@ test_that("plot_PPC: input checks", {
     metabolite = rep("A", 4)
   )
 
-  valid_posterior <- list(A = data.frame(
+  valid_posterior <- data.frame(
     mu_mean = c(0.1, 0.2),
     mu_lower = c(0.05, 0.1),
     mu_higher = c(0.15, 0.3)
-  ))
+  )
 
   invalid_data <- list(
     time = c(0, 1, 2, 3),
     condition = c("A", "B", "A", "B")
   )
 
-  invalid_posterior <- data.frame(
+  invalid_posterior <- list(
     mu_mean = c(0.1, 0.2),
     mu_lower = c(0.05, 0.1)
   )
@@ -38,7 +38,7 @@ test_that("plot_PPC: input checks", {
       posterior = invalid_posterior, data = valid_data,
       "scaled_measurement"
     ),
-    "'posterior' must be a list obtained by diagnostics_dynamics()"
+    "'posterior' must be a data frame obtained by diagnostics_dynamics()"
   )
 
   # Check if 'scaled_measurement' is a character vector
@@ -55,10 +55,11 @@ test_that("plot_PPC: input checks", {
 })
 
 test_that("plot_PPC:output_checks", {
-  posterior_example <- list(A = data.frame(
+  posterior_example <- data.frame(
     time.ID = rep(1:5, each = 10),
+    condition = "A",
     posterior = rnorm(50)
-  ))
+  )
 
   # Example data dataframe (from SummarizedExperiment)
   data_example <- data.frame(
@@ -70,5 +71,5 @@ test_that("plot_PPC:output_checks", {
     posterior = posterior_example, data = data_example,
     scaled_measurement = "m_scaled"
   )
-  expect_s3_class(plot[[1]], "gg")
+  expect_s3_class(plot, "gg")
 })
