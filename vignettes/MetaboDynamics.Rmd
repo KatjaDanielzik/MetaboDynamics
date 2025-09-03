@@ -212,9 +212,8 @@ data <- fit_dynamics_model(
 )
 ```
 
-This returns a list of model fits that are named by the experimental condition
-("A","B","C"). If data is a SummarizedExperiment object the fits are stored in 
-metadata(data)[["dynamic_fits"]]. 
+This returns a fit. If data is a SummarizedExperiment object the fits are stored in 
+metadata(data)[["dynamic_fit"]]. 
 
 MetaboDynamics fits Bayesian models with MCMC (Markov Chain Monte Carlo) which
 returns a list of diagnostic criteria: rhat = R-hat convergence diagnostic (should be 1),
@@ -228,8 +227,6 @@ With diagnostics_dynamics() we can extract all
 the diagnostic criteria of the model fit and visualize them. If data is a 
 SummarizedExperiment object the diagnostics are stored in metadata(data)[["diagnostics_dynamics"]].
 The diagnostic criteria can be visualized with the function plot_diagnostics().
-Additionally data frames for visual posterior predictive checks (PPC) are 
-prepared and the PPC can be visualized with the function plot_PPC().
 
 ```{r}
 # extract diagnostics

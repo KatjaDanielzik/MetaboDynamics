@@ -93,14 +93,17 @@ diagnostics <- # when using a data frame as input diagnostics have to be stored 
 ```
 
 That returns a list with elements [["model_diagnostics"]] which holds a summary
-of the model diagnostics and the extracted posterior estimates for all conditions. 
+of the model diagnostics and the extracted posterior estimates. [["posterior]]
+holds the posterior predictions needed for the posterior predictive check (PPC)
 
-To visualize the diagnostics the following code can be used:
+To visualize the diagnostics and the PPC the following code can be used:
 ```{r}
 plot_diagnostics(
   data = data, # data frame used to fit the dynamics model
   diagnostics = diagnostics[["model_diagnostics"]] # summary of diagnostics
 )
+plot_PPC(data = data,
+         diagnostics = diagnostics[["posterior"]])
 ```
 In this case the diagnostics are all indicating a sane model fit: The model fitting did not result in 
 divergent transitions, the maximum tree depth was not exceeded, Rhat values were
