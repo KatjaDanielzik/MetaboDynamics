@@ -23,6 +23,7 @@
 #' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
 #'                                    longitudinalMetabolomics$metabolite %in% c("ATP", "ADP")]
 #' data <- fit_dynamics_model(
+#'   model = "scaled_log",
 #'   data = data,
 #'   scaled_measurement = "m_scaled", assay = "scaled_log",
 #'   max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
