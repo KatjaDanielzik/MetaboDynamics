@@ -5,11 +5,13 @@
 \title{Fits dynamics model}
 \usage{
 fit_dynamics_model(
+  model = "scaled_log",
   data,
   metabolite = "metabolite",
   time = "time",
   condition = "condition",
   scaled_measurement = "m_scaled",
+  counts = NULL,
   assay = "scaled_log",
   chains = 4,
   cores = 4,
@@ -20,6 +22,15 @@ fit_dynamics_model(
 )
 }
 \arguments{
+\item{model}{which model to fit. Two options are available:
+"scaled_log": taking in normalized and scaled metabolite concentrations (see scaled measurement)
+"raw_plus_counts": tailored for in vitro untargeted LC-MS experiments, taking in "raw"
+(i.e. not normalized and not scaled) metabolite concentrations and cell counts.
+This model assumes independent measurement (i.e. different wells) of cell counts
+and metabolite concentrations. Additionally it assumes that cell counts were estimated
+e.g. by cell counters (i.e. that cells were not counted under the microscope)
+leading to a small uncertainty of the true cell count.}
+
 \item{data}{concentration table with at least three replicate measurements per
 metabolite containing the columns "metabolite",
 "condition", and "m_scaled" by default or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object}
@@ -34,9 +45,20 @@ time column is ordered from lowest to highest for the model to work}
 \item{scaled_measurement}{column of "data" that contains the concentrations per cell,
 centered and normalized per metabolite and experimental condition (mean=0, sd=1)}
 
-\item{assay}{if input is a summarizedExperiment specify the assay that should
+\item{counts}{data frame with at least one replicate per time point and condition
+specifying the cell counts, must contain columns "time", "condition" equivalent
+to the specifications of "data".
+Must contain a column named "counts" that specifies the cell counts.
+Model assumes that the replicates of the cell counts and metabolite concentrations
+are independent of each other (i.e. cell counts were measured in in different
+wells than metabolite concentrations)}
+
+\item{assay}{if input is a SummarizedExperiment specify the assay that should
 be used for input, colData has to hold the columns, "condition" and "metabolite",
-rowData the timepoint specifications}
+rowData the timepoint specifications, in case of the model "scaled_log"
+assay needs to hold scaled log-transformed metabolite concentrations
+(mean=0,sd=1 per metabolite and experimental condition), if model
+"raw_plus_counts" is chosen must hold the non-transformed and non-scaled metabolite concentrations}
 
 \item{chains}{how many Markov-Chains should be used for model fitting, use at
 least two, default=4}
@@ -68,17 +90,22 @@ standardized (mean=0, sd=1) log(cpc) (cpc = normalized metabolite abundance)
 values for robust estimation of mean
 concentrations over time of single metabolites at single experimental
 conditions.
+At least three replicates for metabolite concentrations per time point and condition are needed.
+If cell counts are provided at least one replicate per time point and condition is needed.
 }
 \examples{
 data("longitudinalMetabolomics")
-data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-  longitudinalMetabolomics$metabolite == "ATP"]
+data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition \%in\%c("A","B") &
+                                   longitudinalMetabolomics$metabolite == "ATP"]
 data <- fit_dynamics_model(
+  model = "scaled_log",
   data = data,
-  scaled_measurement = "m_scaled", assay = "scaled_log",
+  assay = "scaled_log",
   max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
 )
-S4Vectors::metadata(data)[["dynamic_fits"]]
+S4Vectors::metadata(data)[["dynamic_fit"]]
+
+
 
 }
 \seealso{

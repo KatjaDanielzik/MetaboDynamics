@@ -5,7 +5,17 @@
 #' values for robust estimation of mean
 #' concentrations over time of single metabolites at single experimental
 #' conditions.
-#'
+#' At least three replicates for metabolite concentrations per time point and condition are needed.
+#' If cell counts are provided at least one replicate per time point and condition is needed. 
+#' 
+#' @param model which model to fit. Two options are available:
+#' "scaled_log": taking in normalized and scaled metabolite concentrations (see scaled measurement)
+#' "raw_plus_counts": tailored for in vitro untargeted LC-MS experiments, taking in "raw"
+#' (i.e. not normalized and not scaled) metabolite concentrations and cell counts. 
+#' This model assumes independent measurement (i.e. different wells) of cell counts
+#' and metabolite concentrations. Additionally it assumes that cell counts were estimated 
+#' e.g. by cell counters (i.e. that cells were not counted under the microscope) 
+#' leading to a small uncertainty of the true cell count.
 #' @param data concentration table with at least three replicate measurements per
 #' metabolite containing the columns "metabolite",
 #' "condition", and "m_scaled" by default or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
@@ -15,9 +25,19 @@
 #' @param condition column of "data" that contains the experimental conditions
 #' @param scaled_measurement column of "data" that contains the concentrations per cell,
 #' centered and normalized per metabolite and experimental condition (mean=0, sd=1)
-#' @param assay if input is a summarizedExperiment specify the assay that should
+#' @param counts data frame with at least one replicate per time point and condition
+#' specifying the cell counts, must contain columns "time", "condition" equivalent
+#' to the specifications of "data".
+#' Must contain a column named "counts" that specifies the cell counts.
+#' Model assumes that the replicates of the cell counts and metabolite concentrations
+#' are independent of each other (i.e. cell counts were measured in in different
+#' wells than metabolite concentrations)
+#' @param assay if input is a SummarizedExperiment specify the assay that should
 #' be used for input, colData has to hold the columns, "condition" and "metabolite",
-#' rowData the timepoint specifications
+#' rowData the timepoint specifications, in case of the model "scaled_log" 
+#' assay needs to hold scaled log-transformed metabolite concentrations
+#' (mean=0,sd=1 per metabolite and experimental condition), if model 
+#' "raw_plus_counts" is chosen must hold the non-transformed and non-scaled metabolite concentrations
 #' @param cores how many cores should be used for model fitting; this
 #' parallelizes the model fitting and therefore speeds it up; default=4
 #' @param chains how many Markov-Chains should be used for model fitting, use at
@@ -42,16 +62,20 @@
 #' @export
 #'
 #' @examples
+# # on scaled log-transformed metabolite concentrations
 #' data("longitudinalMetabolomics")
-#' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-#'   longitudinalMetabolomics$metabolite == "ATP"]
+#' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in%c("A","B") &
+#'                                    longitudinalMetabolomics$metabolite == "ATP"]
 #' data <- fit_dynamics_model(
+#'   model = "scaled_log",
 #'   data = data,
-#'   scaled_measurement = "m_scaled", assay = "scaled_log",
+#'   assay = "scaled_log",
 #'   max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
 #' )
-#' S4Vectors::metadata(data)[["dynamic_fits"]]
+#' S4Vectors::metadata(data)[["dynamic_fit"]]
 #'
+#' 
+#' 
 #' @import methods
 #' @import Rcpp
 #' @importFrom rstan sampling
@@ -62,28 +86,25 @@
 #' @importFrom rlang as_name
 #' @useDynLib MetaboDynamics
 
-fit_dynamics_model <- function(data, metabolite = "metabolite",
-                               time = "time", condition = "condition",
+fit_dynamics_model <- function(model = "scaled_log",
+                               data, 
+                               metabolite = "metabolite",
+                               time = "time", 
+                               condition = "condition",
                                scaled_measurement = "m_scaled",
+                               counts = NULL, 
                                assay = "scaled_log",
                                chains = 4, cores = 4,
                                adapt_delta = 0.95, max_treedepth = 10,
                                iter = 2000, warmup = iter / 4) {
-  # hint user if data is standardized
-  message("Is your data normalized and standardized?
-          We recommend normalization by log-transformation.
-          Scaling and centering (mean=0, sd=1) should be metabolite and condition specific.")
-  # Input checks
-  if (!is.data.frame(data) && !inherits(data, "SummarizedExperiment")) {
-    stop("'data' must be a dataframe or a SummarizedExperiment object")
-  }
-  # check if all input variables are positive integers
-  if (!all(vapply(c(iter, warmup, max_treedepth), function(x) is.numeric(x) && x > 0 && x %% 1 == 0, logical(1)))) {
-    stop("'iter', 'warmup', and 'max_treedepth' must be positive integers")
-  }
-  if (!is.numeric(adapt_delta) | !(adapt_delta > 0 & adapt_delta < 1)) {
-    stop("'adapt_delta' must be numeric and in the range (0;1)")
-  }
+  
+  check_fit_dynamics_input(model = model, data = data, metabolite = metabolite,
+                           time = time, condition = condition,
+                           scaled_measurement = scaled_measurement,
+                           counts = counts, assay = assay, chains = chains, 
+                           cores = cores, adapt_delta = adapt_delta,
+                           max_treedepth = max_treedepth, iter = iter, warmup = warmup)
+  
   # check input class and convert SummarizedExperiment to dataframe
   if (is(data, "SummarizedExperiment")) {
     t <- nrow(rowData(data))
@@ -96,23 +117,19 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
       values_to = scaled_measurement
     )
   }
-
   # convert potential tibbles into data frame
   if (is(data, "tbl")) {
-    data <- as.data.frame(data)
+    data_df <- as.data.frame(data)
   }
   if (is(data, "data.frame")) {
     data_df <- data
   }
-  # assign number of time points
-  t <- length(unique(data_df[[time]]))
 
-  # check if all input variables are character vectors
-  if (!all(vapply(list(metabolite, time, condition, scaled_measurement), is.character, logical(1)))) {
-    stop("'metabolite', 'time', 'condition', and 'scaled_measurement' must be a character vector specifying a column name of data")
-  }
   if (!all(c(metabolite, time, condition, scaled_measurement) %in% colnames(data_df))) {
     stop("'data' must contain columns named 'metabolite','time','condition', and 'scaled_measurement'")
+  }
+  if (is(counts, "tbl")) {
+    counts <- as.data.frame(counts)
   }
   
   # convert character string of variables to variable useable by tidyverse
@@ -131,8 +148,8 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
     group_by(!!metabolite, !!time, !!condition) %>%
     summarise(count = n())
   if (any(grouped_data$count < 3) == TRUE) {
-    stop("Input must contain at least three measurements per metabolite,
-      time and experimental condition.")
+    stop("Input must contain at least three replicates per metabolite,
+      time point and experimental condition.")
   }
   
   # convert variable names back to character string
@@ -140,25 +157,67 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
   condition <- as_name(condition)
   metabolite <- as_name(metabolite)
   scaled_measurement <- as_name(scaled_measurement)
-  # split data into a list of data frames, where each data frame corresponds to
-  # a unique experimental condition
-  data_split <- split(data_df, data_df[[condition]])
+  
+  # check if same all conditions and time points have cell counts
+  if(model=="raw_plus_counts"){
+    if(!identical(unique(data_df[[time]]),unique(counts[[time]]))){
+      stop("data and counts must have the same time points")
+    }
+    if(!identical(unique(data_df[[condition]]),unique(counts[[condition]]))){
+      stop("data and counts must have the same conditions")
+    }}
+  
 
-  # define a function to fit the model to a single data frame
-  # apply the model fitting function to each data frame in the list
-  fits <- lapply(data_split, function(temp) {
+  
+  if(model=="scaled_log"){
+  # fit model
+  fit <- rstan::sampling(
+      object = stanmodels$m_ANOVA_partial_pooling_euclidean_distance,
+      data = list(
+        N = nrow(data_df),
+        M = length(unique(data_df[[metabolite]])),
+        t = length(unique(data_df[[time]])),
+        d = length(unique(data_df[[condition]])),
+        y = data_df[[scaled_measurement]],
+        # Vector of metabolite IDs
+        Me = as.numeric(as.factor(data_df[[metabolite]])),
+        # Vector indicating which row belongs to which timestep
+        X = as.numeric(as.factor(data_df[[time]])),
+        # Condition indicator
+        Do = as.numeric(as.factor(data_df[[condition]]))
+        ),
+      chains = chains,
+      iter = iter,
+      # increase warmup so that algorithm probably chooses
+      # smaller step sizes for sampling the posterior
+      warmup = warmup,
+      algorithm = "NUTS",
+      cores = cores,
+      # increase adapt_delta (target average proposal acceptance probability)
+      # to decrease step size
+      control = list(adapt_delta = adapt_delta, max_treedepth = max_treedepth))
+  }
+  
+  if(model=="raw_plus_counts"){
     # fit model
     fit <- rstan::sampling(
-      object = stanmodels$m_ANOVA_partial_pooling,
+      object = stanmodels$m_ANOVA_partial_pooling_cell_counts_euclidean_distance,
       data = list(
-        y = temp[[scaled_measurement]],
-        t = length(unique(temp[[time]])),
-        M = length(unique(temp[[metabolite]])),
-        N = nrow(temp),
+        N = nrow(data_df),
+        M = length(unique(data_df[[metabolite]])),
+        t = length(unique(data_df[[time]])),
+        D = length(unique(data_df[[condition]])),
+        maven = data_df[[scaled_measurement]],
         # Vector of metabolite IDs
-        Me = as.numeric(as.factor(temp[[metabolite]])),
+        Me = as.numeric(as.factor(data_df[[metabolite]])),
         # Vector indicating which row belongs to which timestep
-        X = as.numeric(as.factor(temp[[time]]))
+        X = as.numeric(as.factor(data_df[[time]])),
+        # Condition indicator
+        Do = as.numeric(as.factor(data_df[[condition]])),
+        Nc = nrow(counts),
+        Cc = as.numeric(counts$counts),
+        X_c = as.numeric(as.factor(counts[[time]])),
+        Do_c = as.numeric(as.factor(counts[[condition]]))
       ),
       chains = chains,
       iter = iter,
@@ -169,19 +228,16 @@ fit_dynamics_model <- function(data, metabolite = "metabolite",
       cores = cores,
       # increase adapt_delta (target average proposal acceptance probability)
       # to decrease step size
-      control = list(adapt_delta = adapt_delta, max_treedepth = max_treedepth)
-    )
-  })
+      control = list(adapt_delta = adapt_delta, max_treedepth = max_treedepth))
+  }
 
-  # assign names to the model fits based on the experimental condition
-  names(fits) <- names(data_split)
 
   # if input is a SummarizedExperiment object, store the fits in the metadata
   if (is(data, "SummarizedExperiment")) {
-    metadata(data)[["dynamic_fits"]] <- fits
+    metadata(data)[["dynamic_fit"]] <- fit
     return(data)
   } else {
     # otherwise, return the list of fits
-    return(fits)
+    return(fit)
   }
 }

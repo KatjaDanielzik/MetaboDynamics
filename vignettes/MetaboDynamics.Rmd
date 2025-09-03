@@ -174,6 +174,13 @@ but the spread of different time points inform each other through the hierarchic
 structure of the hyper-parameter $\lambda$. This partial pooling allows for the
 balance between over- and under fitting.
 
+If the untargeted LC-MS experiment is conducted in vitro and independent cell counts
+(i.e. cell counts were measured in a different well than metabolite abundances) are
+available an adapted model can be run that takes the *raw* (i.e. not normalized and not scaled)
+metabolite abundances and the cell counts as input. The "raw_plus_counts" model is
+slower but has the advantage of taking additionally incorporating the uncertainty of cell counts
+into the estimates of the Bayesian model.  
+
 The code below shows how to fit the Bayesian model with the function
 fit_dynamics_model(). This might take of the order of 10 minutes 
 per experimental condition for 98 metabolites. Here we fit the dynamics model 
@@ -194,6 +201,7 @@ data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
 
 # fit model
 data <- fit_dynamics_model(
+  model = "scaled_log"
   data = data, scaled_measurement = "m_scaled",
   assay = "scaled_log", time = "time",
   condition = "condition", max_treedepth = 10,

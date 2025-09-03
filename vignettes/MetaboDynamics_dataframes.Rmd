@@ -62,6 +62,7 @@ First we will fit the dynamics model and extract the diagnostics:
 # fit dynamics model
 fits <-  #  when using a data frame as input fits have to stored in a separate object
   fit_dynamics_model(
+  model = "scaled_log",
   data = data,
   metabolite = "metabolite", # in which column are metabolite names stored?
   time = "time", # in which column are categorical time points stored?
