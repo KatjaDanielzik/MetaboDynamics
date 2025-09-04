@@ -303,6 +303,9 @@ is an increase in abundance between the two subsequent time points (e.g.
 cannot conclude that there is a difference in abundance between the two time points.
 
 ### Difference of dynamcis between experimental conditions
+
+can be used to detect which metabolites's dynamics change the most/least between conditions
+
 ```{r,fig.wide=TRUE}
 # 1) the differences between two timepoints
 plot_estimates(

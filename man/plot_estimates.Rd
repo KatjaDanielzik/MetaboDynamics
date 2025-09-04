@@ -24,8 +24,6 @@ must be stored in metadata(data) under "estimates_dynamics"}
 \item{dynamics}{should dynamics be plotted?}
 
 \item{distance_conditions}{should differences in metabolite specific dynamic should be plotted?}
-
-\item{time}{column in "data" that contains the time point identifiers}
 }
 \value{
 Visualization of differences between time points(delta_t) and dynamics

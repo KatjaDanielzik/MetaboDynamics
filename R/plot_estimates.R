@@ -4,7 +4,6 @@
 #' the model estimates by estimates_dynamics() or if data is a \link[SummarizedExperiment]{SummarizedExperiment}  estimates
 #' must be stored in metadata(data) under "estimates_dynamics"
 #' @param data \link[SummarizedExperiment]{SummarizedExperiment} used to fit dynamics model and extract the estimates
-#' @param time column in "data" that contains the time point identifiers
 #' @param delta_t should differences between time points be plotted?
 #' @param dynamics should dynamics be plotted?
 #' @param distance_conditions should differences in metabolite specific dynamic should be plotted?

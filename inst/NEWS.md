@@ -4,6 +4,7 @@ estimated standard deviation of metabolite abundance (sigma),
 estiamted pooled standard deviation per metabolite and dose (lambda),
 differences in metabolite abundances between time points, 
 euclidean distance between metabolite dynamics of different conditions
+- plot estimates additionally visualized the euclidean distance between conditions of metabolite specific dynamics
 
 # MetaboDynamics 1.1.5
 - internal adding of ANOVA model with euclidean distance estimation between doses and ANOVA model that integrates cell count uncertainty
