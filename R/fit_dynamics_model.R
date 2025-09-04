@@ -99,7 +99,7 @@ fit_dynamics_model <- function(model = "scaled_log",
                                adapt_delta = 0.95, max_treedepth = 10,
                                iter = 2000, warmup = iter / 4) {
   
-  check_fit_dynamics_input(model = model, data = data, metabolite = metabolite,
+  .check_fit_dynamics_input(model = model, data = data, metabolite = metabolite,
                            time = time, condition = condition,
                            scaled_measurement = scaled_measurement,
                            counts = counts, assay = assay, chains = chains, 
