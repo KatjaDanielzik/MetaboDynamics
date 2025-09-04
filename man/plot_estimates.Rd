@@ -7,31 +7,28 @@
 plot_estimates(
   data,
   estimates = metadata(data)[["estimates_dynamics"]],
-  assay = "scaled_log",
-  time = "time",
   delta_t = TRUE,
-  dynamics = TRUE
+  dynamics = TRUE,
+  distance_conditions = TRUE
 )
 }
 \arguments{
-\item{data}{dataframe or \link[SummarizedExperiment]{SummarizedExperiment}  used used to fit dynamics model and extract the estimates}
+\item{data}{\link[SummarizedExperiment]{SummarizedExperiment} used to fit dynamics model and extract the estimates}
 
-\item{estimates}{a list of dataframes (one per experimental condition) that contains
-the estimates at the timepoints and samples from the posterior generated
-by estimates_dynamics() or if data is a \link[SummarizedExperiment]{SummarizedExperiment}  estimates
+\item{estimates}{a list of data frames (elements: mu, sigma, lambda, euclidean_distance) that contains
+the model estimates by estimates_dynamics() or if data is a \link[SummarizedExperiment]{SummarizedExperiment}  estimates
 must be stored in metadata(data) under "estimates_dynamics"}
 
-\item{assay}{of the \link[SummarizedExperiment]{SummarizedExperiment}  object that was used to fit the dynamics
-model}
-
-\item{time}{column in "data" that contains the time point identifiers}
-
-\item{delta_t}{should differences between timepoints be plotted?}
+\item{delta_t}{should differences between time points be plotted?}
 
 \item{dynamics}{should dynamics be plotted?}
+
+\item{distance_conditions}{should differences in metabolite specific dynamic should be plotted?}
+
+\item{time}{column in "data" that contains the time point identifiers}
 }
 \value{
-Visualization of differences between timepoints(delta_t) and dynamics
+Visualization of differences between time points(delta_t) and dynamics
 profiles of single metabolites
 }
 \description{
@@ -39,19 +36,19 @@ Visualization of parameter estimates from numeric fit of Bayesian model of dynam
 }
 \examples{
 data("longitudinalMetabolomics")
-data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-  longitudinalMetabolomics$metabolite == "ATP"]
+data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition\%in\%c("A","B")&
+                                   longitudinalMetabolomics$metabolite \%in\%c("ATP")]
 data <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", assay = "scaled_log",
   max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
 )
 data <- estimates_dynamics(
-  data = data, iter = 2000,
-  chains = 1, condition = "condition"
+  data = data
 )
-plot_estimates(data = data, delta_t = FALSE)
-plot_estimates(data = data, dynamics = FALSE)
+plot_estimates(data = data, delta_t = TRUE, dynamic = FALSE, distance_conditions = FALSE)
+plot_estimates(data = data, delta_t = FALSE, dynamic = TRUE, distance_conditions = FALSE)
+plot_estimates(data = data, delta_t = FALSE, dynamic = FALSE, distance_conditions = TRUE)
 }
 \seealso{
 parent function \code{\link[=estimates_dynamics]{estimates_dynamics()}}

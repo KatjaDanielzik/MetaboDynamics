@@ -192,23 +192,23 @@ data("longitudinalMetabolomics")
 # we only use a subsection of the simulated data (1 condition and subsample of
 # the whole dataset) for demonstration purposes
 samples <- c(
-  "UMP", "Taurine", "Succinate", "Phosphocreatine", "PEP",
-  "Malic acid", "L-Cystine", "CMP", "Citramalic acid", "2-Aminomuconate"
+  "UMP","PEP",
+ "2-Aminomuconate"
 )
 # only one condition
-data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
+data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in% c("A","B") &
   longitudinalMetabolomics$metabolite %in% samples]
 
 # fit model
 data <- fit_dynamics_model(
-  model = "scaled_log"
+  model = "scaled_log",
   data = data, scaled_measurement = "m_scaled",
   assay = "scaled_log", time = "time",
   condition = "condition", max_treedepth = 10,
   adapt_delta = 0.95, # default 0.95
-  iter = 5000,
+  iter = 2000,
   cores = 1,
-  chains = 2 # only set to 2 for vignette, default = 4
+  chains = 1 # only set to 1 for vignette, default = 4
 )
 ```
 
@@ -232,9 +232,9 @@ The diagnostic criteria can be visualized with the function plot_diagnostics().
 # extract diagnostics
 data <- diagnostics_dynamics(
   data = data,
-  iter = 5000, # number of iterations used for model fitting
+  iter = 2000, # number of iterations used for model fitting
   # the dynamic model
-  chains = 2 # number of chains used for model fitting
+  chains = 1 # number of chains used for model fitting
 )
 
 plot_diagnostics(
@@ -262,6 +262,7 @@ The PPC plot indicates that the model is well-behaved and that the experimental
 data points are consistent with the predicted distribution, suggesting that the 
 model is a good fit to the data.
 
+## Model outputs
 After checking the diagnostic criteria and the PPC we can extract the estimates from the
 model fit using the estimates_dynamics() function:
 If data is a SummarizedExperiment the estimates are stored in metadata(data)[["estimates_dynamics"]].
@@ -270,18 +271,12 @@ If data is a SummarizedExperiment the estimates are stored in metadata(data)[["e
 ```{r,fig.wide=TRUE}
 # #extract estimates
 data <- estimates_dynamics(
-  data = data, iter = 5000,
-  chains = 2, condition = "condition"
+  data = data
 )
 ```
 
-This function returns two types of estimates: 1) the estimated metabolite abundance 
-differences between two subsequent time points for each metabolite at each 
-experimental condition, and 2) the dynamics profiles of each metabolite at each 
-experimental condition.
 
-## Differences between two time points
-
+### !!!! choose different metabolites differences in metabolite abundance between time points
 In the following plots the column label "A" indicates the experimental condition.
 The row labels "timepoint 2 - timepoint 1". The metabolites are ordered on 
 the x-axis according to the estimated mean differences between time points and the
@@ -291,7 +286,7 @@ estimated abundance differences ("delta") are on the y-axis.
 # 1) the differences between two timepoints
 plot_estimates(
   data = data,
-  dynamics = FALSE
+  dynamics = FALSE, distance_conditions = FALSE
 )
 ```
 
@@ -307,8 +302,18 @@ is an increase in abundance between the two subsequent time points (e.g.
 2-Amminomuconate between time point 2 and 3). If the 95% CrI contains zero, we
 cannot conclude that there is a difference in abundance between the two time points.
 
+### Difference of dynamcis between experimental conditions
+```{r,fig.wide=TRUE}
+# 1) the differences between two timepoints
+plot_estimates(
+  data = data,
+  delta_t = FALSE,
+  dynamics = FALSE, distance_conditions = TRUE
+)
+```
 
-## Dynamic profiles
+
+### Dynamic profiles
 
 The dynamic profiles of each metabolite can be visualized using the estimated 
 mean abundances at each time point. The plot below shows the estimated mean 
@@ -317,7 +322,8 @@ abundances at each time point for each metabolite.
 ```{r,fig.wide=TRUE}
 # 2) dynamic profiles
 plot_estimates(
-  data = data,
+  data = data, dynamics = TRUE, 
+  distance_conditions = FALSE,
   delta_t = FALSE
 )
 ```

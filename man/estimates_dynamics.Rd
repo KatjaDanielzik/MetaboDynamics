@@ -39,7 +39,7 @@ mu: is the estimated mean metabolite abundance
 sigma: the estimated standard deviation of metabolite abundance
 lambda: pooled sigma per condition
 delta_mu: differences of mu between time points
-euclidean_distance: estimated euclidean distance of time vectors of one metabolite between conditions
+euclidean_distances: estimated euclidean distance of time vectors of one metabolite between conditions
 If data is a summarizedExperiment object the estimates are stored in
 metadata(data) under "estimates_dynamics"
 }

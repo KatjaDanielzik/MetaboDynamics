@@ -135,16 +135,26 @@ The estimates can be visualized in two ways by the following code:
 
 ```{r}
 # only visualize differences between time points
-plot_estimates(data = data, 
+plot_estimates(# does not need data as input
                estimates = estimates, 
                delta_t = TRUE,  # choose to visualize differences between time points
-               dynamics = FALSE) 
+               dynamics = FALSE,
+               distance_conditions = FALSE) 
 
 # only visualize dynamics
-plot_estimates(data = data, 
+plot_estimates(
                estimates = estimates, 
                delta_t = FALSE, 
+               distance_conditions = FALSE,
                dynamics = TRUE) # choose to visualize the dynamics 
+
+# only visualize euclidean distance between dynamics vectors
+# only visualize dynamics
+plot_estimates(
+               estimates = estimates, 
+               delta_t = FALSE, 
+               distance_conditions = TRUE,
+               dynamics = FALSE) # choose to visualize the dynamics 
 ```
 
 # Clustering dynamics
