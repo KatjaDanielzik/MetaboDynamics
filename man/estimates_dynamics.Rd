@@ -11,11 +11,7 @@ estimates_dynamics(
   condition = "condition",
   time = "time",
   metabolite = "metabolite",
-  fits = metadata(data)[["dynamic_fits"]],
-  iter = 2000,
-  warmup = iter/4,
-  chains = 4,
-  samples = 1
+  fit = metadata(data)[["dynamic_fit"]]
 )
 }
 \arguments{
@@ -34,23 +30,16 @@ model}
 
 \item{metabolite}{column of "data" that contains the metabolite names or IDs}
 
-\item{fits}{list of model fits for which estimates should be extracted}
-
-\item{iter}{how many iterations were used to fit the dynamics model}
-
-\item{warmup}{how many warm-up iterations were used to fit the dynamics model}
-
-\item{chains}{how many chains were used to fit the dynamics model}
-
-\item{samples}{how many posterior samples should be drawn (p.e. for check of clustering precision)}
+\item{fit}{model fit for which estimates should be extracted}
 }
 \value{
-a list of dataframes (one per experimental condition) that contains
-the estimates at the timepoints and samples from the posterior
-(number as specified in samples), delta_mu specifies the difference between
-time point specified in column "time.ID" and subsequent time point (delta_mu
-in row time.ID=1: mu(time point 2)- mu(time point 1)) if number of time points
-in dataset is >1
+a list of dataframes (one per parameters mu, sigma, lambda, delta_mu and euclidean distance) that contains
+the estimates:
+mu: is the estimated mean metabolite abundance
+sigma: the estimated standard deviation of metabolite abundance
+lambda: pooled sigma per condition
+delta_mu: differences of mu between time points
+euclidean_distance: estimated euclidean distance of time vectors of one metabolite between conditions
 If data is a summarizedExperiment object the estimates are stored in
 metadata(data) under "estimates_dynamics"
 }
@@ -61,17 +50,16 @@ Additionally samples from the posterior of mu can be drawn. This can be helpful 
 \examples{
 data("longitudinalMetabolomics")
 data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-  longitudinalMetabolomics$metabolite == "ATP"]
+                                   longitudinalMetabolomics$metabolite == "ATP"]
 data <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", assay = "scaled_log",
   max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
 )
 data <- estimates_dynamics(
-  data = data, iter = 2000,
-  chains = 1, condition = "condition"
+  data = data
 )
-
+S4Vectors::metadata(data)[["estimates_dynamics"]]
 }
 \seealso{
 Fit the dynamic model \code{\link[=fit_dynamics_model]{fit_dynamics_model()}}.

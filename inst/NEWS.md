@@ -1,3 +1,10 @@
+- no more samples in estimates dynamics as probability of clustering solution will be implemented with a bubbletree in cluster_dynamics
+- estimates now returns a list with: estimated metabolite abundance (mu), 
+estimated standard deviation of metabolite abundance (sigma), 
+estiamted pooled standard deviation per metabolite and dose (lambda),
+differences in metabolite abundances between time points, 
+euclidean distance between metabolite dynamics of different conditions
+
 # MetaboDynamics 1.1.5
 - internal adding of ANOVA model with euclidean distance estimation between doses and ANOVA model that integrates cell count uncertainty
 - internal adding of simulated cell counts to data("longitudinalMetabolomics")
