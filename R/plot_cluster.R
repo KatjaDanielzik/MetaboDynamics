@@ -79,34 +79,53 @@ plot_cluster <- function(data){
     ), ylab = paste0(labels$dist.method, " distance"))
     dendrogram <- recordPlot()
 
-    # PCA plot
-    data[["data"]]$cluster <- as.factor(data[["data"]]$cluster)
-    PCA <- prcomp(x = data[["data"]][, dynamics])
-    # store PCA result
-    temp <- cbind(PCA[["x"]], data[["data"]])
-    variance <- as.data.frame(summary(PCA)[["importance"]])
-
-    PCA_plot <- ggplot(temp[order(temp$PC1, temp$PC2), ], aes(x = PC1, y = PC2, col = cluster, group = cluster, fill = cluster)) +
-      stat_ellipse(
-        geom = "polygon",
-        alpha = 0.2
-      ) + # transparency of filling
-      geom_point(aes(shape = cluster)) +
-      # add enough shapes
-      scale_shape_manual(values = seq_len(nlevels(temp$cluster))) +
-      theme_bw() +
-      # add axis labels with proportion of variance
-      xlab(paste0("PC1 (", round(variance$PC1[2], digits = 3) * 100, "%)")) +
-      ylab(paste0("PC2 (", round(variance$PC2[2], digits = 3) * 100, "%)")) +
-      # add viridis scale
-      scale_color_viridis_d() +
-      scale_fill_viridis_d() +
-      ggtitle("Principal component analysis of clustering solution", "color = cluster, points = metabolite")
+    # # PCA plot
+    # data[["data"]]$cluster <- as.factor(data[["data"]]$cluster)
+    # PCA <- prcomp(x = data[["data"]][, dynamics])
+    # # store PCA result
+    # temp <- cbind(PCA[["x"]], data[["data"]])
+    # variance <- as.data.frame(summary(PCA)[["importance"]])
+    # 
+    # PCA_plot <- ggplot(temp[order(temp$PC1, temp$PC2), ], aes(x = PC1, y = PC2, col = cluster, group = cluster, fill = cluster)) +
+    #   stat_ellipse(
+    #     geom = "polygon",
+    #     alpha = 0.2
+    #   ) + # transparency of filling
+    #   geom_point(aes(shape = cluster)) +
+    #   # add enough shapes
+    #   scale_shape_manual(values = seq_len(nlevels(temp$cluster))) +
+    #   theme_bw() +
+    #   # add axis labels with proportion of variance
+    #   xlab(paste0("PC1 (", round(variance$PC1[2], digits = 3) * 100, "%)")) +
+    #   ylab(paste0("PC2 (", round(variance$PC2[2], digits = 3) * 100, "%)")) +
+    #   # add viridis scale
+    #   scale_color_viridis_d() +
+    #   scale_fill_viridis_d() +
+    #   ggtitle("Principal component analysis of clustering solution", "color = cluster, points = metabolite")
 
     return(list(dendrogram = dendrogram, PCA_plot = PCA_plot))
   })
 
   # plot dynamics as lineplots
+  !!!!! adapt order from bubbletree
+  # tree <- revts(tree)
+  # 
+  # t <- tree$data
+  # t <- t[order(t$y, decreasing = FALSE), ]
+  # tips <- t$label[t$isTip==TRUE]
+  
+  # q <- eg
+  # q$compound <- factor(q$compound, levels = rev(tips))
+  # 
+  # g <- ggplot(data = q)+
+  #   facet_grid(compound~., switch = "y")+
+  #   geom_hline(yintercept = 0, linetype = "dashed", col = "gray")+
+  #   geom_point(aes(x = dose, y = mean))+
+  #   geom_errorbar(aes(x = dose, y = mean, ymin = X2.5., ymax = X97.5.),width=0)+
+  #   scale_y_continuous(position = "right", breaks = pretty_breaks(n = 5))+
+  #   theme_bw(base_size = 10)+
+  #   theme(strip.text.y=element_text(margin = margin(0.01,0.01,0.01,0.01,"cm")))
+  
   temp <- do.call(rbind, lapply(data_df, function(l) l[["data"]]))
   dynamics <- data_df[[1]][["dynamics"]]
   temp <- temp %>% pivot_longer(cols = dynamics, names_to = "time.h", values_to = "mean_log_cpc_scaled")

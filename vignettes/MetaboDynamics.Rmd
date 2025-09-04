@@ -290,6 +290,8 @@ plot_estimates(
 )
 ```
 
+L-Alanine B (timepoint 4 timepoint1), ATP L-Alanine timepoint 3 timepoint 1
+
 The results of bayesian models can be interpreted intuitively: the 95% credible
 interval (CrI) (95% highest density interval) indicates the 95% probability range
 of the parameter (i.e. in this case the differences in abundances between time points). That
@@ -305,6 +307,8 @@ cannot conclude that there is a difference in abundance between the two time poi
 ### Difference of dynamcis between experimental conditions
 
 can be used to detect which metabolites's dynamics change the most/least between conditions
+
+!!! insert diagram of anonymized johanns data? 
 
 ```{r,fig.wide=TRUE}
 # 1) the differences between two timepoints
