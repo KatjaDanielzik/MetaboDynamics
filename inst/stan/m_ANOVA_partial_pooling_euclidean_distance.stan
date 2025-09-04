@@ -37,7 +37,7 @@ generated quantities {
   real mu_prior;
   real <lower=0> sigma_prior;
   real <lower=0> lambda_prior;
-  real delta_mu[M,t-1,d];
+  real delta_mu[M,d,t,t];
   real euclidean_distance[M,d,d]; # euclidean distance between metabolite and cell line specific longitudinal vectors of different doses 
 
   for (n in 1:N){
@@ -53,9 +53,16 @@ generated quantities {
 
   // differences between time points per cell line and experimental condition
   for (m in 1:M) {
-    for (i in 2:t) {
-      for (j in 1:d) {
-          delta_mu[m,i-1,j] = mu[m,i,j] - mu[m,i-1,j];
+    for (j in 1:d) {
+      for (t1 in 1:t) {
+        for(t2 in 1:t){
+          if(t1 < t2){
+          delta_mu[m,j,t1,t2] = mu[m,t2,j] - mu[m,t1,j]; # t2 - t1 -> positive estimates mean increase
+          }
+          else {
+          delta_mu[m,j,t1,t2] = 0;
+        }
+        }
       }
     }
   }

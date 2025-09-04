@@ -44,3 +44,4 @@ check_fit_dynamics_input <- function(model, data, metabolite,
     stop("'metabolite', 'time', 'condition', and 'scaled_measurement' must be a character vector specifying a column name of data")
   }
 }
+

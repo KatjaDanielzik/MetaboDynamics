@@ -33,7 +33,8 @@ leading to a small uncertainty of the true cell count.}
 
 \item{data}{concentration table with at least three replicate measurements per
 metabolite containing the columns "metabolite",
-"condition", and "m_scaled" by default or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object}
+"condition", and "m_scaled" by default or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
+Time column needs to be sorted in ascending order}
 
 \item{metabolite}{column of "data" that contains the metabolite names or IDs}
 

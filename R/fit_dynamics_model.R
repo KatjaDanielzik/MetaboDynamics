@@ -19,6 +19,7 @@
 #' @param data concentration table with at least three replicate measurements per
 #' metabolite containing the columns "metabolite",
 #' "condition", and "m_scaled" by default or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
+#' Time column needs to be sorted in ascending order
 #' @param metabolite column of "data" that contains the metabolite names or IDs
 #' @param time column of "time" that contains time as numeric, make sure your
 #' time column is ordered from lowest to highest for the model to work
@@ -128,8 +129,10 @@ fit_dynamics_model <- function(model = "scaled_log",
   if (!all(c(metabolite, time, condition, scaled_measurement) %in% colnames(data_df))) {
     stop("'data' must contain columns named 'metabolite','time','condition', and 'scaled_measurement'")
   }
+  if(model=="raw_plus_counts"){
   if (is(counts, "tbl")) {
     counts <- as.data.frame(counts)
+  }
   }
   
   # convert character string of variables to variable useable by tidyverse

@@ -97,7 +97,7 @@ generated quantities {
   real log_lik[N + Nc];
 
   // differences between time points and euclidean distances between z-scaled vectors
-  real delta_mu[M,t-1,D];
+  real delta_mu[M,D,t,t];
   real euclidean_distance[M,D,D]; # euclidean distance between metabolite and cell line specific longitudinal vectors of different doses
 
   // Prior predictive check
@@ -130,11 +130,18 @@ generated quantities {
   }
 
 
-  // delta mu between time points at one radiation dose of one metabolite
+  // differences between time points per cell line and experimental condition
   for (m in 1:M) {
-    for (i in 2:t) {
-      for (d in 1:D) {
-          delta_mu[m,i-1,d] = mu[m,i,d] - mu[m,i-1,d];
+    for (j in 1:D) {
+      for (t1 in 1:t) {
+        for(t2  in 1:t){
+          if(t1 < t2){
+          delta_mu[m,j,t1,t2] = mu[m,t2,j] - mu[m,t1,j];
+          }
+        else {
+          delta_mu[m,j,t1,t2] = 0;
+        }
+        }
       }
     }
   }
