@@ -57,7 +57,7 @@ plot_cluster <- function(data){
     # dendrogram
     dendro <- as.dendrogram(temp[["mean_dendro"]])
     # get color identifier based on cluster membership of metabolite
-    colors_to_use <- as.numeric(temp[["data"]][, c("metabolite", "cluster")]$cluster)
+    colors_to_use <- as.numeric(as.data.frame(temp[["data"]][, c("metabolite", "cluster")])$cluster)
     # order by dendrogram
     colors_to_use <- colors_to_use[order.dendrogram(dendro)]
     dendro <- dendextend::color_branches(dendro, col = colors_to_use)
@@ -93,7 +93,7 @@ plot_cluster <- function(data){
   # plot dynamics as lineplots
   trees <- lapply(trees,revts)
   tips <- list()
-  lineplots <- list()
+  clusterplots <- list()
   for (i in names(trees)){
     tree <- trees[[i]]
     t  <- tree$data
@@ -101,17 +101,25 @@ plot_cluster <- function(data){
     tips[[i]] <- t$label[t$isTip==TRUE]
     temp <- data[["cluster"]][[i]]$data
     temp <- temp%>%pivot_longer(cols=-c(metabolite,KEGG,condition,cluster),names_to = "time",values_to = "mean")
-    temp$time <- gsub("_mean","",temp$time)
-    temp$metabolite <- factor(temp$metabolite,levels=rev(tips[[i]]))
+    temp$metabolite <- factor(temp$metabolite,levels=tips[[i]])
+    temp$cluster <- as.factor(temp$cluster)
+
+    clusterplots[[i]]<-temp%>%
+      ggplot(aes(y=metabolite,x=cluster,fill=cluster))+
+        geom_tile()+
+        scale_fill_viridis_d()+
+        guides(col="cluster")+
+        theme_bw()#+
+        #scale_y_continuous(breaks=temp$tips_rank,labels = temp$metabolite)
     
-    #!!! get correct order of clusters!!!! -> save order of clusters
-    ggplot(data = temp)+
-      geom_line(aes(x=as.factor(time),y=mean,group=metabolite))+
+    ggplot(data = temp,aes(x=time,y=mean,col=cluster))+
+      geom_line(aes(group=metabolite))+
+      scale_color_viridis_d()+
       facet_grid(rows=vars(cluster))+
-      xlab("")+
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+      theme_bw()+
+      ggtitle(paste0("condition ",i," mean dynamics"))
   }
 
-  return(list(dendrograms = dendrograms, trees = trees, tips = tips, clusters = 
-              lineplot = lineplot))
+  return(list(dendrograms = dendrograms, trees = trees,
+              clusterplots = clusterplots))
 }

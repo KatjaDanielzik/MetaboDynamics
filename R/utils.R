@@ -115,7 +115,7 @@
     deepSplit = deepSplit
   )
   data$cluster <- cutclust
-  return(list(data=data,mean_dendro=clust, mean_phylo=ape::as.phylo(clust)))
+  return(list(data=data,mean_dendro=clust, mean_phylo=ape::as.phylo(x = clust)))
 }
 
 
@@ -136,14 +136,7 @@
     temp <- e[which(e$draw==samples[i]),-c(1,2,4)] # - draw,parameter,condition
     rownames(temp) <- temp$metabolite
     hc <- hclust(dist(as.matrix(temp[,-1]), method = distance), method = agglomeration)
-    ph <- as.phylo(x = hc)
-    
-    if(i == 1) {
-      boot_ph <- ph
-    }
-    else {
-      boot_ph <- c(boot_ph, ph)
-    }
+    boot_ph[[i]] <- as.phylo(x = hc)
   }
   return(boot_ph)
 }
