@@ -6,16 +6,25 @@
 \usage{
 cluster_dynamics(
   data,
+  fit,
+  estimates = NULL,
   distance = "euclidean",
   agglomeration = "ward.D2",
   minClusterSize = 1,
-  deepSplit = 2
+  deepSplit = 2,
+  B = 1000,
+  metabolite = "metabolite",
+  condition = "condition",
+  time = "time",
+  kegg = "kegg"
 )
 }
 \arguments{
-\item{data}{result of \code{\link[=estimates_dynamics]{estimates_dynamics()}} (list of dataframes or SummarizedExperiment object)
-or a list of dataframes (one dataframe per condition, list elements must be named by condition) with columns which are named "metabolite",
-"mu_mean" (mean metabolite abundance log-transformed and standarized to a mean of zero and standard deviation of one per experimental condition and metabolite) and "time.ID" (numerical, specifying the experimental time point)}
+\item{data}{data frame or colData of a \link[SummarizedExperiment]{SummarizedExperiment}  used used to fit dynamics model}
+
+\item{fit}{model fit obtained by fit_dynamics_model(). Needed if data is not a SummarizedExperiment object for which the model fit is saved in metadata[\link{"dynamic_fit"}]}
+
+\item{estimates}{output of estimates_dynamics function, needed if data is not a SummarizedExperiment object for which the model estimates are saved in metadata[\link{"estimates_dynamics"}]}
 
 \item{distance}{distance method to be used as input for hierarchical clustering \link[stats]{dist}
 can be "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski"}
@@ -27,17 +36,32 @@ can be "ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median
 
 \item{deepSplit}{rough control over sensitivity of cluster analysis. Possible values are 0:4,
 the higher the value, the more and smaller clusters will be produced by \link[dynamicTreeCut]{cutreeDynamic}}
+
+\item{B}{number of bootstraps}
+
+\item{metabolite}{column of "data" that contains the metabolite names or IDs}
+
+\item{condition}{name of column in dataframe data that specifies the experimental condition}
+
+\item{time}{column in "data" that contains the time point identifiers}
+
+\item{kegg}{column in "data" that contains the KEGG IDs or other identifier of metabolites}
 }
 \value{
-a list with dataframes named by experimental condition or
+a list with elements 'cluster_mean' and 'cluster_bootstrap'. Both
+contain list elements named by condition. For 'cluster_mean' the elements contain
+'data' (mean estiamtes of mu plus the clustering solution),
+mean_dendro' the dendrogram of the mean estimates, and
+mean_phylo' the phylogram of the mean estimates. For 'cluster_bootstrap' it contains B phylograms from draws of the posterior of mean.
 if data is a \link[SummarizedExperiment]{SummarizedExperiment} object clustering
 results are stored in metadata under "cluster"
 }
 \description{
-convenient wrapper function for clustering of metabolite dynamics
+Convenient wrapper function for clustering of metabolite dynamics
 employing the "hybrid" method of the \link[dynamicTreeCut]{dynamicTreeCut}
 package for clustering and \link[stats]{hclust} for computing of distance
-matrix and hierarchical clustering needed as input for dynamicTreeCut
+matrix and hierarchical clustering needed as input for dynamicTreeCut.
+Provides bootstrapping of clustering solution from posterior estimates of the model.
 }
 \examples{
 data("longitudinalMetabolomics")
@@ -49,8 +73,7 @@ data <- fit_dynamics_model(
   max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
 )
 data <- estimates_dynamics(
-  data = data, iter = 2000,
-  chains = 1, condition = "condition"
+  data = data
 )
 data <- cluster_dynamics(data)
 S4Vectors::metadata(data)[["cluster"]][["A"]][["data"]]
