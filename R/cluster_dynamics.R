@@ -48,7 +48,7 @@
 #' @examples
 #' data("longitudinalMetabolomics")
 #' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-#'   longitudinalMetabolomics$metabolite %in% c("ATP", "L-Alanine", "GDP")]
+#'                                    longitudinalMetabolomics$metabolite %in% c("ATP", "L-Alanine", "GDP")]
 #' data <- fit_dynamics_model(
 #'   data = data,
 #'   scaled_measurement = "m_scaled", assay = "scaled_log",
@@ -57,9 +57,9 @@
 #' data <- estimates_dynamics(
 #'   data = data
 #' )
-#' data <- cluster_dynamics(data)
-#' S4Vectors::metadata(data)[["cluster"]][["A"]][["data"]]
-#'
+#' data <- cluster_dynamics(data,kegg="KEGG")
+#' S4Vectors::metadata(data)[["cluster"]][["cluster_mean"]][["A"]]
+#' plot(metadata(data)[["cluster"]][["cluster_mean"]][["A"]][["mean_dendro"]])
 cluster_dynamics <- function(data, fit, 
                              estimates = NULL,
                              distance = "euclidean",
