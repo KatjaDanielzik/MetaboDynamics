@@ -95,6 +95,7 @@ plot_cluster <- function(data){
   tips <- list()
   clusterplots <- list()
   lineplots <- list()
+  cluster_order <- list()
   for (i in names(trees)){
     tree <- trees[[i]]
     t  <- tree$data
@@ -113,8 +114,8 @@ plot_cluster <- function(data){
   
     plots <- list()
     n_metabolites <- c()
-    cluster_order <- unique(rev(temp[order(temp$metabolite),]$cluster))
-    for (j in cluster_order){
+    cluster_order[[i]] <- unique(rev(temp[order(temp$metabolite),]$cluster))
+    for (j in cluster_order[[i]]){
       plots[[j]]<- temp%>%filter(cluster==j)%>%ggplot(aes(x=time,y=mean))+
       geom_line(aes(group=metabolite))+
       scale_color_viridis_d()+
@@ -148,5 +149,5 @@ plot_cluster <- function(data){
   
   return(list(dendrograms = dendrograms, trees = trees,
               clusterplots = clusterplots, lineplots=lineplots,
-              patchwork = patchwork))
+              patchwork = patchwork,cluster_order=cluster_order))
 }
