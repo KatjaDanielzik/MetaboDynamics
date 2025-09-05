@@ -248,12 +248,11 @@ data <- se
 data <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", assay = "scaled_log",
-  max_treedepth = 14, adapt_delta = 0.999, iter = 5000, cores = 4, chains = 4
+  max_treedepth = 14, adapt_delta = 0.999, iter = 3000, cores = 2, chains = 2
 )
 
 data <- estimates_dynamics(
-  data = data, iter = 5000,
-  chains = 4, condition = "condition"
+  data = data
 )
 data <- cluster_dynamics(data)
 

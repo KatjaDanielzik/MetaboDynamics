@@ -7,12 +7,14 @@
 plot_cluster(data)
 }
 \arguments{
-\item{data}{result of \code{\link[=cluster_dynamics]{cluster_dynamics()}} function}
+\item{data}{result of \code{\link[=cluster_dynamics]{cluster_dynamics()}} function: either a list of dataframes or a SummarizedExperiment object}
 }
 \value{
-a list of plots. Per experimental condition one dendrogram,
-colored by cluster and one visualization of PCA-analysis of the clustering solution.
-Additionally one plot visualizing the clustered dynamics over all conditions
+a list of plots. Per experimental condition: 1)a dendrogram of the
+mean clustering solution, 2) a 'bubbletree': a phylogram with numbers on nodes
+indicating in how many bootstraps of the posterior estimates the same clustering
+solution was generated, 3) order of the tips in bubbletree: needed for matching lineplots and ORA,
+3) mean dynamics of clusters
 }
 \description{
 visualize clustering solution of cluster_dynamics()

@@ -6,6 +6,7 @@
 #' @import ggplot2
 #' @import tidyr
 #' @import ggtree
+#' @import patchwork
 #' @importFrom stats prcomp
 #' @importFrom stats as.dendrogram
 #' @importFrom stats order.dendrogram
@@ -86,8 +87,7 @@ plot_cluster <- function(data){
       theme_bw(base_size = 10)+
       scale_x_continuous(labels = abs)+
       geom_nodelab(geom='text', color = "#4c4c4c" ,size = 2.75, hjust=-0.2,
-                   mapping = aes(label=label,subset=isTip==FALSE))+
-      ggtitle(paste0("condition ",i))
+                   mapping = aes(label=label,subset=isTip==FALSE))
   }
   
   # plot dynamics as lineplots
@@ -109,8 +109,7 @@ plot_cluster <- function(data){
         geom_tile()+
         scale_fill_viridis_d()+
         guides(col="cluster")+
-        theme_bw()#+
-        #scale_y_continuous(breaks=temp$tips_rank,labels = temp$metabolite)
+        theme_bw()
   
     plots <- list()
     n_metabolites <- c()
@@ -136,13 +135,18 @@ plot_cluster <- function(data){
     heights <- as.vector(n_metabolites/sum(n_metabolites))*100 ## needs to be sorted!
     heights <- as.numeric(c(rbind(heights,-2.7))) # add spacing for spacer plots
     p <- Reduce("/",plots)
-    lineplots[[i]] <- p + plot_layout(heights=heights)+plot_annotation("dynamics")+
+    lineplots[[i]] <- p + plot_layout(heights=heights)
       
   }
   
-  i <- "A"
-  trees[[i]]|clusterplots[[i]]|lineplots[[i]]
+  patchwork <- list()
+  for (i in names(data[["cluster"]])){
+  patchwork[[i]] <- trees[[i]]|clusterplots[[i]]|lineplots[[i]]
+  patchwork[[i]] <- patchwork[[i]]+
+    plot_annotation(paste0("condition ",i))
+  }
   
   return(list(dendrograms = dendrograms, trees = trees,
-              clusterplots = clusterplots))
+              clusterplots = clusterplots, lineplots=lineplots,
+              patchwork = patchwork))
 }
