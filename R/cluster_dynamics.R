@@ -153,11 +153,11 @@ cluster_dynamics <- function(data, fit,
     clades <- prop.clades(phy = cluster_mean[[i]]$mean_phylo, 
                                x = c(boot_ph[[i]]), part = NULL,
                 rooted = is.rooted(cluster_mean[[i]]$mean_phylo))
-    cluster_mean[[i]]$mean_phylo$nodel.label <- clades
+    cluster_mean[[i]]$mean_phylo$node.label <- clades
     if(all(cluster_mean[[i]]$mean_phylo$tip.label==as.numeric(as.factor(cluster_mean[[i]]$data$metabolite)))){
-      cluster_mean[[i]]$mean_phylo$tip.label <- as.numeric(as.factor(cluster_mean[[i]]$data$metabolite))
+      cluster_mean[[i]]$mean_phylo$tip.label <- cluster_mean[[i]]$data$metabolite
     }
-    na_nodes <- which(is.na(cluster_mean[[i]]$mean_phylo$nodel.label))
+    na_nodes <- which(is.na(cluster_mean[[i]]$mean_phylo$node.label))
     if(length(na_nodes)!=0){
       cluster_mean[[i]]$mean_phylo$node.label[na_nodes] <- 0
     }
