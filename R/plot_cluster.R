@@ -94,6 +94,7 @@ plot_cluster <- function(data){
   trees <- lapply(trees,revts)
   tips <- list()
   clusterplots <- list()
+  lineplots <- list()
   for (i in names(trees)){
     tree <- trees[[i]]
     t  <- tree$data
@@ -104,22 +105,44 @@ plot_cluster <- function(data){
     temp$metabolite <- factor(temp$metabolite,levels=tips[[i]])
     temp$cluster <- as.factor(temp$cluster)
 
-    clusterplots[[i]]<-temp%>%
-      ggplot(aes(y=metabolite,x=cluster,fill=cluster))+
+    clusterplots[[i]]<-ggplot(temp,aes(y=metabolite,x=cluster,fill=cluster))+
         geom_tile()+
         scale_fill_viridis_d()+
         guides(col="cluster")+
         theme_bw()#+
         #scale_y_continuous(breaks=temp$tips_rank,labels = temp$metabolite)
-    
-    ggplot(data = temp,aes(x=time,y=mean,col=cluster))+
+  
+    plots <- list()
+    n_metabolites <- c()
+    cluster_order <- unique(rev(temp[order(temp$metabolite),]$cluster))
+    for (j in cluster_order){
+      plots[[j]]<- temp%>%filter(cluster==j)%>%ggplot(aes(x=time,y=mean))+
       geom_line(aes(group=metabolite))+
       scale_color_viridis_d()+
+      xlab("")+
       facet_grid(rows=vars(cluster))+
       theme_bw()+
-      ggtitle(paste0("condition ",i," mean dynamics"))
+      ylim(c(-2,2))+
+      theme(axis.title.x=element_blank(),
+              axis.text.x=element_blank(),
+              axis.ticks.x=element_blank())
+      summary <- temp%>%filter(cluster==j)%>%select(cluster,metabolite)%>%
+        distinct()%>%
+        group_by(cluster)%>%summarise(n_metabolite=n_distinct(metabolite))
+      n_metabolites <- c(n_metabolites,summary$n_metabolite)
+      plots[[paste0(j,"space")]] <- plot_spacer() # spacer plot to reduce space between plots
+    }
+    # assign heights according to number of metabolites
+    heights <- as.vector(n_metabolites/sum(n_metabolites))*100 ## needs to be sorted!
+    heights <- as.numeric(c(rbind(heights,-2.7))) # add spacing for spacer plots
+    p <- Reduce("/",plots)
+    lineplots[[i]] <- p + plot_layout(heights=heights)+plot_annotation("dynamics")+
+      
   }
-
+  
+  i <- "A"
+  trees[[i]]|clusterplots[[i]]|lineplots[[i]]
+  
   return(list(dendrograms = dendrograms, trees = trees,
               clusterplots = clusterplots))
 }
