@@ -22,11 +22,10 @@
 #' @param time column in "data" that contains the time point identifiers
 #' @param metabolite column of "data" that contains the metabolite names or IDs
 #'
-#' @returns a list with elements 'cluster_mean' and 'cluster_bootstrap'. Both
-#' contain list elements named by condition. For 'cluster_mean' the elements contain
+#' @returns a list with one list per condition. The elements per condition are
 #' 'data' (mean estiamtes of mu plus the clustering solution), 
 #' mean_dendro' the dendrogram of the mean estimates, and 
-#' mean_phylo' the phylogram of the mean estimates. For 'cluster_bootstrap' it contains B phylograms from draws of the posterior of mean.
+#' mean_phylo' the phylogram of the mean estimates. 
 #' if data is a \link[SummarizedExperiment]{SummarizedExperiment} object clustering
 #' results are stored in metadata under "cluster"
 #'
@@ -58,8 +57,8 @@
 #'   data = data
 #' )
 #' data <- cluster_dynamics(data,kegg="KEGG")
-#' S4Vectors::metadata(data)[["cluster"]][["cluster_mean"]][["A"]]
-#' plot(metadata(data)[["cluster"]][["cluster_mean"]][["A"]][["mean_dendro"]])
+#' S4Vectors::metadata(data)[["cluster"]][["cluster"]][["A"]]
+#' plot(metadata(data)[["cluster"]][["cluster"]][["A"]][["mean_dendro"]])
 cluster_dynamics <- function(data, fit, 
                              estimates = NULL,
                              distance = "euclidean",
@@ -103,6 +102,9 @@ cluster_dynamics <- function(data, fit,
   }
   if(n_distinct(summary$n_time)!=1){
     stop("number of time points must be the same for all metabolites and conditions")
+  }
+  if((B<1|B>1000)){
+    stop("B should be between 1 and 1000")
   }
   
   # clustering on mean estimates plus clustering solution
@@ -165,11 +167,11 @@ cluster_dynamics <- function(data, fit,
     }
     na_nodes <- which(is.na(cluster_mean[[i]]$mean_phylo$nodel.label))
     if(length(na_nodes)!=0){
-      cluster_mean[[i]]$mean_phylo$nodel.label[na_nodes] <- 0
+      cluster_mean[[i]]$mean_phylo$node.label[na_nodes] <- 0
     }
   }
     
-  result <- list(cluster_mean=cluster_mean,cluster_bootstrap=boot_ph)
+  result <- list(cluster=cluster_mean)
   # if input is a SummarizedExperiment object, store the fits in the metadata
   if (is(data, "SummarizedExperiment")) {
     metadata(data)[["cluster"]] <- result

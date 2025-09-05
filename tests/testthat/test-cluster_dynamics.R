@@ -63,7 +63,7 @@ test_that("cluster_dynamics:output_checks", {
   # Test that the function returns a list with the expected elements
   results <- cluster_dynamics(data = dummy_data, fit = dummy_fit, estimates = dummy_estimates)
   expect_type(results, "list")
-  expected_elements <- c("cluster_mean", "cluster_bootstrap")
+  expected_elements <- c("cluster")
   expect_true(all(expected_elements %in% names(results)))
   
 })

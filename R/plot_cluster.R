@@ -1,10 +1,11 @@
 #' visualize clustering solution of cluster_dynamics()
 #'
 #'
-#' @param data result of [cluster_dynamics()] function
+#' @param data result of [cluster_dynamics()] function: either a list of dataframes or a SummarizedExperiment object
 #'
 #' @import ggplot2
 #' @import tidyr
+#' @import ggtree
 #' @importFrom stats prcomp
 #' @importFrom stats as.dendrogram
 #' @importFrom stats order.dendrogram
@@ -14,9 +15,11 @@
 #' @importFrom graphics par
 #' @importFrom graphics title
 #'
-#' @returns a list of plots. Per experimental condition one dendrogram,
-#' colored by cluster and one visualization of PCA-analysis of the clustering solution.
-#' Additionally one plot visualizing the clustered dynamics over all conditions
+#' @returns a list of plots. Per experimental condition: 1)a dendrogram of the
+#' mean clustering solution, 2) a 'bubbletree': a phylogram with numbers on nodes
+#' indicating in how many bootstraps of the posterior estimates the same clustering
+#' solution was generated, 3) order of the tips in bubbletree: needed for matching lineplots and ORA,
+#' 3) mean dynamics of clusters
 #'
 #' @export
 #'
@@ -43,109 +46,72 @@ plot_cluster <- function(data){
 
   # Data transformation
   if (is(data, "SummarizedExperiment")) {
-    data_df <- metadata(data)[["cluster"]]
+    data <- metadata(data)[["cluster"]]
   }
-  if (is(data, "list")) {
-    data_df <- data
-  }
-
-  # bind variables
-  metabolite <- NULL
-  cluster <- NULL
-  condition <- NULL
-  PC1 <- NULL
-  PC2 <- NULL
-  mean_log_cpc_scaled <- NULL
-  time.h <- NULL
-
-  plots <- lapply(data_df, function(data) {
-    dynamics <- data[["dynamics"]]
+  
+  # color coded dendrograms of clustering solution of mean estimates
+  dendrograms <- list()
+  # plot dendrogram with clustering solution
+  for (i in names(data[["cluster"]])){
+      temp <- data[["cluster"]][[i]]
     # dendrogram
-    dendro <- as.dendrogram(data[["tree"]])
+    dendro <- as.dendrogram(temp[["mean_dendro"]])
     # get color identifier based on cluster membership of metabolite
-    colors_to_use <- as.numeric(unique(data[["data"]][, c("metabolite", "cluster")])$cluster)
+    colors_to_use <- as.numeric(temp[["data"]][, c("metabolite", "cluster")]$cluster)
     # order by dendrogram
     colors_to_use <- colors_to_use[order.dendrogram(dendro)]
     dendro <- dendextend::color_branches(dendro, col = colors_to_use)
     dendro <- dendextend::color_labels(dendro, col = colors_to_use)
     # get labels
-    labels <- data[["tree"]]
+    labels <- temp[["mean_dendro"]]
     par(cex = 0.5)
     plot(dendro)
     par(cex = 1)
     title(main = paste0(
-      "Cluster Dendrogram dynamicTreeCut, method= ",
+      i," dynamicTreeCut, method= ",
       labels$method
     ), ylab = paste0(labels$dist.method, " distance"))
-    dendrogram <- recordPlot()
-
-    # # PCA plot
-    # data[["data"]]$cluster <- as.factor(data[["data"]]$cluster)
-    # PCA <- prcomp(x = data[["data"]][, dynamics])
-    # # store PCA result
-    # temp <- cbind(PCA[["x"]], data[["data"]])
-    # variance <- as.data.frame(summary(PCA)[["importance"]])
-    # 
-    # PCA_plot <- ggplot(temp[order(temp$PC1, temp$PC2), ], aes(x = PC1, y = PC2, col = cluster, group = cluster, fill = cluster)) +
-    #   stat_ellipse(
-    #     geom = "polygon",
-    #     alpha = 0.2
-    #   ) + # transparency of filling
-    #   geom_point(aes(shape = cluster)) +
-    #   # add enough shapes
-    #   scale_shape_manual(values = seq_len(nlevels(temp$cluster))) +
-    #   theme_bw() +
-    #   # add axis labels with proportion of variance
-    #   xlab(paste0("PC1 (", round(variance$PC1[2], digits = 3) * 100, "%)")) +
-    #   ylab(paste0("PC2 (", round(variance$PC2[2], digits = 3) * 100, "%)")) +
-    #   # add viridis scale
-    #   scale_color_viridis_d() +
-    #   scale_fill_viridis_d() +
-    #   ggtitle("Principal component analysis of clustering solution", "color = cluster, points = metabolite")
-
-    return(list(dendrogram = dendrogram, PCA_plot = PCA_plot))
-  })
-
+    dendrograms[[i]] <- recordPlot()
+  }
+  
+  # bubbletrees of bootstrapping
+  trees <- list()
+  for (i in names(data[["cluster"]])){
+    temp <- data[["cluster"]][[i]]
+    trees[[i]]<- ggtree(temp$mean_phylo,linetype='solid')+
+      geom_point2(mapping = aes(subset=isTip==FALSE),size = 0.5, col = "black")+
+      geom_tippoint(size = 2, fill = "white", shape = 21)+
+      geom_tiplab(color='black', as_ylab = TRUE, align = TRUE)+
+      layout_rectangular()+
+      theme_bw(base_size = 10)+
+      scale_x_continuous(labels = abs)+
+      geom_nodelab(geom='text', color = "#4c4c4c" ,size = 2.75, hjust=-0.2,
+                   mapping = aes(label=label,subset=isTip==FALSE))+
+      ggtitle(paste0("condition ",i))
+  }
+  
   # plot dynamics as lineplots
-  !!!!! adapt order from bubbletree
-  # tree <- revts(tree)
-  # 
-  # t <- tree$data
-  # t <- t[order(t$y, decreasing = FALSE), ]
-  # tips <- t$label[t$isTip==TRUE]
-  
-  # q <- eg
-  # q$compound <- factor(q$compound, levels = rev(tips))
-  # 
-  # g <- ggplot(data = q)+
-  #   facet_grid(compound~., switch = "y")+
-  #   geom_hline(yintercept = 0, linetype = "dashed", col = "gray")+
-  #   geom_point(aes(x = dose, y = mean))+
-  #   geom_errorbar(aes(x = dose, y = mean, ymin = X2.5., ymax = X97.5.),width=0)+
-  #   scale_y_continuous(position = "right", breaks = pretty_breaks(n = 5))+
-  #   theme_bw(base_size = 10)+
-  #   theme(strip.text.y=element_text(margin = margin(0.01,0.01,0.01,0.01,"cm")))
-  
-  temp <- do.call(rbind, lapply(data_df, function(l) l[["data"]]))
-  dynamics <- data_df[[1]][["dynamics"]]
-  temp <- temp %>% pivot_longer(cols = dynamics, names_to = "time.h", values_to = "mean_log_cpc_scaled")
+  trees <- lapply(trees,revts)
+  tips <- list()
+  lineplots <- list()
+  for (i in names(trees)){
+    tree <- trees[[i]]
+    t  <- tree$data
+    t <- t[order(t$y, decreasing = FALSE), ]
+    tips[[i]] <- t$label[t$isTip==TRUE]
+    temp <- data[["cluster"]][[i]]$data
+    temp <- temp%>%pivot_longer(cols=-c(metabolite,KEGG,condition,cluster),names_to = "time",values_to = "mean")
+    temp$time <- gsub("_mean","",temp$time)
+    temp$metabolite <- factor(temp$metabolite,levels=rev(tips[[i]]))
+    
+    #!!! get correct order of clusters!!!! -> save order of clusters
+    ggplot(data = temp)+
+      geom_line(aes(x=as.factor(time),y=mean,group=metabolite))+
+      facet_grid(rows=vars(cluster))+
+      xlab("")+
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  }
 
-  lineplot <- ggplot(temp, aes(
-    x = as.factor(as.numeric(time.h)),
-    y = mean_log_cpc_scaled, group = metabolite,
-    col = metabolite
-  )) +
-    geom_line() +
-    theme_bw() +
-    facet_grid(cols = vars(cluster), rows = vars(condition)) +
-    xlab("time point") +
-    ylab("estimated deviation from mean abundance") +
-    ylim(c(-2.5, 2.5)) +
-    guides(col = "none") +
-    scale_colour_viridis_d() +
-    ggtitle("clustered dynamics", "line = metabolite, color = metabolite,
-              panels = cluster, row label = condition")
-  plots[["lineplot"]] <- lineplot
-
-  return(plots)
+  return(list(dendrograms = dendrograms, trees = trees, tips = tips, clusters = 
+              lineplot = lineplot))
 }
