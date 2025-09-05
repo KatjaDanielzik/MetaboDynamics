@@ -86,52 +86,55 @@
   return(sim)
 }
 
+#' hierarchical clustering
+#'
+#' @param data estimates[["mu"]]
+#' @param distance distance method
+#' @param agglomeration agglomeration method of hierarchical clustering
+#' @param minClusterSize minimum number of metabolites per of cluster \link[dynamicTreeCut]{cutreeDynamic}
+#' @param deepSplit rough control over sensitivity of cluster analysis. Possible values are 0:4,
+#' the higher the value, the more and smaller clusters will be produced by \link[dynamicTreeCut]{cutreeDynamic}
+
+#' @returns list of input data including clustering solution, dendrogram, phylogram
+#' @keywords internal
+.hierarchical_clustering <- function(data,distance,agglomeration,minClusterSize,deepSplit){
+  dist <- as.matrix(dist(data[,-c(1:3)])) # - metabolite,KEGG,condition -> only times left
+  # assign metabolite names
+  colnames(dist) <- data$metabolite
+  rownames(dist) <- data$metabolite
+  # get hierarchical clustering result
+  clust <- hclust(as.dist(dist), method = agglomeration)
+  clust$dist.method <- distance  
+  # cut clustering results with dynamic tree cut
+  cutclust <- cutreeDynamic(
+    dendro = clust,
+    distM = as.matrix(dist),
+    method = "hybrid",
+    minClusterSize = minClusterSize,
+    deepSplit = deepSplit
+  )
+  data$cluster <- cutclust
+  return(list(data=data,mean_dendro=clust, mean_phylo=ape::as.phylo(clust)))
+}
+
 
 #' get bootstrapps for clustering of dynamics vectors (cluster_dynamics function)
 #'
 #' @keywords internal
-.get_boot_tp <- function(x, distance, method, B) {
-  
-  # !!! all for mean form summary(fit,"parameter")$summary
-  
-  # eg <- x$posteriors$delta_t  ### adapt to our data set
-  # 
-  # if(missing(groups)==FALSE) {
-  #   if(any(!groups %in% unique(eg$group))) {
-  #     stop("selected treatment groups not found in data")
-  #   }
-  #   eg <- eg[eg$group %in% groups, ]
-  # }
-  # 
-  # # hclust -> main tree
-  eg <- x
-  gs <- as.numeric(as.factor(eg$metabolite))
-  gns <- eg$metabolite
-  v <- eg%>%group_by(metabolite,radiation.dose,cell.line)%>%
-    mutate(mean_1h=mean(`1h`),mean_3h=mean(`3h`),mean_6h=mean(`6h`),mean_24h=mean(`24h`))%>%
-    select(-c(`1h`:`24h`,draw:chain))%>%distinct()
-  v <- as.data.frame(v)
-  colnames(v) <- gsub("mean_","",colnames(v))
-  rownames(v) <- v$metabolite
-  # names(v) <- eg$group_id
-  hc <- hclust(dist(as.matrix(v[,-c(1:4)]), method = distance), method = method)
-  main_ph <- as.phylo(x = hc)
-  
-  
-  # extract posterior
-  # e <- extract(x$f, par = "mu_group")$mu_group[, gs]  # extracts 
+.get_boot_ph <- function(x, distance, agglomeration, B) {
   
   e <- x
+  e <- as.data.frame(e)
   # get B samples from posterior
-  samples <- sample(x= seq_len(draws),size=min(nrow(e),B),replace = TRUE)
+  samples <- sample(x= seq_len(max(e$draw)),size=min(nrow(max(e$draw)),B),replace = TRUE)
   
   boot_ph <- c()
   for(i in seq_len(length(samples))) {
     
     # hclust
-    temp <- e[which(e$draw==samples[i]),c(5,8:11)] # metabolite + time vector
-    rownames(temp) <- temp$metabolite
-    hc <- hclust(dist(as.matrix(temp[,-1]), method = distance), method = method)
+    temp <- e[which(e$draw==samples[i]),-c(1,2,4)] # - draw,parameter,condition
+    rownames(temp) <- temp[[metabolite]]
+    hc <- hclust(dist(as.matrix(temp[,-1]), method = distance), method = agglomeration)
     ph <- as.phylo(x = hc)
     
     if(i == 1) {
@@ -141,6 +144,7 @@
       boot_ph <- c(boot_ph, ph)
     }
   }
+  return(boot_ph)
 }
 
 
