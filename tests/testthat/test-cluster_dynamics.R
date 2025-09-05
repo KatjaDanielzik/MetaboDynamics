@@ -1,78 +1,69 @@
-test_that("cluster_dynamics: input checks", {
-  # Function returns an error when data is not a list of dataframes or SummarizedExperiment object
-  test_data <- data.frame(a = c(1, 2, 3))
-  expect_error(cluster_dynamics(test_data), "'data' must be a list of dataframes or a SummarizedExperiment object")
+# Define a dummy data frame
+dummy_data <- data.frame(
+  time = rep(1:2, each = 2 * 3),
+  metabolite = rep(letters[1:2], times = 2 * 3),
+  condition = rep("A", length.out = 12),
+  scaled_measurement = rnorm(12),
+  kegg = rep(rnorm(2), times = 2 * 3)
+)
 
-  # Function returns an error when data is a list and contains non-dataframe elements
-  test_data <- list(
-    data.frame(
-      metabolite = c("ATP", "L-Alanine", "GDP"),
-      mu_mean = c(1, 2, 3),
-      time.ID = c(1, 2, 3)
-    ),
-    matrix(1:9, nrow = 3, ncol = 3)
-  )
-  expect_error(cluster_dynamics(test_data), "'data' must be a list of dataframes if it is not a SummarizedExperiment object")
+# Define a dummy fit object
+dummy_fit <- fit_dynamics_model(model = "scaled_log",data=dummy_data,
+                                scaled_measurement="scaled_measurement",
+                                cores=1,
+                                chains=1)
 
-  # Function returns an error when dataframes in data do not contain required columns
-  test_data <- list(
-    data.frame(
-      metabolite = c("ATP", "L-Alanine", "GDP"),
-      time.ID = c(1, 2, 3)
-    ),
-    data.frame(
-      metabolite = c("ATP", "L-Alanine", "GDP"),
-      mu_mean = c(4, 5, 6),
-      time.ID = c(1, 2, 3)
-    )
-  )
+# Define a dummy estimates list
+dummy_estimates <- estimates_dynamics(data=dummy_data,fit=dummy_fit,kegg="kegg")
+
+# Define the tests
+test_that("cluster_dynamics:input_checks", {
+  # Test that the function throws an error if data is not a SummarizedExperiment object or if estimates are not provided
   expect_error(
-    cluster_dynamics(test_data),
-    "dataframes in 'data' must contain columns named 'metabolite', 'mu_mean' and 'time.ID'"
+    cluster_dynamics(data = "not a SummarizedExperiment object", fit = dummy_fit),
+    "'data' must be a SummarizedExperiment object or provide estimates"
   )
-
-  # Function returns an error when there are missing mu_mean values for
-  # any metabolite-time.ID combination
-  test_data <- list(
-    data.frame(
-      metabolite = c("ATP", "L-Alanine", "GDP"),
-      mu_mean = c(1, 2, 3),
-      time.ID = c(1, 2, 3)
-    ),
-    data.frame(
-      metabolite = c("ATP", "L-Alanine", "GDP"),
-      mu_mean = c(4, 5, 6),
-      time.ID = c(1, 2, 3)
-    )
-  )
+  
+  # Test that the function throws an error if estimates is not a list of data frames obtained by estimates_dynamics()
   expect_error(
-    cluster_dynamics(test_data),
-    "dataframes in 'data' must have a mu_mean value for every time.ID per metabolite'"
+    cluster_dynamics(data = dummy_data, fit = dummy_fit, estimates = "not a list of data frames"),
+    "'data' must be a SummarizedExperiment object or provide estimates"
+  )
+  
+  # Test that the function throws an error if mu is not a data frame
+  expect_error(
+    cluster_dynamics(data = dummy_data, fit = dummy_fit, estimates = list(mu = "not a data frame")),
+    "'mu' must be a data frame"
+  )
+  
+  # Test that the function throws an error if fit is not a modelfit obtained by fit_dynamics_model()
+  expect_error(
+    cluster_dynamics(data = dummy_data, fit = "not a modelfit", estimates = dummy_estimates),
+    "'fit' must be a modelfit obtained by fit_dynamics_model()"
+  )
+  
+  # Test that the function throws an error if every metabolite and condition does not have at least one time point for clustering
+  test <- dummy_estimates
+  test$mu$time[2] <- NA
+  expect_error(
+    cluster_dynamics(data = dummy_data, fit = dummy_fit, estimates = test),
+    "every metabolite and condition must have at least one time point for clustering"
+  )
+  
+  # Test that the function throws an error if the number of time points is not the same for all metabolites and conditions
+  test <- dummy_estimates
+  test$mu$time[2] <- 1
+  expect_error(
+    cluster_dynamics(data = dummy_data, fit = dummy_fit, estimates = test),
+    "number of time points must be the same for all metabolites and conditions"
   )
 })
 
-test_that("cluster_dynamics: output checks", {
-  # Function returns a list with the correct number of elements when data is
-  # a list of data frames
-  test_data <- list(
-    data.frame(
-      metabolite = c("ATP", "L-Alanine", "GDP"),
-      mu_mean = rep(c(1, 2, 3), 3),
-      time.ID = rep(c(1, 2, 3), each = 3)
-    ),
-    data.frame(
-      metabolite = c("ATP", "L-Alanine", "GDP"),
-      mu_mean = rep(c(1, 2, 3), 3),
-      time.ID = rep(c(1, 2, 3), each = 3)
-    )
-  )
-  result <- cluster_dynamics(test_data)
-  expect_equal(length(result), 2)
-
-  # Function returns correct named list elements and elements have correct
-  # classes    expect_true(all(c("data", "distance_matrix", "tree") %in% names(result)))
-  result <- result[[1]]
-  expect_true(is.data.frame(result$data))
-  expect_true(is.matrix(result$distance_matrix))
-  expect_true(inherits(result$tree, "hclust"))
+test_that("cluster_dynamics:output_checks", {
+  # Test that the function returns a list with the expected elements
+  results <- cluster_dynamics(data = dummy_data, fit = dummy_fit, estimates = dummy_estimates)
+  expect_type(results, "list")
+  expected_elements <- c("cluster_mean", "cluster_bootstrap")
+  expect_true(all(expected_elements %in% names(results)))
+  
 })

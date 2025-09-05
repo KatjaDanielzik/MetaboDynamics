@@ -17,8 +17,16 @@
 #' @param deepSplit rough control over sensitivity of cluster analysis. Possible values are 0:4,
 #' the higher the value, the more and smaller clusters will be produced by \link[dynamicTreeCut]{cutreeDynamic}
 #' @param B number of bootstraps
+#' @param kegg column in "data" that contains the KEGG IDs or other identifier of metabolites
+#' @param condition name of column in dataframe data that specifies the experimental condition
+#' @param time column in "data" that contains the time point identifiers
+#' @param metabolite column of "data" that contains the metabolite names or IDs
 #'
-#' @returns a list with dataframes named by experimental condition or
+#' @returns a list with elements 'cluster_mean' and 'cluster_bootstrap'. Both
+#' contain list elements named by condition. For 'cluster_mean' the elements contain
+#' 'data' (mean estiamtes of mu plus the clustering solution), 
+#' mean_dendro' the dendrogram of the mean estimates, and 
+#' mean_phylo' the phylogram of the mean estimates. For 'cluster_bootstrap' it contains B phylograms from draws of the posterior of mean.
 #' if data is a \link[SummarizedExperiment]{SummarizedExperiment} object clustering
 #' results are stored in metadata under "cluster"
 #'
@@ -52,10 +60,16 @@
 #' data <- cluster_dynamics(data)
 #' S4Vectors::metadata(data)[["cluster"]][["A"]][["data"]]
 #'
-cluster_dynamics <- function(data, fit, distance = "euclidean",
+cluster_dynamics <- function(data, fit, 
+                             estimates = NULL,
+                             distance = "euclidean",
                              agglomeration = "ward.D2",
                              minClusterSize = 1, deepSplit = 2,
-                             B = 1000) {
+                             B = 1000,
+                             metabolite = "metabolite",
+                             condition = "condition",
+                             time = "time",
+                             kegg = "kegg") {
  
   # Input checks
   if (!is.list(estimates)&!inherits(data, "SummarizedExperiment")){
@@ -66,125 +80,96 @@ cluster_dynamics <- function(data, fit, distance = "euclidean",
     estimates <- metadata(data)[["estimates_dynamics"]]
     fit <- metadata(data)[["dynamic_fit"]]
   }
-  if (!is.list(estimates)) {
-    stop("'estimates' must be a list of dataframes obtained by estimates_dynamics()")
+  if (!is.list(estimates)){
+    stop("'estimates' must be a list of data frames obtained by estimates_dynamics()")
+  }
+  if(!is(estimates[["mu"]],"data.frame")){
+    stop("'mu' must be a data frame")
   }
   if(!inherits(fit,"stanfit")){
     stop("'fit' must be a modelfit obtained by fit_dynamics_model()")
   }
-   
-  # Input checks !!!!
-  # 
-  # check for stanfit
-  # check for estimates
-  # check for data
-  # check for >1 time point per metabolite and condition
-  # check for column names metabolite, time, condition
   
-  # # check for correct number of mu_mean for every time.ID and metabolite combination
-  #   time_ids <- unique(data_df$time)
-  #   metabolites <- unique(data$metabolite)
-  #   for (metabolite in metabolites) {
-  #     if (nrow(unique(data[data$metabolite == metabolite, ])) != length(time_ids)) {
-  #       stop("dataframes in 'data' must have a mu_mean value for every time.ID per metabolite'")
-  #     }
-  #   }
-  # }
-
-  # attach variables to function
-  metabolite <- NULL
-  time.ID <- NULL
-  mu_mean <- NULL
-
-  # two steps
-  # 1) on mean estimates get clustering solution
-  # 2) bootstrapping on clustering solution for bubbletree
-
-
-# 1) on mean estimates get clustering solution
+  # check for correct number of mean (>1) for every metabolite, condition
+  summary <- estimates[["mu"]]
+  summary <- summary%>%group_by(metabolite,condition)%>%
+    summarise(n_time=n_distinct(time))
+  if(!all(summary$n_time>=1)|any(is.na(estimates[["mu"]][[time]]))){
+    stop("every metabolite and condition must have at least one time point for clustering")
+  }
+  if(!all(summary$n_time>=1)){
+    stop("every metabolite and condition must have at least one time point for
+         clustering")
+  }
+  if(n_distinct(summary$n_time)!=1){
+    stop("number of time points must be the same for all metabolites and conditions")
+  }
+  
+  # clustering on mean estimates plus clustering solution
   # get estimates of mu (scaled metabolite abundance per condition and metabolite)
-    mu <- estimates[["mu"]]
-    # only select mean estimates
-    mu <- mu%>%select(!!metabolite,!!kegg,!!time,!!condition,mean)%>%
-      mutate(time=paste0(time,"_mean"))%>% # add label to mean 
-      pivot_wider(names_from = !!time, values_from = mean)
-    
-    # split per condition
-    mu_split <- split.data.frame(mu,f=as.factor(mu[[condition]]))
-    # get mean clustering solution
-    cluster_mean <- lapply(X = mu_split,FUN = .hierarchical_clustering,
-                           distance = distance,
-                           agglomeration = agglomeration,
-                           minClusterSize = minClusterSize,
-                           deepSplit = deepSplit)
-
-    
-    # bootstrapping with phylograms (function adapted from snaketron/cellmig)
-    # get posterior and make different conditions accesible
-    posterior <- as.data.frame(rstan::extract(fit,pars="mu"))
-    names <- names(posterior)
-    x <- as.data.frame(do.call(rbind,strsplit(x=names,split="[.]")))
-    colnames(x) <- c("parameter",metabolite,time,condition)
-    mu <- estimates[["mu"]]
-    data_names <- mu%>%select(!!metabolite,!!time,!!condition)%>%distinct()
-    new_names <- paste0("mu.",data_names[[metabolite]],".",data_names[[time]],".",
-                        data_names[[condition]])
-    names(posterior) <- new_names
-    
-    # turn into useable format for bootstrapping
-    draws <- nrow(posterior)
-    posterior$draw <- seq_len(draws)
-    posterior <- posterior%>%pivot_longer(cols=-draw,names_to = "ID", values_to = "posterior")
-    x <- do.call(rbind,strsplit(posterior$ID,"[.]"))
-    posterior$parameter <- x[,1]
-    posterior[[metabolite]] <- x[,2]
-    posterior[[time]] <- x[,3]
-    posterior[[condition]] <- x[,4]
-    posterior <- posterior%>%select(-ID)%>%
-      pivot_wider(names_from = !!time,values_from = posterior)
-    posterior_split <- split.data.frame(posterior,posterior[[condition]])
-    
-    # get bootstrapping of clustering solution
-    boot_ph <- lapply(X = posterior_split,
-                      FUN = .get_boot_ph,
-                      distance = distance, 
-                      agglomeration = agglomeration, 
-                      B = B)
-    # get clades 
-    clades <- list()
-    for (i in unique(mu[[condition]])){
-      clades[[i]] <- prop.clades(phy = cluster_mean[[i]]$mean_phylo, 
-                                 x = c(boot_ph[[i]]), part = NULL,
-                  rooted = is.rooted(cluster_mean[[i]]$mean_phylo))
-      cluster_mean[[i]]$mean_phylo$nodel.label <- clades[[i]]
-      if(all(cluster_mean[[i]]$mean_phylo$tip.label==as.numeric(as.factor(cluster_mean[[i]]$data[[metabolite]])))){
-        cluster_mean[[i]]$mean_phylo$tip.label <- as.numeric(as.factor(cluster_mean[[i]]$data[[metabolite]]))
-      }
-      na_nodes <- which(is.na(cluster_mean[[i]]$mean_phylo$nodel.label))
-      if(length(na_nodes)!=0){
-        cluster_mean[[i]]$mean_phylo$nodel.label[na_nodes] <- 0
-      }
-    }
-
-    
-    # if(all(main_ph$tip.label == !!metabolite!!!)) {
-    #   mean_ph$tip.label <- gns
-    # }
-    
-    # b = 0 for these nodes
-    na_nodes <- which(is.na(mean_ph$node.label))
-    if(length(na_nodes)!=0) {
-      mean_ph$node.label[na_nodes] <- 0
-    }
-    
-    # output
-    # 1) dataframe with mean clustering solution -> ORA/compare functions
-    # 2) plot_cluster: bubbletree data, dataframe with mean clustering solution -> lineplots
-    # 3) vector/dataframe of tip order (needed for ORA to align?)
-
+  mu <- estimates[["mu"]]
+  # only select mean estimates
+  mu <- mu%>%select(!!metabolite,!!kegg,!!time,!!condition,mean)%>%
+    mutate(time=paste0(time,"_mean"))%>% # add label to mean 
+    pivot_wider(names_from = !!time, values_from = mean)
   
+  # split per condition
+  mu_split <- split.data.frame(mu,f=as.factor(mu[[condition]]))
+  # get mean clustering solution
+  cluster_mean <- lapply(X = mu_split,FUN = .hierarchical_clustering,
+                         distance = distance,
+                         agglomeration = agglomeration,
+                         minClusterSize = minClusterSize,
+                         deepSplit = deepSplit)
+
     
-    result <- list(cluster_mean=cluster_mean,cluster_bootstrap=cluster_bootstrap)
+  # bootstrapping with phylograms (function adapted from snaketron/cellmig)
+  # get posterior and make different conditions accesible
+  posterior <- as.data.frame(rstan::extract(fit,pars="mu"))
+  names <- names(posterior)
+  x <- as.data.frame(do.call(rbind,strsplit(x=names,split="[.]")))
+  colnames(x) <- c("parameter",metabolite,time,condition)
+  mu <- estimates[["mu"]]
+  data_names <- mu%>%select(!!metabolite,!!time,!!condition)%>%distinct()
+  new_names <- paste0("mu.",data_names[[metabolite]],".",data_names[[time]],".",
+                      data_names[[condition]])
+  names(posterior) <- new_names
+    
+  # turn into useable format for bootstrapping
+  draws <- nrow(posterior)
+  posterior$draw <- seq_len(draws)
+  posterior <- posterior%>%pivot_longer(cols=-draw,names_to = "ID", values_to = "posterior")
+  x <- do.call(rbind,strsplit(posterior$ID,"[.]"))
+  posterior$parameter <- x[,1]
+  posterior[[metabolite]] <- x[,2]
+  posterior[[time]] <- x[,3]
+  posterior[[condition]] <- x[,4]
+  posterior <- posterior%>%select(-ID)%>%
+    pivot_wider(names_from = !!time,values_from = posterior)
+  posterior_split <- split.data.frame(posterior,posterior[[condition]])
+  
+  # get bootstrapping of clustering solution
+  boot_ph <- lapply(X = posterior_split,
+                    FUN = .get_boot_ph,
+                    distance = distance, 
+                    agglomeration = agglomeration, 
+                    B = B)
+  # get clades 
+  for (i in unique(mu[[condition]])){
+    clades <- prop.clades(phy = cluster_mean[[i]]$mean_phylo, 
+                               x = c(boot_ph[[i]]), part = NULL,
+                rooted = is.rooted(cluster_mean[[i]]$mean_phylo))
+    cluster_mean[[i]]$mean_phylo$nodel.label <- clades
+    if(all(cluster_mean[[i]]$mean_phylo$tip.label==as.numeric(as.factor(cluster_mean[[i]]$data[[metabolite]])))){
+      cluster_mean[[i]]$mean_phylo$tip.label <- as.numeric(as.factor(cluster_mean[[i]]$data[[metabolite]]))
+    }
+    na_nodes <- which(is.na(cluster_mean[[i]]$mean_phylo$nodel.label))
+    if(length(na_nodes)!=0){
+      cluster_mean[[i]]$mean_phylo$nodel.label[na_nodes] <- 0
+    }
+  }
+    
+  result <- list(cluster_mean=cluster_mean,cluster_bootstrap=boot_ph)
   # if input is a SummarizedExperiment object, store the fits in the metadata
   if (is(data, "SummarizedExperiment")) {
     metadata(data)[["cluster"]] <- result
