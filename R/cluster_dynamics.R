@@ -52,7 +52,7 @@
 #' data <- estimates_dynamics(
 #'   data = data
 #' )
-#' data <- cluster_dynamics(data,kegg="KEGG")
+#' data <- cluster_dynamics(data)
 #' S4Vectors::metadata(data)[["cluster"]][["cluster"]][["A"]]
 #' plot(metadata(data)[["cluster"]][["cluster"]][["A"]][["mean_dendro"]])
 cluster_dynamics <- function(data, fit, 
@@ -103,7 +103,7 @@ cluster_dynamics <- function(data, fit,
   # get estimates of mu (scaled metabolite abundance per condition and metabolite)
   mu <- estimates[["mu"]]
   # only select mean estimates
-  mu <- mu%>%select(metabolite,kegg,time,condition,mean)%>%
+  mu <- mu%>%select(metabolite,KEGG,time,condition,mean)%>%
     mutate(time=paste0(time,"_mean"))%>% # add label to mean 
     pivot_wider(names_from = time, values_from = mean)
   

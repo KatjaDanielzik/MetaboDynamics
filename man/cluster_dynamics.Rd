@@ -62,7 +62,7 @@ data <- fit_dynamics_model(
 data <- estimates_dynamics(
   data = data
 )
-data <- cluster_dynamics(data,kegg="KEGG")
+data <- cluster_dynamics(data)
 S4Vectors::metadata(data)[["cluster"]][["cluster"]][["A"]]
 plot(metadata(data)[["cluster"]][["cluster"]][["A"]][["mean_dendro"]])
 }
