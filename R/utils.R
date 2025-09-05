@@ -94,7 +94,8 @@
 #' @param minClusterSize minimum number of metabolites per of cluster \link[dynamicTreeCut]{cutreeDynamic}
 #' @param deepSplit rough control over sensitivity of cluster analysis. Possible values are 0:4,
 #' the higher the value, the more and smaller clusters will be produced by \link[dynamicTreeCut]{cutreeDynamic}
-
+#' @importFrom ape as.phylo
+#' @importFrom dynamicTreeCut cutreeDynamic
 #' @returns list of input data including clustering solution, dendrogram, phylogram
 #' @keywords internal
 .hierarchical_clustering <- function(data,distance,agglomeration,minClusterSize,deepSplit){
@@ -133,7 +134,7 @@
     
     # hclust
     temp <- e[which(e$draw==samples[i]),-c(1,2,4)] # - draw,parameter,condition
-    rownames(temp) <- temp[[metabolite]]
+    rownames(temp) <- temp$metabolite
     hc <- hclust(dist(as.matrix(temp[,-1]), method = distance), method = agglomeration)
     ph <- as.phylo(x = hc)
     

@@ -12,11 +12,7 @@ cluster_dynamics(
   agglomeration = "ward.D2",
   minClusterSize = 1,
   deepSplit = 2,
-  B = 1000,
-  metabolite = "metabolite",
-  condition = "condition",
-  time = "time",
-  kegg = "kegg"
+  B = 1000
 )
 }
 \arguments{
@@ -38,21 +34,12 @@ can be "ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median
 the higher the value, the more and smaller clusters will be produced by \link[dynamicTreeCut]{cutreeDynamic}}
 
 \item{B}{number of bootstraps}
-
-\item{metabolite}{column of "data" that contains the metabolite names or IDs}
-
-\item{condition}{name of column in dataframe data that specifies the experimental condition}
-
-\item{time}{column in "data" that contains the time point identifiers}
-
-\item{kegg}{column in "data" that contains the KEGG IDs or other identifier of metabolites}
 }
 \value{
-a list with elements 'cluster_mean' and 'cluster_bootstrap'. Both
-contain list elements named by condition. For 'cluster_mean' the elements contain
+a list with one list per condition. The elements per condition are
 'data' (mean estiamtes of mu plus the clustering solution),
 mean_dendro' the dendrogram of the mean estimates, and
-mean_phylo' the phylogram of the mean estimates. For 'cluster_bootstrap' it contains B phylograms from draws of the posterior of mean.
+mean_phylo' the phylogram of the mean estimates.
 if data is a \link[SummarizedExperiment]{SummarizedExperiment} object clustering
 results are stored in metadata under "cluster"
 }
@@ -66,7 +53,7 @@ Provides bootstrapping of clustering solution from posterior estimates of the mo
 \examples{
 data("longitudinalMetabolomics")
 data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-  longitudinalMetabolomics$metabolite \%in\% c("ATP", "L-Alanine", "GDP")]
+                                   longitudinalMetabolomics$metabolite \%in\% c("ATP", "L-Alanine", "GDP")]
 data <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", assay = "scaled_log",
@@ -75,9 +62,9 @@ data <- fit_dynamics_model(
 data <- estimates_dynamics(
   data = data
 )
-data <- cluster_dynamics(data)
-S4Vectors::metadata(data)[["cluster"]][["A"]][["data"]]
-
+data <- cluster_dynamics(data,kegg="KEGG")
+S4Vectors::metadata(data)[["cluster"]][["cluster"]][["A"]]
+plot(metadata(data)[["cluster"]][["cluster"]][["A"]][["mean_dendro"]])
 }
 \seealso{
 \code{\link[=fit_dynamics_model]{fit_dynamics_model()}}, \code{\link[=estimates_dynamics]{estimates_dynamics()}}, \code{\link[=plot_cluster]{plot_cluster()}}

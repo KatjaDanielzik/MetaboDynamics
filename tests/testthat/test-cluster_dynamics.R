@@ -10,7 +10,7 @@ dummy_data <- data.frame(
 # Define a dummy fit object
 dummy_fit <- fit_dynamics_model(model = "scaled_log",data=dummy_data,
                                 scaled_measurement="scaled_measurement",
-                                cores=1,
+                                cores=1, iter = 1000,
                                 chains=1)
 
 # Define a dummy estimates list
