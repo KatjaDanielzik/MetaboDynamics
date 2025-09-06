@@ -11,11 +11,11 @@ valid_background <- data.frame(
   module_name = c("Module1", "Module2"),
   middle_hierarchy = c("MH1", "MH2")
 )
-valid_clusters <- data.frame(
+valid_clusters <- list(A=list(data=data.frame(
   KEGG = c("C00001", "C00002"),
   cluster = c(1, 2),
-  condition = c("A", "B")
-)
+  condition = c("A", "B"))
+))
 
 invalid_background <- data.frame(
   KEGG = c("C00001", "C00002"),
@@ -48,20 +48,11 @@ test_that("ORA_hypergeometric: input checks", {
     )
   )
 
-  # Invalid 'clusters' input (non-dataframe input)
-  invalid_clusters <- list(KEGG = c("k1", "k2"), cluster = c("A", "B"))
-  expect_error(
-    ORA_hypergeometric(
-      background = valid_background,
-      annotations = valid_annotations,
-      data <- invalid_clusters,
-      tested_column = valid_tested_column
-    ),
-    "'data' must be a dataframe or a SummarizedExperiment object"
-  )
-
   #  Missing required columns in 'data'
-  missing_columns_clusters <- data.frame(KEGG = c("k1", "k2"))
+  missing_columns_clusters <- list(A=list(data=data.frame(
+    cluster = c(1, 2),
+    condition = c("A", "B"))
+  ))
   expect_error(
     ORA_hypergeometric(
       background = valid_background,

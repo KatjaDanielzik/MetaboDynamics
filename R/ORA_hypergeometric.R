@@ -104,7 +104,7 @@ ORA_hypergeometric <- function(background,
     }))
   }
   # convert potential tibbles into data frame
-  if (is(data_df, "tbl")) {
+  if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
   if (is(data, "data.frame")) {
