@@ -4,17 +4,27 @@
 \alias{plot_ORA}
 \title{Plot results of over-representation analysis with ORA_hypergeometric()}
 \usage{
-plot_ORA(data, tested_column = "middle_hierarchy")
+plot_ORA(
+  data,
+  tested_column = "middle_hierarchy",
+  patchwork = FALSE,
+  plot_cluster = NULL
+)
 }
 \arguments{
-\item{data}{result dataframe from ORA_hypergeometric() or \link[SummarizedExperiment]{SummarizedExperiment}
+\item{data}{result dataframe from \code{\link[=ORA_hypergeometric]{ORA_hypergeometric()}} or \link[SummarizedExperiment]{SummarizedExperiment}
 object where the ORA_hypergeometric() results are stored in metadata(data)
 under "ORA_tested_column"}
 
 \item{tested_column}{KEGG module hierarchy level on which ORA was executed}
+
+\item{patchwork}{should result be patchworked to results of \code{\link[=plot_cluster]{plot_cluster()}}?}
+
+\item{plot_cluster}{if patchwork = TRUE this needs to be the result of \code{\link[=plot_cluster]{plot_cluster()}}}
 }
 \value{
-a plot of the over-representation analysis
+a plot of the over-representation analysis and lsit of plots suitable to
+patchwork with cluster visualization if patchwork=TRUE
 }
 \description{
 Plot results of over-representation analysis with ORA_hypergeometric()

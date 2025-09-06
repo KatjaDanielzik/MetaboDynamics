@@ -6,7 +6,8 @@
 #' @param tested_column KEGG module hierarchy level on which ORA was executed
 #' @param patchwork should result be patchworked to results of [plot_cluster()]?
 #' @param plot_cluster if patchwork = TRUE this needs to be the result of [plot_cluster()]
-#' @return a plot of the over-representation analysis
+#' @return a plot of the over-representation analysis and lsit of plots suitable to
+#' patchwork with cluster visualization if patchwork=TRUE
 #' @export
 #' @import ggplot2
 #' @import dplyr
