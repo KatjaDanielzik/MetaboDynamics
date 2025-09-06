@@ -88,4 +88,5 @@ For a worked example on simulated data see [Vignette](https://www.bioconductor.o
 browseVignettes("MetaboDynamics")
 ```
 
-![](man/figures/README-MetaboDynamics_pitch.png)
+![](man/figures/README-MetaboDynamics_graphical_abstrac.png)
+![](man/figures/README-MetaboDynamics_questions.png)
