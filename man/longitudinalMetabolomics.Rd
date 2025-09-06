@@ -248,13 +248,13 @@ data <- se
 data <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", assay = "scaled_log",
-  max_treedepth = 14, adapt_delta = 0.999, iter = 3000, cores = 2, chains = 2
+  max_treedepth = 14, adapt_delta = 0.999, iter = 5000, cores = 2, chains = 2
 )
 
 data <- estimates_dynamics(
   data = data
 )
-data <- cluster_dynamics(data)
+data <- cluster_dynamics(data,B=10)
 
 # save shortened analysis in metadata of se
 metadata(se)[["estimates_dynamics"]] <- metadata(data)[["estimates_dynamics"]]

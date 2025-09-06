@@ -11,6 +11,7 @@
 #' log(p(OvE))>0 indicates an over-representation of the functional module in
 #' the cluster, log(p(OvE))<0 an under-representation.
 #' @seealso 
+#' Function to obtain data [cluster_dynamics()]
 #' Function to visualize ORA results [plot_ORA()]
 #' @param background dataframe that contains
 #' KEGG IDs of metabolites that are assigned to functional modules, is incorporated
@@ -19,12 +20,7 @@
 #' modules our experimental metabolites are annotated in KEGG, can be constructed
 #' by filtering the provided KEGG background [modules_compounds] for the experimental
 #' metabolites
-#' @param data data frame containing columns "KEGG" specifying the KEGG
-#' identifiers of metabolites, "cluster" specifying the cluster ID of metabolites and a
-#' column specifying the experimental condition called "condition" or if data
-#' is a SummarizedExperiment or a \link[SummarizedExperiment]{SummarizedExperiment} clustering
-#' solution must be stored in metadata(data)
-#' under "cluster"
+#' @param data esult of [cluster_dynamics()] function: either a list of data frames or a SummarizedExperiment object
 #' @param tested_column column that is in background and annotations and on
 #' which the hypergeometric model will be executed
 #
@@ -90,25 +86,25 @@ ORA_hypergeometric <- function(background,
     stop("'data' must be a list or a SummarizedExperiment object obtained by cluster_dynamics")
   }
   if (is(data, "SummarizedExperiment")) {
-    data <- metadata(data)[["cluster"]]
+    data_df <- metadata(data)[["cluster"]]
     # combine data of list elements
-    data <- bind_rows(lapply(data_df, function(x){
+    data_df <- bind_rows(lapply(data_df, function(x){
       return(x$data)
     }))
   }
 
   if (is(data, "list")) {
     # combine data of list elements
-    data <- bind_rows(lapply(data, function(x){
+    data_df <- bind_rows(lapply(data, function(x){
       return(x$data)
     }))
   }
   # convert potential tibbles into data frame
-  if (is(data, "tbl")) {
-    data <- as.data.frame(data)
+  if (is(data_df, "tbl")) {
+    data_df <- as.data.frame(data_df)
   }
-  if (is(data, "data.frame")) {
-    data_df <- data
+  if (is(data_df, "data.frame")) {
+    data_df <- data_df
   }
 
   # input checks
@@ -212,6 +208,7 @@ ORA_hypergeometric <- function(background,
       OvE_gen_higher = quantile(OvE_gen, probs = 0.975, na.rm = TRUE),
       OvE_gen_median = median(OvE_gen, na.rm = TRUE)
     )
+  
   # if input is a SummarizedExperiment object, store the fits in the metadata
   if (is(data, "SummarizedExperiment")) {
     name <- paste0("ORA_", name)

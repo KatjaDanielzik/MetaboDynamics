@@ -40,8 +40,8 @@ plot_cluster <- function(data){
   
   # bubbletrees of bootstrapping
   trees <- list()
-  for (i in names(data[["cluster"]])){
-    temp <- data[["cluster"]][[i]]
+  for (i in names(data)){
+    temp <- data[[i]]
     trees[[i]]<- ggtree(temp$mean_phylo,linetype='solid')+
       geom_point2(mapping = aes(subset=isTip==FALSE),size = 0.5, col = "black")+
       geom_tippoint(size = 2, fill = "white", shape = 21)+
@@ -65,7 +65,7 @@ plot_cluster <- function(data){
     t  <- tree$data
     t <- t[order(t$y, decreasing = FALSE), ]
     tips[[i]] <- t$label[t$isTip==TRUE]
-    temp <- data[["cluster"]][[i]]$data
+    temp <- data[[i]]$data
     temp <- temp%>%pivot_longer(cols=-c(metabolite,KEGG,condition,cluster),names_to = "time",values_to = "mean")
     temp$metabolite <- factor(temp$metabolite,levels=tips[[i]])
     temp$cluster <- as.factor(temp$cluster)
@@ -79,7 +79,7 @@ plot_cluster <- function(data){
   
     plots <- list()
     n_metabolites <- c()
-    cluster_order[[i]] <- unique(rev(temp[order(temp$metabolite),]$cluster))
+    cluster_order[[i]] <- unique(rev(temp[order(temp$metabolite),]$cluster)) # get factors 
     for (j in cluster_order[[i]]){
       plots[[j]]<- temp%>%filter(cluster==j)%>%ggplot(aes(x=time,y=mean))+
       geom_line(aes(group=metabolite))+
@@ -111,7 +111,7 @@ plot_cluster <- function(data){
   }
   
   patchwork <- list()
-  for (i in names(data[["cluster"]])){
+  for (i in names(data)){
   p <- trees[[i]]|clusterplots[[i]]|lineplots[[i]]
   patchwork[[i]] <- p+plot_annotation(paste0("condition ",i),
 "plots: dendrogram with cluster probability, cluster affiliations of metabolites, metabolite dynamics in clusters")

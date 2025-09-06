@@ -1,9 +1,11 @@
 #' Plot results of over-representation analysis with ORA_hypergeometric()
 #'
-#' @param data result dataframe from ORA_hypergeometric() or \link[SummarizedExperiment]{SummarizedExperiment}
+#' @param data result dataframe from [ORA_hypergeometric()] or \link[SummarizedExperiment]{SummarizedExperiment}
 #' object where the ORA_hypergeometric() results are stored in metadata(data)
 #' under "ORA_tested_column"
 #' @param tested_column KEGG module hierarchy level on which ORA was executed
+#' @param patchwork should result be patchworked to results of [plot_cluster()]?
+#' @param plot_cluster if patchwork = TRUE this needs to be the result of [plot_cluster()]
 #' @return a plot of the over-representation analysis
 #' @export
 #' @import ggplot2
@@ -23,7 +25,9 @@
 #'   tested_column = "middle_hierarchy"
 #' )
 #' plot_ORA(longitudinalMetabolomics)
-plot_ORA <- function(data, tested_column = "middle_hierarchy") {
+plot_ORA <- function(data, tested_column = "middle_hierarchy",
+                     patchwork = FALSE,
+                     plot_cluster = NULL) {
   # bind variables to function
   OvE_gen <- NULL
   module_name <- NULL
@@ -47,6 +51,13 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy") {
   }
   if (is(data, "data.frame")) {
     a_clusters <- data
+  }
+  if (!is.logical(patchwork)) {
+    stop("'patchwork' must be either 'TRUE' or 'FALSE'")
+  }
+  if (isTRUE(patchwork)) {
+    if(!inherits(plot_cluster,"list"))
+    stop("if 'patchwork is TRUE, plot_cluster must be provided")
   }
 
   # get module name (in ORA_hypergeometric this is the 3rd column of the result)
@@ -91,5 +102,37 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy") {
       "hypergeometric ORA",
       "median and 95% interquantile range, panels=clusterID"
     )
-  return(plot)
+  
+  ora_patchwork <- list()
+  if(patchwork == TRUE){
+    for(i in unique(a_clusters$condition)){
+      temp <- a_clusters%>%filter(condition==i)
+      # get cluster order
+      cluster_order <- plot_cluster$cluster_order[[i]]
+      # order cluster in ORA hypergeometric
+      temp$cluster <- factor(temp$cluster, levels=rev(cluster_order))
+      plots <- list()
+      for (j in temp$cluster){
+        temp_plot <- temp%>%filter(cluster==j)
+        plots[[j]] <-
+          ggplot(temp_plot,aes(x=OvE_gen_median,y=cluster,col=col))+
+            geom_point()+
+            geom_errorbarh(aes(xmin=OvE_gen_lower,xmax=OvE_gen_higher))+
+            facet_grid(cols=vars(middle_hierarchy))+
+            theme_bw()+
+            geom_vline(xintercept = 0, linetype = "dashed") +
+            ylab("cluster ID")+
+            xlab("") +
+            scale_color_manual(
+            values = c("black", "green", "red"),
+            labels = c("0 in ICR", "ICR>0", "ICR<0"), name = "")
+        plots[[paste0(j,"space")]] <- plot_spacer() 
+      }
+      heights <- plot_cluster$cluster_heights[[i]] ## needs to be sorted!
+      p <- Reduce("/",plots)
+      ora_patchwork[[i]] <- p + plot_layout(heights=heights)+plot_annotation("ORA of KEGG functional modules",
+                                                                         "mean and 95% ICR")
+      }
+      }
+  return(list(plot=plot,ora_patchwork=ora_patchwork))
 }

@@ -50,6 +50,7 @@ test_that("ORA_hypergeometric: input checks", {
 
   #  Missing required columns in 'data'
   missing_columns_clusters <- list(A=list(data=data.frame(
+    data = c(1,2),
     cluster = c(1, 2),
     condition = c("A", "B"))
   ))

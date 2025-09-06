@@ -7,6 +7,8 @@ euclidean distance between metabolite dynamics of different conditions
 - plot estimates additionally visualized the euclidean distance between conditions of metabolite specific dynamics
 - cluster_dynamics provides clustering solution of mean estimates of mu as well as bootstraps clustering solutions
 - plot cluster provides bubbletree, cluster identity, dynamics plots as well as patchwork plot
+(plot_ORA has now option to be added to bubbletree)
+(alll functions require named columns "metabolite","condition","time", "KEGG" (for ORA))
 # MetaboDynamics 1.1.5
 - internal adding of ANOVA model with euclidean distance estimation between doses and ANOVA model that integrates cell count uncertainty
 - internal adding of simulated cell counts to data("longitudinalMetabolomics")
