@@ -110,9 +110,11 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
       # get cluster order
       cluster_order <- plot_cluster$cluster_order[[i]]
       # order cluster in ORA hypergeometric
-      temp$cluster <- factor(temp$cluster, levels=rev(cluster_order))
+      temp$cluster <- as.factor(temp$cluster)
+      temp$cluster <- factor(temp$cluster, levels=cluster_order)
+      temp <- temp[order(temp$cluster),]
       plots <- list()
-      for (j in temp$cluster){
+      for (j in unique(temp$cluster)){
         temp_plot <- temp%>%filter(cluster==j)
         plots[[j]] <-
           ggplot(temp_plot,aes(x=OvE_gen_median,y=cluster,col=col))+
