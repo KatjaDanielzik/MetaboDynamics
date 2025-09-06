@@ -7,19 +7,11 @@
 #' @import tidyr
 #' @import ggtree
 #' @import patchwork
-#' @importFrom stats prcomp
-#' @importFrom stats as.dendrogram
-#' @importFrom stats order.dendrogram
-#' @importFrom dendextend color_branches
-#' @importFrom dendextend color_labels
-#' @importFrom grDevices recordPlot
-#' @importFrom graphics par
-#' @importFrom graphics title
 #'
-#' @returns a list of plots. Per experimental condition: 1)a dendrogram of the
-#' mean clustering solution, 2) a 'bubbletree': a phylogram with numbers on nodes
+#' @returns a list of plots. Per experimental condition: 1) a 'bubbletree': a phylogram with numbers on nodes
 #' indicating in how many bootstraps of the posterior estimates the same clustering
-#' solution was generated, 3) order of the tips in bubbletree: needed for matching lineplots and ORA,
+#' solution was generated, 2) cluster affiliation of metabolites, 3) dynamics of metabolites per cluster,
+#' 4) patchwork of 1-3, 5) order of the tips in bubbletree: needed for matching lineplots and ORA,
 #' 3) mean dynamics of clusters
 #'
 #' @export
@@ -48,31 +40,6 @@ plot_cluster <- function(data){
   # Data transformation
   if (is(data, "SummarizedExperiment")) {
     data <- metadata(data)[["cluster"]]
-  }
-  
-  # color coded dendrograms of clustering solution of mean estimates
-  dendrograms <- list()
-  # plot dendrogram with clustering solution
-  for (i in names(data[["cluster"]])){
-      temp <- data[["cluster"]][[i]]
-    # dendrogram
-    dendro <- as.dendrogram(temp[["mean_dendro"]])
-    # get color identifier based on cluster membership of metabolite
-    colors_to_use <- as.numeric(as.data.frame(temp[["data"]][, c("metabolite", "cluster")])$cluster)
-    # order by dendrogram
-    colors_to_use <- colors_to_use[order.dendrogram(dendro)]
-    dendro <- dendextend::color_branches(dendro, col = colors_to_use)
-    dendro <- dendextend::color_labels(dendro, col = colors_to_use)
-    # get labels
-    labels <- temp[["mean_dendro"]]
-    par(cex = 0.5)
-    plot(dendro)
-    par(cex = 1)
-    title(main = paste0(
-      i," dynamicTreeCut, method= ",
-      labels$method
-    ), ylab = paste0(labels$dist.method, " distance"))
-    dendrograms[[i]] <- recordPlot()
   }
   
   # bubbletrees of bootstrapping
@@ -110,6 +77,7 @@ plot_cluster <- function(data){
         geom_tile()+
         scale_fill_viridis_d()+
         guides(col="cluster")+
+        ylab("")+
         theme_bw()
   
     plots <- list()
@@ -125,7 +93,10 @@ plot_cluster <- function(data){
       ylim(c(-2,2))+
       theme(axis.title.x=element_blank(),
               axis.text.x=element_blank(),
-              axis.ticks.x=element_blank())
+              axis.ticks.x=element_blank())+
+      geom_vline(aes(xintercept=as.factor(time)),col="grey",linetype="dashed")+
+      geom_hline(aes(yintercept=0),col="grey",linetype="dashed")
+      
       summary <- temp%>%filter(cluster==j)%>%select(cluster,metabolite)%>%
         distinct()%>%
         group_by(cluster)%>%summarise(n_metabolite=n_distinct(metabolite))
@@ -136,18 +107,18 @@ plot_cluster <- function(data){
     heights <- as.vector(n_metabolites/sum(n_metabolites))*100 ## needs to be sorted!
     heights <- as.numeric(c(rbind(heights,-2.7))) # add spacing for spacer plots
     p <- Reduce("/",plots)
-    lineplots[[i]] <- p + plot_layout(heights=heights)
-      
+    lineplots[[i]] <- p + plot_layout(heights=heights)+plot_annotation("metabolite dynamics",
+                                                                       "lines = metabolite, row panels = cluster,
+    grey lines = time points")
   }
   
   patchwork <- list()
   for (i in names(data[["cluster"]])){
-  patchwork[[i]] <- trees[[i]]|clusterplots[[i]]|lineplots[[i]]
-  patchwork[[i]] <- patchwork[[i]]+
-    plot_annotation(paste0("condition ",i))
+  p <- trees[[i]]|clusterplots[[i]]|lineplots[[i]]
+  patchwork[[i]] <- p+plot_annotation(paste0("condition ",i),
+"plots: dendrogram with cluster probability, cluster affiliations of metabolites, metabolite dynamics in clusters")
   }
   
-  return(list(dendrograms = dendrograms, trees = trees,
-              clusterplots = clusterplots, lineplots=lineplots,
-              patchwork = patchwork,cluster_order=cluster_order))
+  return(list(trees = trees, clusterplots = clusterplots, lineplots=lineplots,
+              patchwork = patchwork, cluster_order=cluster_order))
 }
