@@ -21,7 +21,9 @@ visualize clustering solution of cluster_dynamics()
 }
 \examples{
 data("longitudinalMetabolomics")
-plot_cluster(longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A"])
+plots <- plot_cluster(longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A"])
+
+plots[["trees"]][["A"]]
 }
 \seealso{
 \code{\link[=cluster_dynamics]{cluster_dynamics()}}

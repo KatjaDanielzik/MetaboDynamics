@@ -19,7 +19,7 @@
 #' modules our experimental metabolites are annotated in KEGG, can be constructed
 #' by filtering the provided KEGG background [modules_compounds] for the experimental
 #' metabolites
-#' @param data dataframe containing columns "KEGG" specifying the KEGG
+#' @param data data frame containing columns "KEGG" specifying the KEGG
 #' identifiers of metabolites, "cluster" specifying the cluster ID of metabolites and a
 #' column specifying the experimental condition called "condition" or if data
 #' is a SummarizedExperiment or a \link[SummarizedExperiment]{SummarizedExperiment} clustering
@@ -86,17 +86,25 @@ ORA_hypergeometric <- function(background,
   module_id <- NULL
 
   # Input checks
-  if (!is.data.frame(data) && !inherits(data, "SummarizedExperiment")) {
-    stop("'data' must be a dataframe or a SummarizedExperiment object")
+  if (!inherits(data, "list") && !inherits(data, "SummarizedExperiment")) {
+    stop("'data' must be a list or a SummarizedExperiment object obtained by cluster_dynamics")
   }
   if (is(data, "SummarizedExperiment")) {
-    data_df <- metadata(data)[["cluster"]]
-    # bind listelements of clustering together that contain the dataframes
-    data_df <- do.call(rbind, lapply(data_df, function(l) l[["data"]]))
+    data <- metadata(data)[["cluster"]]
+    # combine data of list elements
+    data <- bind_rows(lapply(data_df, function(x){
+      return(x$data)
+    }))
   }
 
+  if (is(data, "list")) {
+    # combine data of list elements
+    data <- bind_rows(lapply(data, function(x){
+      return(x$data)
+    }))
+  }
   # convert potential tibbles into data frame
-  if (is(data, "tbl")) {
+  if (is(data_df, "tbl")) {
     data <- as.data.frame(data)
   }
   if (is(data, "data.frame")) {

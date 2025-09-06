@@ -163,13 +163,12 @@ cluster_dynamics <- function(data, fit,
     }
   }
     
-  result <- list(cluster=cluster_mean)
   # if input is a SummarizedExperiment object, store the fits in the metadata
   if (is(data, "SummarizedExperiment")) {
-    metadata(data)[["cluster"]] <- result
+    metadata(data)[["cluster"]] <- cluster_mean
     return(data)
   } else {
     # otherwise, return the list of fits
-    return(result)
+    return(cluster_mean)
   }
 }

@@ -21,7 +21,7 @@ modules our experimental metabolites are annotated in KEGG, can be constructed
 by filtering the provided KEGG background \link{modules_compounds} for the experimental
 metabolites}
 
-\item{data}{dataframe containing columns "KEGG" specifying the KEGG
+\item{data}{data frame containing columns "KEGG" specifying the KEGG
 identifiers of metabolites, "cluster" specifying the cluster ID of metabolites and a
 column specifying the experimental condition called "condition" or if data
 is a SummarizedExperiment or a \link[SummarizedExperiment]{SummarizedExperiment} clustering
