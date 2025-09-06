@@ -42,6 +42,7 @@ devtools::install_github("KatjaDanielzik/MetaboDynamics",build_vignettes=TRUE)
 ```
 
 ## Overview
+![](man/figures/README-MetaboDynamics_graphical_abstract.png)
 
 MetaboDynamics facilitates the analysis of longitudinal metabolomics
 data e.g. from untargeted LC-MS. Common tools mostly only allow the comparison
@@ -79,6 +80,11 @@ probabilistic models:
     metabolites that compose two clusters this allows to spot differences and similarities between
     experimental conditions. For examples clusters of metabolites with similar
     metabolite composition but different dynamics between experimental conditions.
+    
+![](man/figures/README-MetaboDynamics_questions.png)
+
+!!!! ADD ORA to questions and comparison between clusters?
+Which clusters are similar between conditions?
 
 ## Workflow
 
@@ -87,6 +93,3 @@ For a worked example on simulated data see [Vignette](https://www.bioconductor.o
 ``` r
 browseVignettes("MetaboDynamics")
 ```
-
-![](man/figures/README-MetaboDynamics_graphical_abstract.png)
-![](man/figures/README-MetaboDynamics_questions.png)
