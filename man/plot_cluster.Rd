@@ -7,7 +7,7 @@
 plot_cluster(data)
 }
 \arguments{
-\item{data}{result of \code{\link[=cluster_dynamics]{cluster_dynamics()}} function: either a list of dataframes or a SummarizedExperiment object}
+\item{data}{result of \code{\link[=cluster_dynamics]{cluster_dynamics()}} function: either a list of data frames or a SummarizedExperiment object}
 }
 \value{
 a list of plots. Per experimental condition: 1) a 'bubbletree': a phylogram with numbers on nodes

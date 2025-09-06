@@ -1,7 +1,7 @@
 #' visualize clustering solution of cluster_dynamics()
 #'
 #'
-#' @param data result of [cluster_dynamics()] function: either a list of dataframes or a SummarizedExperiment object
+#' @param data result of [cluster_dynamics()] function: either a list of data frames or a SummarizedExperiment object
 #'
 #' @import ggplot2
 #' @import tidyr
@@ -25,21 +25,15 @@
 plot_cluster <- function(data){
   # Input checks
   if (!inherits(data, "list") && !inherits(data, "SummarizedExperiment")) {
-    stop("'data' must be a list or a SummarizedExperiment object
-         obtained by function cluster_dynamics()")
-  }
-  if (is(data, "list")) {
-    lapply(data, function(data) {
-      # check for dataframe format
-      if (!inherits(data, "list")) {
-        stop("'data' must be a list of lists obtained by cluster_dynamics() if it is not a SummarizedExperiment object")
-      }
-    })
+    stop("'data' must be a list or a SummarizedExperiment object obtained by function cluster_dynamics()")
   }
 
   # Data transformation
   if (is(data, "SummarizedExperiment")) {
     data <- metadata(data)[["cluster"]]
+  }
+  if (!inherits(data, "list")){
+    stop("clustering solution obtained by cluster_dynamics must be stored in metadata of SummarizedExperiment under 'cluster'")
   }
   
   # bubbletrees of bootstrapping
@@ -63,6 +57,7 @@ plot_cluster <- function(data){
   clusterplots <- list()
   lineplots <- list()
   cluster_order <- list()
+  cluster_heights <- list()
   for (i in names(trees)){
     tree <- trees[[i]]
     t  <- tree$data
@@ -106,6 +101,7 @@ plot_cluster <- function(data){
     # assign heights according to number of metabolites
     heights <- as.vector(n_metabolites/sum(n_metabolites))*100 ## needs to be sorted!
     heights <- as.numeric(c(rbind(heights,-2.7))) # add spacing for spacer plots
+    cluster_heights[[i]] <- heights
     p <- Reduce("/",plots)
     lineplots[[i]] <- p + plot_layout(heights=heights)+plot_annotation("metabolite dynamics",
                                                                        "lines = metabolite, row panels = cluster,
@@ -120,5 +116,5 @@ plot_cluster <- function(data){
   }
   
   return(list(trees = trees, clusterplots = clusterplots, lineplots=lineplots,
-              patchwork = patchwork, cluster_order=cluster_order))
+              patchwork = patchwork, cluster_order=cluster_order, cluster_heights = cluster_heights))
 }
