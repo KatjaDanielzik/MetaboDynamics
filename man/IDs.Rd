@@ -6,9 +6,9 @@
 }
 \usage{data("IDs")}
 \format{
-  A data frame with two columns
-    \describe{
-    \item{\code{metabolite}}{metabolite name}
+  A dataframe
+  \describe{
     \item{\code{KEGG}}{KEGG ID of metabolites}
+    \item{\code{replicate}}{column that specifies the measurement replicate}
   }
 }
