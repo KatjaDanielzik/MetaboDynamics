@@ -13,6 +13,8 @@
 #' @seealso 
 #' Function to obtain data [cluster_dynamics()]
 #' Function to visualize ORA results [plot_ORA()]
+#' @param data result of [cluster_dynamics()] function: either a list of data frames or a SummarizedExperiment object
+#' @param IDs dataframe with two columsn 'metabolite' and 'KEGG' mapping KEGG IDs to metabolites
 #' @param background dataframe that contains
 #' KEGG IDs of metabolites that are assigned to functional modules, is incorporated
 #' in the package [modules_compounds]
@@ -20,7 +22,6 @@
 #' modules our experimental metabolites are annotated in KEGG, can be constructed
 #' by filtering the provided KEGG background [modules_compounds] for the experimental
 #' metabolites
-#' @param data esult of [cluster_dynamics()] function: either a list of data frames or a SummarizedExperiment object
 #' @param tested_column column that is in background and annotations and on
 #' which the hypergeometric model will be executed
 #
@@ -41,18 +42,21 @@
 #' head(modules_compounds)
 #' data("metabolite_modules")
 #' head(metabolite_modules)
-#' # middly hierachy
+#' data("IDs")
+#' head(IDs)
+#' 
 #' longitudinalMetabolomics <- ORA_hypergeometric(
 #'   data = longitudinalMetabolomics,
 #'   annotations = metabolite_modules,
 #'   background = modules_compounds,
+#'   IDs = IDs,
 #'   tested_column = "middle_hierarchy"
 #' )
 #' S4Vectors::metadata(longitudinalMetabolomics)[["ORA_middle_hierarchy"]]
 #' 
 ORA_hypergeometric <- function(background,
                                annotations,
-                               data, tested_column = "middle_hierarchy") {
+                               data, IDs, tested_column = "middle_hierarchy") {
   # attach new variables to function
   N_b <- NULL
   N <- NULL
@@ -114,6 +118,9 @@ ORA_hypergeometric <- function(background,
   if (!is.data.frame(annotations)) {
     stop("'annotations' must be a dataframe obtained by get_ORA_annotations()")
   }
+  if (!is.data.frame(IDs)) {
+    stop("'annotations' must be a dataframe obtained by get_ORA_annotations()")
+  }
   if (!is.character(tested_column)) {
     stop("'tested_column' must be a character vector")
   }
@@ -134,7 +141,13 @@ ORA_hypergeometric <- function(background,
   if (!all(c("KEGG", "condition", "cluster") %in% colnames(data_df))) {
     stop("'data' must contains columns 'KEGG', 'cluster' and 'condition'")
   }
-
+  if (!all(c("metabolite","KEGG") %in% colnames(data_df))) {
+    stop("'IDs' must contains columns 'metabolite' and 'KEGG'")
+  }
+  
+  # map KEGG IDs to data
+  data_df <- left_join(data_df,IDs[,c("metabolite","KEGG")],by="metabolite")
+  
   name <- tested_column
 
   # all experimental metabolites that are mapped to KEGG modules

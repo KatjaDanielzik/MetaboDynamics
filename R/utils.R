@@ -99,7 +99,7 @@
 #' @returns list of input data including clustering solution, dendrogram, phylogram
 #' @keywords internal
 .hierarchical_clustering <- function(data,distance,agglomeration,minClusterSize,deepSplit){
-  dist <- as.matrix(dist(data[,-c(1:3)])) # - metabolite,KEGG,condition -> only times left
+  dist <- as.matrix(dist(data[,-c(1:2)])) # - metabolite,condition -> only times left
   # assign metabolite names
   colnames(dist) <- data$metabolite
   rownames(dist) <- data$metabolite

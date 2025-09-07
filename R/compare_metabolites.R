@@ -3,12 +3,7 @@
 #' Uses the Jaccard Index to compare metabolite names between dynamics clusters of
 #' different experimental conditions
 #'
-#' @param data a dataframe or containing a column specifying the metabolite
-#' names to be compared and cluster IDs (column named "cluster") of
-#' clusters of similar dynamics, as well as a column "condition" specifying
-#' the experimental conditions.
-#' to be compared or a \link[SummarizedExperiment]{SummarizedExperiment} storing the same information in
-#' metadata(data) under "cluster"
+#' @param data result of [cluster_dynamics()] function: either a list of data frames or a SummarizedExperiment object
 #' @param metabolite column in "data" that specifies either metabolite name
 #' or KEGG ID or some other identifier
 #'
@@ -29,19 +24,24 @@
 #'   data = longitudinalMetabolomics
 #' )
 #' S4Vectors::metadata(longitudinalMetabolomics)[["comparison_metabolites"]]
-compare_metabolites <- function(data, metabolite = "metabolite") {
+compare_metabolites <- function(data) {
   # Input checks
-  if (!is.data.frame(data) && !inherits(data, "SummarizedExperiment")) {
-    stop("'data' must be a dataframe or a SummarizedExperiment object")
+  # Input checks
+  if (!inherits(data, "list") && !inherits(data, "SummarizedExperiment")) {
+    stop("'data' must be a list or a SummarizedExperiment object obtained by 'cluster_dynamics()'")
   }
   if (is(data, "SummarizedExperiment")) {
     data_df <- metadata(data)[["cluster"]]
-    # bind listelements of clustering together that contain the dataframes
-    data_df <- do.call(rbind, lapply(data_df, function(l) l[["data"]]))
+    # combine data of list elements
+    data_df <- bind_rows(lapply(data_df, function(x){
+      return(x$data)
+    }))
   }
-  # convert potential tibbles into data frame
-  if (is(data, "tbl")) {
-    data <- as.data.frame(data)
+  if (is(data, "list")) {
+    # combine data of list elements
+    data_df <- bind_rows(lapply(data, function(x){
+      return(x$data)
+    }))
   }
 
   if (is(data, "data.frame")) {

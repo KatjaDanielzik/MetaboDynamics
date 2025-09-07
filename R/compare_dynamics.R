@@ -5,12 +5,7 @@
 #' time points) of two clusters that come from different
 #' experimental conditions to estimate the mean distance between clusters.
 #'
-#' @param data a dataframe or containing a column specifying the metabolite
-#' names to be compared and cluster IDs (column named "cluster") of
-#' clusters of similar dynamics, as well as a column "condition" specifying
-#' the experimental conditions.
-#' to be compared or a \link[SummarizedExperiment]{SummarizedExperiment} storing the same information in
-#' metadata(data) under "cluster"
+#' @param data result of [cluster_dynamics()] function: either a list of data frames or a SummarizedExperiment object
 #' @param dynamics vector specifying the column names of dataframe clusters
 #' that hold the dynamics information
 #' @param cores how many cores should be used for model fitting; this
@@ -42,17 +37,26 @@
 #'   cores = 1
 #' )
 #' S4Vectors::metadata(longitudinalMetabolomics)[["comparison_dynamics"]]
-compare_dynamics <- function(data, dynamics = metadata(data)[["cluster"]][[1]]$dynamics, cores = 4) {
+compare_dynamics <- function(data, dynamics = metadata(data)[["dynamics"]], cores = 4) {
   # Input checks
-  if (!is.data.frame(data) && !inherits(data, "SummarizedExperiment")) {
-    stop("'data' must be a dataframe or a SummarizedExperiment object")
+  if (!inherits(data, "list") && !inherits(data, "SummarizedExperiment")) {
+    stop("'data' must be a list or a SummarizedExperiment object obtained by 'cluster_dynamics()'")
   }
   if (is(data, "SummarizedExperiment")) {
     data_df <- metadata(data)[["cluster"]]
-    # bind listelements of clustering together that contain the dataframes
-    data_df <- do.call(rbind, lapply(data_df, function(l) l[["data"]]))
+    # combine data of list elements
+    data_df <- bind_rows(lapply(data_df, function(x){
+      return(x$data)
+    dynamics = dynamics
+    }))
   }
-  # convert potential tibbles into data frame
+  if (is(data, "list")) {
+    # combine data of list elements
+    data_df <- bind_rows(lapply(data, function(x){
+      return(x$data)
+    }))
+  }
+  #convert potential tibbles into data frame
   if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }

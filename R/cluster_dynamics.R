@@ -24,6 +24,7 @@
 #' mean_phylo' the phylogram of the mean estimates. 
 #' if data is a \link[SummarizedExperiment]{SummarizedExperiment} object clustering
 #' results are stored in metadata under "cluster"
+#' Element 'dynamics' contains column names of timepoints
 #'
 #' @export
 #'
@@ -103,9 +104,11 @@ cluster_dynamics <- function(data, fit,
   # get estimates of mu (scaled metabolite abundance per condition and metabolite)
   mu <- estimates[["mu"]]
   # only select mean estimates
-  mu <- mu%>%select(metabolite,KEGG,time,condition,mean)%>%
+  mu <- mu%>%select(metabolite,time,condition,mean)%>%
     mutate(time=paste0(time,"_mean"))%>% # add label to mean 
     pivot_wider(names_from = time, values_from = mean)
+  dynamics <- colnames(mu)[-c(1:2)] # not metabolite and condition 
+  
   
   # split per condition
   mu_split <- split.data.frame(mu,f=as.factor(mu$condition))
@@ -115,7 +118,7 @@ cluster_dynamics <- function(data, fit,
                          agglomeration = agglomeration,
                          minClusterSize = minClusterSize,
                          deepSplit = deepSplit)
-
+  
     
   # bootstrapping with phylograms (function adapted from snaketron/cellmig)
   # get posterior and make different conditions accesible
@@ -166,6 +169,7 @@ cluster_dynamics <- function(data, fit,
   # if input is a SummarizedExperiment object, store the fits in the metadata
   if (is(data, "SummarizedExperiment")) {
     metadata(data)[["cluster"]] <- cluster_mean
+    metadata(data)[["dynamics"]] <- dynamics
     return(data)
   } else {
     # otherwise, return the list of fits
