@@ -9,9 +9,10 @@
 #' @param data data frame or colData of a \link[SummarizedExperiment]{SummarizedExperiment}
 #' used to fit dynamics model
 #' @param fit model fit obtained by fit_dynamics_model(). Needed if data is not a 
-#' SummarizedExperiment object for which the model fit is saved in metadata[["dynamic_fit"]]
+#' SummarizedExperiment object for which the model fit is saved in "dynamic_fit" of metadata
 #' @param estimates output of estimates_dynamics function, needed if data is not 
-#' a SummarizedExperiment object for which the model estimates are saved in metadata[["estimates_dynamics"]]
+#' a SummarizedExperiment object for which the model estimates are saved in "estimates_dynamics"
+#' of metadata
 #' @param distance distance method to be used as input for hierarchical clustering \link[stats]{dist}
 #' can be "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski"
 #' @param agglomeration agglomerative method to be used for hierarchical clustering \link[stats]{hclust}
@@ -102,6 +103,13 @@ cluster_dynamics <- function(data, fit,
   if((B<1|B>1000)){
     stop("B should be between 1 and 1000")
   }
+  # binding of variables
+  metabolite <- NULL
+  condition <- NULL
+  time <- NULL
+  draw <- NULL
+  ID <- NULL
+  
   
   # clustering on mean estimates plus clustering solution
   # get estimates of mu (scaled metabolite abundance per condition and metabolite)

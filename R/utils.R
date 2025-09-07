@@ -83,7 +83,7 @@
 
 #' hierarchical clustering
 #'
-#' @param data estimates[["mu"]]
+#' @param data element "mu" of estimates
 #' @param distance distance method
 #' @param agglomeration agglomeration method of hierarchical clustering
 #' @param minClusterSize minimum number of metabolites per of cluster \link[dynamicTreeCut]{cutreeDynamic}

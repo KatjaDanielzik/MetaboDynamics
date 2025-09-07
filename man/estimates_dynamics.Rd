@@ -7,28 +7,19 @@
 estimates_dynamics(
   data,
   assay = "scaled_log",
-  kegg = "KEGG",
-  condition = "condition",
-  time = "time",
-  metabolite = "metabolite",
   fit = metadata(data)[["dynamic_fit"]]
 )
 }
 \arguments{
-\item{data}{data frame or colData of a \link[SummarizedExperiment]{SummarizedExperiment}  used used to fit dynamics model, must contain a column specifying KEGG IDs, column named "condition" specifiyng the experimental condition and a column named "time" specifying the timepoints.
+\item{data}{data frame or colData of a \link[SummarizedExperiment]{SummarizedExperiment}
+used to fit dynamics model, must contain a column named "condition" specifiyng
+the experimental condition and a column
+named "time" specifying the timepoints.
 If it is a SummarizedExperiment object the dynamic fits must be stores in metadata(data)
 under "dynamic_fits"}
 
 \item{assay}{of the SummarizedExperiment object that was used to fit the dynamics
 model}
-
-\item{kegg}{column in "data" that contains the KEGG IDs or other identifier of metabolites}
-
-\item{condition}{name of column in dataframe data that specifies the experimental condition}
-
-\item{time}{column in "data" that contains the time point identifiers}
-
-\item{metabolite}{column of "data" that contains the metabolite names or IDs}
 
 \item{fit}{model fit for which estimates should be extracted}
 }

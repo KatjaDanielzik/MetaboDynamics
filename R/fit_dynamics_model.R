@@ -152,7 +152,10 @@ fit_dynamics_model <- function(model = "scaled_log",
       stop("data and counts must have the same conditions")
     }}
   
-
+  # Binding of global variables
+  time <- NULL
+  metabolite <- NULL
+  condition <- NULL
   
   if(model=="scaled_log"){
   # fit model

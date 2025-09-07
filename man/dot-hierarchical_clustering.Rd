@@ -13,7 +13,7 @@
 )
 }
 \arguments{
-\item{data}{estimates[\link{"mu"}]}
+\item{data}{element "mu" of estimates}
 
 \item{distance}{distance method}
 

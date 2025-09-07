@@ -7,9 +7,6 @@
 .check_fit_dynamics_input(
   model,
   data,
-  metabolite,
-  time,
-  condition,
   scaled_measurement,
   counts,
   assay,

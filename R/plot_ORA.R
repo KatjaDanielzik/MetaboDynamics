@@ -65,6 +65,8 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
   module_name <- colnames(a_clusters)[3]
   module_name <- as.symbol(module_name)
   module_name <- enquo(module_name)
+  tested_column <- as.symbol(tested_column)
+  tested_column <- enquo(tested_column)
 
   # color code for visualization
   a_clusters <- a_clusters %>% mutate(col = ifelse(log(OvE_gen_higher) < 0,
@@ -113,7 +115,7 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
           ggplot(temp_plot,aes(x=OvE_gen_median,y=cluster,col=col))+
             geom_point()+
             geom_errorbarh(aes(xmin=OvE_gen_lower,xmax=OvE_gen_higher))+
-            facet_grid(cols=vars(middle_hierarchy))+
+            facet_grid(cols=vars(!!tested_column))+
             theme_bw()+
             geom_vline(xintercept = 0, linetype = "dashed") +
             ylab("cluster ID")+

@@ -7,6 +7,7 @@
 #' @import tidyr
 #' @import ggtree
 #' @import patchwork
+#' @importFrom tidytree isTip
 #'
 #' @returns a list of plots. Per experimental condition: 1) a 'bubbletree': a phylogram with numbers on nodes
 #' indicating in how many bootstraps of the posterior estimates the same clustering
@@ -37,6 +38,14 @@ plot_cluster <- function(data){
   if (!inherits(data, "list")){
     stop("clustering solution obtained by cluster_dynamics must be stored in metadata of SummarizedExperiment under 'cluster'")
   }
+  # binding of global variables
+  label <- NULL
+  metabolite <- NULL
+  condition <- NULL
+  cluster <- NULL
+  time <- NULL
+  
+  
   
   # bubbletrees of bootstrapping
   trees <- list()
@@ -66,7 +75,7 @@ plot_cluster <- function(data){
     t <- t[order(t$y, decreasing = FALSE), ]
     tips[[i]] <- t$label[t$isTip==TRUE]
     temp <- data[[i]]$data
-    temp <- temp%>%pivot_longer(cols=-c(metabolite,KEGG,condition,cluster),names_to = "time",values_to = "mean")
+    temp <- temp%>%pivot_longer(cols=-c(metabolite,condition,cluster),names_to = "time",values_to = "mean")
     temp$metabolite <- factor(temp$metabolite,levels=tips[[i]])
     temp$cluster <- as.factor(temp$cluster)
 

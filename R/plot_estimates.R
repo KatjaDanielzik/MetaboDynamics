@@ -57,6 +57,19 @@ plot_estimates <- function(data ,estimates = metadata(data)[["estimates_dynamics
   if (!is.logical(distance_conditions)) {
     stop("'distance_conditions' must be either 'TRUE' or 'FALSE'")
   }
+  
+  # binding of global variables
+  `97.5%` <- NULL
+  `2.5%` <- NULL
+  condition <- NULL
+  timepoint_1 <- NULL
+  timepoint_2 <- NULL
+  times <- NULL
+  condition_1 <- NULL
+  condition_2 <- NULL
+  conditions <- NULL
+  metabolite <- NULL
+  time <- NULL
 
   plots <- list()
   plots_delta_t <- list()

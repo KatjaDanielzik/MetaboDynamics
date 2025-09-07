@@ -7,9 +7,6 @@
 fit_dynamics_model(
   model = "scaled_log",
   data,
-  metabolite = "metabolite",
-  time = "time",
-  condition = "condition",
   scaled_measurement = "m_scaled",
   counts = NULL,
   assay = "scaled_log",
@@ -32,22 +29,14 @@ e.g. by cell counters (i.e. that cells were not counted under the microscope)
 leading to a small uncertainty of the true cell count.}
 
 \item{data}{concentration table with at least three replicate measurements per
-metabolite containing the columns "metabolite",
-"condition", and "m_scaled" by default or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
+metabolite. Must contain columns named "metabolite" (containing names or IDs), "time" (categorical, the same for all conditions), and "condition" or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
 Time column needs to be sorted in ascending order}
-
-\item{metabolite}{column of "data" that contains the metabolite names or IDs}
-
-\item{time}{column of "time" that contains time as numeric, make sure your
-time column is ordered from lowest to highest for the model to work}
-
-\item{condition}{column of "data" that contains the experimental conditions}
 
 \item{scaled_measurement}{column of "data" that contains the concentrations per cell,
 centered and normalized per metabolite and experimental condition (mean=0, sd=1)}
 
 \item{counts}{data frame with at least one replicate per time point and condition
-specifying the cell counts, must contain columns "time", "condition" equivalent
+specifying the cell counts, must contain columns "time", and "condition" equivalent
 to the specifications of "data".
 Must contain a column named "counts" that specifies the cell counts.
 Model assumes that the replicates of the cell counts and metabolite concentrations

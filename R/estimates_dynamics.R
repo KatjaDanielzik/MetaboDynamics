@@ -19,6 +19,7 @@
 #'
 #' @import dplyr
 #' @importFrom stats runif
+#' @importFrom stats na.omit
 #' @import SummarizedExperiment
 #' @importFrom S4Vectors metadata
 #'
