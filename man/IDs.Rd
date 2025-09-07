@@ -4,6 +4,9 @@
 \title{
   KEGG ID mapping of metabolites in data set longitudinalMetabolomics
 }
+\description{
+Example data set of KEGG ID annotations of metabolites as needed for \code{\link[=ORA_hypergeometric]{ORA_hypergeometric()}}
+}
 \usage{data("IDs")}
 \format{
   A dataframe
@@ -12,3 +15,4 @@
     \item{\code{replicate}}{column that specifies the measurement replicate}
   }
 }
+\keyword{datasets}

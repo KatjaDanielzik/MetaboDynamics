@@ -7,7 +7,6 @@
 #' @import tidyr
 #' @import ggtree
 #' @import patchwork
-#' @importFrom tidytree isTip
 #'
 #' @returns a list of plots. Per experimental condition: 1) a 'bubbletree': a phylogram with numbers on nodes
 #' indicating in how many bootstraps of the posterior estimates the same clustering

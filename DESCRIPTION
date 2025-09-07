@@ -1,6 +1,6 @@
 Package: MetaboDynamics
 Title: Bayesian analysis of longitudinal metabolomics data
-Version: 1.1.5
+Version: 1.1.6
 Authors@R: 
   c(person(given="Katja",family= "Danielzik", email="katja.danielzik@uni-due.de", 
            role = c("aut", "cre"),
@@ -45,7 +45,6 @@ Imports:
   SummarizedExperiment,
   tidyr,
   dynamicTreeCut,
-  dendextend,
   rlang,
   ape,
   ggtree,
