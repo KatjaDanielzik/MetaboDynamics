@@ -66,14 +66,6 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
   module_name <- as.symbol(module_name)
   module_name <- enquo(module_name)
 
-  # reduce rows for faster plotting
-  a_clusters <- a_clusters %>% select(
-    condition, cluster, !!module_name, OvE_gen,
-    OvE_gen_median, OvE_gen_lower,
-    OvE_gen_higher
-  )
-  a_clusters <- unique(a_clusters)
-
   # color code for visualization
   a_clusters <- a_clusters %>% mutate(col = ifelse(log(OvE_gen_higher) < 0,
     "ICR<0",

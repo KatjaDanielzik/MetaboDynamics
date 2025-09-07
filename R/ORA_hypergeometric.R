@@ -209,6 +209,14 @@ ORA_hypergeometric <- function(background,
       OvE_gen_median = median(OvE_gen, na.rm = TRUE)
     )
   
+  # reduce rows for faster plotting
+  a_clusters <- a_clusters %>% select(
+    condition, cluster, !!tested_column, OvE_gen,
+    OvE_gen_median, OvE_gen_lower,
+    OvE_gen_higher
+  )
+  a_clusters <- unique(a_clusters)
+  
   # if input is a SummarizedExperiment object, store the fits in the metadata
   if (is(data, "SummarizedExperiment")) {
     name <- paste0("ORA_", name)
