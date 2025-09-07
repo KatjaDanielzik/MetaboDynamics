@@ -256,9 +256,13 @@ data <- estimates_dynamics(
 )
 data <- cluster_dynamics(data,B=10)
 
+data <- ORA_hypergeometric(data = data, background = modules_compounds, 
+                           annotations = metabolite_modules, tested_column = "middle_hierarchy")
+
 # save shortened analysis in metadata of se
 metadata(se)[["estimates_dynamics"]] <- metadata(data)[["estimates_dynamics"]]
 metadata(se)[["cluster"]] <- metadata(data)[["cluster"]]
+metadata(se)[["ORA_middle_hierarchy"]] <- metadata(data)[["ORA_middle_hierarchy"]]
 
 longitudinalMetabolomics <- se
 usethis::use_data(longitudinalMetabolomics,overwrite = TRUE)
