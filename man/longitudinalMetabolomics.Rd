@@ -256,6 +256,8 @@ data <- estimates_dynamics(
 )
 data <- cluster_dynamics(data,B=10)
 
+data("modules_compounds")
+data("metabolite_modules")
 data <- ORA_hypergeometric(data = data, background = modules_compounds, 
                            annotations = metabolite_modules, tested_column = "middle_hierarchy")
 

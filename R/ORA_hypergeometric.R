@@ -209,7 +209,7 @@ ORA_hypergeometric <- function(background,
       OvE_gen_median = median(OvE_gen, na.rm = TRUE)
     )
   
-  # reduce rows for faster plotting
+  # reduce rows before saving
   a_clusters <- a_clusters %>% select(
     condition, cluster, !!tested_column, OvE_gen,
     OvE_gen_median, OvE_gen_lower,

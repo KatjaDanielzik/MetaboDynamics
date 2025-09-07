@@ -182,6 +182,7 @@ simulated_data_df <- simulated_data_df %>%
 # add KEGG IDs
 name_map_HMDB_CAS <- readr::read_csv("name_map_HMDB_CAS.csv")
 longitudinalMetabolomics_df <- dplyr::left_join(simulated_data_df,name_map_HMDB_CAS[,c("Query","KEGG")],join_by("metabolite"=="Query"))
+usethis::use_data(longitudinalMetabolomics_df,overwrite = TRUE)
 }
 
 \keyword{datasets}
