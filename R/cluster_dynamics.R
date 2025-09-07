@@ -57,7 +57,7 @@
 #' S4Vectors::metadata(data)[["cluster"]][["cluster"]][["A"]]
 #' plot(metadata(data)[["cluster"]][["cluster"]][["A"]][["mean_dendro"]])
 cluster_dynamics <- function(data, fit, 
-                             estimates = NULL,
+                             estimates,
                              distance = "euclidean",
                              agglomeration = "ward.D2",
                              minClusterSize = 1, deepSplit = 2,

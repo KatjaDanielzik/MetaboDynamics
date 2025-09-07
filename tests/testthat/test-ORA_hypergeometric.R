@@ -12,10 +12,14 @@ valid_background <- data.frame(
   middle_hierarchy = c("MH1", "MH2")
 )
 valid_clusters <- list(A=list(data=data.frame(
-  KEGG = c("C00001", "C00002"),
+  metabolite = c("A","B"),
   cluster = c(1, 2),
   condition = c("A", "B"))
 ))
+valid_IDs <- data.frame(
+  metabolite = c("A","B"),
+  KEGG = c("C00001", "C00002")
+)
 
 invalid_background <- data.frame(
   KEGG = c("C00001", "C00002"),
@@ -59,9 +63,10 @@ test_that("ORA_hypergeometric: input checks", {
       background = valid_background,
       annotations = valid_annotations,
       data = missing_columns_clusters,
-      tested_column = valid_tested_column
+      tested_column = valid_tested_column,
+      IDs = valid_IDs
     ),
-    "'data' must contains columns 'KEGG', 'cluster' and 'condition'"
+    "'data' must contains columns 'metabolite', 'cluster' and 'condition'"
   )
 
   # Invalid 'tested_column' input (not a character)
@@ -70,7 +75,7 @@ test_that("ORA_hypergeometric: input checks", {
       background = valid_background,
       annotations = valid_annotations,
       data <- valid_clusters,
-      tested_column = 123
+      tested_column = 123, IDs = valid_IDs
     ),
     "'tested_column' must be a character vector"
   )
@@ -83,6 +88,16 @@ test_that("ORA_hypergeometric: input checks", {
     data <- valid_clusters,
     tested_column = invalid_tested_column
   ))
+  
+  # invalid IDs
+  invalid_IDs <- valid_IDs[,1]
+  expect_error(ORA_hypergeometric(
+    background = valid_background,
+    annotations = valid_annotations,
+    data <- valid_clusters,
+    tested_column = valid_tested_column,
+    IDs = invalid_IDs
+  ))
 })
 
 
@@ -92,7 +107,8 @@ test_that("ORA_hypergeometric:output_checks", {
     background = valid_background,
     annotations = valid_annotations,
     data = valid_clusters,
-    tested_column = "middle_hierarchy"
+    tested_column = "middle_hierarchy",
+    IDs = valid_IDs
   )
   expect_true("condition" %in% colnames(result))
   expect_true("cluster" %in% colnames(result))

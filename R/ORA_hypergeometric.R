@@ -119,7 +119,7 @@ ORA_hypergeometric <- function(background,
     stop("'annotations' must be a dataframe obtained by get_ORA_annotations()")
   }
   if (!is.data.frame(IDs)) {
-    stop("'annotations' must be a dataframe obtained by get_ORA_annotations()")
+    stop("'IDs' must be a dataframe obtained by get_ORA_annotations()")
   }
   if (!is.character(tested_column)) {
     stop("'tested_column' must be a character vector")
@@ -138,15 +138,18 @@ ORA_hypergeometric <- function(background,
     stop("'annotations' must contains columns 'module_id', 'module_name', 'KEGG' and 'tested_column'
          suitable dataframes can be obtained with get_ORA_annoations()")
   }
-  if (!all(c("KEGG", "condition", "cluster") %in% colnames(data_df))) {
-    stop("'data' must contains columns 'KEGG', 'cluster' and 'condition'")
+  if (!all(c("metabolite", "condition", "cluster") %in% colnames(data_df))) {
+    stop("'data' must contains columns 'metabolite', 'cluster' and 'condition'")
   }
-  if (!all(c("metabolite","KEGG") %in% colnames(data_df))) {
+  if (!all(c("metabolite","KEGG") %in% colnames(IDs))) {
     stop("'IDs' must contains columns 'metabolite' and 'KEGG'")
   }
   
   # map KEGG IDs to data
   data_df <- left_join(data_df,IDs[,c("metabolite","KEGG")],by="metabolite")
+  if (!all(c("metabolite","KEGG", "condition", "cluster") %in% colnames(data_df))) {
+    stop("ID matching not successfull")
+  }
   
   name <- tested_column
 
