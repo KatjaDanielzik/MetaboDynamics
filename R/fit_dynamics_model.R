@@ -17,17 +17,12 @@
 #' e.g. by cell counters (i.e. that cells were not counted under the microscope) 
 #' leading to a small uncertainty of the true cell count.
 #' @param data concentration table with at least three replicate measurements per
-#' metabolite containing the columns "metabolite",
-#' "condition", and "m_scaled" by default or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
+#' metabolite. Must contain columns named "metabolite" (containing names or IDs), "time" (categorical, the same for all conditions), and "condition" or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
 #' Time column needs to be sorted in ascending order
-#' @param metabolite column of "data" that contains the metabolite names or IDs
-#' @param time column of "time" that contains time as numeric, make sure your
-#' time column is ordered from lowest to highest for the model to work
-#' @param condition column of "data" that contains the experimental conditions
 #' @param scaled_measurement column of "data" that contains the concentrations per cell,
 #' centered and normalized per metabolite and experimental condition (mean=0, sd=1)
 #' @param counts data frame with at least one replicate per time point and condition
-#' specifying the cell counts, must contain columns "time", "condition" equivalent
+#' specifying the cell counts, must contain columns "time", and "condition" equivalent
 #' to the specifications of "data".
 #' Must contain a column named "counts" that specifies the cell counts.
 #' Model assumes that the replicates of the cell counts and metabolite concentrations
@@ -89,9 +84,6 @@
 
 fit_dynamics_model <- function(model = "scaled_log",
                                data, 
-                               metabolite = "metabolite",
-                               time = "time", 
-                               condition = "condition",
                                scaled_measurement = "m_scaled",
                                counts = NULL, 
                                assay = "scaled_log",
@@ -99,8 +91,7 @@ fit_dynamics_model <- function(model = "scaled_log",
                                adapt_delta = 0.95, max_treedepth = 10,
                                iter = 2000, warmup = iter / 4) {
   
-  .check_fit_dynamics_input(model = model, data = data, metabolite = metabolite,
-                           time = time, condition = condition,
+  .check_fit_dynamics_input(model = model, data = data,
                            scaled_measurement = scaled_measurement,
                            counts = counts, assay = assay, chains = chains, 
                            cores = cores, adapt_delta = adapt_delta,
@@ -126,7 +117,7 @@ fit_dynamics_model <- function(model = "scaled_log",
     data_df <- data
   }
 
-  if (!all(c(metabolite, time, condition, scaled_measurement) %in% colnames(data_df))) {
+  if (!all(c("metabolite", "time", "condition", scaled_measurement) %in% colnames(data_df))) {
     stop("'data' must contain columns named 'metabolite','time','condition', and 'scaled_measurement'")
   }
   if(model=="raw_plus_counts"){
@@ -138,17 +129,11 @@ fit_dynamics_model <- function(model = "scaled_log",
   # convert character string of variables to variable useable by tidyverse
   scaled_measurement <- as.symbol(scaled_measurement)
   scaled_measurement <- enquo(scaled_measurement)
-  metabolite <- as.symbol(metabolite)
-  metabolite <- enquo(metabolite)
-  condition <- as.symbol(condition)
-  condition <- enquo(condition)
-  time <- as.symbol(time)
-  time <- enquo(time)
-  
+
   # validate at least triplicate measurements
   # count replicates per metabolite, time and condition
   grouped_data <- data_df %>%
-    group_by(!!metabolite, !!time, !!condition) %>%
+    group_by(metabolite, time, condition) %>%
     summarise(count = n())
   if (any(grouped_data$count < 3) == TRUE) {
     stop("Input must contain at least three replicates per metabolite,
@@ -156,17 +141,14 @@ fit_dynamics_model <- function(model = "scaled_log",
   }
   
   # convert variable names back to character string
-  time <- as_name(time)
-  condition <- as_name(condition)
-  metabolite <- as_name(metabolite)
   scaled_measurement <- as_name(scaled_measurement)
   
   # check if same all conditions and time points have cell counts
   if(model=="raw_plus_counts"){
-    if(!identical(unique(data_df[[time]]),unique(counts[[time]]))){
+    if(!identical(unique(data_df$time),unique(counts$time))){
       stop("data and counts must have the same time points")
     }
-    if(!identical(unique(data_df[[condition]]),unique(counts[[condition]]))){
+    if(!identical(unique(data_df$condition),unique(counts$condition))){
       stop("data and counts must have the same conditions")
     }}
   
@@ -178,16 +160,16 @@ fit_dynamics_model <- function(model = "scaled_log",
       object = stanmodels$m_ANOVA_partial_pooling_euclidean_distance,
       data = list(
         N = nrow(data_df),
-        M = length(unique(data_df[[metabolite]])),
-        t = length(unique(data_df[[time]])),
-        d = length(unique(data_df[[condition]])),
+        M = length(unique(data_df$metabolite)),
+        t = length(unique(data_df$time)),
+        d = length(unique(data_df$condition)),
         y = data_df[[scaled_measurement]],
         # Vector of metabolite IDs
-        Me = as.numeric(as.factor(data_df[[metabolite]])),
+        Me = as.numeric(as.factor(data_df$metabolite)),
         # Vector indicating which row belongs to which timestep
-        X = as.numeric(as.factor(data_df[[time]])),
+        X = as.numeric(as.factor(data_df$time)),
         # Condition indicator
-        Do = as.numeric(as.factor(data_df[[condition]]))
+        Do = as.numeric(as.factor(data_df$condition))
         ),
       chains = chains,
       iter = iter,
@@ -207,20 +189,20 @@ fit_dynamics_model <- function(model = "scaled_log",
       object = stanmodels$m_ANOVA_partial_pooling_cell_counts_euclidean_distance,
       data = list(
         N = nrow(data_df),
-        M = length(unique(data_df[[metabolite]])),
-        t = length(unique(data_df[[time]])),
-        D = length(unique(data_df[[condition]])),
+        M = length(unique(data_df$metabolite)),
+        t = length(unique(data_df$time)),
+        D = length(unique(data_df$condition)),
         maven = data_df[[scaled_measurement]],
         # Vector of metabolite IDs
-        Me = as.numeric(as.factor(data_df[[metabolite]])),
+        Me = as.numeric(as.factor(data_df$metabolite)),
         # Vector indicating which row belongs to which timestep
-        X = as.numeric(as.factor(data_df[[time]])),
+        X = as.numeric(as.factor(data_df$time)),
         # Condition indicator
-        Do = as.numeric(as.factor(data_df[[condition]])),
+        Do = as.numeric(as.factor(data_df$condition)),
         Nc = nrow(counts),
         Cc = as.numeric(counts$counts),
-        X_c = as.numeric(as.factor(counts[[time]])),
-        Do_c = as.numeric(as.factor(counts[[condition]]))
+        X_c = as.numeric(as.factor(counts$time)),
+        Do_c = as.numeric(as.factor(counts$condition))
       ),
       chains = chains,
       iter = iter,

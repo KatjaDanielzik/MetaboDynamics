@@ -7,8 +7,7 @@ dummy_data <- data.frame(
 
 dummy_fit <- fit_dynamics_model(
   data = dummy_data, chains = 1, cores = 1, iter = 200,
-  metabolite = "metabolite", condition = "condition",
-  time = "time", scaled_measurement = "scaled_measurement"
+  scaled_measurement = "scaled_measurement"
 )
 
 test_that("diagnostics_dynamics: input checks", {
@@ -27,7 +26,7 @@ test_that("diagnostics_dynamics: input checks", {
   # Missing required column in 'data'
   expect_error(
     diagnostics_dynamics(data = dummy_data[, -1], fit = dummy_fit),
-    "'data' must contain a column named 'time'"
+    "'data' must contain columns named 'metabolite','time', and 'condition'"
   )
 })
 

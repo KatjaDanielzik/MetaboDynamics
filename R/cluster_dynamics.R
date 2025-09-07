@@ -6,9 +6,12 @@
 #' matrix and hierarchical clustering needed as input for dynamicTreeCut.
 #' Provides bootstrapping of clustering solution from posterior estimates of the model.
 #'
-#' @param data data frame or colData of a \link[SummarizedExperiment]{SummarizedExperiment}  used used to fit dynamics model
-#' @param fit model fit obtained by fit_dynamics_model(). Needed if data is not a SummarizedExperiment object for which the model fit is saved in metadata[["dynamic_fit"]]
-#' @param estimates output of estimates_dynamics function, needed if data is not a SummarizedExperiment object for which the model estimates are saved in metadata[["estimates_dynamics"]]
+#' @param data data frame or colData of a \link[SummarizedExperiment]{SummarizedExperiment}
+#' used to fit dynamics model
+#' @param fit model fit obtained by fit_dynamics_model(). Needed if data is not a 
+#' SummarizedExperiment object for which the model fit is saved in metadata[["dynamic_fit"]]
+#' @param estimates output of estimates_dynamics function, needed if data is not 
+#' a SummarizedExperiment object for which the model estimates are saved in metadata[["estimates_dynamics"]]
 #' @param distance distance method to be used as input for hierarchical clustering \link[stats]{dist}
 #' can be "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski"
 #' @param agglomeration agglomerative method to be used for hierarchical clustering \link[stats]{hclust}
@@ -19,12 +22,12 @@
 #' @param B number of bootstraps
 #'
 #' @returns a list with one list per condition. The elements per condition are
-#' 'data' (mean estiamtes of mu plus the clustering solution), 
+#' 'data' (mean estimates of mu plus the clustering solution), 
 #' mean_dendro' the dendrogram of the mean estimates, and 
 #' mean_phylo' the phylogram of the mean estimates. 
 #' if data is a \link[SummarizedExperiment]{SummarizedExperiment} object clustering
 #' results are stored in metadata under "cluster"
-#' Element 'dynamics' contains column names of timepoints
+#' Element 'dynamics' contains column names of time points
 #'
 #' @export
 #'

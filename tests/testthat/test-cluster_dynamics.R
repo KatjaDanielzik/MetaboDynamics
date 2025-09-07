@@ -14,7 +14,7 @@ dummy_fit <- fit_dynamics_model(model = "scaled_log",data=dummy_data,
                                 chains=1)
 
 # Define a dummy estimates list
-dummy_estimates <- estimates_dynamics(data=dummy_data,fit=dummy_fit,kegg="kegg")
+dummy_estimates <- estimates_dynamics(data=dummy_data,fit=dummy_fit)
 
 # Define the tests
 test_that("cluster_dynamics:input_checks", {
@@ -63,7 +63,7 @@ test_that("cluster_dynamics:output_checks", {
   # Test that the function returns a list with the expected elements
   results <- cluster_dynamics(data = dummy_data, fit = dummy_fit, estimates = dummy_estimates)
   expect_type(results, "list")
-  expected_elements <- c("cluster")
-  expect_true(all(expected_elements %in% names(results)))
+  expected_elements <- c("data","mean_dendro","mean_phylo")
+  expect_true(all(expected_elements %in% names(results[["A"]])))
   
 })

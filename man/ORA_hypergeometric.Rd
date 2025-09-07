@@ -8,6 +8,7 @@ ORA_hypergeometric(
   background,
   annotations,
   data,
+  IDs,
   tested_column = "middle_hierarchy"
 )
 }
@@ -21,7 +22,9 @@ modules our experimental metabolites are annotated in KEGG, can be constructed
 by filtering the provided KEGG background \link{modules_compounds} for the experimental
 metabolites}
 
-\item{data}{esult of \code{\link[=cluster_dynamics]{cluster_dynamics()}} function: either a list of data frames or a SummarizedExperiment object}
+\item{data}{result of \code{\link[=cluster_dynamics]{cluster_dynamics()}} function: either a list of data frames or a SummarizedExperiment object}
+
+\item{IDs}{dataframe with two columsn 'metabolite' and 'KEGG' mapping KEGG IDs to metabolites}
 
 \item{tested_column}{column that is in background and annotations and on
 which the hypergeometric model will be executed}
@@ -48,11 +51,14 @@ data("modules_compounds")
 head(modules_compounds)
 data("metabolite_modules")
 head(metabolite_modules)
-# middly hierachy
+data("IDs")
+head(IDs)
+
 longitudinalMetabolomics <- ORA_hypergeometric(
   data = longitudinalMetabolomics,
   annotations = metabolite_modules,
   background = modules_compounds,
+  IDs = IDs,
   tested_column = "middle_hierarchy"
 )
 S4Vectors::metadata(longitudinalMetabolomics)[["ORA_middle_hierarchy"]]

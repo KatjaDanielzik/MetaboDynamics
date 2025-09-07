@@ -77,7 +77,10 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
     )
     fit <- metadata(data)[["dynamic_fit"]]
   }
-
+  # convert potential tibbles into data frame
+  if (is(data, "tbl")) {
+    data_df <- as.data.frame(data_df)
+  }
   # convert potential tibbles into data frame
   if (is(data, "tbl")) {
     data <- as.data.frame(data)
@@ -95,8 +98,8 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
   if (!inherits(fit, "stanfit")) {
     stop("'fit' must be a stanfit object")
   }
-  if (!all(c("time") %in% colnames(data_df))) {
-    stop("'data' must contain a column named 'time'")
+  if (!all(c("metabolite", "time", "condition") %in% colnames(data_df))) {
+    stop("'data' must contain columns named 'metabolite','time', and 'condition'")
   }
   if (!(all(c(warmup, iter, chains) > 0 & c(warmup, iter, chains) %% 1 == 0))) {
     stop("'iter', 'warmup', and 'chains' must be positive integers")

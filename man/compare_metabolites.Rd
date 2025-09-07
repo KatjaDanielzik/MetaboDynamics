@@ -4,21 +4,13 @@
 \alias{compare_metabolites}
 \title{Comparison of metabolite sets between dynamics clusters of different experimental conditions}
 \usage{
-compare_metabolites(data, metabolite = "metabolite")
+compare_metabolites(data)
 }
 \arguments{
-\item{data}{a dataframe or containing a column specifying the metabolite
-names to be compared and cluster IDs (column named "cluster") of
-clusters of similar dynamics, as well as a column "condition" specifying
-the experimental conditions.
-to be compared or a \link[SummarizedExperiment]{SummarizedExperiment} storing the same information in
-metadata(data) under "cluster"}
-
-\item{metabolite}{column in "data" that specifies either metabolite name
-or KEGG ID or some other identifier}
+\item{data}{result of \code{\link[=cluster_dynamics]{cluster_dynamics()}} function: either a list of data frames or a SummarizedExperiment object}
 }
 \value{
-a dataframe of Jaccard indices between data or if data input
+a data frame of Jaccard indices between data or if data input
 was a SummarizedExperiment results are stored in metadata(data) under
 "comparison_metabolites"
 }

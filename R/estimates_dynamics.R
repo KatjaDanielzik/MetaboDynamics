@@ -3,15 +3,14 @@
 #' Extracts the mean concentrations (mu) at every time point from the dynamics model fit, the 95% highest density interval (HDI), the estimated standard deviation of metabolite concentrations at every time point (sigma), and the pooled standard deviation of every metabolite over all timepoints (lambda).
 #' Additionally samples from the posterior of mu can be drawn. This can be helpful if p.e. one wants to estimate the clustering precision. Lambda can be used for clustering algorithms such as VSClust that also take the variance into account.
 #'
-#' @param data data frame or colData of a \link[SummarizedExperiment]{SummarizedExperiment}  used used to fit dynamics model, must contain a column specifying KEGG IDs, column named "condition" specifiyng the experimental condition and a column named "time" specifying the timepoints.
+#' @param data data frame or colData of a \link[SummarizedExperiment]{SummarizedExperiment} 
+#' used to fit dynamics model, must contain a column named "condition" specifiyng 
+#' the experimental condition and a column 
+#' named "time" specifying the timepoints.
 #' If it is a SummarizedExperiment object the dynamic fits must be stores in metadata(data)
 #' under "dynamic_fits"
 #' @param assay of the SummarizedExperiment object that was used to fit the dynamics
 #' model
-#' @param kegg column in "data" that contains the KEGG IDs or other identifier of metabolites
-#' @param condition name of column in dataframe data that specifies the experimental condition
-#' @param time column in "data" that contains the time point identifiers
-#' @param metabolite column of "data" that contains the metabolite names or IDs
 #' @param fit model fit for which estimates should be extracted
 #'
 #' @seealso Fit the dynamic model [fit_dynamics_model()].
@@ -48,8 +47,6 @@
 #' )
 #' S4Vectors::metadata(data)[["estimates_dynamics"]]
 estimates_dynamics <- function(data, assay = "scaled_log",
-                               kegg = "KEGG", condition = "condition", time = "time",
-                               metabolite = "metabolite",
                                fit = metadata(data)[["dynamic_fit"]]) {
   
   
@@ -82,17 +79,15 @@ estimates_dynamics <- function(data, assay = "scaled_log",
   if (!inherits(fit, "stanfit")) {
     stop("'fit' must be a stanfit objects")
   }
-  if (!all(vapply(list(time, condition, kegg), is.character, logical(1)))) {
-    stop("'time', 'kegg' and 'condition' must be a character vector specifying a column name of data")
-  }
-  if (!all(c(time, kegg, condition) %in% colnames(data_df))) {
-    stop("'data' must contain columns named 'condition', 'kegg' and 'time'")
+
+  if (!all(c("metabolite", "time", "condition") %in% colnames(data_df))) {
+    stop("'data' must contain columns named 'metabolite','time', and 'condition'")
   }
 
   # get number of metabolites, time points and conditions
-  M <- length(unique(data_df[[metabolite]]))
-  t <- length(unique(data_df[[time]]))
-  C <- length(unique(data[[condition]]))
+  M <- length(unique(data_df$metabolite))
+  t <- length(unique(data_df$time))
+  C <- length(unique(data$condition))
 
 
   estimates_data <- data.frame(
@@ -164,22 +159,6 @@ estimates_dynamics <- function(data, assay = "scaled_log",
                  lambda = lambda, 
                  delta_mu= delta_mu, 
                  euclidean_distances=distances)
-
-  # Map metabolite IDs to KEGG and names
-  metabolites <- unique(data_df[c(metabolite, kegg)])
-
-  # # Join metadata: for all list elements
-  result <- lapply(result,function(x){
-    if(is.data.frame(x)&metabolite%in%colnames(x)){
-      x <- left_join(x,metabolites,by=metabolite)
-      x <- x %>% relocate (!!kegg, .after=!!metabolite)
-    }
-    return(x)
-  })
-  # result <- left_join(result, metabolites, by = "metabolite")
-  # result <- result %>% relocate("metabolite", .after = "metabolite")
-  # result <- result %>% relocate(kegg, .after = "metabolite")
-  # result <- unique(result)
 
   # if input is a SummarizedExperiment object, store estimates in the metadata
   if (is(data, "SummarizedExperiment")) {

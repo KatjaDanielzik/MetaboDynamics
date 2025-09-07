@@ -46,7 +46,10 @@ Imports:
   tidyr,
   dynamicTreeCut,
   dendextend,
-  rlang
+  rlang,
+  ape,
+  ggtree,
+  patchwork
 VignetteBuilder: knitr
 Depends: 
   R (>= 4.4.0)

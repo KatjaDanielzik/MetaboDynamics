@@ -1,7 +1,6 @@
 #' input checks for fit_dynamics_model
 #' @keywords internal
-.check_fit_dynamics_input <- function(model, data, metabolite,
-                                     time, condition,
+.check_fit_dynamics_input <- function(model, data,
                                      scaled_measurement,
                                      counts, assay, chains, cores, adapt_delta,
                                      max_treedepth, iter, warmup){
@@ -25,7 +24,7 @@
       stop("'counts' must be a dataframe if you chose model 'raw_plus_counts'.
                 If you cannot provide cell counts choose model 'scaled_log'")
     }
-    if (!all(c(time, condition, "counts") %in% colnames(counts))) {
+    if (!all(c("time", "condition", "counts") %in% colnames(counts))) {
       stop("'counts' must contain columns named 'time','condition', and 'counts'")
     }
   }
@@ -40,10 +39,6 @@
   }
   if (!is.numeric(adapt_delta) | !(adapt_delta > 0 & adapt_delta < 1)) {
     stop("'adapt_delta' must be numeric and in the range (0;1)")
-  }
-  # check if all input variables are character vectors
-  if (!all(vapply(list(metabolite, time, condition, scaled_measurement), is.character, logical(1)))) {
-    stop("'metabolite', 'time', 'condition', and 'scaled_measurement' must be a character vector specifying a column name of data")
   }
 }
 

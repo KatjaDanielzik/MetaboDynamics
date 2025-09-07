@@ -31,6 +31,7 @@ are stored in colData and timepoint specifications in rowData.
 }
 \source{
  \bold{Script used to create simulated data}
+ set.seed(1234)
 # load KEGG database for assignment of metabolite names:
 data("metabolite_modules")
 

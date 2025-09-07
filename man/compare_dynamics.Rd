@@ -4,19 +4,10 @@
 \alias{compare_dynamics}
 \title{Comparison of metabolite dynamics clusters under different experimental conditions}
 \usage{
-compare_dynamics(
-  data,
-  dynamics = metadata(data)[["cluster"]][[1]]$dynamics,
-  cores = 4
-)
+compare_dynamics(data, dynamics = metadata(data)[["dynamics"]], cores = 4)
 }
 \arguments{
-\item{data}{a dataframe or containing a column specifying the metabolite
-names to be compared and cluster IDs (column named "cluster") of
-clusters of similar dynamics, as well as a column "condition" specifying
-the experimental conditions.
-to be compared or a \link[SummarizedExperiment]{SummarizedExperiment} storing the same information in
-metadata(data) under "cluster"}
+\item{data}{result of \code{\link[=cluster_dynamics]{cluster_dynamics()}} function: either a list of data frames or a SummarizedExperiment object}
 
 \item{dynamics}{vector specifying the column names of dataframe clusters
 that hold the dynamics information}

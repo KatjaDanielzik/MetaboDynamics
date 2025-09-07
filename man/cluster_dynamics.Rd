@@ -42,6 +42,7 @@ mean_dendro' the dendrogram of the mean estimates, and
 mean_phylo' the phylogram of the mean estimates.
 if data is a \link[SummarizedExperiment]{SummarizedExperiment} object clustering
 results are stored in metadata under "cluster"
+Element 'dynamics' contains column names of timepoints
 }
 \description{
 Convenient wrapper function for clustering of metabolite dynamics

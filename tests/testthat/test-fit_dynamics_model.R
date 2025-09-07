@@ -13,41 +13,25 @@ test_that("fit_dynamics_model:input_checks", {
     fit_dynamics_model(data = list(), scaled_measurement = "m_scaled"),
     "'data' must be a dataframe or a SummarizedExperiment object"
   )
-  # column names must be character strings
-  expect_error(
-    fit_dynamics_model(
-      data = mock_data,
-      metabolite = 123, time = 1, condition = TRUE, scaled_measurement = "m_scaled"
-    ),
-    "'metabolite', 'time', 'condition', and 'scaled_measurement' must be a character vector specifying a column name of data"
-  )
+
   # missing columns in the data
   expect_error(
     fit_dynamics_model(
       data = mock_data[, -1], # remove the metabolite column
-      scaled_measurement = "m_scaled", time = "time", condition = "condition"
-    ),
-    "'data' must contain columns named 'metabolite','time','condition', and 'scaled_measurement'"
-  )
-
-  expect_error(
-    fit_dynamics_model(
-      data = mock_data, # remove the metabolite column
-      scaled_measurement = "m_scaled", condition = "concentration", time = "time"
+      scaled_measurement = "m_scaled"
     ),
     "'data' must contain columns named 'metabolite','time','condition', and 'scaled_measurement'"
   )
 
   # adapt_delta must be in range [0;1]
   expect_error(fit_dynamics_model(
-    data = mock_data, condition = "condition", time = "time",
+    data = mock_data,
     adapt_delta = 1.5, scaled_measurement = "m_scaled"
   ))
 
   expect_error(
     fit_dynamics_model(
-      data = mock_data, scaled_measurement = "m_scaled",
-      condition = "condition"
+      data = mock_data, scaled_measurement = "m_scaled"
     ),
     "Input must contain at least three replicates per metabolite,
       time point and experimental condition."
@@ -80,9 +64,6 @@ test_that("fit_dynamics_model:output_checks", {
   # basic function output
   fit <- fit_dynamics_model(
     data = mock_data,
-    metabolite = "metabolite",
-    time = "time",
-    condition = "condition",
     scaled_measurement = "m_scaled",
     chains = 1,
     cores = 1,
