@@ -44,8 +44,6 @@ plot_cluster <- function(data){
   cluster <- NULL
   time <- NULL
   
-  
-  
   # bubbletrees of bootstrapping
   trees <- list()
   for (i in names(data)){

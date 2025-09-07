@@ -105,7 +105,7 @@ fit_dynamics_model <- function(model = "scaled_log",
       as.data.frame(colData(data))
     ))
     data_df <- data_df %>% pivot_longer(
-      cols = seq_len(t), names_to = time,
+      cols = seq_len(t), names_to = "time",
       values_to = scaled_measurement
     )
   }

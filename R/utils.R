@@ -93,7 +93,7 @@
 #' @importFrom dynamicTreeCut cutreeDynamic
 #' @returns list of input data including clustering solution, dendrogram, phylogram
 #' @keywords internal
-.hierarchical_clustering <- function(data,distance,agglomeration,minClusterSize,deepSplit){
+.hierarchical_clustering <- function(data_clust,distance,agglomeration,minClusterSize,deepSplit){
   dist <- as.matrix(dist(data[,-c(1:2)])) # - metabolite,condition -> only times left
   # assign metabolite names
   colnames(dist) <- data$metabolite
@@ -109,8 +109,8 @@
     minClusterSize = minClusterSize,
     deepSplit = deepSplit
   )
-  data$cluster <- cutclust
-  return(list(data=data,mean_dendro=clust, mean_phylo=ape::as.phylo(x = clust)))
+  data_clust$cluster <- cutclust
+  return(list(data_clust=data_clust,mean_dendro=clust, mean_phylo=ape::as.phylo(x = clust)))
 }
 
 
