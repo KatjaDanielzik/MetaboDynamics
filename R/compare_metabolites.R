@@ -4,10 +4,7 @@
 #' different experimental conditions
 #'
 #' @param data result of [cluster_dynamics()] function: either a list of data frames or a SummarizedExperiment object
-#' @param metabolite column in "data" that specifies either metabolite name
-#' or KEGG ID or some other identifier
-#'
-#' @return a dataframe of Jaccard indices between data or if data input
+#' @return a data frame of Jaccard indices between data or if data input
 #' was a SummarizedExperiment results are stored in metadata(data) under
 #' "comparison_metabolites"
 #'
@@ -26,7 +23,6 @@
 #' S4Vectors::metadata(longitudinalMetabolomics)[["comparison_metabolites"]]
 compare_metabolites <- function(data) {
   # Input checks
-  # Input checks
   if (!inherits(data, "list") && !inherits(data, "SummarizedExperiment")) {
     stop("'data' must be a list or a SummarizedExperiment object obtained by 'cluster_dynamics()'")
   }
@@ -43,23 +39,21 @@ compare_metabolites <- function(data) {
       return(x$data)
     }))
   }
-
-  if (is(data, "data.frame")) {
-    data_df <- data
+  #convert potential tibbles into data frame
+  if (is(data_df, "tbl")) {
+    data <- as.data.frame(data_df)
+  }
+  if (is(data_df, "data.frame")) {
+    data_df <- data_df
   }
   if (is(data_df, "tbl")) {
     data_df <- as.data.frame(data_df)
   }
   
-  if (!is.character(metabolite)) stop("'metabolite' must be a character vector")
-  if (!all(c("cluster") %in% colnames(data_df))) {
-    stop("'data' must contain a column named 'cluster'")
+  if (!all(c("cluster","metabolite","condition") %in% colnames(data_df))) {
+    stop("'data' must contain columns named 'cluster','metabolite' and 'condition'")
   }
-  if (!all(c(metabolite) %in% colnames(data_df))) {
-    stop("'data' must contain a column containing
-         metabolite names as specified with metabolite= ")
-  }
-  
+
   # order data_df according to condition and cluster
   data_df$cluster <- as.numeric(data_df$cluster)
   data_df <- data_df[order(data_df$condition,data_df$cluster),]
@@ -89,7 +83,7 @@ compare_metabolites <- function(data) {
   # Prepare metabolite lists for all combinations
   metabolite_lists <- lapply(seq_len(n_combinations), function(i) {
     subset <- data_df[data_df$condition == as.character(unique_combinations[i, "condition"]) &
-      data_df$cluster == as.numeric(unique_combinations[i, "cluster"]), metabolite]
+      data_df$cluster == as.numeric(unique_combinations[i, "cluster"]), "metabolite"]
     unique(subset)
   })
 

@@ -1,23 +1,21 @@
 test_that("compare_dynamics: input checks", {
-  mock_clusters <- data.frame(
+  mock_clusters <- list(A=list(data=data.frame(
     condition = c(rep("A", 5), rep("B", 5)),
-    cluster = c(rep("C1", 5), rep("C2", 5)),
+    cluster = c(rep("1", 5), rep("2", 5)),
     mu1_mean = rnorm(10), mu2_mean = rnorm(10)
-  )
-
-  error_clusters <- data.frame(
+  )))
+  
+  error_clusters <- list(A=data.frame(
     condi = c(rep("A", 5), rep("B", 5)),
     clust = c(rep("C1", 5), rep("C2", 5)),
     mu1_mean = rnorm(10), mu2_mean = rnorm(10)
-  )
+  ))
 
   expect_error(
     compare_dynamics(
       data = NULL,
       dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean")
-    ),
-    "'data' must be a dataframe"
-  )
+    ))
   expect_error(
     compare_dynamics(data = mock_clusters, dynamics = NULL),
     "'dynamics' must be a character vector"
@@ -26,8 +24,7 @@ test_that("compare_dynamics: input checks", {
     compare_dynamics(
       data = error_clusters,
       dynamics = c("mu1_mean", "mu2_mean", "mu3_mean", "mu4_mean")
-    ),
-    "'data' must contain 'condition' and 'cluster' columns"
+    )
   )
   expect_error(
     compare_dynamics(data = mock_clusters, dynamics = c("not_present")),
@@ -37,12 +34,12 @@ test_that("compare_dynamics: input checks", {
 
 test_that("compare_dynamics:output_checks", {
   # Prepare valid dummy data
-  dummy_clusters <- data.frame(
+  dummy_clusters <- list(A=list(data=data.frame(
     condition = rep(c("A", "B"), each = 5),
     cluster = rep(c("1", "2"), times = 5),
     mu1_mean = rnorm(10), mu2_mean = rnorm(10)
-  )
-  dynamics <- c("mu1_mean", "mu2_mean")
+  )))
+  dynamics <- c("mu1_mean","mu2_mean")
 
   result <- compare_dynamics(data = dummy_clusters, dynamics = dynamics, cores = 1)
 

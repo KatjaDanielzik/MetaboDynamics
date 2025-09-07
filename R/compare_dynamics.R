@@ -57,11 +57,11 @@ compare_dynamics <- function(data, dynamics = metadata(data)[["dynamics"]], core
     }))
   }
   #convert potential tibbles into data frame
-  if (is(data, "tbl")) {
-    data <- as.data.frame(data)
+  if (is(data_df, "tbl")) {
+    data <- as.data.frame(data_df)
   }
-  if (is(data, "data.frame")) {
-    data_df <- data
+  if (is(data_df, "data.frame")) {
+    data_df <- data_df
   }
   if (is(data_df, "tbl")) {
     data_df <- as.data.frame(data_df)
@@ -69,7 +69,7 @@ compare_dynamics <- function(data, dynamics = metadata(data)[["dynamics"]], core
   if (!is.character(dynamics)) stop("'dynamics' must be a character vector")
 
   if (!all(c("condition", "cluster") %in% colnames(data_df))) {
-    stop("'data' must contain 'condition' and 'cluster' columns")
+    stop("'data' must contain columns named 'condition' and 'cluster'")
   }
   if (!all(dynamics %in% colnames(data_df))) {
     stop("All specified 'dynamics' columns must exist in `data` dataframe")
