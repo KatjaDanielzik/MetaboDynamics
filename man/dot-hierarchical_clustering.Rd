@@ -5,7 +5,7 @@
 \title{hierarchical clustering}
 \usage{
 .hierarchical_clustering(
-  data,
+  data_clust,
   distance,
   agglomeration,
   minClusterSize,
@@ -13,7 +13,7 @@
 )
 }
 \arguments{
-\item{data}{element "mu" of estimates}
+\item{data_clust}{element "mu" of estimates}
 
 \item{distance}{distance method}
 

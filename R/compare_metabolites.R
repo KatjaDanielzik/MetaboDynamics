@@ -41,7 +41,7 @@ compare_metabolites <- function(data) {
   }
   #convert potential tibbles into data frame
   if (is(data_df, "tbl")) {
-    data <- as.data.frame(data_df)
+    data_df <- as.data.frame(data_df)
   }
   if (is(data_df, "data.frame")) {
     data_df <- data_df

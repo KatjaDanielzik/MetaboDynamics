@@ -68,8 +68,8 @@ data <- estimates_dynamics(
   data = data
 )
 data <- cluster_dynamics(data, B = 1000)
-S4Vectors::metadata(data)[["cluster"]][["cluster"]][["A"]]
-plot(metadata(data)[["cluster"]][["cluster"]][["A"]][["mean_dendro"]])
+S4Vectors::metadata(data)[["cluster"]][["A"]]
+plot(metadata(data)[["cluster"]][["A"]][["mean_dendro"]])
 }
 \seealso{
 \code{\link[=fit_dynamics_model]{fit_dynamics_model()}}, \code{\link[=estimates_dynamics]{estimates_dynamics()}}, \code{\link[=plot_cluster]{plot_cluster()}}

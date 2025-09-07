@@ -83,7 +83,7 @@
 
 #' hierarchical clustering
 #'
-#' @param data element "mu" of estimates
+#' @param data_clust element "mu" of estimates
 #' @param distance distance method
 #' @param agglomeration agglomeration method of hierarchical clustering
 #' @param minClusterSize minimum number of metabolites per of cluster \link[dynamicTreeCut]{cutreeDynamic}
@@ -94,10 +94,10 @@
 #' @returns list of input data including clustering solution, dendrogram, phylogram
 #' @keywords internal
 .hierarchical_clustering <- function(data_clust,distance,agglomeration,minClusterSize,deepSplit){
-  dist <- as.matrix(dist(data[,-c(1:2)])) # - metabolite,condition -> only times left
+  dist <- as.matrix(dist(data_clust[,-c(1:2)])) # - metabolite,condition -> only times left
   # assign metabolite names
-  colnames(dist) <- data$metabolite
-  rownames(dist) <- data$metabolite
+  colnames(dist) <- data_clust$metabolite
+  rownames(dist) <- data_clust$metabolite
   # get hierarchical clustering result
   clust <- hclust(as.dist(dist), method = agglomeration)
   clust$dist.method <- distance  
@@ -110,7 +110,7 @@
     deepSplit = deepSplit
   )
   data_clust$cluster <- cutclust
-  return(list(data_clust=data_clust,mean_dendro=clust, mean_phylo=ape::as.phylo(x = clust)))
+  return(list(data=data_clust,mean_dendro=clust, mean_phylo=ape::as.phylo(x = clust)))
 }
 
 

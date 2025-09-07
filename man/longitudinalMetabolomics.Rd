@@ -256,10 +256,12 @@ data <- estimates_dynamics(
   data = data
 )
 data <- cluster_dynamics(data,B=10)
+metadata(data)[["dynamic_fit"]] <- NULL
 
 data("modules_compounds")
 data("metabolite_modules")
-data <- ORA_hypergeometric(data = data, background = modules_compounds, 
+data("IDs")
+data <- ORA_hypergeometric(data = data, background = modules_compounds, IDs = IDs,
                            annotations = metabolite_modules, tested_column = "middle_hierarchy")
 
 # save shortened analysis in metadata of se
@@ -269,6 +271,9 @@ metadata(se)[["ORA_middle_hierarchy"]] <- metadata(data)[["ORA_middle_hierarchy"
 
 longitudinalMetabolomics <- se
 usethis::use_data(longitudinalMetabolomics,overwrite = TRUE)
+
+longitudinalMetabolomics_df <- dplyr::left_join(simulated_data_df,name_map_HMDB_CAS[,c("Query","KEGG")],join_by("metabolite"=="Query"))
+usethis::use_data(longitudinalMetabolomics_df,overwrite = TRUE)
 }
 
 \keyword{datasets}

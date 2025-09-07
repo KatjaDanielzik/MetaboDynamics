@@ -31,12 +31,22 @@ experimental conditions to estimate the mean distance between clusters.
 }
 \examples{
 data("longitudinalMetabolomics")
-longitudinalMetabolomics <- compare_dynamics(
-  data = longitudinalMetabolomics,
-  dynamics = c("1", "2", "3", "4"),
+data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition \%in\%c("A","B") &
+                                   longitudinalMetabolomics$metabolite \%in\% c("ATP", "L-Alanine", "GDP")]
+data <- fit_dynamics_model(
+  data = data,
+  scaled_measurement = "m_scaled", assay = "scaled_log",
+  max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
+)
+data <- estimates_dynamics(
+  data = data
+)
+data <- cluster_dynamics(data, B = 1)
+data <- compare_dynamics(
+  data = data,
   cores = 1
 )
-S4Vectors::metadata(longitudinalMetabolomics)[["comparison_dynamics"]]
+S4Vectors::metadata(data)[["comparison_dynamics"]]
 }
 \seealso{
 Visualization of estimates \code{\link[=heatmap_dynamics]{heatmap_dynamics()}}/
