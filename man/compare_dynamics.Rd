@@ -32,7 +32,7 @@ experimental conditions to estimate the mean distance between clusters.
 \examples{
 data("longitudinalMetabolomics")
 data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition \%in\%c("A","B") &
-                                   longitudinalMetabolomics$metabolite \%in\% c("ATP", "L-Alanine", "GDP")]
+longitudinalMetabolomics$metabolite \%in\% c("ATP", "L-Alanine", "GDP")]
 data <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", assay = "scaled_log",

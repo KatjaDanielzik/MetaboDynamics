@@ -1,5 +1,3 @@
-- get_ORA_dataframes added back to obtain data frames needed for ORA
-
 # MetaboDynamics 1.1.6
 - no more samples in estimates dynamics as probability of clustering solution will be implemented with a bubbletree in cluster_dynamics
 - estimates now returns a list with: estimated metabolite abundance (mu), 
