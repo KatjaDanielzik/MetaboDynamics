@@ -35,12 +35,15 @@ data("modules_compounds")
 head(modules_compounds)
 data("metabolite_modules")
 head(metabolite_modules)
+data("IDs")
+head(IDs)
 # middly hierachy
 longitudinalMetabolomics <- ORA_hypergeometric(
   data = longitudinalMetabolomics,
   annotations = metabolite_modules,
   background = modules_compounds,
-  tested_column = "middle_hierarchy"
+  tested_column = "middle_hierarchy",
+  IDs = IDs
 )
 plot_ORA(longitudinalMetabolomics)
 }
