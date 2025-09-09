@@ -32,22 +32,32 @@ heatmap_metabolites <- function(distances = metadata(data)[["comparison_metaboli
   cluster_b <- NULL
 
   # Input checks
-  if (!is.data.frame(data) && !inherits(data, "SummarizedExperiment")) {
-    stop("'data' must be a dataframe or a SummarizedExperiment object")
+  # Input checks
+  if (!inherits(data, "list") && !inherits(data, "SummarizedExperiment")) {
+    stop("'data' must be a list or a SummarizedExperiment object obtained by 'cluster_dynamics()'")
   }
   if (is(data, "SummarizedExperiment")) {
-    distances <- metadata(data)[["comparison_metabolites"]]
     data_df <- metadata(data)[["cluster"]]
-    # bind listelements of clustering together that contain the dataframes
-    data_df <- do.call(rbind, lapply(data_df, function(l) l[["data"]]))
+    # combine data of list elements
+    data_df <- bind_rows(lapply(data_df, function(x) {
+      return(x$data)
+    }))
   }
-
+  if (is(data, "list")) {
+    # combine data of list elements
+    data_df <- bind_rows(lapply(data, function(x) {
+      return(x$data)
+    }))
+  }
   # convert potential tibbles into data frame
-  if (is(data, "tbl")) {
-    data <- as.data.frame(data)
+  if (is(data_df, "tbl")) {
+    data_df <- as.data.frame(data_df)
   }
-  if (is(data, "data.frame")) {
-    data_df <- data
+  if (is(data_df, "data.frame")) {
+    data_df <- data_df
+  }
+  if (is(data_df, "tbl")) {
+    data_df <- as.data.frame(data_df)
   }
   # input checks
   if (!is.data.frame(distances)) {

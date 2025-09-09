@@ -50,8 +50,8 @@ heatmap_dynamics <- function(estimates = metadata(data)[["comparison_dynamics"]]
 
   # input checks
   # Input checks
-  if (!is.data.frame(data) && !inherits(data, "SummarizedExperiment")) {
-    stop("'data' must be a dataframe or a SummarizedExperiment object")
+  if (!inherits(data, "list") && !inherits(data, "SummarizedExperiment")) {
+    stop("'data' must be list or a SummarizedExperiment object")
   }
   if (is(data, "SummarizedExperiment")) {
     data_df <- metadata(data)[["cluster"]]
@@ -59,7 +59,11 @@ heatmap_dynamics <- function(estimates = metadata(data)[["comparison_dynamics"]]
     data_df <- do.call(rbind, lapply(data_df, function(l) l[["data"]]))
     estimates <- metadata(data)[["comparison_dynamics"]][["estimates"]]
   }
-
+  if (is(data, "list")) {
+    # combine data of list elements
+    data_df <- bind_rows(lapply(data, function(x) {
+      return(x$data)
+    }))}
   # convert potential tibbles into data frame
   if (is(data, "tbl")) {
     data <- as.data.frame(data)
