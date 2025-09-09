@@ -116,9 +116,9 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
       for (j in unique(temp$cluster)) {
         temp_plot <- temp %>% filter(cluster == j)
         plots[[j]] <-
-          ggplot(temp_plot, aes(x = OvE_gen_median, y = cluster, col = col)) +
+          ggplot(temp_plot, aes(x = log(OvE_gen_median), y = cluster, col = col)) +
           geom_point() +
-          geom_errorbarh(aes(xmin = OvE_gen_lower, xmax = OvE_gen_higher)) +
+          geom_errorbarh(aes(xmin = log(OvE_gen_lower), xmax = log(OvE_gen_higher))) +
           facet_grid(cols = vars(!!tested_column)) +
           theme_bw() +
           geom_vline(xintercept = 0, linetype = "dashed") +
