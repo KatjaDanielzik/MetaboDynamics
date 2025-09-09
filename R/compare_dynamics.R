@@ -51,11 +51,11 @@ compare_dynamics <- function(data, cores = 4) {
     stop("'data' must be a list or a SummarizedExperiment object obtained by 'cluster_dynamics()'")
   }
   if (is(data, "SummarizedExperiment")) {
+    dynamics <- metadata(data)[["dynamics"]]
     data_df <- metadata(data)[["cluster"]]
     # combine data of list elements
     data_df <- bind_rows(lapply(data_df, function(x) {
       return(x$data)
-      dynamics <- metadata(data)[["dynamics"]]
     }))
   }
   if (is(data, "list")) {

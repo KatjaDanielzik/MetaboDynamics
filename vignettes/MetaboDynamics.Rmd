@@ -575,9 +575,7 @@ dist_{ID}&\sim {\sf normal}(\mu_{ID},\sigma_{ID}) \\
 data("longitudinalMetabolomics")
 longitudinalMetabolomics <- compare_dynamics(
   data = longitudinalMetabolomics,
-  cores = 1, # just set to 1 for vignette, set to 4 if possible
-  dynamics = c("time_point_1_mean","time_point_2_mean","time_point_3_mean",
-               "time_point_4_mean")
+  cores = 1 # just set to 1 for vignette, set to 4 if possible
   )
 ```
 
