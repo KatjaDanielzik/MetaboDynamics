@@ -54,7 +54,7 @@ heatmap_metabolites <- function(distances = metadata(data)[["comparison_metaboli
     stop("'distances' must be a dataframe obtained by compare_metabolites()")
   }
 
-  x <- unique(data_df[order(data_df$condition,data_df$cluster), c("condition", "cluster")])
+  x <- unique(data_df[order(data_df$condition, data_df$cluster), c("condition", "cluster")])
 
   plot <- ggplot(
     distances,

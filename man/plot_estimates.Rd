@@ -34,8 +34,8 @@ Visualization of parameter estimates from numeric fit of Bayesian model of dynam
 }
 \examples{
 data("longitudinalMetabolomics")
-data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition\%in\%c("A","B")&
-                                   longitudinalMetabolomics$metabolite \%in\%c("ATP")]
+data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition \%in\% c("A", "B") &
+  longitudinalMetabolomics$metabolite \%in\% c("ATP")]
 data <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", assay = "scaled_log",

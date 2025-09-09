@@ -37,13 +37,13 @@ test_that("plot_ORA:input_checks", {
     plot_ORA(data = "not a data.frame or SummarizedExperiment"),
     "'data' must be a dataframe or a SummarizedExperiment object"
   )
-  
+
   # Test that the function throws an error if patchwork is not logical
   expect_error(
     plot_ORA(data = dummy_df, patchwork = "not logical"),
     "'patchwork' must be either 'TRUE' or 'FALSE'"
   )
-  
+
   # Test that the function throws an error if patchwork is TRUE but plot_cluster is missing or not a list
   expect_error(
     plot_ORA(data = dummy_df, patchwork = TRUE),
@@ -62,7 +62,7 @@ test_that("plot_ORA:output_checks", {
   expect_named(results, c("plot", "ora_patchwork"))
   expect_s3_class(results$plot, "gg")
   expect_length(results$ora_patchwork, 0)
-  
+
   # Test that the function returns a list with the expected elements when patchwork is TRUE
   results_patch <- plot_ORA(data = dummy_df, patchwork = TRUE, plot_cluster = dummy_cluster_plot_result)
   expect_type(results_patch, "list")

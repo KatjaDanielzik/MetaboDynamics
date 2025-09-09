@@ -18,8 +18,8 @@
 #' @seealso parent function [estimates_dynamics()]
 #' @examples
 #' data("longitudinalMetabolomics")
-#' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition%in%c("A","B")&
-#'                                    longitudinalMetabolomics$metabolite %in%c("ATP")]
+#' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in% c("A", "B") &
+#'   longitudinalMetabolomics$metabolite %in% c("ATP")]
 #' data <- fit_dynamics_model(
 #'   data = data,
 #'   scaled_measurement = "m_scaled", assay = "scaled_log",
@@ -31,14 +31,13 @@
 #' plot_estimates(data = data, delta_t = TRUE, dynamic = FALSE, distance_conditions = FALSE)
 #' plot_estimates(data = data, delta_t = FALSE, dynamic = TRUE, distance_conditions = FALSE)
 #' plot_estimates(data = data, delta_t = FALSE, dynamic = FALSE, distance_conditions = TRUE)
-
-plot_estimates <- function(data ,estimates = metadata(data)[["estimates_dynamics"]],
+plot_estimates <- function(data, estimates = metadata(data)[["estimates_dynamics"]],
                            delta_t = TRUE, dynamics = TRUE, distance_conditions = TRUE) {
   # bind variables to function
   r <- NULL
 
   # Input checks
-  if (!is.list(estimates)&!inherits(data, "SummarizedExperiment")){
+  if (!is.list(estimates) & !inherits(data, "SummarizedExperiment")) {
     stop("'data' must be a SummarizedExperiment object or provide estimates")
   }
   # check input class and convert SummarizedExperiment to dataframe
@@ -57,7 +56,7 @@ plot_estimates <- function(data ,estimates = metadata(data)[["estimates_dynamics
   if (!is.logical(distance_conditions)) {
     stop("'distance_conditions' must be either 'TRUE' or 'FALSE'")
   }
-  
+
   # binding of global variables
   `97.5%` <- NULL
   `2.5%` <- NULL
@@ -74,105 +73,108 @@ plot_estimates <- function(data ,estimates = metadata(data)[["estimates_dynamics
   plots <- list()
   plots_delta_t <- list()
   # differences between timepoints
-    if (delta_t == TRUE) { # plot requested?
-      if(is.data.frame(estimates[["delta_mu"]])){ # do we have a result?
-        delta_mu <- estimates[["delta_mu"]]
-        delta_mu <- delta_mu%>%mutate(col = ifelse(`97.5%` < 0, "CrI<0",
-                                ifelse(`2.5%` > 0, "CrI>0", "0inCrI")))
-    for (j in unique(estimates[["delta_mu"]]$condition)){
-        temp <- delta_mu%>%filter(condition==j)
-        
+  if (delta_t == TRUE) { # plot requested?
+    if (is.data.frame(estimates[["delta_mu"]])) { # do we have a result?
+      delta_mu <- estimates[["delta_mu"]]
+      delta_mu <- delta_mu %>% mutate(col = ifelse(`97.5%` < 0, "CrI<0",
+        ifelse(`2.5%` > 0, "CrI>0", "0inCrI")
+      ))
+      for (j in unique(estimates[["delta_mu"]]$condition)) {
+        temp <- delta_mu %>% filter(condition == j)
+
         # create rank
-        temp <- temp%>%group_by(condition,timepoint_1,timepoint_2)%>%
-          arrange(mean)%>%
-          mutate(r=row_number(),times=paste0(timepoint_2,"-",timepoint_1)) # delta_t = t2-t1
-        
-        for(i in unique(temp$times)){
-          temp_plot <- temp%>%filter(times==i)
-          
-          plots_delta_t[[paste0(j,"_",i)]] <- 
-          ggplot(temp_plot,aes(x= r, y = mean, col= col))+
-          geom_point() +
-          geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`),width=0.2) +
-          ylab("delta") +
-          scale_color_manual(
-            values = c("0inCrI"="black", "CrI>0"="green", "CrI<0"="red")
-          ) +
-          geom_hline(yintercept = 0, linetype = "dashed") +
-          theme_bw() +
-          xlab("metabolite")+
-          scale_x_continuous(breaks=temp_plot$r,labels = temp_plot$metabolite)+
-          facet_grid(cols=vars(times),rows=vars(condition))+
-          theme(axis.text.x = element_text(angle = -90, hjust = 0)) +
-          ggtitle(
-            "differences between timepoints",
-            "point = mean, errorbar = 95% highest density interval (CrI)"
-          )
+        temp <- temp %>%
+          group_by(condition, timepoint_1, timepoint_2) %>%
+          arrange(mean) %>%
+          mutate(r = row_number(), times = paste0(timepoint_2, "-", timepoint_1)) # delta_t = t2-t1
+
+        for (i in unique(temp$times)) {
+          temp_plot <- temp %>% filter(times == i)
+
+          plots_delta_t[[paste0(j, "_", i)]] <-
+            ggplot(temp_plot, aes(x = r, y = mean, col = col)) +
+            geom_point() +
+            geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`), width = 0.2) +
+            ylab("delta") +
+            scale_color_manual(
+              values = c("0inCrI" = "black", "CrI>0" = "green", "CrI<0" = "red")
+            ) +
+            geom_hline(yintercept = 0, linetype = "dashed") +
+            theme_bw() +
+            xlab("metabolite") +
+            scale_x_continuous(breaks = temp_plot$r, labels = temp_plot$metabolite) +
+            facet_grid(cols = vars(times), rows = vars(condition)) +
+            theme(axis.text.x = element_text(angle = -90, hjust = 0)) +
+            ggtitle(
+              "differences between timepoints",
+              "point = mean, errorbar = 95% highest density interval (CrI)"
+            )
           plots[["delta_t"]] <- plots_delta_t
         }
       }
-      }
-      if(!is.data.frame(estimates[["delta_mu"]])){
-        message("Differences between time points can only be plotted if number of timepoints >1.")
-      }
     }
-  
+    if (!is.data.frame(estimates[["delta_mu"]])) {
+      message("Differences between time points can only be plotted if number of timepoints >1.")
+    }
+  }
+
   plots_distances <- list()
   # differences between timepoints
   if (distance_conditions == TRUE) { # plot requested?
-    if(is.data.frame(estimates[["euclidean_distances"]])){ # do we have a result?
+    if (is.data.frame(estimates[["euclidean_distances"]])) { # do we have a result?
       distances <- estimates[["euclidean_distances"]]
 
-        # create rank
-        distances <- distances%>%group_by(condition_1,condition_2)%>%
-          arrange(mean)%>%
-          mutate(r=row_number(),conditions=paste0(condition_1,"_",condition_2)) # delta_t = t2-t1
-        
-        for(i in unique(distances$conditions)){
-          temp_plot <- distances%>%filter(conditions==i)
-          
-          plots_distances[[i]] <- 
-            ggplot(temp_plot,aes(y= r, x = mean))+
-            geom_point() +
-            geom_errorbarh(aes(xmin = `2.5%`, xmax = `97.5%`),height=0.2) +
-            xlab("euclidean distancs between dynamics vectors") +
-            geom_vline(xintercept = 0, linetype = "dashed") +
-            theme_bw() +
-            ylab("metabolite")+
-            scale_y_continuous(breaks=temp_plot$r,labels = temp_plot$metabolite)+
-            facet_grid(cols=vars(conditions))+
-            ggtitle(
-              "differences between dynamics of experimental conditons",
-              "point = mean, errorbar = 95% highest density interval (CrI)"
-            )
-        }
-          plots[["distance_conditions"]] <- plots_distances
+      # create rank
+      distances <- distances %>%
+        group_by(condition_1, condition_2) %>%
+        arrange(mean) %>%
+        mutate(r = row_number(), conditions = paste0(condition_1, "_", condition_2)) # delta_t = t2-t1
+
+      for (i in unique(distances$conditions)) {
+        temp_plot <- distances %>% filter(conditions == i)
+
+        plots_distances[[i]] <-
+          ggplot(temp_plot, aes(y = r, x = mean)) +
+          geom_point() +
+          geom_errorbarh(aes(xmin = `2.5%`, xmax = `97.5%`), height = 0.2) +
+          xlab("euclidean distancs between dynamics vectors") +
+          geom_vline(xintercept = 0, linetype = "dashed") +
+          theme_bw() +
+          ylab("metabolite") +
+          scale_y_continuous(breaks = temp_plot$r, labels = temp_plot$metabolite) +
+          facet_grid(cols = vars(conditions)) +
+          ggtitle(
+            "differences between dynamics of experimental conditons",
+            "point = mean, errorbar = 95% highest density interval (CrI)"
+          )
       }
-    if(!is.data.frame(estimates[["euclidean_distances"]])){
+      plots[["distance_conditions"]] <- plots_distances
+    }
+    if (!is.data.frame(estimates[["euclidean_distances"]])) {
       message("Differences of dynamics between conditons can only be plotted if number of conditions >1.")
     }
-   }
-  
+  }
+
 
   # dynamics
   if (dynamics == TRUE) {
     temp_d <- estimates[["mu"]]
-    temp_d <- temp_d%>%select(metabolite,condition,time,mean)
-    
-    plots[["dynamcis"]]<-
+    temp_d <- temp_d %>% select(metabolite, condition, time, mean)
+
+    plots[["dynamcis"]] <-
       ggplot(temp_d, aes(
         x = as.factor(time),
         y = mean, group = metabolite, col = metabolite
       )) +
       geom_line() +
       xlab("time point") +
-      scale_color_viridis_d()+
+      scale_color_viridis_d() +
       ylab("estimated deviation from mean abundance") +
       theme_bw() +
       theme(legend.position = "none") +
       facet_grid(rows = vars(condition)) +
       ggtitle("dynamics", "color = metabolite, row label = condition")
   }
-  
+
   return(plots)
 }

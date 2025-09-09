@@ -84,9 +84,10 @@ At least three replicates for metabolite concentrations per time point and condi
 If cell counts are provided at least one replicate per time point and condition is needed.
 }
 \examples{
+## on scaled log-transformed metabolite concentrations
 data("longitudinalMetabolomics")
-data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition \%in\%c("A","B") &
-                                   longitudinalMetabolomics$metabolite == "ATP"]
+data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition \%in\% c("A", "B") &
+  longitudinalMetabolomics$metabolite == "ATP"]
 data <- fit_dynamics_model(
   model = "scaled_log",
   data = data,
@@ -94,8 +95,6 @@ data <- fit_dynamics_model(
   max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
 )
 S4Vectors::metadata(data)[["dynamic_fit"]]
-
-
 
 }
 \seealso{

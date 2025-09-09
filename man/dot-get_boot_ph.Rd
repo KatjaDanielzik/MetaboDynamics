@@ -6,6 +6,15 @@
 \usage{
 .get_boot_ph(x, distance, agglomeration, B)
 }
+\arguments{
+\item{x}{posterior of dynamics model}
+
+\item{distance}{distance measure used for hierarchical clustering}
+
+\item{agglomeration}{agglomeration method used for hierarchical clustering}
+
+\item{B}{number of bootstrapps}
+}
 \description{
 get bootstrapps for clustering of dynamics vectors (cluster_dynamics function)
 }

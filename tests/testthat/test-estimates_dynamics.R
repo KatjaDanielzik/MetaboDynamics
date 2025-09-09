@@ -36,5 +36,5 @@ test_that("estimates_dynamics:output_checks", {
     fit = dummy_fit
   )
   expect_type(results, "list")
-  expect_named(results, c("mu","sigma","lambda","delta_mu","euclidean_distances"))
+  expect_named(results, c("mu", "sigma", "lambda", "delta_mu", "euclidean_distances"))
 })

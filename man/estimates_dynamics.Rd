@@ -41,7 +41,7 @@ Additionally samples from the posterior of mu can be drawn. This can be helpful 
 \examples{
 data("longitudinalMetabolomics")
 data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-                                   longitudinalMetabolomics$metabolite == "ATP"]
+  longitudinalMetabolomics$metabolite == "ATP"]
 data <- fit_dynamics_model(
   data = data,
   scaled_measurement = "m_scaled", assay = "scaled_log",

@@ -8,7 +8,7 @@
 #' @param data dataframe or a \link[SummarizedExperiment]{SummarizedExperiment} used to fit dynamics model
 #' column of "time" that contains time must be numeric, has to contain columns
 #' specifying the metabolite named "metabolite", and column specifiying the time
-#' point named "time", a column named "condition" must specify the experimental condition. 
+#' point named "time", a column named "condition" must specify the experimental condition.
 #' @param assay of the SummarizedExperiment object that was used to fit the dynamics
 #' model
 #' @param fit model fit for which diagnostics should be extracted, is the
@@ -37,24 +37,23 @@
 #' @export
 #'
 #' @examples
-#'data("longitudinalMetabolomics")
-#'data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in% c("A","B") &
-#'                                   longitudinalMetabolomics$metabolite =="ATP"]
-#'data <- fit_dynamics_model(
-#'  model = "scaled_log",
-#'  data = data,
-#'  scaled_measurement = "m_scaled", assay = "scaled_log",
-#'  max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
-#')
-#'data <- diagnostics_dynamics(
-#'  data = data, assay = "scaled_log",
-#'  iter = 2000, chains = 1,
-#'  fit = metadata(data)[["dynamic_fit"]]
-#')
-#'S4Vectors::metadata(data)[["diagnostics_dynamics"]][["model_diagnostics"]]
-#'S4Vectors::metadata(data)[["diagnostics_dynamics"]][["posterior"]]
-#' 
-
+#' data("longitudinalMetabolomics")
+#' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in% c("A", "B") &
+#'   longitudinalMetabolomics$metabolite == "ATP"]
+#' data <- fit_dynamics_model(
+#'   model = "scaled_log",
+#'   data = data,
+#'   scaled_measurement = "m_scaled", assay = "scaled_log",
+#'   max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
+#' )
+#' data <- diagnostics_dynamics(
+#'   data = data, assay = "scaled_log",
+#'   iter = 2000, chains = 1,
+#'   fit = metadata(data)[["dynamic_fit"]]
+#' )
+#' S4Vectors::metadata(data)[["diagnostics_dynamics"]][["model_diagnostics"]]
+#' S4Vectors::metadata(data)[["diagnostics_dynamics"]][["posterior"]]
+#'
 diagnostics_dynamics <- function(data, assay = "scaled_log",
                                  iter = 2000, warmup = iter / 4, chains = 4,
                                  fit = metadata(data)[["dynamic_fit"]]) {
@@ -93,7 +92,7 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
   N <- nrow(data_df)
   t <- length(unique(data_df$time))
   C <- length(unique(data_df$condition))
-  
+
   # check if all elements of fits are stanfit objects
   if (!inherits(fit, "stanfit")) {
     stop("'fit' must be a stanfit object")
@@ -113,41 +112,41 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
     "treedepth_error", rhat_cols, neff_cols
   )
 
-    # Extract model diagnostics
-    divergences <- rstan::get_num_divergent(fit)
-    treedepth_errors <- rstan::get_num_max_treedepth(fit)
-    rhat <- rstan::summary(fit)$summary[, "Rhat"]
-    n_eff <- rstan::summary(fit)$summary[, "n_eff"]
+  # Extract model diagnostics
+  divergences <- rstan::get_num_divergent(fit)
+  treedepth_errors <- rstan::get_num_max_treedepth(fit)
+  rhat <- rstan::summary(fit)$summary[, "Rhat"]
+  n_eff <- rstan::summary(fit)$summary[, "n_eff"]
 
-    # Create index mapping metabolites to timepoints
-    metabolite_indices <- rep(seq_len(M), each = t)
+  # Create index mapping metabolites to timepoints
+  metabolite_indices <- rep(seq_len(M), each = t)
 
-    # Create data frame with all diagnostics
-    diag_data <- data.frame(
-      metabolite.ID = rep(seq_len(M),each=C),
-      condition = rep(unique(data_df$condition),M),
-      divergences = divergences,
-      treedepth_error = treedepth_errors
+  # Create data frame with all diagnostics
+  diag_data <- data.frame(
+    metabolite.ID = rep(seq_len(M), each = C),
+    condition = rep(unique(data_df$condition), M),
+    divergences = divergences,
+    treedepth_error = treedepth_errors
+  )
+  # only extract rhat and n_eff for mu
+  start <- 1
+  end <- M * t * C
+  diag_data <- cbind(
+    diag_data,
+    matrix(rhat[start:end],
+      nrow = C * M, byrow = TRUE,
+      dimnames = list(NULL, rhat_cols)
+    ),
+    matrix(n_eff[start:end],
+      nrow = C * M, byrow = TRUE,
+      dimnames = list(NULL, neff_cols)
     )
-    # only extract rhat and n_eff for mu
-    start <- 1
-    end <- M*t*C
-    diag_data <- cbind(
-      diag_data,
-      matrix(rhat[start:end],
-        nrow = C*M, byrow = TRUE,
-        dimnames = list(NULL, rhat_cols)
-      ),
-      matrix(n_eff[start:end],
-        nrow = C*M, byrow = TRUE,
-        dimnames = list(NULL, neff_cols)
-      )
-    )
+  )
 
-  draws <- (iter-warmup)*chains
+  draws <- (iter - warmup) * chains
   # if model without cell counts y_rep else maven_rep (raw metabolite concentrations rep)
-  if(fit@model_name=="m_ANOVA_partial_pooling_euclidean_distance"){
-  # Posterior predictive checks for all fits
+  if (fit@model_name == "m_ANOVA_partial_pooling_euclidean_distance") {
+    # Posterior predictive checks for all fits
     posterior <- as.data.frame(fit, pars = "y_rep") %>%
       pivot_longer(
         cols = everything(),
@@ -155,12 +154,13 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
         values_to = "posterior"
       ) %>%
       mutate(
-        metabolite.ID = rep(as.numeric(as.factor(data_df$metabolite)),draws),
-        time.ID = rep(as.numeric(as.factor(data_df$time)),draws),
-        condition = rep(data_df$condition,draws))
+        metabolite.ID = rep(as.numeric(as.factor(data_df$metabolite)), draws),
+        time.ID = rep(as.numeric(as.factor(data_df$time)), draws),
+        condition = rep(data_df$condition, draws)
+      )
   }
-  
-  if(fit@model_name=="m_ANOVA_partial_pooling_cell_counts_euclidean_distance"){
+
+  if (fit@model_name == "m_ANOVA_partial_pooling_cell_counts_euclidean_distance") {
     # Posterior predictive checks for all fits
     posterior <- as.data.frame(fit, pars = "maven_rep") %>%
       pivot_longer(
@@ -169,14 +169,15 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
         values_to = "posterior"
       ) %>%
       mutate(
-        metabolite.ID = rep(as.numeric(as.factor(data_df$metabolite)),draws),
-        time.ID = rep(as.numeric(as.factor(data_df$time)),draws),
-        condition = rep(data_df$condition,draws))
+        metabolite.ID = rep(as.numeric(as.factor(data_df$metabolite)), draws),
+        time.ID = rep(as.numeric(as.factor(data_df$time)), draws),
+        condition = rep(data_df$condition, draws)
+      )
   }
-  
+
 
   # Combine diagnostics and posterior predictive checks
-  result <- list(model_diagnostics = diag_data,posterior = posterior)
+  result <- list(model_diagnostics = diag_data, posterior = posterior)
 
   # if input is a SummarizedExperiment object, store the fits in the metadata
   if (is(data, "SummarizedExperiment")) {

@@ -1,4 +1,3 @@
-
 # Define a dummy data frame
 dummy_data <- data.frame(
   time = rep(1:2, each = 2 * 3),
@@ -43,25 +42,25 @@ test_that("plot_estimates:input_checks", {
   expect_no_error(
     plot_estimates(data = "not a data frame", estimates = dummy_estimates)
   )
-  
+
   # Test that the function throws an error if estimates is not a list of data frames obtained by estimates_dynamics()
   expect_error(
     plot_estimates(data = dummy_data, estimates = "not a list of data frames"),
     "'data' must be a SummarizedExperiment object or provide estimates"
   )
-  
+
   # Test that the function throws an error if delta_t is not a logical value
   expect_error(
     plot_estimates(data = dummy_data, estimates = dummy_estimates, delta_t = "not a logical value"),
     "'delta_t' must be either 'TRUE' or 'FALSE'"
   )
-  
+
   # Test that the function throws an error if dynamics is not a logical value
   expect_error(
     plot_estimates(data = dummy_data, estimates = dummy_estimates, dynamics = "not a logical value"),
     "'dynamics' must be either 'TRUE' or 'FALSE'"
   )
-  
+
   # Test that the function throws an error if distance_conditions is not a logical value
   expect_error(
     plot_estimates(data = dummy_data, estimates = dummy_estimates, distance_conditions = "not a logical value"),
@@ -78,4 +77,3 @@ test_that("plot_estimates:output_checks", {
   expected_elements <- c("delta_t", "distance_conditions", "dynamcis")
   expect_true(all(expected_elements %in% names(results)))
 })
-  

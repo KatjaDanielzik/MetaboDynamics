@@ -11,13 +11,13 @@ valid_background <- data.frame(
   module_name = c("Module1", "Module2"),
   middle_hierarchy = c("MH1", "MH2")
 )
-valid_clusters <- list(A=list(data=data.frame(
-  metabolite = c("A","B"),
+valid_clusters <- list(A = list(data = data.frame(
+  metabolite = c("A", "B"),
   cluster = c(1, 2),
-  condition = c("A", "B"))
-))
+  condition = c("A", "B")
+)))
 valid_IDs <- data.frame(
-  metabolite = c("A","B"),
+  metabolite = c("A", "B"),
   KEGG = c("C00001", "C00002")
 )
 
@@ -53,11 +53,11 @@ test_that("ORA_hypergeometric: input checks", {
   )
 
   #  Missing required columns in 'data'
-  missing_columns_clusters <- list(A=list(data=data.frame(
-    data = c(1,2),
+  missing_columns_clusters <- list(A = list(data = data.frame(
+    data = c(1, 2),
     cluster = c(1, 2),
-    condition = c("A", "B"))
-  ))
+    condition = c("A", "B")
+  )))
   expect_error(
     ORA_hypergeometric(
       background = valid_background,
@@ -88,9 +88,9 @@ test_that("ORA_hypergeometric: input checks", {
     data <- valid_clusters,
     tested_column = invalid_tested_column
   ))
-  
+
   # invalid IDs
-  invalid_IDs <- valid_IDs[,1]
+  invalid_IDs <- valid_IDs[, 1]
   expect_error(ORA_hypergeometric(
     background = valid_background,
     annotations = valid_annotations,

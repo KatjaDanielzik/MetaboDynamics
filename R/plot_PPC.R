@@ -21,7 +21,7 @@
 #' @examples
 #' data("longitudinalMetabolomics")
 #' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-#'                                    longitudinalMetabolomics$metabolite %in% c("ATP", "ADP")]
+#'   longitudinalMetabolomics$metabolite %in% c("ATP", "ADP")]
 #' data <- fit_dynamics_model(
 #'   model = "scaled_log",
 #'   data = data,
@@ -36,7 +36,6 @@
 #' plot_PPC(
 #'   data = data, assay = "scaled_log"
 #' )
-
 plot_PPC <- function(
     posterior = metadata(data)[["diagnostics_dynamics"]],
     data, assay = "scaled_log",
@@ -97,21 +96,21 @@ plot_PPC <- function(
 
 
   # plot for every experimental condition
-  plot<-
-      ggplot(posterior, aes(x = as.factor(time.ID))) +
-      geom_violin(aes(y = posterior, x = as.factor(time.ID)), scale = "count") +
-      geom_jitter(data = PPC, aes(x = as.factor(time.ID), y = !!scaled_measurement), width = 0.05) + # aes_string allows us to use predefined variables
-      theme_bw() +
-      ylim(-5, 5) + # we standardized data so we are not expecting much smaller or bigger values
-      xlab("time point") +
-      facet_wrap(~condition)+
-      ggtitle(
-        paste0(
-          "Posterior predicitve check ",
-          ": points within violins?"
-        ),
-        "violins=posterior, points=data"
-      )
+  plot <-
+    ggplot(posterior, aes(x = as.factor(time.ID))) +
+    geom_violin(aes(y = posterior, x = as.factor(time.ID)), scale = "count") +
+    geom_jitter(data = PPC, aes(x = as.factor(time.ID), y = !!scaled_measurement), width = 0.05) + # aes_string allows us to use predefined variables
+    theme_bw() +
+    ylim(-5, 5) + # we standardized data so we are not expecting much smaller or bigger values
+    xlab("time point") +
+    facet_wrap(~condition) +
+    ggtitle(
+      paste0(
+        "Posterior predicitve check ",
+        ": points within violins?"
+      ),
+      "violins=posterior, points=data"
+    )
 
   return(plot)
 }

@@ -34,7 +34,7 @@ Plots posterior predictive check of numerical fit of Bayesian dynamics model
 \examples{
 data("longitudinalMetabolomics")
 data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-                                   longitudinalMetabolomics$metabolite \%in\% c("ATP", "ADP")]
+  longitudinalMetabolomics$metabolite \%in\% c("ATP", "ADP")]
 data <- fit_dynamics_model(
   model = "scaled_log",
   data = data,

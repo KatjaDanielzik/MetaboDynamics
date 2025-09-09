@@ -37,7 +37,7 @@
 #'   fit = metadata(data)[["dynamic_fit"]]
 #' )
 #' plot_diagnostics(data = data, assay = "scaled_log")
-#' 
+#'
 plot_diagnostics <- function(
     data, assay = "scaled_log",
     diagnostics = metadata(data)[["diagnostics_dynamics"]][["model_diagnostics"]],

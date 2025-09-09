@@ -1,10 +1,10 @@
 test_that("compare_metabolites: input checks", {
-  mock_clusters <- list(A=list(data=data.frame(
+  mock_clusters <- list(A = list(data = data.frame(
     metabolite = c(rep("A", 5), rep("B", 5)),
     cluster = c(rep("C1", 5), rep("C2", 5))
   )))
 
-  error_clusters <- list(A=list(data=data.frame(
+  error_clusters <- list(A = list(data = data.frame(
     met = c(rep("A", 5), rep("B", 5)),
     clust = c(rep("C1", 5), rep("C2", 5))
   )))
@@ -27,7 +27,7 @@ test_that("compare_metabolites: input checks", {
 
 test_that("compare_metabolites:output_checks", {
   # Prepare valid dummy data
-  dummy_clusters <- list(A=list(data=data.frame(
+  dummy_clusters <- list(A = list(data = data.frame(
     condition = rep(c("A", "B"), each = 3),
     cluster = rep(c("1", "2"), times = 3),
     metabolite = c("met1", "met2", "met3", "met1", "met4", "met5")
@@ -39,7 +39,7 @@ test_that("compare_metabolites:output_checks", {
   expect_s3_class(result, "data.frame")
 
   # Output contains expected columns
-  expected_columns <- c("comparison","cluster_a", "cluster_b", "Jaccard")
+  expected_columns <- c("comparison", "cluster_a", "cluster_b", "Jaccard")
   expect_true(all(expected_columns %in% colnames(result)))
 
   # Jaccard column values are numeric

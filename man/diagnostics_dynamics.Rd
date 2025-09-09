@@ -49,18 +49,18 @@ and rhat and neff values for all timepoints.
 }
 \examples{
 data("longitudinalMetabolomics")
-data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition \%in\% c("A","B") &
-                                  longitudinalMetabolomics$metabolite =="ATP"]
+data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition \%in\% c("A", "B") &
+  longitudinalMetabolomics$metabolite == "ATP"]
 data <- fit_dynamics_model(
- model = "scaled_log",
- data = data,
- scaled_measurement = "m_scaled", assay = "scaled_log",
- max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
+  model = "scaled_log",
+  data = data,
+  scaled_measurement = "m_scaled", assay = "scaled_log",
+  max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
 )
 data <- diagnostics_dynamics(
- data = data, assay = "scaled_log",
- iter = 2000, chains = 1,
- fit = metadata(data)[["dynamic_fit"]]
+  data = data, assay = "scaled_log",
+  iter = 2000, chains = 1,
+  fit = metadata(data)[["dynamic_fit"]]
 )
 S4Vectors::metadata(data)[["diagnostics_dynamics"]][["model_diagnostics"]]
 S4Vectors::metadata(data)[["diagnostics_dynamics"]][["posterior"]]

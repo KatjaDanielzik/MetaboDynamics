@@ -36,19 +36,18 @@ test_that("fit_dynamics_model:input_checks", {
     "Input must contain at least three replicates per metabolite,
       time point and experimental condition."
   )
-  
+
   # Test: counts must be a dataframe if model is 'raw_plus_counts'
   expect_error(
     fit_dynamics_model(model = "raw_plus_counts", data = mock_data, counts = list()),
     "'counts' must be a dataframe if you chose model 'raw_plus_counts'."
   )
-  
+
   # Test: counts must contain columns named 'time','condition', and 'counts'
   expect_error(
     fit_dynamics_model(model = "raw_plus_counts", data = mock_data, counts = data.frame(time = 1:10)),
     "'counts' must contain columns named 'time','condition', and 'counts'"
   )
-  
 })
 
 test_that("fit_dynamics_model:output_checks", {
@@ -71,9 +70,7 @@ test_that("fit_dynamics_model:output_checks", {
     warmup = 20, adapt_delta = 0.8, max_treedepth = 10
   )
 
-  
+
   # Test: output must be a 'stanfit' object
   expect_true(inherits(fit, "stanfit"))
-
 })
-

@@ -10,7 +10,7 @@
 #' probabilities of these ratios.
 #' log(p(OvE))>0 indicates an over-representation of the functional module in
 #' the cluster, log(p(OvE))<0 an under-representation.
-#' @seealso 
+#' @seealso
 #' Function to obtain data [cluster_dynamics()]
 #' Function to visualize ORA results [plot_ORA()]
 #' @param data result of [cluster_dynamics()] function: either a list of data frames or a SummarizedExperiment object
@@ -44,7 +44,7 @@
 #' head(metabolite_modules)
 #' data("IDs")
 #' head(IDs)
-#' 
+#'
 #' longitudinalMetabolomics <- ORA_hypergeometric(
 #'   data = longitudinalMetabolomics,
 #'   annotations = metabolite_modules,
@@ -53,7 +53,7 @@
 #'   tested_column = "middle_hierarchy"
 #' )
 #' S4Vectors::metadata(longitudinalMetabolomics)[["ORA_middle_hierarchy"]]
-#' 
+#'
 ORA_hypergeometric <- function(background,
                                annotations,
                                data, IDs, tested_column = "middle_hierarchy") {
@@ -92,14 +92,14 @@ ORA_hypergeometric <- function(background,
   if (is(data, "SummarizedExperiment")) {
     data_df <- metadata(data)[["cluster"]]
     # combine data of list elements
-    data_df <- bind_rows(lapply(data_df, function(x){
+    data_df <- bind_rows(lapply(data_df, function(x) {
       return(x$data)
     }))
   }
 
   if (is(data, "list")) {
     # combine data of list elements
-    data_df <- bind_rows(lapply(data, function(x){
+    data_df <- bind_rows(lapply(data, function(x) {
       return(x$data)
     }))
   }
@@ -141,16 +141,16 @@ ORA_hypergeometric <- function(background,
   if (!all(c("metabolite", "condition", "cluster") %in% colnames(data_df))) {
     stop("'data' must contains columns 'metabolite', 'cluster' and 'condition'")
   }
-  if (!all(c("metabolite","KEGG") %in% colnames(IDs))) {
+  if (!all(c("metabolite", "KEGG") %in% colnames(IDs))) {
     stop("'IDs' must contains columns 'metabolite' and 'KEGG'")
   }
-  
+
   # map KEGG IDs to data
-  data_df <- left_join(data_df,IDs[,c("metabolite","KEGG")],by="metabolite")
-  if (!all(c("metabolite","KEGG", "condition", "cluster") %in% colnames(data_df))) {
+  data_df <- left_join(data_df, IDs[, c("metabolite", "KEGG")], by = "metabolite")
+  if (!all(c("metabolite", "KEGG", "condition", "cluster") %in% colnames(data_df))) {
     stop("ID matching not successfull")
   }
-  
+
   name <- tested_column
 
   # all experimental metabolites that are mapped to KEGG modules
@@ -224,7 +224,7 @@ ORA_hypergeometric <- function(background,
       OvE_gen_higher = quantile(OvE_gen, probs = 0.975, na.rm = TRUE),
       OvE_gen_median = median(OvE_gen, na.rm = TRUE)
     )
-  
+
   # reduce rows before saving
   a_clusters <- a_clusters %>% select(
     condition, cluster, !!tested_column, OvE_gen,
@@ -232,7 +232,7 @@ ORA_hypergeometric <- function(background,
     OvE_gen_higher
   )
   a_clusters <- unique(a_clusters)
-  
+
   # if input is a SummarizedExperiment object, store the fits in the metadata
   if (is(data, "SummarizedExperiment")) {
     name <- paste0("ORA_", name)

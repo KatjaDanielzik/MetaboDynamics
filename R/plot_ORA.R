@@ -60,8 +60,9 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
     stop("'patchwork' must be either 'TRUE' or 'FALSE'")
   }
   if (isTRUE(patchwork)) {
-    if(!inherits(plot_cluster,"list"))
-    stop("if 'patchwork is TRUE, plot_cluster must be provided")
+    if (!inherits(plot_cluster, "list")) {
+      stop("if 'patchwork is TRUE, plot_cluster must be provided")
+    }
   }
 
   # get module name (in ORA_hypergeometric this is the 3rd column of the result)
@@ -100,39 +101,42 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
       "hypergeometric ORA",
       "median and 95% interquantile range, panels=clusterID"
     )
-  
+
   ora_patchwork <- list()
-  if(patchwork == TRUE){
-    for(i in unique(a_clusters$condition)){
-      temp <- a_clusters%>%filter(condition==i)
+  if (patchwork == TRUE) {
+    for (i in unique(a_clusters$condition)) {
+      temp <- a_clusters %>% filter(condition == i)
       # get cluster order
       cluster_order <- plot_cluster$cluster_order[[i]]
       # order cluster in ORA hypergeometric
       temp$cluster <- as.factor(temp$cluster)
-      temp$cluster <- factor(temp$cluster, levels=cluster_order)
-      temp <- temp[order(temp$cluster),]
+      temp$cluster <- factor(temp$cluster, levels = cluster_order)
+      temp <- temp[order(temp$cluster), ]
       plots <- list()
-      for (j in unique(temp$cluster)){
-        temp_plot <- temp%>%filter(cluster==j)
+      for (j in unique(temp$cluster)) {
+        temp_plot <- temp %>% filter(cluster == j)
         plots[[j]] <-
-          ggplot(temp_plot,aes(x=OvE_gen_median,y=cluster,col=col))+
-            geom_point()+
-            geom_errorbarh(aes(xmin=OvE_gen_lower,xmax=OvE_gen_higher))+
-            facet_grid(cols=vars(!!tested_column))+
-            theme_bw()+
-            geom_vline(xintercept = 0, linetype = "dashed") +
-            ylab("cluster ID")+
-            xlab("") +
-            scale_color_manual(
+          ggplot(temp_plot, aes(x = OvE_gen_median, y = cluster, col = col)) +
+          geom_point() +
+          geom_errorbarh(aes(xmin = OvE_gen_lower, xmax = OvE_gen_higher)) +
+          facet_grid(cols = vars(!!tested_column)) +
+          theme_bw() +
+          geom_vline(xintercept = 0, linetype = "dashed") +
+          ylab("cluster ID") +
+          xlab("") +
+          scale_color_manual(
             values = c("black", "green", "red"),
-            labels = c("0 in ICR", "ICR>0", "ICR<0"), name = "")
-        plots[[paste0(j,"space")]] <- plot_spacer() 
+            labels = c("0 in ICR", "ICR>0", "ICR<0"), name = ""
+          )
+        plots[[paste0(j, "space")]] <- plot_spacer()
       }
       heights <- plot_cluster$cluster_heights[[i]] ## needs to be sorted!
-      p <- Reduce("/",plots)
-      ora_patchwork[[i]] <- p + plot_layout(heights=heights)+plot_annotation("ORA of KEGG functional modules",
-                                                                         "mean and 95% ICR")
-      }
-      }
-  return(list(plot=plot,ora_patchwork=ora_patchwork))
+      p <- Reduce("/", plots)
+      ora_patchwork[[i]] <- p + plot_layout(heights = heights) + plot_annotation(
+        "ORA of KEGG functional modules",
+        "mean and 95% ICR"
+      )
+    }
+  }
+  return(list(plot = plot, ora_patchwork = ora_patchwork))
 }

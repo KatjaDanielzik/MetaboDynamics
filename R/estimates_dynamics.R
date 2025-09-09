@@ -3,9 +3,9 @@
 #' Extracts the mean concentrations (mu) at every time point from the dynamics model fit, the 95% highest density interval (HDI), the estimated standard deviation of metabolite concentrations at every time point (sigma), and the pooled standard deviation of every metabolite over all timepoints (lambda).
 #' Additionally samples from the posterior of mu can be drawn. This can be helpful if p.e. one wants to estimate the clustering precision. Lambda can be used for clustering algorithms such as VSClust that also take the variance into account.
 #'
-#' @param data data frame or colData of a \link[SummarizedExperiment]{SummarizedExperiment} 
-#' used to fit dynamics model, must contain a column named "condition" specifiyng 
-#' the experimental condition and a column 
+#' @param data data frame or colData of a \link[SummarizedExperiment]{SummarizedExperiment}
+#' used to fit dynamics model, must contain a column named "condition" specifiyng
+#' the experimental condition and a column
 #' named "time" specifying the timepoints.
 #' If it is a SummarizedExperiment object the dynamic fits must be stores in metadata(data)
 #' under "dynamic_fits"
@@ -37,20 +37,18 @@
 #' @examples
 #' data("longitudinalMetabolomics")
 #' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition == "A" &
-#'                                    longitudinalMetabolomics$metabolite == "ATP"]
+#'   longitudinalMetabolomics$metabolite == "ATP"]
 #' data <- fit_dynamics_model(
 #'   data = data,
 #'   scaled_measurement = "m_scaled", assay = "scaled_log",
 #'   max_treedepth = 14, adapt_delta = 0.95, iter = 2000, cores = 1, chains = 1
 #' )
-#'data <- estimates_dynamics(
+#' data <- estimates_dynamics(
 #'   data = data
 #' )
 #' S4Vectors::metadata(data)[["estimates_dynamics"]]
 estimates_dynamics <- function(data, assay = "scaled_log",
                                fit = metadata(data)[["dynamic_fit"]]) {
-  
-  
   # Input checks
   if (!is.data.frame(data) & !inherits(data, "SummarizedExperiment")) {
     stop("'data' must be a dataframe or colData of a SummarizedExperiment object")
@@ -68,7 +66,7 @@ estimates_dynamics <- function(data, assay = "scaled_log",
     )
     fit <- metadata(data)[["dynamic_fit"]]
   }
-  
+
   # convert potential tibbles into data frame
   if (is(data, "tbl")) {
     data <- as.data.frame(data)
@@ -92,74 +90,75 @@ estimates_dynamics <- function(data, assay = "scaled_log",
 
 
   estimates_data <- data.frame(
-    metabolite = rep(rep(unique(data_df$metabolite),each=C),each=t),
-    time = rep(rep(unique(data_df$time),each=C),M),
-    condition = rep(rep(unique(data_df$condition),t),M)
+    metabolite = rep(rep(unique(data_df$metabolite), each = C), each = t),
+    time = rep(rep(unique(data_df$time), each = C), M),
+    condition = rep(rep(unique(data_df$condition), t), M)
   )
-  
+
   # extract for mu
-  mu <- rstan::summary(fit,pars="mu")$summary
-  mu <- cbind(estimates_data, parameter = "mu",mu[,c("mean","2.5%","97.5%")])
+  mu <- rstan::summary(fit, pars = "mu")$summary
+  mu <- cbind(estimates_data, parameter = "mu", mu[, c("mean", "2.5%", "97.5%")])
 
   # extract for sigma
-  sigma <- rstan::summary(fit,pars="sigma")$summary
-  sigma <- cbind(estimates_data, parameter = "sigma", sigma[,c("mean","2.5%","97.5%")])
-  
+  sigma <- rstan::summary(fit, pars = "sigma")$summary
+  sigma <- cbind(estimates_data, parameter = "sigma", sigma[, c("mean", "2.5%", "97.5%")])
+
   # extract for lambda
   ## lambda only one per condition -> adapt estimates_data
   lambda_data <- data.frame(
-    metabolite = rep(unique(data_df$metabolite),each=C),
-    condition = rep(unique(data_df$condition),M)
+    metabolite = rep(unique(data_df$metabolite), each = C),
+    condition = rep(unique(data_df$condition), M)
   )
 
-  lambda <- rstan::summary(fit,pars="lambda")$summary
-  lambda <- cbind(lambda_data, parameter = "lambda", lambda[,c("mean","2.5%","97.5%")])
-  
+  lambda <- rstan::summary(fit, pars = "lambda")$summary
+  lambda <- cbind(lambda_data, parameter = "lambda", lambda[, c("mean", "2.5%", "97.5%")])
+
   # extract euclidean distances
   ## get possible dose combinations
-  if(C>1&t>1){
-  combinations <- t(combn(unique(data_df$condition), 2))
+  if (C > 1 & t > 1) {
+    combinations <- t(combn(unique(data_df$condition), 2))
 
-  distances_data <- data.frame(
-    metabolite = rep(unique(data_df$metabolite),each=nrow(combinations)),
-    condition_1 = combinations[,1],
-    condition_2 = combinations[,2]
-  )
-  
-  distances <- as.data.frame(rstan::summary(fit,pars="euclidean_distance")$summary)
-  distances <- distances%>%na.omit() # posterior contains estiamtes that do not fullfull condition_1<conditon_2 due to stan technicalities
-  distances <- cbind(distances_data,parameter="euclidean_distance",distances[,c("mean","2.5%","97.5%")])
+    distances_data <- data.frame(
+      metabolite = rep(unique(data_df$metabolite), each = nrow(combinations)),
+      condition_1 = combinations[, 1],
+      condition_2 = combinations[, 2]
+    )
+
+    distances <- as.data.frame(rstan::summary(fit, pars = "euclidean_distance")$summary)
+    distances <- distances %>% na.omit() # posterior contains estiamtes that do not fullfull condition_1<conditon_2 due to stan technicalities
+    distances <- cbind(distances_data, parameter = "euclidean_distance", distances[, c("mean", "2.5%", "97.5%")])
   }
-  if(t==1|C==1){
+  if (t == 1 | C == 1) {
     distances <- "only possible for more than one time point and more than one condition"
   }
-  
+
   # extract for delta_mu
   if (t > 1) {
     combinations <- t(combn(unique(data_df$time), 2))
 
     delta_mu_data <- data.frame(
-      metabolite = rep(rep(unique(data_df$metabolite),each=nrow(combinations)),each=C),
-      condition = rep(rep(unique(data_df$condition),each=nrow(combinations)),M),
-      timepoint_1 = combinations[,1],
-      timepoint_2 = combinations[,2]
+      metabolite = rep(rep(unique(data_df$metabolite), each = nrow(combinations)), each = C),
+      condition = rep(rep(unique(data_df$condition), each = nrow(combinations)), M),
+      timepoint_1 = combinations[, 1],
+      timepoint_2 = combinations[, 2]
     )
-  
-  delta_mu <- as.data.frame(rstan::summary(fit,pars="delta_mu")$summary)
-  delta_mu <- delta_mu%>%na.omit()
-  delta_mu <- cbind(delta_mu_data,parameter="delta_mu",delta_mu[,c("mean","2.5%","97.5%")])
-  
+
+    delta_mu <- as.data.frame(rstan::summary(fit, pars = "delta_mu")$summary)
+    delta_mu <- delta_mu %>% na.omit()
+    delta_mu <- cbind(delta_mu_data, parameter = "delta_mu", delta_mu[, c("mean", "2.5%", "97.5%")])
   }
-  if(t==1){
+  if (t == 1) {
     delta_mu <- "only possible for more than one time point"
   }
-    
+
   # combine results in one list
-  result <- list(mu = mu, 
-                 sigma = sigma , 
-                 lambda = lambda, 
-                 delta_mu= delta_mu, 
-                 euclidean_distances=distances)
+  result <- list(
+    mu = mu,
+    sigma = sigma,
+    lambda = lambda,
+    delta_mu = delta_mu,
+    euclidean_distances = distances
+  )
 
   # if input is a SummarizedExperiment object, store estimates in the metadata
   if (is(data, "SummarizedExperiment")) {

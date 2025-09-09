@@ -1,7 +1,7 @@
 #' Comparison of metabolite dynamics clusters under different experimental conditions
 #'
 #' Employs a Bayesian model that assumes a normal distribution of Euclidean
-#' distances between dynamics vectors (metabolite abundances at different 
+#' distances between dynamics vectors (metabolite abundances at different
 #' time points) of two clusters that come from different
 #' experimental conditions to estimate the mean distance between clusters.
 #'
@@ -31,8 +31,8 @@
 #'
 #' @examples
 #' data("longitudinalMetabolomics")
-#'data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in%c("A","B") &
-#'longitudinalMetabolomics$metabolite %in% c("ATP", "L-Alanine", "GDP")]
+#' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in% c("A", "B") &
+#'   longitudinalMetabolomics$metabolite %in% c("ATP", "L-Alanine", "GDP")]
 #' data <- fit_dynamics_model(
 #'   data = data,
 #'   scaled_measurement = "m_scaled", assay = "scaled_log",
@@ -41,7 +41,7 @@
 #' data <- estimates_dynamics(
 #'   data = data
 #' )
-#'data <- cluster_dynamics(data, B = 1)
+#' data <- cluster_dynamics(data, B = 1)
 #' data <- compare_dynamics(
 #'   data = data,
 #'   cores = 1
@@ -55,18 +55,18 @@ compare_dynamics <- function(data, dynamics = metadata(data)[["dynamics"]], core
   if (is(data, "SummarizedExperiment")) {
     data_df <- metadata(data)[["cluster"]]
     # combine data of list elements
-    data_df <- bind_rows(lapply(data_df, function(x){
+    data_df <- bind_rows(lapply(data_df, function(x) {
       return(x$data)
-    dynamics = metadata(data)[["dynamics"]]
+      dynamics <- metadata(data)[["dynamics"]]
     }))
   }
   if (is(data, "list")) {
     # combine data of list elements
-    data_df <- bind_rows(lapply(data, function(x){
+    data_df <- bind_rows(lapply(data, function(x) {
       return(x$data)
     }))
   }
-  #convert potential tibbles into data frame
+  # convert potential tibbles into data frame
   if (is(data_df, "tbl")) {
     data_df <- as.data.frame(data_df)
   }
@@ -87,8 +87,8 @@ compare_dynamics <- function(data, dynamics = metadata(data)[["dynamics"]], core
 
   # order data_df according to condition and cluster
   data_df$cluster <- as.numeric(data_df$cluster)
-  data_df <- data_df[order(data_df$condition,data_df$cluster),]
-  
+  data_df <- data_df[order(data_df$condition, data_df$cluster), ]
+
   # Extract unique condition-cluster combinations
   unique_combinations <- unique(data_df[, c("condition", "cluster")])
   n_combinations <- nrow(unique_combinations)

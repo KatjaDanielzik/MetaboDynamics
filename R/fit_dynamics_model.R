@@ -1,20 +1,20 @@
 #' Fits dynamics model
 #'
 #' Employs a hierarchical model that assumes a normal distribution of
-#' standardized (mean=0, sd=1) log(cpc) (cpc = normalized metabolite abundance) 
+#' standardized (mean=0, sd=1) log(cpc) (cpc = normalized metabolite abundance)
 #' values for robust estimation of mean
 #' concentrations over time of single metabolites at single experimental
 #' conditions.
 #' At least three replicates for metabolite concentrations per time point and condition are needed.
-#' If cell counts are provided at least one replicate per time point and condition is needed. 
-#' 
+#' If cell counts are provided at least one replicate per time point and condition is needed.
+#'
 #' @param model which model to fit. Two options are available:
 #' "scaled_log": taking in normalized and scaled metabolite concentrations (see scaled measurement)
 #' "raw_plus_counts": tailored for in vitro untargeted LC-MS experiments, taking in "raw"
-#' (i.e. not normalized and not scaled) metabolite concentrations and cell counts. 
+#' (i.e. not normalized and not scaled) metabolite concentrations and cell counts.
 #' This model assumes independent measurement (i.e. different wells) of cell counts
-#' and metabolite concentrations. Additionally it assumes that cell counts were estimated 
-#' e.g. by cell counters (i.e. that cells were not counted under the microscope) 
+#' and metabolite concentrations. Additionally it assumes that cell counts were estimated
+#' e.g. by cell counters (i.e. that cells were not counted under the microscope)
 #' leading to a small uncertainty of the true cell count.
 #' @param data concentration table with at least three replicate measurements per
 #' metabolite. Must contain columns named "metabolite" (containing names or IDs), "time" (categorical, the same for all conditions), and "condition" or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
@@ -30,9 +30,9 @@
 #' wells than metabolite concentrations)
 #' @param assay if input is a SummarizedExperiment specify the assay that should
 #' be used for input, colData has to hold the columns, "condition" and "metabolite",
-#' rowData the timepoint specifications, in case of the model "scaled_log" 
+#' rowData the timepoint specifications, in case of the model "scaled_log"
 #' assay needs to hold scaled log-transformed metabolite concentrations
-#' (mean=0,sd=1 per metabolite and experimental condition), if model 
+#' (mean=0,sd=1 per metabolite and experimental condition), if model
 #' "raw_plus_counts" is chosen must hold the non-transformed and non-scaled metabolite concentrations
 #' @param cores how many cores should be used for model fitting; this
 #' parallelizes the model fitting and therefore speeds it up; default=4
@@ -58,10 +58,10 @@
 #' @export
 #'
 #' @examples
-# # on scaled log-transformed metabolite concentrations
+#' ## on scaled log-transformed metabolite concentrations
 #' data("longitudinalMetabolomics")
-#' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in%c("A","B") &
-#'                                    longitudinalMetabolomics$metabolite == "ATP"]
+#' data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in% c("A", "B") &
+#'   longitudinalMetabolomics$metabolite == "ATP"]
 #' data <- fit_dynamics_model(
 #'   model = "scaled_log",
 #'   data = data,
@@ -70,8 +70,6 @@
 #' )
 #' S4Vectors::metadata(data)[["dynamic_fit"]]
 #'
-#' 
-#' 
 #' @import methods
 #' @import Rcpp
 #' @importFrom rstan sampling
@@ -83,20 +81,21 @@
 #' @useDynLib MetaboDynamics
 
 fit_dynamics_model <- function(model = "scaled_log",
-                               data, 
+                               data,
                                scaled_measurement = "m_scaled",
-                               counts = NULL, 
+                               counts = NULL,
                                assay = "scaled_log",
                                chains = 4, cores = 4,
                                adapt_delta = 0.95, max_treedepth = 10,
                                iter = 2000, warmup = iter / 4) {
-  
-  .check_fit_dynamics_input(model = model, data = data,
-                           scaled_measurement = scaled_measurement,
-                           counts = counts, assay = assay, chains = chains, 
-                           cores = cores, adapt_delta = adapt_delta,
-                           max_treedepth = max_treedepth, iter = iter, warmup = warmup)
-  
+  .check_fit_dynamics_input(
+    model = model, data = data,
+    scaled_measurement = scaled_measurement,
+    counts = counts, assay = assay, chains = chains,
+    cores = cores, adapt_delta = adapt_delta,
+    max_treedepth = max_treedepth, iter = iter, warmup = warmup
+  )
+
   # check input class and convert SummarizedExperiment to dataframe
   if (is(data, "SummarizedExperiment")) {
     t <- nrow(rowData(data))
@@ -120,12 +119,12 @@ fit_dynamics_model <- function(model = "scaled_log",
   if (!all(c("metabolite", "time", "condition", scaled_measurement) %in% colnames(data_df))) {
     stop("'data' must contain columns named 'metabolite','time','condition', and 'scaled_measurement'")
   }
-  if(model=="raw_plus_counts"){
-  if (is(counts, "tbl")) {
-    counts <- as.data.frame(counts)
+  if (model == "raw_plus_counts") {
+    if (is(counts, "tbl")) {
+      counts <- as.data.frame(counts)
+    }
   }
-  }
-  
+
   # convert character string of variables to variable useable by tidyverse
   scaled_measurement <- as.symbol(scaled_measurement)
   scaled_measurement <- enquo(scaled_measurement)
@@ -139,27 +138,28 @@ fit_dynamics_model <- function(model = "scaled_log",
     stop("Input must contain at least three replicates per metabolite,
       time point and experimental condition.")
   }
-  
+
   # convert variable names back to character string
   scaled_measurement <- as_name(scaled_measurement)
-  
+
   # check if same all conditions and time points have cell counts
-  if(model=="raw_plus_counts"){
-    if(!identical(unique(data_df$time),unique(counts$time))){
+  if (model == "raw_plus_counts") {
+    if (!identical(unique(data_df$time), unique(counts$time))) {
       stop("data and counts must have the same time points")
     }
-    if(!identical(unique(data_df$condition),unique(counts$condition))){
+    if (!identical(unique(data_df$condition), unique(counts$condition))) {
       stop("data and counts must have the same conditions")
-    }}
-  
+    }
+  }
+
   # Binding of global variables
   time <- NULL
   metabolite <- NULL
   condition <- NULL
-  
-  if(model=="scaled_log"){
-  # fit model
-  fit <- rstan::sampling(
+
+  if (model == "scaled_log") {
+    # fit model
+    fit <- rstan::sampling(
       object = stanmodels$m_ANOVA_partial_pooling_euclidean_distance,
       data = list(
         N = nrow(data_df),
@@ -173,7 +173,7 @@ fit_dynamics_model <- function(model = "scaled_log",
         X = as.numeric(as.factor(data_df$time)),
         # Condition indicator
         Do = as.numeric(as.factor(data_df$condition))
-        ),
+      ),
       chains = chains,
       iter = iter,
       # increase warmup so that algorithm probably chooses
@@ -183,10 +183,11 @@ fit_dynamics_model <- function(model = "scaled_log",
       cores = cores,
       # increase adapt_delta (target average proposal acceptance probability)
       # to decrease step size
-      control = list(adapt_delta = adapt_delta, max_treedepth = max_treedepth))
+      control = list(adapt_delta = adapt_delta, max_treedepth = max_treedepth)
+    )
   }
-  
-  if(model=="raw_plus_counts"){
+
+  if (model == "raw_plus_counts") {
     # fit model
     fit <- rstan::sampling(
       object = stanmodels$m_ANOVA_partial_pooling_cell_counts_euclidean_distance,
@@ -216,7 +217,8 @@ fit_dynamics_model <- function(model = "scaled_log",
       cores = cores,
       # increase adapt_delta (target average proposal acceptance probability)
       # to decrease step size
-      control = list(adapt_delta = adapt_delta, max_treedepth = max_treedepth))
+      control = list(adapt_delta = adapt_delta, max_treedepth = max_treedepth)
+    )
   }
 
 

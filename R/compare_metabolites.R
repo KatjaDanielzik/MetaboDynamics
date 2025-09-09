@@ -29,17 +29,17 @@ compare_metabolites <- function(data) {
   if (is(data, "SummarizedExperiment")) {
     data_df <- metadata(data)[["cluster"]]
     # combine data of list elements
-    data_df <- bind_rows(lapply(data_df, function(x){
+    data_df <- bind_rows(lapply(data_df, function(x) {
       return(x$data)
     }))
   }
   if (is(data, "list")) {
     # combine data of list elements
-    data_df <- bind_rows(lapply(data, function(x){
+    data_df <- bind_rows(lapply(data, function(x) {
       return(x$data)
     }))
   }
-  #convert potential tibbles into data frame
+  # convert potential tibbles into data frame
   if (is(data_df, "tbl")) {
     data_df <- as.data.frame(data_df)
   }
@@ -49,15 +49,15 @@ compare_metabolites <- function(data) {
   if (is(data_df, "tbl")) {
     data_df <- as.data.frame(data_df)
   }
-  
-  if (!all(c("cluster","metabolite","condition") %in% colnames(data_df))) {
+
+  if (!all(c("cluster", "metabolite", "condition") %in% colnames(data_df))) {
     stop("'data' must contain columns named 'cluster','metabolite' and 'condition'")
   }
 
   # order data_df according to condition and cluster
   data_df$cluster <- as.numeric(data_df$cluster)
-  data_df <- data_df[order(data_df$condition,data_df$cluster),]
-  
+  data_df <- data_df[order(data_df$condition, data_df$cluster), ]
+
 
   # Extract unique condition-cluster combinations
   unique_combinations <- unique(data_df[, c("condition", "cluster")])
