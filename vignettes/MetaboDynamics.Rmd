@@ -17,23 +17,70 @@ vignette: >
 BiocStyle::markdown()
 ```
 
-# Background 
-Metabolomics data from longitudinal or time-course high-throughput experiments, such as untargeted liquid chromatography-mass spectrometry (LC-MS), allows for insights into changes of metabolite abundances over time. However, most existing tools are limited to comparing only two time points or experimental conditions, and they often rely on frequentist statistical methods. Additionally, most tools are only able to analyze groups of metabolites on a pathway level, potentially missing more general patterns of changes in the metabolism in sparse data.
-
-Here, we introduce MetaboDynamics, a modular workflow of probabilistic models for the analysis of longitudinal metabolomics data. This package provides a flexible framework for analyzing longitudinal data, allowing users to model changes in metabolite abundances over time and identify patterns of interest.
-
-Metabolomics data is often noisy and limited by few replicates due to high costs. To address these challenges, we employ a Bayesian hierarchical model that balances between under-fitting and over-fitting. This model provides a robust method for estimating mean abundances at every time point as well as abundance differences between subsequent time points, even with limited replicates.
-
-The MetaboDynamics workflow requires abundance tables as input, which can include metabolites and their observed abundances, LC-MS peak intensities or areas. The workflow can handle any number of time points, and the dynamics model requires at least three replicates. However, functions to compare cluster and compare dynamics with each other do not require a certain number of replicates and can be applied to calculated mean abundances of e.g. two replicates.
-
-In this vignette, I will demonstrate how to use the MetaboDynamics package to analyze longitudinal metabolomics data, including data preprocessing, model fitting, and interpretation of results. We will show how to apply the package to a simulated data set and how to visualize and interpret the results.
-
 # Data requirements
+- MetaboDynamics requires at least triplicates of metabolite abundances for all
+analyzed time points and conditions. No minimum number of metabolites is required.
+Time points are treated as categorical variables and have to be the same for all
+conditions.
+- Data can be a data frame (see Vignette "using MetaboDynamics with data frames)
+or a SummarizedExperiment object (demonstrated in this vignette).
+- Metabolite abundances have to be stored in column named "metabolite", time points
+in "time" and the experimental condition in "condition"
+- For clustering of metabolite abundance dynamics are at least two time points required
+- To conduct over-representation analysis on KEGG functional modules KEGG IDs of
+metabolites are required
+- To conduct comparison of metabolite abundance dynamics between clusters at least
+two experimental conditions are required
+- If an in vitro experiment is analyzed andc ell counts should be incorporated in model, 
+cell counts have to be estimated (i.e. cell counter not counting every cell) and 
+independent (i.e. separate wells for cell counts and metabolite abundances) as a
+poisson distribution is assumed. At least one replicate of cell counts per time
+point and condition is required. 
 
-The minimal requirements are triplicates of (relative) metabolite abundances at a minimum of two time points and at least one experimental condition. There is no minimum number of metabolites required.
-
-Metabolite abundances have to be adequately normalized. For example normalization to cell counts in cell culture.
+Metabolite abundances have to be adequately normalized and scaled.
 The expected scaling is explained in the following workflow. 
+
+In the case of an in vitro experiment with available cell counts for all time points
+and conditions no scaling or normalization is necessary as this will be handled
+by the fit_dynamics_model() function (model="raw_plus_counts")
+
+# Analysis time:
+For two conditions of 100 metabolites each the fitting of the metabolite abundance 
+dynamics model will take 10-15 minutes (one core per chain). Total workflow time
+is approximately 15-20 minutes.
+
+# Background 
+Metabolomics data from longitudinal or time-course high-throughput experiments, 
+such as untargeted liquid chromatography-mass spectrometry (LC-MS), allows for 
+insights into changes of metabolite abundances over time. However, most existing 
+tools are limited to comparing only two time points or experimental conditions,
+and they often rely on frequentist statistical methods. Additionally, most tool
+s are only able to analyze groups of metabolites on a pathway level, potentially
+missing more general patterns of changes in the metabolism in sparse data.
+
+Here, we introduce MetaboDynamics, a modular workflow of probabilistic models 
+for the analysis of longitudinal metabolomics data. This package provides a 
+flexible framework for analyzing longitudinal data, allowing users to model 
+changes in metabolite abundances over time and identify patterns of interest.
+
+Metabolomics data is often noisy and limited by few replicates due to high costs. 
+To address these challenges, we employ a Bayesian hierarchical model that balances
+between under-fitting and over-fitting. This model provides a robust method for 
+estimating mean abundances at every time point as well as abundance differences 
+between subsequent time points, even with limited replicates. An additional output
+of the model is the difference between dynamics of different experimental conditions.
+
+The MetaboDynamics workflow requires abundance tables as input, which can 
+include metabolites and their observed abundances, LC-MS peak intensities or areas.
+The workflow can handle any number of time points, and the dynamics model requires 
+at least three replicates. However, functions to compare dynamics
+with each other do not require a certain number of replicates and can be applied
+to calculated mean abundances of e.g. two replicates.
+
+In this vignette, I will demonstrate how to use the MetaboDynamics package to
+analyze longitudinal metabolomics data, including data preprocessing, 
+model fitting, and interpretation of results. We will show how to apply 
+the package to a simulated data set and how to visualize and interpret the results.
 
 # Setup: load required packages
 ```{r setup}
@@ -48,7 +95,7 @@ library(tidyr) # data handling
 
 The MetaboDynamics package includes a simulated data set called 
 "longitudinalMetabolomics". This data set consists of 98 metabolites with three 
-replicates at four time points (1-4) across three experimental conditions (A-C).
+replicates at four time points (1-4) across two experimental conditions (A-B).
 The data set is represented as a [SummarizedExperiment](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) object, where the abundance tables of each experimental condition are stored in assays (raw abundances in "concentrations", log-transformed transformations in 
 "log_con" and scaled (mean=0, sd=1) log-transformed abundances" in "scaled_log"), and the metabolite names, 
 KEGG IDs, experimental conditions, and clustering solutions per experimental 
@@ -178,12 +225,14 @@ If the untargeted LC-MS experiment is conducted in vitro and independent cell co
 (i.e. cell counts were measured in a different well than metabolite abundances) are
 available an adapted model can be run that takes the *raw* (i.e. not normalized and not scaled)
 metabolite abundances and the cell counts as input. The "raw_plus_counts" model is
-slower but has the advantage of taking additionally incorporating the uncertainty of cell counts
+slower but has the advantage of additionally incorporating the uncertainty of cell counts
 into the estimates of the Bayesian model.  
 
 The code below shows how to fit the Bayesian model with the function
-fit_dynamics_model(). This might take of the order of 10 minutes for 98 metabolites. Here we fit the dynamics model 
-for a small subset of the simulated metabolites. 
+fit_dynamics_model(). Just in this vignette the number of chains is set to 1.
+To get reliable estimates at least four chains should be used. If more than
+one CPU core is available chains can run in parallel (parameter "chains").
+Here we fit the dynamics modelfor a small subset of the simulated metabolites. 
 
 ```{r,fig.wide=TRUE}
 # we can hand a SummarizedExperiment object to the function
@@ -192,7 +241,7 @@ data("longitudinalMetabolomics")
 # the whole dataset) for demonstration purposes
 samples <- c(
   "UMP", "PEP",
-  "2-Aminomuconate"
+  "2-Aminomuconate","ATP"
 )
 # only one condition
 data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in% c("A", "B") &
@@ -202,8 +251,7 @@ data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in% c("A"
 data <- fit_dynamics_model(
   model = "scaled_log",
   data = data, scaled_measurement = "m_scaled",
-  assay = "scaled_log", time = "time",
-  condition = "condition", max_treedepth = 10,
+  assay = "scaled_log",
   adapt_delta = 0.95, # default 0.95
   iter = 2000,
   cores = 1,
@@ -257,9 +305,8 @@ plot_PPC(
 )
 ```
 
-The PPC plot indicates that the model is well-behaved and that the experimental 
-data points are consistent with the predicted distribution, suggesting that the 
-model is a good fit to the data.
+The PPC plot shows that the experimental data points are consistent with the 
+predicted distribution, suggesting that the model is a good fit to the data.
 
 ## Model outputs
 After checking the diagnostic criteria and the PPC we can extract the estimates from the
@@ -274,8 +321,12 @@ data <- estimates_dynamics(
 )
 ```
 
+To visualize the estimates we can use the plot_estimates() function. 
 
-### !!!! choose different metabolites differences in metabolite abundance between time points
+## Differences of metabolite abundances between time points
+First we visualize the differences of metabolite abundances between time points
+(Parameter "delta_t").
+
 In the following plots the column label "A" indicates the experimental condition.
 The row labels "timepoint 2 - timepoint 1". The metabolites are ordered on 
 the x-axis according to the estimated mean differences between time points and the
@@ -283,13 +334,14 @@ estimated abundance differences ("delta") are on the y-axis.
 
 ```{r,fig.wide=TRUE}
 # 1) the differences between two timepoints
-plot_estimates(
+plots <- plot_estimates(
   data = data,
+  delta_t = TRUE,
   dynamics = FALSE, distance_conditions = FALSE
 )
+plots$delta_t$`A_time_point_2-time_point_1`
+plots$delta_t$`A_time_point_3-time_point_2`
 ```
-
-L-Alanine B (timepoint 4 timepoint1), ATP L-Alanine timepoint 3 timepoint 1
 
 The results of bayesian models can be interpreted intuitively: the 95% credible
 interval (CrI) (95% highest density interval) indicates the 95% probability range
@@ -299,15 +351,12 @@ error bars.
 If the 95% CrI lies below zero, we can conclude that there is a decrease in 
 abundance between the two subsequent time points (e.g. PEP between time point 1 
 and 2, red error bar). If the 95% CrI lies above zero, we can conclude that there
-is an increase in abundance between the two subsequent time points (e.g. 
-2-Amminomuconate between time point 2 and 3). If the 95% CrI contains zero, we
+is an increase in abundance between the two subsequent time points. If the 95% CrI contains zero, we
 cannot conclude that there is a difference in abundance between the two time points.
 
 ### Difference of dynamcis between experimental conditions
-
-can be used to detect which metabolites's dynamics change the most/least between conditions
-
-!!! insert diagram of anonymized johanns data? 
+If the parameter "distance_conditions" is set to TRUE a ranked list of differences
+between metabolite dynamics of different conditions is visualized.
 
 ```{r,fig.wide=TRUE}
 # 1) the differences between two timepoints
@@ -318,11 +367,15 @@ plot_estimates(
 )
 ```
 
+In the case of our simulated data set the uncertainty (i.e. the CrI width) for
+the estimated differences between dynamics is pretty high. Bigger euclidean
+distances indicate big differences between dynamics, small euclidean distances
+small differences between dynamics. 
 
 ### Dynamic profiles
 
 The dynamic profiles of each metabolite can be visualized using the estimated 
-mean abundances at each time point. The plot below shows the estimated mean 
+mean abundances at each time point (parameter "dynamics"). The plot below shows the estimated mean 
 abundances at each time point for each metabolite.
 
 ```{r,fig.wide=TRUE}
@@ -340,67 +393,73 @@ for each metabolite over the observed time interval.
 
 
 The estimates of the dynamics model are returned by the function estimates_dynamics() 
-and can be accessed with:
+and can be accessed with. The estimates are ordered by condition. 
 
 ```{r}
 # get estimates
 estimates <- metadata(data)[["estimates_dynamics"]]
 # only show first rows of condition A
-estimates[["A"]][1:10, ]
+estimates$euclidean_distances
 ```
 
 To identify groups of metabolites that have similar dynamics we could now cluster these 
-metabolite specific dynamics vectors (estimates[,"mu_mean"]) to 
+metabolite specific dynamics vectors (estimates$mu) to 
 determine if groups of metabolites have similar dynamics.
 
 # Cluster dynamics
 MetaboDynamics has a build-in wrapper function for clustering with the "hybrid"
 method of the package [dynamicTreeCut](https://cran.r-project.org/web/packages/dynamicTreeCut/index.html).
-An alternative would for example be to use a soft-clustering algorithm such
-as implemented in the Bioconductor package [Mfuzz](https://bioconductor.org/packages/release/bioc/html/Mfuzz.html).
-Some clustering methods
-also allow to use the overall variation (estimates[,"lamda_mean"]). Clustering precision
-could be calculated by using samples from the model posterior (i.e. specifying 
-"samples" in estimates_dynamics function) and comparing clustering solutions of
-the mean abundances with clustering solutions using the posterior samples 
-(estimates[,"mu_sample_n"]).
+Bootstrapping of the clustering solution is implemented with draws from the 
+posterior distribution of mean metabolite abundances. Bootstrapping allows
+for the estimation of clustering reliability.
+
+From here on I will demonstrate the workflow on the whole simulated data set.
 
 The code below shows how to use the cluster wrapper function cluster_dynamics
 on a SummarizedExperiment object where the dynamics estimates are stored in
-metadata(data)[["estimates_dynamics"]]. The function cluster_dynamics() also accepts lists
-of dataframes with calculated mean abundances of metabolites if less than
-three replicates (minimal requirement for fit_dynamics) are available. 
+metadata(data)[["estimates_dynamics"]]. 
 
 ```{r,fig.wide=TRUE}
 data <- cluster_dynamics(data,
-  deepSplit = 0
+  deepSplit = 2,
+  B = 10 # number of bootstrapps
 ) # low clustering sensitivity
 ```
 
 For the visualization of the clustering results we can use the function
-plot_cluster, which offers three different visualizations of the clustering
-results: 1) a dendrogram with color coding of the different clusters. 
+plot_cluster()
 
 ```{r}
-plot <- plot_cluster(data)
+plots <- plot_cluster(data)
 ```
-2) A Principal Component Analysis (PCA) of the clustering result 
+
+The functions returns three outputs:
+1) phylogenetic trees ([ggtree](https://www.bioconductor.org/packages/release/bioc/html/ggtree.html)) (dendrograms) with number on nodes indicating the number of bootstrapss with 
+the same clustering solution. Similar visualizations have been implemented
+in [scbubbletree](https://bioconductor.org/packages/release/bioc/html/scBubbletree.html) and 
+[cellmig](https://github.com/snaketron/cellmig).
+
+To plot phylogenetic trees of condition A run:
 
 ```{r}
-plot[["A"]][["PCA_plot"]]
+plots$trees$B
 ```
-and 3) the visualization of the single metabolite dynamics within the different
-conditions. For the sake of demonstration we use from here on a clustering result (metaddata(longitudinalMetabolomics[[("cluster"))]]
-on the full simulated data set (data("longitudinalMetabolomics")). 
+
+In half of the 10 bootstrapps 2-Amminomuconate and UMP are clustered together, but
+ATP and PEP are only clustered together in 1/10 bootstrapps. 
+
+2) lineplots of the clustered metabolite dynamics
+```{r}
+plots$lineplots$B
+```
+
+and 3) a [patchwork](https://cran.r-project.org/web/packages/patchwork/index.html) 
+plot of the phylogenetic tree, cluster affiliations and the metabolite dynamics. 
 
 ```{r}
-plot_cluster(longitudinalMetabolomics)
-plot[["lineplot"]]
+plots$patchwork$B
 ```
 
-We can identify different patterns (i.e. clusters) of metabolite dynamics and 
-these patterns differ between different experimental conditions. Can we quantify 
-the biological function of these dynamics clusters?
 
 # Over-representation analysis of functional modules in dynamics clusters
 To quantify the possible biological function of these dynamics clusters we 
@@ -412,12 +471,12 @@ The functional modules of the KEGG-database are organised in three hierarchies:
 upper, middle and lower. The middle hierarchy holds modules such as "Amino acid
 metabolism", the lower for example "branched chain amino acid metabolism". To 
 facilitate analysis the data frames "metabolite_modules", which 
-holds the information about the metabolites of the simulated data set, and "modules_compounds",
-which holds the information about which metabolites are in general annotated to
-functional modules, were prepared. 
+holds the information about the metabolites of the simulated data set, and 
+"modules_compounds", which holds the information about which metabolites are in 
+general annotated to functional modules, were prepared. 
 
-To construct the needed annotation dataframe for your experimental dataset
-simply filter the "modules_compounds" dataset for your experimental metabolites'
+To construct the needed annotation data frame for your experimental data set
+simply filter the "modules_compounds" data set for your experimental metabolites'
 KEGG IDs. 
 
 We load both data sets and can inspect the
@@ -438,6 +497,13 @@ every observed organism and experimental condition. For example, the modules
 and "Biosynthesis of terpenoids and polyketides" should not be analyzed in a 
 human lung cancer cell line.
 
+For the ORA we additionally need a data frame annotating metabolites to KEGG
+IDs. For the simulated example data set the results are in data("IDs")
+```{r}
+data("IDs")
+head(IDs)
+```
+
 For the functional analysis we employ a hypergeometric model. We consider a 
 functional module as over-represented in a cluster if the 95% inter-quantile
 range (ICR) of the log-transformed probabilities of OvEs (observed vs. expected)
@@ -450,52 +516,45 @@ the ORA results are stored in metadata(data)[["ORA_tested_column"]]
 We apply the functional analysis to the middle hierarchy of functional
 modules. 
 
+
 ```{r,fig.wide=TRUE}
 data <- ORA_hypergeometric(
   background = modules_compounds,
   annotations = metabolite_modules,
-  data = longitudinalMetabolomics, tested_column = "middle_hierarchy"
+  IDs = IDs,
+  data = data, tested_column = "middle_hierarchy"
 )
 
-plot_ORA(data, tested_column = "middle_hierarchy")
+plot_ORA(data = data)
 ```
 
 Great, we can now see which functional module is over- 
 (green points and error-bars) or under-represented (none in this example) in 
-which dynamics cluster! For instance in cluster 2 of condition A module
-"Nucleotide metabolism" over-represented. 
+which dynamics cluster! For instance in cluster 1 of condition A module
+"Nucleotide metabolism" is over-represented. 
 
-##### !!!! attach ORA to patchwork
-data("longitudinalMetabolomics")
-data("longitudinalMetabolomics_df")
-samples <- c("TTP","Sarcosine","L-Ornithine","Uracil","Xanthine","ATP","dGMP","l-Tyrosine","Malic acid","sn-Glycero-3-phosphocholine")
-data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in%c("A","B") &
-                                   longitudinalMetabolomics$metabolite %in% samples]
-data <- fit_dynamics_model(
-  data = data,
-  scaled_measurement = "m_scaled", assay = "scaled_log",
-  max_treedepth = 14, adapt_delta = 0.95, iter = 3000, cores = 1, chains = 1
-)
-data <- estimates_dynamics(
-  data = data
-)
-data <- cluster_dynamics(data, B = 1000)
-plot_cluster <- plot_cluster(data)
-plot_cluster
-data("metabolite_modules")
-data("modules_compounds")
-data <- ORA_hypergeometric(data=data,background = modules_compounds,annotations = metabolite_modules,tested_column = "middle_hierarchy")
+If we want to attach the over-representation analysis to the previously 
+generated patchwork plot of the cluster dynamics, we need to store the clustering
+plots and set argument "patchwork" of plot_ORA to TRUE.
 
-plot_ORA <- plot_ORA(data = data,tested_column = "middle_hierarchy",patchwork = TRUE,plot_cluster = plot_cluster)
+```{r}
+# get cluster plots
+cluster <- plot_cluster(data = data)
 
-patchwork <- list()
-for (i in unique(longitudinalMetabolomics_df$condition)[1:2]){
-  p <- plot_cluster$patchwork[[i]]|plot_ORA$ora_patchwork[[i]]
-  patchwork[[i]] <- p+plot_annotation(title = paste0("condition ",i),subtitle="plots: dendrogram with cluster probability, cluster affiliations of metabolites, ORA")
-  
-}
+# set patchwork to TRUE and provide cluster plots
+ora <- plot_ORA(data = data, tested_column = "middle_hierarchy",
+         patchwork = TRUE, plot_cluster = cluster)
+```
+
+To visualize the dynamics and ORA results run: 
+```{r}
+# patch plots together
+library(patchwork)
+p <- cluster$lineplots$A|ora$ora_patchwork$A
+p+plot_layout(ncol=2, widths = c(1,6))
+```
+
 # Comparison of clusters of different experimental conditions
-
 ## Dynamics 
 We can not only conduct over-representation analysis of KEGG-functional modules but
 also compare dynamics clusters across different experimental conditions. For 
@@ -516,13 +575,15 @@ dist_{ID}&\sim {\sf normal}(\mu_{ID},\sigma_{ID}) \\
 data("longitudinalMetabolomics")
 longitudinalMetabolomics <- compare_dynamics(
   data = longitudinalMetabolomics,
-  cores = 1 # just set to 1 for vignette, set to 4 if possible
-)
+  cores = 1, # just set to 1 for vignette, set to 4 if possible
+  dynamics = c("time_point_1_mean","time_point_2_mean","time_point_3_mean",
+               "time_point_4_mean")
+  )
 ```
 
 We can visualize the posterior estimates of the model with:
 
-```{r,fig.aling='center',fig.dpi=150}
+```{r,fig.aling='center',fig.width=8,fig.height=6}
 heatmap_dynamics(data = longitudinalMetabolomics)
 ```
 This results in a bubble heat map where each cluster of every condition (i.e.
@@ -531,8 +592,8 @@ The comparison of clusters is reciprocal and therefore each comparison pair is
 only visualized once. 
 The bigger and brighter a point, the smaller is the mean distance between
 dynamics clusters and the smaller is the standard deviation. That means that big 
-bright points indicate high dynamic similarity which small spread. Here C_10 and
-A_10 have high similarity in dynamics. 
+bright points indicate high dynamic similarity which small spread. Here A_7 and B_8
+have high similarity in dynamics. 
 
 ## Metabolites
 We can also compare metabolite composition of clusters. For this we employ
@@ -541,7 +602,7 @@ the Jaccard Index which is a metric for similarity of two vectors. Values near
 SummarizedExperiment object the results of compare_metabolites are stored 
 in metadata(data)[["comparison_metabolites"]].
 
-```{r,fig.aling='center',fig.dpi=150}
+```{r,fig.aling='center',fig.width=8,fig.height=6}
 longitudinalMetabolomics <- compare_metabolites(
   data = longitudinalMetabolomics
 )
@@ -553,14 +614,14 @@ here always have a Jaccard Index of zero, as every metabolite is only assigned
 to one cluster per condition, hence there is no similarity between clusters
 of one experimental condition. 
 We have two clusters that are similar in their metabolite composition:
-C_4 and A_3. If we compare that to the dynamics profiles and ORA analysis
+A_12 and B_8. If we compare that to the dynamics profiles and ORA analysis
 we see that similar functional modules are over-expressed as expected BUT
 the dynamics differ between the two radiation doses. 
 
 Can we facilitate visualization for the combination of both measures?
 
 ## Combine both
-```{r,fig.aling='center',fig.dpi=150}
+```{r,fig.aling='center',fig.height=6,fig.width=8}
 dynamics <- metadata(longitudinalMetabolomics)[["comparison_dynamics"]][["estimates"]]
 metabolites <- metadata(longitudinalMetabolomics)[["comparison_metabolites"]]
 temp <- left_join(dynamics, metabolites, join_by("cluster_a", "cluster_b"))
@@ -585,11 +646,11 @@ experimental condition (e.g. kind of treatment/ dose of treatment) has the
 biggest effect. These clusters are similar in regards to their composing metabolites
 (i.e. big points)
 but dissimilar (i.e. bright color) in regards to their dynamics. Here this is 
-for example the cluster pair B_10 and A_5. Their ORA profiles are also quite similar 
-as expected from the similar metabolite compositions. 
+for example the cluster pair A_11 and B_12 (not a big point but bright color).
+
 Clusters of metabolites that are not much affected by the experimental condition
 can be spotted by big (i.e. high metabolite similarity) black (i.e. low dissimilarity
-in dynamics) points, for example cluster pair C_4 and A_3.
+in dynamics) points, for example cluster pair A_6 and B_9.
 
 ```{r}
 sessionInfo()
