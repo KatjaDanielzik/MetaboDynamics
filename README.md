@@ -8,9 +8,9 @@
 ![](man/figures/README-MetaboDynamics_graphical_abstract.png)
 
 # Data requirements
-- MetaboDynamics requires at least triplicates of metabolite abundances for all
+- MetaboDynamics requires **at least triplicates of metabolite abundances** for all
 analyzed time points and conditions. No minimum number of metabolites is required.
-- Data can be a data frame (see Vignette "using MetaboDynamics with data frames)
+- Data can be a data frame (see Vignette "using MetaboDynamics with data frames"")
 or a SummarizedExperiment object (demonstrated in this vignette).
 - Metabolite abundances have to be stored in column named "metabolite", time points
 in "time" and the experimental condition in "condition"
@@ -25,7 +25,7 @@ poisson distribution is assumed. At least one replicate of cell counts per time
 point and condition is required. 
 
 Metabolite abundances have to be adequately normalized and scaled.
-The expected scaling is explained in the following workflow. 
+The expected scaling is explained in the Vignette.
 
 In the case of an in vitro experiment with available cell counts for all time points
 and conditions no scaling or normalization is necessary as this will be handled
