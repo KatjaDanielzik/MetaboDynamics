@@ -32,7 +32,6 @@ library(tidyr) # data handling
 
 # Load data
 The MetaboDynamics package also includes a simulated example data set in a data frame format. 
-Please note, that although both data sets were simulated with the same code different seeds were used so that the results can deviate from each other.
 To load the data set in data frame format, execute the following code:
 
 ```{r}
@@ -40,36 +39,39 @@ data("longitudinalMetabolomics_df", package = "MetaboDynamics")
 ```
 
 # Model dynamics
-
 To keep run time of this vignette short we will execute the workflow on a subset
 of five metabolites across all conditions. 
 
 ```{r,fig.wide=TRUE}
-# take a sample of five metabolites and subset data
-metabolites <- sample(x = unique(longitudinalMetabolomics_df$metabolite), size = 5)
-data <- longitudinalMetabolomics_df %>% filter(metabolite %in% metabolites)
+data("longitudinalMetabolomics_df")
+# take a sample (of five metabolites and subset data
+samples <- c(
+  "UMP", "PEP",
+  "2-Aminomuconate","ATP"
+)
+data <- longitudinalMetabolomics_df %>% filter(metabolite %in% samples)
 
 head(data)
 ```
-The measured metabolites are stored in column "metabolite", time points are specified in column "time", and column "condition" specifies the experimental condition.
+The measured metabolites are stored in column "metabolite", time points are 
+specified in column "time", and column "condition" specifies the experimental condition.
 
-The required log-transformed and scaled (per metabolite and condition to a mean of 0 and sd of 1) metabolite abundances are stored
-in column "m_scaled". The function fit_dynamics_model() allows to specify other column names for metabolite, time points, condition and scaled measurement. 
+The required log-transformed and scaled (per metabolite and condition to a mean 
+of 0 and sd of 1) metabolite abundances are stored in column "m_scaled". The
+function fit_dynamics_model() allows to specify other column names for metabolite,
+time points, condition and scaled measurement. 
 
 First we will fit the dynamics model and extract the diagnostics:
 
 ```{r}
 # fit dynamics model
-fits <- #  when using a data frame as input fits have to stored in a separate object
+fit <- #  when using a data frame as input fits have to stored in a separate object
   fit_dynamics_model(
     model = "scaled_log",
     data = data,
-    metabolite = "metabolite", # in which column are metabolite names stored?
-    time = "time", # in which column are categorical time points stored?
-    condition = "condition", # in which are categorical experimental conditions stored?,
     scaled_measurement = "m_scaled", # in which column are scaled measurments stored?
     max_treedepth = 10,
-    adapt_delta = 0.95, # default 0.95
+    adapt_delta = 0.99, # default 0.95
     iter = 2000,
     warmup = 2000 / 4, # default is 1/4 of iterations
     chains = 1, # only set to 1 in vignette, recommended default is 4!
@@ -77,15 +79,14 @@ fits <- #  when using a data frame as input fits have to stored in a separate ob
   )
 ```
 
-This returns a list of model fits that are named by the experimental condition
-(in the case of the simulated data set "A","B","C").
+This returns a model fit.
 
 ```{r}
 # Extract diagnostics
 diagnostics <- # when using a data frame as input diagnostics have to be stored in a separate object
   diagnostics_dynamics(
     data = data, # data frame that was used to fit the dynamics model,
-    fits = fits, # list of fits from dynamics model, result of fit_dynamics_mode function
+    fit = fit, # list of fits from dynamics model, result of fit_dynamics_mode function
     iter = 2000, # how many iterations were used to fit the dynamics model
     chains = 1, # how many chains were used to fit the dynamics model
   )
@@ -102,8 +103,8 @@ plot_diagnostics(
   diagnostics = diagnostics[["model_diagnostics"]] # summary of diagnostics
 )
 plot_PPC(
-  data = data,
-  diagnostics = diagnostics[["posterior"]]
+  data = data, posterior = diagnostics[["posterior"]],
+  scaled_measurement = "m_scaled"
 )
 ```
 In this case the diagnostics are all indicating a sane model fit: The model fitting did not result in 
@@ -120,15 +121,7 @@ to for example test clustering performance.
 estimates <- # estimates have to be stored in a separate object when using data frames
   estimates_dynamics(
     data = data,
-    fits = fits,
-    iter = 2000,
-    warmup = 500,
-    chains = 1,
-    condition = "condition",
-    metabolite = "metabolite",
-    time = "time",
-    samples = 1 # 1 sample from posterior taken
-  )
+    fit = fit)
 ```
 
 This returns a list containing the estimates for every experimental condition.
@@ -136,7 +129,8 @@ The estimates can be visualized in two ways by the following code:
 
 ```{r}
 # only visualize differences between time points
-plot_estimates( # does not need data as input
+plot_estimates(
+  # does not need data as input
   estimates = estimates,
   delta_t = TRUE, # choose to visualize differences between time points
   dynamics = FALSE,
@@ -178,29 +172,27 @@ metabolite dynamics per experimental condition.
 ```{r}
 cluster <- # clustering results have to be stored in separate object when using data frame as input
   cluster_dynamics(
-    data = estimates, # data is now the estimates or a data frame ob similar structure
+    estimates = estimates, # data is now the estimates or a data frame ob similar structure
+    fit = fit,
     distance = "euclidean", # which distance method should be used
     agglomeration = "ward.D2", # which agglomeration method for hierarchical clustering should be used
     deepSplit = 2, # sensitivity of cluster analysis,
-    minClusterSize = 1 # minimum number of metabolites in one cluster
-  )
+    minClusterSize = 1, # minimum number of metabolites in one cluster
+    B = 10, # number of bootstrapps
+    )
 ```
 
 To visualize the clustering results we can use the function plot_cluster which
-returns a list of plots. The list element "lineplot" visualizes the metabolite dynamics in each cluster for every condition:
+returns a list of plots. For details see Vignette "MetaboDynamics".
 
 ```{r}
 plots <- plot_cluster(cluster)
-plots[["lineplot"]]
+plots$trees$A
+plots$clusterplots$A
+plots$lineplots$A
+plots$patchwork$A
 ```
 
-Additionally we can visualize for every experimental condition the dendrogram
-and a Principal component analysis of the clustering solution. 
-
-```{r}
-# For condition A
-plots[["A"]]
-```
 
 # Over-Representation Analysis (ORA)
 To conduct the over-representation analysis KEGG IDs of the experimental metabolites are needed.
@@ -211,19 +203,9 @@ The clustering result also needs to be converted from a list to a single data fr
 ```{r}
 # load background dataset
 data("modules_compounds")
-
+data("metabolite_modules")
 # get KEGGs from data
-KEGGs <- unique(data$KEGG)
-
-# construct "metabolite_modules" data set
-metabolite_modules <- modules_compounds %>% filter(KEGG %in% KEGGs)
-
-# convert clustering results from list to dataframe
-cluster_data <- rbind(
-  cluster[["A"]][["data"]],
-  cluster[["B"]][["data"]],
-  cluster[["C"]][["data"]]
-)
+data("IDs")
 ```
 
 The over-representation analysis and visualization can be achieved with the
@@ -234,8 +216,9 @@ ora <- # store ORA result to separate object when using data frames as input
   ORA_hypergeometric(
     background = modules_compounds,
     annotations = metabolite_modules,
-    data = cluster_data, # dataframe format of clustering output
-    tested_column = "middle_hierarchy"
+    data = cluster, # dataframe format of clustering output
+    tested_column = "middle_hierarchy",
+    IDs = IDs
   )
 
 # Visualization
@@ -257,8 +240,8 @@ code:
 ```{r}
 comparison_dynamics <- # result needs to be stored in a separate object when using data frames
   compare_dynamics(
-    data = cluster_data, # clustering result
-    dynamics = c("1", "2", "3", "4"), # which columns specify the time point specific mean metabolite abundances?
+    data = cluster,
+    # clustering result
     cores = 1 # only set to 1 for vignette, can be increased to 4 for parallelization
   )
 ```
@@ -270,7 +253,7 @@ of the function results. To visualize the results run the following code:
 # Visualize comparison results
 heatmap_dynamics(
   estimates = comparison_dynamics[["estimates"]],
-  data = cluster_data
+  data = cluster
 )
 ```
 
@@ -282,13 +265,13 @@ The comparison of metabolite composition follows the same principle as the compa
 # compare metabolite composition
 compare_metabolites <-
   compare_metabolites(
-    data = cluster_data
+    data = cluster
   )
 
 # Visualization
 heatmap_metabolites(
   distances = compare_metabolites,
-  data = cluster_data
+  data = cluster
 )
 ```
 
