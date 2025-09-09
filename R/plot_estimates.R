@@ -31,7 +31,7 @@
 #' plot_estimates(data = data, delta_t = TRUE, dynamic = FALSE, distance_conditions = FALSE)
 #' plot_estimates(data = data, delta_t = FALSE, dynamic = TRUE, distance_conditions = FALSE)
 #' plot_estimates(data = data, delta_t = FALSE, dynamic = FALSE, distance_conditions = TRUE)
-plot_estimates <- function(data, estimates = metadata(data)[["estimates_dynamics"]],
+plot_estimates <- function(data = NULL, estimates = metadata(data)[["estimates_dynamics"]],
                            delta_t = TRUE, dynamics = TRUE, distance_conditions = TRUE) {
   # bind variables to function
   r <- NULL
