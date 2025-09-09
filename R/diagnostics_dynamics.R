@@ -77,15 +77,15 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
     fit <- metadata(data)[["dynamic_fit"]]
   }
   # convert potential tibbles into data frame
-  if (is(data, "tbl")) {
-    data_df <- as.data.frame(data_df)
-  }
   # convert potential tibbles into data frame
   if (is(data, "tbl")) {
     data <- as.data.frame(data)
   }
   if (is(data, "data.frame")) {
     data_df <- data
+  }
+  if (is(data_df, "tbl")) {
+    data_df <- as.data.frame(data_df)
   }
   # read out number of metabolites and time points
   M <- length(unique(data_df$metabolite))
