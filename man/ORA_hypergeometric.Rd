@@ -25,7 +25,7 @@ metabolites}
 \item{data}{result of \code{\link[=cluster_dynamics]{cluster_dynamics()}} function: either a list of data
 frames or a SummarizedExperiment object}
 
-\item{IDs}{dataframe with two columsn 'metabolite' and 'KEGG' mapping KEGG IDs to metabolites.
+\item{IDs}{dataframe with two columns 'metabolite' and 'KEGG' mapping KEGG IDs to metabolites.
 If function \code{\link[=get_ORA_annotations]{get_ORA_annotations()}} is used to retrieve IDs these are stored under
 "KEGG_annotations" of metadata(data)}
 

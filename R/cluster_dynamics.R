@@ -60,7 +60,7 @@
 #' data <- cluster_dynamics(data, B = 1000)
 #' S4Vectors::metadata(data)[["cluster"]][["A"]]
 #' plot(S4Vectors::metadata(data)[["cluster"]][["A"]][["mean_dendro"]])
-cluster_dynamics <- function(data, fit,
+cluster_dynamics <- function(data = NULL, fit,
                              estimates = NULL,
                              distance = "euclidean",
                              agglomeration = "ward.D2",

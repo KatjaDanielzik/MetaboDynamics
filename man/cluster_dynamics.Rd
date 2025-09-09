@@ -5,7 +5,7 @@
 \title{cluster dynamics profiles of metabolites}
 \usage{
 cluster_dynamics(
-  data,
+  data = NULL,
   fit,
   estimates = NULL,
   distance = "euclidean",

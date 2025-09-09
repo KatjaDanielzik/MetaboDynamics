@@ -4,13 +4,10 @@
 \alias{compare_dynamics}
 \title{Comparison of metabolite dynamics clusters under different experimental conditions}
 \usage{
-compare_dynamics(data, dynamics = metadata(data)[["dynamics"]], cores = 4)
+compare_dynamics(data, cores = 4)
 }
 \arguments{
 \item{data}{result of \code{\link[=cluster_dynamics]{cluster_dynamics()}} function: either a list of data frames or a SummarizedExperiment object}
-
-\item{dynamics}{vector specifying the column names of dataframe clusters
-that hold the dynamics information}
 
 \item{cores}{how many cores should be used for model fitting; this
 parallelizes the model fitting and therefore speeds it up; default=4}

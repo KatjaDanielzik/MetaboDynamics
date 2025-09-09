@@ -5,7 +5,7 @@
 \title{Visualization of parameter estimates from numeric fit of Bayesian model of dynamics}
 \usage{
 plot_estimates(
-  data,
+  data = NULL,
   estimates = metadata(data)[["estimates_dynamics"]],
   delta_t = TRUE,
   dynamics = TRUE,

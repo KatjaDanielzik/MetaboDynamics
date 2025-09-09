@@ -15,7 +15,7 @@
 #' Function to visualize ORA results [plot_ORA()]
 #' @param data result of [cluster_dynamics()] function: either a list of data
 #' frames or a SummarizedExperiment object
-#' @param IDs dataframe with two columsn 'metabolite' and 'KEGG' mapping KEGG IDs to metabolites. 
+#' @param IDs dataframe with two columns 'metabolite' and 'KEGG' mapping KEGG IDs to metabolites. 
 #' If function [get_ORA_annotations()] is used to retrieve IDs these are stored under 
 #' "KEGG_annotations" of metadata(data)
 #' @param background dataframe that contains

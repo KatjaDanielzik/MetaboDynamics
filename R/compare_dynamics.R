@@ -6,8 +6,6 @@
 #' experimental conditions to estimate the mean distance between clusters.
 #'
 #' @param data result of [cluster_dynamics()] function: either a list of data frames or a SummarizedExperiment object
-#' @param dynamics vector specifying the column names of dataframe clusters
-#' that hold the dynamics information
 #' @param cores how many cores should be used for model fitting; this
 #' parallelizes the model fitting and therefore speeds it up; default=4
 #'
@@ -47,7 +45,7 @@
 #'   cores = 1
 #' )
 #' S4Vectors::metadata(data)[["comparison_dynamics"]]
-compare_dynamics <- function(data, dynamics = metadata(data)[["dynamics"]], cores = 4) {
+compare_dynamics <- function(data, cores = 4) {
   # Input checks
   if (!inherits(data, "list") && !inherits(data, "SummarizedExperiment")) {
     stop("'data' must be a list or a SummarizedExperiment object obtained by 'cluster_dynamics()'")
@@ -65,7 +63,9 @@ compare_dynamics <- function(data, dynamics = metadata(data)[["dynamics"]], core
     data_df <- bind_rows(lapply(data, function(x) {
       return(x$data)
     }))
-  }
+    dynamics <- data_df%>%ungroup()%>%select(-c(metabolite,condition,cluster)) # result is metabolite, condition, dynamics
+    dynamics <- colnames(dynamics)
+    }
   # convert potential tibbles into data frame
   if (is(data_df, "tbl")) {
     data_df <- as.data.frame(data_df)
@@ -78,8 +78,8 @@ compare_dynamics <- function(data, dynamics = metadata(data)[["dynamics"]], core
   }
   if (!is.character(dynamics)) stop("'dynamics' must be a character vector")
 
-  if (!all(c("condition", "cluster") %in% colnames(data_df))) {
-    stop("'data' must contain columns named 'condition' and 'cluster'")
+  if (!all(c("metabolite","condition", "cluster") %in% colnames(data_df))) {
+    stop("'data' must contain columns named 'metabolite', 'condition', and 'cluster'")
   }
   if (!all(dynamics %in% colnames(data_df))) {
     stop("All specified 'dynamics' columns must exist in `data` dataframe")
