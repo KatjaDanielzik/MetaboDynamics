@@ -70,7 +70,7 @@ sample size being to low, default=2000}
 facilitate efficiency, must be at least 25\% of ITER, default=iter/4}
 }
 \value{
-error messages
+description error messages
 }
 \description{
 input checks for fit_dynamics_model

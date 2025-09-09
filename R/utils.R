@@ -38,7 +38,7 @@
 #' sample size being to low, default=2000
 #' @param warmup how many iterations the model warms up for, increasing might
 #' facilitate efficiency, must be at least 25% of ITER, default=iter/4
-#' @return error messages
+#' @returns description error messages
 #' @keywords internal
 .check_fit_dynamics_input <- function(model, data,
                                       scaled_measurement,
@@ -86,7 +86,7 @@
 #' @param a a numeric vector
 #' @param b a numeric vector of same length as a
 #' @importFrom stats dist
-#' @return euclidean distance between vectors
+#' @returns euclidean distance between vectors
 #' @keywords internal
 
 .eu <- function(a, b) {
@@ -159,6 +159,7 @@
 #' @param agglomeration agglomeration method used for hierarchical clustering
 #' @param B number of bootstrapps
 #' @keywords internal
+#' @returns bootsstrapps of clustering solution
 .get_boot_ph <- function(x, distance, agglomeration, B) {
   e <- x
   e <- as.data.frame(e)

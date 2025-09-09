@@ -15,6 +15,9 @@
 
 \item{B}{number of bootstrapps}
 }
+\value{
+bootsstrapps of clustering solution
+}
 \description{
 get bootstrapps for clustering of dynamics vectors (cluster_dynamics function)
 }

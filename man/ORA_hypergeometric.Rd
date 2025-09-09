@@ -22,9 +22,12 @@ modules our experimental metabolites are annotated in KEGG, can be constructed
 by filtering the provided KEGG background \link{modules_compounds} for the experimental
 metabolites}
 
-\item{data}{result of \code{\link[=cluster_dynamics]{cluster_dynamics()}} function: either a list of data frames or a SummarizedExperiment object}
+\item{data}{result of \code{\link[=cluster_dynamics]{cluster_dynamics()}} function: either a list of data
+frames or a SummarizedExperiment object}
 
-\item{IDs}{dataframe with two columsn 'metabolite' and 'KEGG' mapping KEGG IDs to metabolites}
+\item{IDs}{dataframe with two columsn 'metabolite' and 'KEGG' mapping KEGG IDs to metabolites.
+If function \code{\link[=get_ORA_annotations]{get_ORA_annotations()}} is used to retrieve IDs these are stored under
+"KEGG_annotations" of metadata(data)}
 
 \item{tested_column}{column that is in background and annotations and on
 which the hypergeometric model will be executed}
@@ -67,4 +70,6 @@ S4Vectors::metadata(longitudinalMetabolomics)[["ORA_middle_hierarchy"]]
 \seealso{
 Function to obtain data \code{\link[=cluster_dynamics]{cluster_dynamics()}}
 Function to visualize ORA results \code{\link[=plot_ORA]{plot_ORA()}}
+
+\code{\link[=get_ORA_annotations]{get_ORA_annotations()}}
 }

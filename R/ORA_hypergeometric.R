@@ -13,8 +13,11 @@
 #' @seealso
 #' Function to obtain data [cluster_dynamics()]
 #' Function to visualize ORA results [plot_ORA()]
-#' @param data result of [cluster_dynamics()] function: either a list of data frames or a SummarizedExperiment object
-#' @param IDs dataframe with two columsn 'metabolite' and 'KEGG' mapping KEGG IDs to metabolites
+#' @param data result of [cluster_dynamics()] function: either a list of data
+#' frames or a SummarizedExperiment object
+#' @param IDs dataframe with two columsn 'metabolite' and 'KEGG' mapping KEGG IDs to metabolites. 
+#' If function [get_ORA_annotations()] is used to retrieve IDs these are stored under 
+#' "KEGG_annotations" of metadata(data)
 #' @param background dataframe that contains
 #' KEGG IDs of metabolites that are assigned to functional modules, is incorporated
 #' in the package [modules_compounds]
@@ -24,6 +27,8 @@
 #' metabolites
 #' @param tested_column column that is in background and annotations and on
 #' which the hypergeometric model will be executed
+#' 
+#' @seealso [get_ORA_annotations()]
 #
 #' @return a dataframe containing the ORA results or if data is SummarizedExperiment \link[SummarizedExperiment]{SummarizedExperiment}
 #' object the output is stored in metadata(data) under "ORA_tested_column"

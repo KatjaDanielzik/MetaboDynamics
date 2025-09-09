@@ -24,7 +24,7 @@ Description: MetaboDynamics is an R-package that provides a framework of
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Suggests: 
   knitr,
   rmarkdown,
@@ -61,5 +61,5 @@ LinkingTo:
   rstan (>= 2.18.1),
   StanHeaders (>= 2.18.0)
 SystemRequirements: GNU make
-biocViews: Software,Metabolomics,Bayesian,FunctionalPrediction,MultipleComparison,KEGG,Pathways,TimeCourse
+biocViews: Software,Metabolomics,Bayesian,FunctionalPrediction,MultipleComparison,KEGG,Pathways,TimeCourse, Clustering
 Biarch: true
