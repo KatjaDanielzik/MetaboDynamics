@@ -84,6 +84,11 @@ compare_dynamics <- function(data, cores = 4) {
   if (!all(dynamics %in% colnames(data_df))) {
     stop("All specified 'dynamics' columns must exist in `data` dataframe")
   }
+  
+  # binding of global variables
+  metabolite <- NULL
+  condition <- NULL
+  cluster <- NULL
 
   # order data_df according to condition and cluster
   data_df$cluster <- as.numeric(data_df$cluster)
