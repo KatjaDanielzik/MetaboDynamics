@@ -6,7 +6,7 @@ A simulated data set of longitudinal concentration tables of metabolites.
 }
 \description{
 A simulated data set of 98 metabolites. 3 replicate measurements of 4 time points
-and at 3 experimental conditions. Metabolites are in 8 dynamics groups per
+and at 2 experimental conditions. Metabolites are in 8 dynamics groups per
 experimental condition. 4 groups have varying dynamics between conditions.
 Is represented as a SummarizedExperiment object where concentration tables of 
 each experimental condition are stored in assays (raw concentrations in "concentrations",
@@ -51,11 +51,11 @@ n_time_points <- 4 # Number of time points
 
 n_replicates <- 3 # Number of replicates for all features and time points
 
-n_conditions <- 3 # Number of experimental conditions
+n_conditions <- 2 # Number of experimental conditions
 
 x_varying_groups <- 4 # Number of groups with varying dynamics across conditions
 
-condition_names <- c("A","B","C")
+condition_names <- c("A","B")
 
 # Probability matrix for assigning metabolites from different database groups to dynamic groups
 # For simplicity, we assume equal probability; customize as needed

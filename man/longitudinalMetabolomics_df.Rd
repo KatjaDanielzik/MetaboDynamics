@@ -53,11 +53,11 @@ n_time_points <- 4 # Number of time points
 
 n_replicates <- 3 # Number of replicates for all features and time points
 
-n_conditions <- 3 # Number of experimental conditions
+n_conditions <- 2 # Number of experimental conditions
 
 x_varying_groups <- 4 # Number of groups with varying dynamics across conditions
 
-condition_names <- c("A","B","C")
+condition_names <- c("A","B")
 
 # Probability matrix for assigning metabolites from different database groups to dynamic groups
 # For simplicity, we assume equal probability; customize as needed
