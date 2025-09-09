@@ -4,6 +4,8 @@
 [![](https://img.shields.io/badge/doi-10.18129/B9.bioc.MetaboDynamics%20-yellow.svg)](https://doi.org/10.18129/B9.bioc.MetaboDynamics )
 [![License: GPL](https://img.shields.io/badge/license-GPL-blue.svg)](https://cran.r-project.org/web/licenses/GPL)
 
+# Graphical abstract
+![](man/figures/README-MetaboDynamics_graphical_abstract.png)
 
 # Data requirements
 - MetaboDynamics requires at least triplicates of metabolite abundances for all
@@ -57,8 +59,6 @@ devtools::install_github("KatjaDanielzik/MetaboDynamics",build_vignettes=TRUE)
 ```
 
 ## Overview
-![](man/figures/README-MetaboDynamics_graphical_abstract.png)
-
 MetaboDynamics facilitates the analysis of longitudinal metabolomics
 data e.g. from untargeted LC-MS. Common tools mostly only allow the comparison
 between two time points instead of analyzing the full observed dynamics profile
