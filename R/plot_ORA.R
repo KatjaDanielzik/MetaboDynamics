@@ -121,6 +121,7 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
           geom_errorbarh(aes(xmin = log(OvE_gen_lower), xmax = log(OvE_gen_higher))) +
           facet_grid(cols = vars(!!tested_column)) +
           theme_bw() +
+          theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
           geom_vline(xintercept = 0, linetype = "dashed") +
           ylab("cluster ID") +
           xlab("") +
