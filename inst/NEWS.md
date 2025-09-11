@@ -1,3 +1,6 @@
+# MetaboDynamics 1.1.7
+- altered plot_cluster and plot_ORA visualization for patchwork option: easier visualization
+
 # MetaboDynamics 1.1.6
 - get_ORA_annotations function (retrieving KEGG IDs hierarchies) added back to package
 - no more samples in estimates dynamics as probability of clustering solution will be implemented with a bubbletree in cluster_dynamics

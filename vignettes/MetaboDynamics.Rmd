@@ -547,11 +547,11 @@ ora <- plot_ORA(data = data, tested_column = "middle_hierarchy",
 ```
 
 To visualize the dynamics and ORA results run: 
-```{r}
+```{r,fig.width=12,fig.height=6}
 # patch plots together
 library(patchwork)
-p <- cluster$lineplots$A|ora$ora_patchwork$A
-p+plot_layout(ncol=2, widths = c(1,6))
+p <- cluster$patchwork$A|ora$ora_patchwork$A
+p+plot_layout(ncol=4, widths = c(2,1,2,2))
 ```
 
 # Comparison of clusters of different experimental conditions
