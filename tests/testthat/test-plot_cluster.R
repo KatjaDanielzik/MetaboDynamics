@@ -14,13 +14,13 @@ test_that("plot_cluster:input_checks", {
     # Test that the function returns a list with the expected plot structure
     results <- plot_cluster(data = dummy_cluster)
     expect_type(results, "list")
-    expected_elements <- c("trees", "clusterplots", "lineplots", "patchwork", "cluster_order", "cluster_heights")
+    expected_elements <- c("trees", "clusterplots", "lineplots", "patchwork", "cluster_order")
     expect_true(all(expected_elements %in% names(results)))
 
     # Test specific components of the output
     expect_true(all(sapply(results$trees, function(x) inherits(x, "gg"))))
     expect_true(all(sapply(results$clusterplots, function(x) inherits(x, "gg"))))
-    expect_true(all(sapply(results$lineplots, function(x) inherits(x, "patchwork"))))
+    expect_true(all(sapply(results$lineplots, function(x) inherits(x, "gg"))))
     expect_true(all(sapply(results$patchwork, function(x) inherits(x, "patchwork"))))
 
     # Test that the function processes SummarizedExperiment objects correctly

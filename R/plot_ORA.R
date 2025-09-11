@@ -79,7 +79,9 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
       "ICR>0", "ICR includes 0"
     )
   ))
-
+  
+  # standard visualization
+  
   plot <- ggplot(
     a_clusters,
     aes(x = log(as.numeric(OvE_gen)), y = (!!module_name), col = col)
@@ -104,38 +106,36 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
 
   ora_patchwork <- list()
   if (patchwork == TRUE) {
-    for (i in unique(a_clusters$condition)) {
-      temp <- a_clusters %>% filter(condition == i)
-      # get cluster order
+    plots <- list()
+    for (i in unique(a_clusters$condition)){
+      temp <- a_clusters%>%filter(condition==i)
       cluster_order <- plot_cluster$cluster_order[[i]]
       # order cluster in ORA hypergeometric
       temp$cluster <- as.factor(temp$cluster)
       temp$cluster <- factor(temp$cluster, levels = cluster_order)
-      temp <- temp[order(temp$cluster), ]
-      plots <- list()
-      for (j in unique(temp$cluster)) {
-        temp_plot <- temp %>% filter(cluster == j)
-        plots[[j]] <-
-          ggplot(temp_plot, aes(x = log(OvE_gen_median), y = cluster, col = col)) +
-          geom_point() +
-          geom_errorbarh(aes(xmin = log(OvE_gen_lower), xmax = log(OvE_gen_higher))) +
-          facet_grid(cols = vars(!!tested_column)) +
-          theme_bw() +
-          geom_vline(xintercept = 0, linetype = "dashed") +
-          ylab("cluster ID") +
-          xlab("") +
-          scale_color_manual(
-            values = c("black", "green", "red"),
-            labels = c("0 in ICR", "ICR>0", "ICR<0"), name = ""
-          )
-        plots[[paste0(j, "space")]] <- plot_spacer()
-      }
-      heights <- plot_cluster$cluster_heights[[i]] ## needs to be sorted!
-      p <- Reduce("/", plots)
-      ora_patchwork[[i]] <- p + plot_layout(heights = heights) + plot_annotation(
-        "ORA of KEGG functional modules",
-        "mean and 95% ICR"
-      )
+      ora_patchwork[[i]] <- ggplot(
+        temp,
+        aes(y = log(as.numeric(OvE_gen)), x = gsub(" metabolism","",!!tested_column), col = col)
+      ) +
+        geom_errorbar(aes(
+          ymin = log(as.numeric(OvE_gen_lower)),
+          ymax = log(as.numeric(OvE_gen_higher))
+        )) +
+        geom_point(aes(y = log(as.numeric(OvE_gen_median)))) +
+        geom_hline(yintercept = 0, linetype = "dashed") +
+        theme_bw() +
+        scale_color_manual(
+          values = c("black", "green", "red"),
+          labels = c("0 in ICR", "ICR>0", "ICR<0"), name = ""
+        ) +
+        xlab("") + 
+        ylab("log(p(OvE))") +
+        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+        facet_grid(rows = vars(cluster)) +
+        ggtitle("hypergeometric ORA",
+          "median and 
+95% interquantile range (ICR)"
+        )
     }
   }
   return(list(plot = plot, ora_patchwork = ora_patchwork))
