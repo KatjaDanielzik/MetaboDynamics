@@ -128,11 +128,11 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
           values = c("black", "green", "red"),
           labels = c("0 in ICR", "ICR>0", "ICR<0"), name = ""
         ) +
-        xlab("") + 
+        xlab("Metabolism module") + 
         ylab("log(p(OvE))") +
         theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
         facet_grid(rows = vars(cluster)) +
-        ggtitle("hypergeometric ORA",
+        ggtitle("Hypergeometric ORA",
           "median and 
 95% interquantile range (ICR)"
         )

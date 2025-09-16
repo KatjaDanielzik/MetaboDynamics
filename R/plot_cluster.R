@@ -57,7 +57,7 @@ plot_cluster <- function(data) {
         geom = "text", color = "#4c4c4c", size = 2.75, hjust = -0.2,
         mapping = aes(label = label, subset = isTip == FALSE)
       )+
-      ggtitle("dendrogram","number on nodes = bootstrapps")
+      ggtitle("Dendrogram","number on nodes = bootstrapps")
   }
 
   # plot dynamics as lineplots
@@ -87,7 +87,7 @@ plot_cluster <- function(data) {
       xlab("")+
       theme_bw()+
       theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
-      ggtitle("cluster affiliation","dynamic tree cut")
+      ggtitle("Cluster affiliation","dynamic tree cut")
     
     temp$time <- gsub("_mean","",temp$time)
     lineplots[[i]] <- ggplot(temp, aes(x = time, y = mean,col=cluster)) +
@@ -101,14 +101,14 @@ plot_cluster <- function(data) {
       theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust =1))+
       geom_vline(aes(xintercept = as.factor(time)), col = "grey", linetype = "dashed") +
       geom_hline(aes(yintercept = 0), col = "grey", linetype = "dashed")+
-      ggtitle("dynamics","panel = cluster ID")
+      ggtitle("Dynamics","panel = cluster ID")
   }
 
   patchwork <- list()
   for (i in names(data)) {
     p <- trees[[i]] | clusterplots[[i]] | lineplots[[i]]
     patchwork[[i]] <- p + plot_annotation(
-      paste0("condition ", i))
+      paste0("Condition ", i))
   }
 
   return(list(
