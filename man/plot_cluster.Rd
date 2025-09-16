@@ -13,8 +13,7 @@ plot_cluster(data)
 a list of plots. Per experimental condition: 1) a 'bubbletree': a phylogram with numbers on nodes
 indicating in how many bootstraps of the posterior estimates the same clustering
 solution was generated, 2) cluster affiliation of metabolites, 3) dynamics of metabolites per cluster,
-4) patchwork of 1-3, 5) order of the tips in bubbletree: needed for matching lineplots and ORA,
-3) mean dynamics of clusters
+4) patchwork of 1-3, 5) order of the tips in bubbletree: needed for matching cluster plots and ORA
 }
 \description{
 visualize clustering solution of cluster_dynamics()

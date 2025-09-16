@@ -1,3 +1,6 @@
+# MetaboDynamics 1.1.8
+- bug fixes
+
 # MetaboDynamics 1.1.7
 - altered plot_cluster and plot_ORA visualization for patchwork option: easier visualization
 

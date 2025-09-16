@@ -176,3 +176,34 @@
   }
   return(boot_ph)
 }
+
+# Function to calculate all pairwise distances between two groups
+#' compare_dynamics()
+#'
+#' @param group_a dataframe of one cluster of one condition
+#' @param group_b dataframe of one cluster of a different condition than group_a
+#' @param dynamics character vector specifying the columns that hold dynamic
+#' estimates in data
+#' @return matrix of pairwise euclidean distances between two groups of vectors
+#' @keywords internal
+.calculate_distances <- function(group_a, group_b, dynamics) {
+  group_a <- as.matrix(group_a[, dynamics, drop = FALSE])
+  group_b <- as.matrix(group_b[, dynamics, drop = FALSE])
+  outer(seq_len(nrow(group_a)), seq_len(nrow(group_b)), Vectorize(function(i, j) {
+    .eu(group_a[i, ], group_b[j, ])
+  }))
+}
+
+#' Function to calculate Jaccard index on two character vectors of metabolite
+#' names
+#'
+#' @param group_a group of clusters of metabolites
+#' @param group_b group of clusters of metabolites
+#'
+#' @return the Jaccard index
+#' @keywords internal
+
+.calculate_jaccard <- function(group_a, group_b) {
+  .similarity(group_a, group_b)
+}
+

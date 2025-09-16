@@ -39,8 +39,6 @@
 #' @importFrom stats hclust
 #' @importFrom stats as.dist
 #' @importFrom S4Vectors metadata
-#' @importFrom rstan extract
-#' @import tidyr
 #' @import dplyr
 #' @importFrom ape prop.clades
 #' @importFrom ape is.rooted
@@ -118,7 +116,7 @@ cluster_dynamics <- function(data = NULL, fit,
   mu <- mu %>%
     select(metabolite, time, condition, mean) %>%
     mutate(time = paste0(time, "_mean")) %>% # add label to mean
-    pivot_wider(names_from = time, values_from = mean)
+    tidyr::pivot_wider(names_from = time, values_from = mean)
   dynamics <- colnames(mu)[-c(1:2)] # not metabolite and condition
 
 
@@ -153,7 +151,7 @@ cluster_dynamics <- function(data = NULL, fit,
   # turn into useable format for bootstrapping
   draws <- nrow(posterior)
   posterior$draw <- seq_len(draws)
-  posterior <- posterior %>% pivot_longer(cols = -draw, names_to = "ID", values_to = "posterior")
+  posterior <- posterior %>% tidyr::pivot_longer(cols = -draw, names_to = "ID", values_to = "posterior")
   x <- do.call(rbind, strsplit(posterior$ID, "[.]"))
   posterior$parameter <- x[, 1]
   posterior$metabolite <- x[, 2]
@@ -161,7 +159,7 @@ cluster_dynamics <- function(data = NULL, fit,
   posterior$condition <- x[, 4]
   posterior <- posterior %>%
     select(-ID) %>%
-    pivot_wider(names_from = time, values_from = posterior)
+    tidyr::pivot_wider(names_from = time, values_from = posterior)
   posterior_split <- split.data.frame(posterior, posterior$condition)
 
   # get bootstrapping of clustering solution

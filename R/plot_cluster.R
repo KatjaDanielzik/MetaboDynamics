@@ -4,8 +4,6 @@
 #' @param data result of [cluster_dynamics()] function: either a list of data frames or a SummarizedExperiment object
 #'
 #' @import ggplot2
-#' @import tidyr
-#' @import ggtree
 #' @import patchwork
 #'
 #' @returns a list of plots. Per experimental condition: 1) a 'bubbletree': a phylogram with numbers on nodes
@@ -46,14 +44,14 @@ plot_cluster <- function(data) {
   trees <- list()
   for (i in names(data)) {
     temp <- data[[i]]
-    trees[[i]] <- ggtree(temp$mean_phylo, linetype = "solid") +
-      geom_point2(mapping = aes(subset = isTip == FALSE), size = 0.5, col = "black") +
-      geom_tippoint(size = 2, fill = "white", shape = 21) +
-      geom_tiplab(color = "black", as_ylab = TRUE, align = TRUE) +
-      layout_rectangular() +
+    trees[[i]] <- ggtree::ggtree(temp$mean_phylo, linetype = "solid") +
+      ggtree::geom_point2(mapping = aes(subset = isTip == FALSE), size = 0.5, col = "black") +
+      ggtree::geom_tippoint(size = 2, fill = "white", shape = 21) +
+      ggtree::geom_tiplab(color = "black", as_ylab = TRUE, align = TRUE) +
+      ggtree::layout_rectangular() +
       theme_bw(base_size = 10) +
       scale_x_continuous(labels = abs) +
-      geom_nodelab(
+      ggtree::geom_nodelab(
         geom = "text", color = "#4c4c4c", size = 2.75, hjust = -0.2,
         mapping = aes(label = label, subset = isTip == FALSE)
       )+
@@ -61,7 +59,7 @@ plot_cluster <- function(data) {
   }
 
   # plot dynamics as lineplots
-  trees <- lapply(trees, revts)
+  trees <- lapply(trees, ggtree::revts)
   tips <- list()
   clusterplots <- list()
   lineplots <- list()
@@ -73,7 +71,8 @@ plot_cluster <- function(data) {
     t <- t[order(t$y, decreasing = FALSE), ]
     tips[[i]] <- t$label[t$isTip == TRUE]
     temp <- data[[i]]$data
-    temp <- temp %>% pivot_longer(cols = -c(metabolite, condition, cluster), names_to = "time", values_to = "mean")
+    temp <- temp %>% tidyr::pivot_longer(cols = -c(metabolite, condition, cluster),
+                                         names_to = "time", values_to = "mean")
     temp$metabolite <- factor(temp$metabolite, levels = tips[[i]])
     temp$cluster <- as.factor(temp$cluster)
     
