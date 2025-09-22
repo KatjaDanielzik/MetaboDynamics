@@ -31,8 +31,8 @@ in "time" and the experimental condition in "condition"
 metabolites are required
 - To conduct comparison of metabolite abundance dynamics between clusters at least
 two experimental conditions are required
-- If an in vitro experiment is analyzed andc ell counts should be incorporated in model, 
-cell counts have to be estimated (i.e. cell counter not counting every cell) and 
+- If an in vitro experiment is analyzed and cell counts should be incorporated in model, 
+cell counts have to be estimated (i.e. via a cell counter not counting every cell) and 
 independent (i.e. separate wells for cell counts and metabolite abundances) as a
 poisson distribution is assumed. At least one replicate of cell counts per time
 point and condition is required. 
@@ -44,9 +44,9 @@ In the case of an in vitro experiment with available cell counts for all time po
 and conditions no scaling or normalization is necessary as this will be handled
 by the fit_dynamics_model() function (model="raw_plus_counts")
 
-# Analysis time:
+# Analysis time
 For two conditions of 100 metabolites each the fitting of the metabolite abundance 
-dynamics model will take 10-15 minutes (one core per chain). Total workflow time
+dynamics model will take 10-15 minutes. Total workflow time
 is approximately 15-20 minutes.
 
 # Background 
@@ -54,8 +54,8 @@ Metabolomics data from longitudinal or time-course high-throughput experiments,
 such as untargeted liquid chromatography-mass spectrometry (LC-MS), allows for 
 insights into changes of metabolite abundances over time. However, most existing 
 tools are limited to comparing only two time points or experimental conditions,
-and they often rely on frequentist statistical methods. Additionally, most tool
-s are only able to analyze groups of metabolites on a pathway level, potentially
+and they often rely on frequentist statistical methods. Additionally, most tools
+are only able to analyze groups of metabolites on a pathway level, potentially
 missing more general patterns of changes in the metabolism in sparse data.
 
 Here, we introduce MetaboDynamics, a modular workflow of probabilistic models 
@@ -69,13 +69,6 @@ between under-fitting and over-fitting. This model provides a robust method for
 estimating mean abundances at every time point as well as abundance differences 
 between subsequent time points, even with limited replicates. An additional output
 of the model is the difference between dynamics of different experimental conditions.
-
-The MetaboDynamics workflow requires abundance tables as input, which can 
-include metabolites and their observed abundances, LC-MS peak intensities or areas.
-The workflow can handle any number of time points, and the dynamics model requires 
-at least three replicates. However, functions to compare dynamics
-with each other do not require a certain number of replicates and can be applied
-to calculated mean abundances of e.g. two replicates.
 
 In this vignette, I will demonstrate how to use the MetaboDynamics package to
 analyze longitudinal metabolomics data, including data preprocessing, 
@@ -102,7 +95,7 @@ KEGG IDs, experimental conditions, and clustering solutions per experimental
 condition are stored in colData and rowData. 
 
 If you have a data frame as input and do not want to convert to a SummarizedExperiment object
-please see Vignette "using MetaboDynamics with data frames" as guidance. 
+please see Vignette **"using MetaboDynamics with data frames"** as guidance. 
 
 To load the data, execute the following code:
 
@@ -223,8 +216,26 @@ balance between over- and under fitting.
 
 If the untargeted LC-MS experiment is conducted in vitro and independent cell counts
 (i.e. cell counts were measured in a different well than metabolite abundances) are
-available an adapted model can be run that takes the *raw* (i.e. not normalized and not scaled)
-metabolite abundances and the cell counts as input. The "raw_plus_counts" model is
+available an adapted model can be run that takes the **raw** (i.e. not normalized and not scaled)
+metabolite abundances and the cell counts as input. 
+
+With cc = cell counts and apc = metabolite abundance per cell we get:
+
+\begin{align*}
+metabolite abundances
+con_{m,c,t}&\sim {\sf log_normal}(\mu_{m,c,t},\sigma_{m,c,t}) \\
+\mu_{m,c,t}&\sim {\sf normal}(12,5) \\
+\sigma_{m,c,t}&\sim {\sf exponential}(\lambda_{m,c}) \\
+\lambda_{m,c}&\sim {\sf exponential}(2) \\
+cell counts
+cc_{c,t}&\sim {\sf poisson}(meanCounts_{c,t}) \\
+meanCounts_{c,t}&\sim{\sf exponential}(1/1e6) \\
+meanNatural_{m,c,t}&=exp(\mu_{m,c,t}+\sigma_{m,c,t}) \\
+apc_{m,c,t}&=meanNatural_{m,c,t}/meanCounts_{c,t} \\
+apcScaled_{m,c,t}&=(log(apc_{m,c,t})-mean(log(apc_{m,c,t})))/sd(log(apc_{m,c,t})) \\
+\end{align*}
+
+The "raw_plus_counts" model is
 slower but has the advantage of additionally incorporating the uncertainty of cell counts
 into the estimates of the Bayesian model.  
 
@@ -232,7 +243,7 @@ The code below shows how to fit the Bayesian model with the function
 fit_dynamics_model(). Just in this vignette the number of chains is set to 1.
 To get reliable estimates at least four chains should be used. If more than
 one CPU core is available chains can run in parallel (parameter "chains").
-Here we fit the dynamics modelfor a small subset of the simulated metabolites. 
+Here we fit the dynamics model for a small subset of the simulated metabolites. 
 
 ```{r,fig.wide=TRUE}
 # we can hand a SummarizedExperiment object to the function
