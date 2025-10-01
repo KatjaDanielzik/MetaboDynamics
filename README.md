@@ -48,8 +48,7 @@ BiocManager::install("MetaboDynamics")
 ```
 You can also install the development version (current bug fixes and added features
 can be found in the [NEWS](https://github.com/KatjaDanielzik/MetaboDynamics/blob/main/inst/NEWS.md) 
-file) of MetaboDynamics from
-[GitHub](https://github.com/) with:
+file) of MetaboDynamics:
 
 ``` r
 if (!require("BiocManager", quietly = TRUE))
