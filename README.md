@@ -52,10 +52,11 @@ file) of MetaboDynamics from
 [GitHub](https://github.com/) with:
 
 ``` r
-if (!require("devtools", quietly = TRUE))
-    install.packages("devtools")
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
 
-devtools::install_github("KatjaDanielzik/MetaboDynamics",build_vignettes=TRUE)
+BiocManager::install(version="devel")
+BiocManager::install("MetaboDynamics")
 ```
 
 ## Overview
