@@ -20,7 +20,8 @@
 #' metabolite. Must contain columns named "metabolite" (containing names or IDs), "time" (categorical, the same for all conditions), and "condition" or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
 #' Time column needs to be sorted in ascending order
 #' @param scaled_measurement column of "data" that contains the concentrations per cell,
-#' centered and normalized per metabolite and experimental condition (mean=0, sd=1)
+#' centered and normalized per metabolite and experimental condition (mean=0, sd=1),
+#' must be numeric
 #' @param counts data frame with at least one replicate per time point and condition
 #' specifying the cell counts, must contain columns "time", and "condition" equivalent
 #' to the specifications of "data".
@@ -109,25 +110,25 @@ fit_dynamics_model <- function(model = "scaled_log",
     )
   }
   # convert potential tibbles into data frame
-  if (is(data, "tbl")) {
-    data_df <- as.data.frame(data)
-  }
   if (is(data, "data.frame")) {
     data_df <- data
+  }
+  if (is(data, "tbl")) {
+    data_df <- as.data.frame(data)
   }
 
   if (!all(c("metabolite", "time", "condition", scaled_measurement) %in% colnames(data_df))) {
     stop("'data' must contain columns named 'metabolite','time','condition', and 'scaled_measurement'")
+  }
+  
+  if (!is.numeric(data_df[[scaled_measurement]])) {
+    stop("'scaled_measurement' must be numeric")
   }
   if (model == "raw_plus_counts") {
     if (is(counts, "tbl")) {
       counts <- as.data.frame(counts)
     }
   }
-
-  # convert character string of variables to variable useable by tidyverse
-  scaled_measurement <- as.symbol(scaled_measurement)
-  scaled_measurement <- enquo(scaled_measurement)
 
   # validate at least triplicate measurements
   # count replicates per metabolite, time and condition
@@ -138,9 +139,6 @@ fit_dynamics_model <- function(model = "scaled_log",
     stop("Input must contain at least three replicates per metabolite,
       time point and experimental condition.")
   }
-
-  # convert variable names back to character string
-  scaled_measurement <- as_name(scaled_measurement)
 
   # check if same all conditions and time points have cell counts
   if (model == "raw_plus_counts") {
