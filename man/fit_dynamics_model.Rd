@@ -33,7 +33,8 @@ metabolite. Must contain columns named "metabolite" (containing names or IDs), "
 Time column needs to be sorted in ascending order}
 
 \item{scaled_measurement}{column of "data" that contains the concentrations per cell,
-centered and normalized per metabolite and experimental condition (mean=0, sd=1)}
+centered and normalized per metabolite and experimental condition (mean=0, sd=1),
+must be numeric}
 
 \item{counts}{data frame with at least one replicate per time point and condition
 specifying the cell counts, must contain columns "time", and "condition" equivalent
