@@ -1,23 +1,22 @@
-# MetaboDynamics 1.1.8
-- bug fixes
-
 # MetaboDynamics 1.1.7
-- altered plot_cluster and plot_ORA visualization for patchwork option: easier visualization
+- altered plot_cluster and plot_ORA visualization for patchwork option
+enabling easier visualization
 
 # MetaboDynamics 1.1.6
-- get_ORA_annotations function (retrieving KEGG IDs hierarchies) added back to package
-- no more samples in estimates dynamics as probability of clustering solution will be implemented with a bubbletree in cluster_dynamics
-- estimates now returns a list with: estimated metabolite abundance (mu), 
+- **all functions** require columns names "metabolite","condition","time" for consistency throughout the package
+- **get_ORA_annotations()** function (retrieving KEGG IDs hierarchies) added back to package
+- no more samples in estimates dynamics as probability of clustering solution is 
+implemented now as bootstrapping from model posterior in function cluster_dynamics
+- **estimates_dynamics()** now returns a list with: estimated metabolite abundance (mu), 
   estimated standard deviation of metabolite abundance (sigma), 
   estimated pooled standard deviation per metabolite and dose (lambda),
   differences in metabolite abundances between time points, 
   euclidean distance between metabolite dynamics of different conditions
-- plot estimates additionally visualized the euclidean distance between conditions of metabolite specific dynamics
-- cluster_dynamics provides clustering solution of mean estimates of mu as well as bootstraps clustering solutions
-- plot cluster provides bubbletree, cluster identity, dynamics plots as well as patchwork plot
-- plot_ORA has now option to be added to bubbletree obtained by plot_cluster
-- all functions require named columns "metabolite","condition","time", "KEGG" (for ORA))
-- ORA_hypergeometric() requires now a data frame annotationg metabolites to KEGG IDs
+- **plot_estimates()** additionally visualizes the euclidean distance between conditions of metabolite specific dynamics
+- **cluster_dynamics()** provides clustering solution of mean estimates of mu as well as bootstraps clustering solutions
+- **plot_cluster** provides bubbletree, cluster identity, dynamics plots as well as patchwork plot (combining bubbletree, cluster identity and dynamics plots)
+- **plot_ORA()** has now option to be added to bubbletree obtained by plot_cluster
+- **ORA_hypergeometric()** requires now a data frame annotationg metabolites to KEGG IDs (column names "metabolite" and "KEGG")
 
 # MetaboDynamics 1.1.5
 - internal adding of ANOVA model with euclidean distance estimation between doses and ANOVA model that integrates cell count uncertainty
@@ -27,7 +26,7 @@
 - differences between time points are now ordered and return is a list of plots 
 
 # MetaboDynamics 1.1.2
-contains a vignette describing the package workflow with a data frame input
+- contains a vignette describing the package workflow with a data frame input
 
 # MetaboDynamics 1.0.2
 Minor bug fix in vignette that caused errors in package checks

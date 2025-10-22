@@ -222,7 +222,7 @@ metabolite abundances and the cell counts as input.
 With cc = cell counts and apc = metabolite abundance per cell we get:
 
 \begin{align*}
-con_{m,c,t}&\sim {\sf log_normal}(\mu_{m,c,t},\sigma_{m,c,t}) \\
+con_{m,c,t}&\sim {\sf lognormal}(\mu_{m,c,t},\sigma_{m,c,t}) \\
 \mu_{m,c,t}&\sim {\sf normal}(12,5) \\
 \sigma_{m,c,t}&\sim {\sf exponential}(\lambda_{m,c}) \\
 \lambda_{m,c}&\sim {\sf exponential}(2) \\
