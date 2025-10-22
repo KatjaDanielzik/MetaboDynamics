@@ -124,7 +124,11 @@ fit_dynamics_model <- function(model = "scaled_log",
   if (!is.numeric(data_df[[scaled_measurement]])) {
     stop("'scaled_measurement' must be numeric")
   }
-  if (model == "raw_plus_counts") {
+  if (!all(is.na(data_df[[scaled_measurement]]))) {
+    stop("'scaled_measurement' cannot contain NAs")
+  }
+  
+    if (model == "raw_plus_counts") {
     if (is(counts, "tbl")) {
       counts <- as.data.frame(counts)
     }
