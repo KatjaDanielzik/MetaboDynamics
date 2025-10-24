@@ -1,4 +1,4 @@
-# MetaboDynamics 1.99.11
+# MetaboDynamics 1.99.12
 - contains a **vignette describing the package workflow with a data frame input**
 - altered plot_cluster and plot_ORA visualization for patchwork option
 enabling easier visualization
