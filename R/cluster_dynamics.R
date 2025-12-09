@@ -107,6 +107,7 @@ cluster_dynamics <- function(data = NULL, fit,
   time <- NULL
   draw <- NULL
   ID <- NULL
+  parameter <- NULL
 
 
   # clustering on mean estimates plus clustering solution
@@ -133,33 +134,30 @@ cluster_dynamics <- function(data = NULL, fit,
 
 
   # bootstrapping with phylograms (function adapted from snaketron/cellmig)
-  # get posterior and make different conditions accesible
-  posterior <- as.data.frame(rstan::extract(fit, pars = "mu"))
-  names <- names(posterior)
-  x <- as.data.frame(do.call(rbind, strsplit(x = names, split = "[.]")))
-  colnames(x) <- c("parameter", "metabolite", "time", "condition")
+  # get names from data
   mu <- estimates[["mu"]]
+  mu$parameter <- rownames(mu)
+  # replace "," in parameter with "." as that is the format of posterior
+  mu$parameter <- gsub(",", ".", mu$parameter)
+  mu$parameter <- gsub("[[]", ".", mu$parameter)
+  mu$parameter <- gsub("[]]", "", mu$parameter)
+  # create look up table
   data_names <- mu %>%
-    select(metabolite, time, condition) %>%
+    select(parameter, metabolite, time, condition) %>%
     distinct()
-  new_names <- paste0(
-    "mu.", data_names$metabolite, ".", data_names$time, ".",
-    data_names$condition
-  )
-  names(posterior) <- new_names
 
-  # turn into useable format for bootstrapping
+  # transfer names to posterior and convert in useable format for bootstrapping
+  posterior <- as.data.frame(rstan::extract(fit, pars = "mu"))
   draws <- nrow(posterior)
   posterior$draw <- seq_len(draws)
-  posterior <- posterior %>% tidyr::pivot_longer(cols = -draw, names_to = "ID", values_to = "posterior")
-  x <- do.call(rbind, strsplit(posterior$ID, "[.]"))
-  posterior$parameter <- x[, 1]
-  posterior$metabolite <- x[, 2]
-  posterior$time <- x[, 3]
-  posterior$condition <- x[, 4]
+  posterior <- posterior %>% tidyr::pivot_longer(cols = -draw, names_to = "parameter", values_to = "posterior")
+  # left join with names
+  posterior <- left_join(posterior, data_names, join_by(parameter))
+  # wide format for clustering
   posterior <- posterior %>%
-    select(-ID) %>%
+    select(-parameter) %>%
     tidyr::pivot_wider(names_from = time, values_from = posterior)
+  # split per condition for clustering
   posterior_split <- split.data.frame(posterior, posterior$condition)
 
   # get bootstrapping of clustering solution
