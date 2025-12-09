@@ -169,7 +169,7 @@
   boot_ph <- c()
   for (i in seq_len(length(samples))) {
     # hclust
-    temp <- e[which(e$draw == samples[i]), -c(1, 2, 4)] # - draw,parameter,condition
+    temp <- e[which(e$draw == samples[i]), -c(1, 3)] # - draw,condition
     rownames(temp) <- temp$metabolite
     hc <- hclust(dist(as.matrix(temp[, -1]), method = distance), method = agglomeration)
     boot_ph[[i]] <- as.phylo(x = hc)
@@ -206,4 +206,3 @@
 .calculate_jaccard <- function(group_a, group_b) {
   .similarity(group_a, group_b)
 }
-
