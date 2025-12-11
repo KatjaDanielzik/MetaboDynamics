@@ -89,7 +89,30 @@ plot_cluster <- function(data) {
       ggtitle("Cluster affiliation","dynamic tree cut")
     
     temp$time <- gsub("_mean","",temp$time)
-    lineplots[[i]] <- ggplot(temp, aes(x = time, y = mean,col=cluster)) +
+    
+    # Assure that if possible time points are numeric -> correct order on axis
+    # This is where the special logic applies
+    if (is.numeric(temp$time)) {
+      # If time is already numeric, keep original function behavior
+      temp$time_numeric <- temp$time
+    } else {
+      # If time is character, try to convert to numeric (if contains numbers + suffix)
+     # temp$time_numeric <- suppressWarnings(as.numeric(temp$time))
+      temp$time_numeric <- suppressWarnings(
+        as.numeric(gsub("[^0-9.]", "", temp$time))
+      )
+      
+      # Check if conversion was successful (no NAs and all values are numeric)
+      if (all(!is.na(temp$time_numeric)) && all(!is.infinite(temp$time_numeric))) {
+        # Conversion successful - use numeric time for plotting
+        temp$time_numeric <- temp$time_numeric
+      } else {
+        # Conversion failed - stick to original character representation
+        temp$time_numeric <- temp$time
+      }
+    }
+    
+    lineplots[[i]] <- ggplot(temp, aes(x = as.factor(time_numeric), y = mean,col=cluster)) +
       geom_line(aes(group = metabolite)) +
       scale_color_viridis_d(option="turbo") +
       xlab("") +
@@ -98,7 +121,7 @@ plot_cluster <- function(data) {
       ylim(c(-2, 2)) +
       guides(col="none") +
       theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust =1))+
-      geom_vline(aes(xintercept = as.factor(time)), col = "grey", linetype = "dashed") +
+      #geom_vline(aes(xintercept = as.factor(time)), col = "grey", linetype = "dashed") +
       geom_hline(aes(yintercept = 0), col = "grey", linetype = "dashed")+
       ggtitle("Dynamics","panel = cluster ID")
   }
