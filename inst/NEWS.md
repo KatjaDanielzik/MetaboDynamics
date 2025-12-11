@@ -1,3 +1,9 @@
+# MetaboDynamics 2.1.2
+- bug fix in plot_cluster: correct sorting of time points
+
+# MetaboDynamics 2.1.1
+- cluster_dynamics bug fix: can handle all metabolite names
+
 # MetaboDynamics 1.99.12
 - contains a **vignette describing the package workflow with a data frame input**
 - altered plot_cluster and plot_ORA visualization for patchwork option

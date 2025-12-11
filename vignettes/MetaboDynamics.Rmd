@@ -22,6 +22,7 @@ BiocStyle::markdown()
 analyzed time points and conditions. No minimum number of metabolites is required.
 Time points are treated as categorical variables and have to be the same for all
 conditions.
+- **if no metabolite abundance is available indicate with "NA" instead of 0 (MetaboAnalyst format)**
 - Data can be a data frame (see Vignette "using MetaboDynamics with data frames)
 or a SummarizedExperiment object (demonstrated in this vignette).
 - Metabolite abundances have to be stored in column named "metabolite", time points
