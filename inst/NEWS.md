@@ -1,4 +1,4 @@
-# MetaboDynamics 2.2.0
+# MetaboDynamics 2.1.3
 - added model_option in fit_dynamics_model(): either "sd_per_time_point" (only option before)
 or "sd_per_condition" (less sigmas, more robust with few replicates)
 
