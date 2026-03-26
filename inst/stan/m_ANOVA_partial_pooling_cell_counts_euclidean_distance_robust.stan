@@ -15,8 +15,8 @@ data {
 
 parameters {
   real mu_maven[M, t, D]; // mean of maven values for each metabolite, time, dose, and cell line
-  real <lower=0 > sd_maven[M, t, D]; // standard deviation of maven values for each metabolite, time, dose, and cell line
-  real <lower=0> lambda_maven[M, D]; // metabolite specific lambda (hyperprior for sigma)
+  real <lower=0 > sd_maven[M, D]; // standard deviation of maven values for each metabolite, and dose
+  real <lower=0> lambda_maven[M]; // metabolite specific lambda (hyperprior for sigma)
   
   real <lower=0 > mu_counts[t, D]; // mean of cell counts for each time, dose, and cell line
 }
@@ -28,7 +28,7 @@ transformed parameters {
   for (m in 1:M) {
     for (i in 1:t) {
       for (d in 1:D) {
-          mean_natural[m,i,d] = exp(mu_maven[m, i, d]+(sd_maven[m, i, d]/2)); # expected value for log-normal distribution 2= exp(mu+(sigma²/2))
+          mean_natural[m,i,d] = exp(mu_maven[m, i, d]+(sd_maven[m, d]/2)); # expected value for log-normal distribution 2= exp(mu+(sigma²/2))
           cpc[m, i, d] = mean_natural[m,i,d]/ mu_counts[i, d];
           log_cpc[m, i, d] = log10(cpc[m, i, d]);
       }
@@ -62,10 +62,10 @@ model {
   // priors
   // maven
   for (m in 1:M) {
-    lambda_maven[m,] ~ exponential(2);
+    lambda_maven[m] ~ exponential(2);
       for (d in 1:D) {
         for (i in 1:t) {
-          sd_maven[m, i, d] ~ exponential(lambda_maven[m,d]); // hierarchy of sd_maven: pooling of sd for all measurements of one metabolite
+          sd_maven[m, d] ~ exponential(lambda_maven[m]); // hierarchy of sd_maven: pooling of sd for all measurements of one metabolite
           mu_maven[m, i, d] ~ normal(12, 5);
       }
     }
@@ -81,7 +81,7 @@ model {
   // single models
   // LC-MS
   for (n in 1:N) {
-    maven[n] ~ lognormal(mu_maven[Me[n], X[n], Do[n]], sd_maven[Me[n], X[n], Do[n]]);
+    maven[n] ~ lognormal(mu_maven[Me[n], X[n], Do[n]], sd_maven[Me[n], Do[n]]);
   }
 
   // cell counts
@@ -112,7 +112,7 @@ generated quantities {
 
   // y_rep
   for (n in 1:N) {
-    maven_rep[n] = lognormal_rng(mu_maven[Me[n], X[n], Do[n]], sd_maven[Me[n], X[n], Do[n]]); // back transformation of maven values
+    maven_rep[n] = lognormal_rng(mu_maven[Me[n], X[n], Do[n]], sd_maven[Me[n], Do[n]]); // back transformation of maven values
   }
 
 
@@ -122,7 +122,7 @@ generated quantities {
 
   // log_lik
   for (n in 1:N) {
-    log_lik[n] = normal_lpdf(log10(maven[n]) | mu_maven[Me[n], X[n], Do[n]], sd_maven[Me[n], X[n], Do[n]]);
+    log_lik[n] = normal_lpdf(log10(maven[n]) | mu_maven[Me[n], X[n], Do[n]], sd_maven[Me[n], Do[n]]);
   }
 
   for (n in 1:Nc) {

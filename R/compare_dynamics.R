@@ -63,9 +63,11 @@ compare_dynamics <- function(data, cores = 4) {
     data_df <- bind_rows(lapply(data, function(x) {
       return(x$data)
     }))
-    dynamics <- data_df%>%ungroup()%>%select(-c(metabolite,condition,cluster)) # result is metabolite, condition, dynamics
+    dynamics <- data_df %>%
+      ungroup() %>%
+      select(-c(metabolite, condition, cluster)) # result is metabolite, condition, dynamics
     dynamics <- colnames(dynamics)
-    }
+  }
   # convert potential tibbles into data frame
   if (is(data_df, "tbl")) {
     data_df <- as.data.frame(data_df)
@@ -78,13 +80,13 @@ compare_dynamics <- function(data, cores = 4) {
   }
   if (!is.character(dynamics)) stop("'dynamics' must be a character vector")
 
-  if (!all(c("metabolite","condition", "cluster") %in% colnames(data_df))) {
+  if (!all(c("metabolite", "condition", "cluster") %in% colnames(data_df))) {
     stop("'data' must contain columns named 'metabolite', 'condition', and 'cluster'")
   }
   if (!all(dynamics %in% colnames(data_df))) {
     stop("All specified 'dynamics' columns must exist in `data` dataframe")
   }
-  
+
   # binding of global variables
   metabolite <- NULL
   condition <- NULL

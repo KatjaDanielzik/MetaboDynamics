@@ -79,9 +79,9 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
       "ICR>0", "ICR includes 0"
     )
   ))
-  
+
   # standard visualization
-  
+
   plot <- ggplot(
     a_clusters,
     aes(x = log(as.numeric(OvE_gen)), y = (!!module_name), col = col)
@@ -107,15 +107,15 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
   ora_patchwork <- list()
   if (patchwork == TRUE) {
     plots <- list()
-    for (i in unique(a_clusters$condition)){
-      temp <- a_clusters%>%filter(condition==i)
+    for (i in unique(a_clusters$condition)) {
+      temp <- a_clusters %>% filter(condition == i)
       cluster_order <- plot_cluster$cluster_order[[i]]
       # order cluster in ORA hypergeometric
       temp$cluster <- as.factor(temp$cluster)
       temp$cluster <- factor(temp$cluster, levels = cluster_order)
       ora_patchwork[[i]] <- ggplot(
         temp,
-        aes(y = log(as.numeric(OvE_gen)), x = gsub(" metabolism","",!!tested_column), col = col)
+        aes(y = log(as.numeric(OvE_gen)), x = gsub(" metabolism", "", !!tested_column), col = col)
       ) +
         geom_errorbar(aes(
           ymin = log(as.numeric(OvE_gen_lower)),
@@ -128,12 +128,13 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
           values = c("black", "green", "red"),
           labels = c("0 in ICR", "ICR>0", "ICR<0"), name = ""
         ) +
-        xlab("Metabolism module") + 
+        xlab("Metabolism module") +
         ylab("log(p(OvE))") +
-        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
         facet_grid(rows = vars(cluster)) +
-        ggtitle("Hypergeometric ORA",
-          "median and 
+        ggtitle(
+          "Hypergeometric ORA",
+          "median and
 95% interquantile range (ICR)"
         )
     }

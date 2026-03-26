@@ -22,7 +22,7 @@ BiocStyle::markdown()
 analyzed time points and conditions. No minimum number of metabolites is required.
 Time points are treated as categorical variables and have to be the same for all
 conditions.
-- **if no metabolite abundance is available indicate with "NA" instead of 0 (MetaboAnalyst format)**
+- **if no metabolite abundance is available indicate with "NA" instead of 0**
 - Data can be a data frame (see Vignette "using MetaboDynamics with data frames)
 or a SummarizedExperiment object (demonstrated in this vignette).
 - Metabolite abundances have to be stored in column named "metabolite", time points
@@ -199,10 +199,22 @@ ggplot(abundances) +
 
 
 # Model dynamics
-To analyze the dynamics data, we use a Bayesian hierarchical model. 
-This model is used to account for the complexity and variability of the data and 
-to provide a flexible and robust framework for analysis. The model is defined as
-follows with: con = metabolite abundances,
+To analyze the dynamics data, we use a Bayesian hierarchical models. 
+These model are used to account for the complexity and variability of the data and 
+to provide a flexible and robust framework for analysis. 
+
+We provide two model options: *sd_per_time_point* and *sd_per_condition*.
+
+For the *sd_per_time_point* option we assume a normal distribution of log-transformed
+metabolite abundances.  
+This model assumes a normal distribution of log-transformed and scaled metabolite
+abundances and estimates a mean $\mu$ per metabolite and time point. The spread $\sigma$ 
+of the replicate measurements is also estimated per metabolite and time point, 
+but the spread of different time points inform each other through the hierarchical
+structure of the hyper-parameter $\lambda$. This partial pooling allows for the
+balance between over- and under fitting.
+
+With: con = metabolite abundances,
 m = metabolite, c = experimental condition and t = time point ID:
 
 \begin{align*}
@@ -212,25 +224,53 @@ m = metabolite, c = experimental condition and t = time point ID:
 \lambda_{m,c}&\sim {\sf exponential}(2) 
 \end{align*}
 
-The model assumes a normal distribution of log-transformed and scaled metabolite
-abundances and estimates a mean $\mu$ per metabolite and time point. The spread $\sigma$ 
-of the replicate measurements is also estimated per metabolite and time point, 
-but the spread of different time points inform each other through the hierarchical
-structure of the hyper-parameter $\lambda$. This partial pooling allows for the
-balance between over- and underfitting.
+While this option maximizes the sensitivity of the detection of differential
+metabolite abundances it is not always well suited for few replicates or high
+variance between replicates. 
+We advice to **check the diagnostic criteria and PPC carefully** and if in doubt
+switch to *sd_per_condition*.
+
+For these cases we provide the second option 
+*sd_per_condition* that assumes the same $\sigma$ for all time points per condition
+and metabolite and has partial pooling of metabolite and condition specific 
+$\sigma$ into metabolite specific $\lambda$.
+
+\begin{align*}
+\log(con_{m,c,t})&\sim {\sf normal}(\mu_{m,c,t},\sigma_{m,c}) \\
+\mu_{m,c,t}&\sim {\sf normal}(0,2) \\
+\sigma_{m,c}&\sim {\sf exponential}(\lambda_{m}) \\
+\lambda_{m}&\sim {\sf exponential}(2) 
+\end{align*}
 
 If the untargeted LC-MS experiment is conducted in vitro and independent cell counts
 (i.e. cell counts were measured in a different well than metabolite abundances) are
-available an adapted model can be run that takes the **raw** (i.e. not normalized and not scaled)
+available adapted models can be run that takes the **raw** (i.e. not normalized and not scaled)
 metabolite abundances and the cell counts as input. 
+Again we have the two options *sd_per_time_point* and *sd_per_condition*.
 
 With cc = cell counts and con = metabolite abundance per cell we get:
+
+- **sd_per_time_point** 
 
 \begin{align*}
 con_{m,c,t}&\sim {\sf lognormal}(\mu_{m,c,t},\sigma_{m,c,t}) \\
 \mu_{m,c,t}&\sim {\sf normal}(12,5) \\
 \sigma_{m,c,t}&\sim {\sf exponential}(\lambda_{m,c}) \\
 \lambda_{m,c}&\sim {\sf exponential}(2) \\
+cc_{c,t}&\sim {\sf poisson}(meanCounts_{c,t}) \\
+meanCounts_{c,t}&\sim{\sf exponential}(1/1e6) \\
+meanNatural_{m,c,t}&=exp(\mu_{m,c,t}+\sigma_{m,c,t}) \\
+apc_{m,c,t}&=meanNatural_{m,c,t}/meanCounts_{c,t} \\
+apcScaled_{m,c,t}&=(log(apc_{m,c,t})-mean(log(apc_{m,c,t})))/sd(log(apc_{m,c,t})) \\
+\end{align*}
+
+- **sd_per_condition**
+
+\begin{align*}
+con_{m,c,t}&\sim {\sf lognormal}(\mu_{m,c,t},\sigma_{m,c}) \\
+\mu_{m,c,t}&\sim {\sf normal}(12,5) \\
+\sigma_{m,c}&\sim {\sf exponential}(\lambda_{m}) \\
+\lambda_{m}&\sim {\sf exponential}(2) \\
 cc_{c,t}&\sim {\sf poisson}(meanCounts_{c,t}) \\
 meanCounts_{c,t}&\sim{\sf exponential}(1/1e6) \\
 meanNatural_{m,c,t}&=exp(\mu_{m,c,t}+\sigma_{m,c,t}) \\
@@ -256,7 +296,7 @@ data("longitudinalMetabolomics")
 # the whole dataset) for demonstration purposes
 samples <- c(
   "UMP", "PEP",
-  "2-Aminomuconate","ATP"
+  "2-Aminomuconate", "ATP"
 )
 # only sampled metabolites
 data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in% c("A", "B") &
@@ -265,6 +305,7 @@ data <- longitudinalMetabolomics[, longitudinalMetabolomics$condition %in% c("A"
 # fit model
 data <- fit_dynamics_model(
   model = "scaled_log",
+  model_option = "sd_per_condition", # faster fitting for vignette
   data = data, scaled_measurement = "m_scaled",
   assay = "scaled_log",
   adapt_delta = 0.95, # default 0.95
@@ -372,7 +413,7 @@ If the 95% CrI contains zero, we
 cannot conclude that there is a difference in abundance between the two time points given
 the provided data.
 
-### Difference of dynamcis between experimental conditions
+### Difference of dynamics between experimental conditions
 If the parameter "distance_conditions" is set to TRUE a ranked list of differences
 between metabolite dynamics of different conditions is visualized.
 
@@ -438,9 +479,9 @@ metadata(data)[["estimates_dynamics"]].
 
 ```{r,fig.wide=TRUE}
 data <- cluster_dynamics(data,
-  deepSplit = 2,# low clustering sensitivity: can be set between 1 (low) and 4 (high)
+  deepSplit = 2, # low clustering sensitivity: can be set between 1 (low) and 4 (high)
   B = 10 # number of bootstrapps
-) 
+)
 ```
 
 For the visualization of the clustering results we can use the function
@@ -483,7 +524,7 @@ retrieved from the KEGG-database the following information:
 1) to which functional modules our experimental metabolites are annotated and
 2) which metabolites are annotated to functional modules in general.
 
-The functional modules of the KEGG-database are organised in three hierarchies:
+The functional modules of the KEGG-database are organized in three hierarchies:
 upper, middle and lower. The middle hierarchy holds modules such as "Amino acid
 metabolism", the lower for example "branched chain amino acid metabolism". To 
 facilitate analysis the data frames "metabolite_modules", which 
@@ -558,16 +599,18 @@ plots and set argument "patchwork" of plot_ORA to TRUE.
 cluster <- plot_cluster(data = data)
 
 # set patchwork to TRUE and provide cluster plots
-ora <- plot_ORA(data = data, tested_column = "middle_hierarchy",
-         patchwork = TRUE, plot_cluster = cluster)
+ora <- plot_ORA(
+  data = data, tested_column = "middle_hierarchy",
+  patchwork = TRUE, plot_cluster = cluster
+)
 ```
 
 To visualize the dynamics and ORA results run: 
 ```{r,fig.width=12,fig.height=6}
 # patch plots together
 library(patchwork)
-p <- cluster$patchwork$A|ora$ora_patchwork$A
-p+plot_layout(ncol=4, widths = c(2,1,2,2))
+p <- cluster$patchwork$A | ora$ora_patchwork$A
+p + plot_layout(ncol = 4, widths = c(2, 1, 2, 2))
 ```
 
 # Comparison of clusters of different experimental conditions
@@ -592,7 +635,7 @@ data("longitudinalMetabolomics")
 longitudinalMetabolomics <- compare_dynamics(
   data = longitudinalMetabolomics,
   cores = 1 # just set to 1 for vignette, set to 4 if possible
-  )
+)
 ```
 
 We can visualize the posterior estimates of the model with:

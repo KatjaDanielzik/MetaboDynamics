@@ -7,11 +7,13 @@
 #' used to fit dynamics model, must contain a column named "condition" specifiyng
 #' the experimental condition and a column
 #' named "time" specifying the timepoints.
-#' If it is a SummarizedExperiment object the dynamic fits must be stores in metadata(data)
-#' under "dynamic_fits"
+#' If it is a SummarizedExperiment object the dynamic fits must be stored in metadata(data)
+#' under "dynamic_fits" (automatically done by [fit_dynamics_model()]
 #' @param assay of the SummarizedExperiment object that was used to fit the dynamics
 #' model
 #' @param fit model fit for which estimates should be extracted
+#' @param model_option model option that was used for fitting with [fit_dynamics_model()].
+#' If data is a SummarizedExperiment this is automatically provided by the metadata written by [fit_dynamics_model()]
 #'
 #' @seealso Fit the dynamic model [fit_dynamics_model()].
 #' Diagnostics of the dynamic model [diagnostics_dynamics()]
@@ -48,7 +50,8 @@
 #' )
 #' S4Vectors::metadata(data)[["estimates_dynamics"]]
 estimates_dynamics <- function(data, assay = "scaled_log",
-                               fit = metadata(data)[["dynamic_fit"]]) {
+                               fit = metadata(data)[["dynamic_fit"]],
+                               model_option = "sd_per_condition") {
   # Input checks
   if (!is.data.frame(data) & !inherits(data, "SummarizedExperiment")) {
     stop("'data' must be a dataframe or colData of a SummarizedExperiment object")
@@ -65,6 +68,7 @@ estimates_dynamics <- function(data, assay = "scaled_log",
       values_to = "scaled_measurement"
     )
     fit <- metadata(data)[["dynamic_fit"]]
+    model_option <- metadata(data)[["model_option"]]
   }
 
   # convert potential tibbles into data frame
@@ -83,6 +87,10 @@ estimates_dynamics <- function(data, assay = "scaled_log",
     stop("'data' must contain columns named 'metabolite','time', and 'condition'")
   }
 
+  if (!model_option %in% c("sd_per_time_point", "sd_per_condition")) {
+    stop("'model_option' must be either 'sd_per_time_point' or 'sd_per_condition'")
+  }
+
   # get number of metabolites, time points and conditions
   M <- length(unique(data_df$metabolite))
   t <- length(unique(data_df$time))
@@ -90,28 +98,55 @@ estimates_dynamics <- function(data, assay = "scaled_log",
 
 
   estimates_data <- data.frame(
-    metabolite = rep(rep(unique(data_df$metabolite), each = C), each = t),
-    time = rep(rep(unique(data_df$time), each = C), M),
-    condition = rep(rep(unique(data_df$condition), t), M)
+    metabolite = rep(rep(levels(as.factor(data_df$metabolite)), each = C), each = t),
+    time = rep(rep(levels(as.factor(data_df$time)), each = C), M),
+    condition = rep(rep(levels(as.factor(data_df$condition)), t), M)
   )
 
   # extract for mu
   mu <- rstan::summary(fit, pars = "mu")$summary
   mu <- cbind(estimates_data, parameter = "mu", mu[, c("mean", "2.5%", "97.5%")])
 
+  if (model_option == "sd_per_time_point") {
+    # extract for sigma
+    sigma <- rstan::summary(fit, pars = "sigma")$summary
+    sigma <- cbind(estimates_data, parameter = "sigma", sigma[, c("mean", "2.5%", "97.5%")])
+
+    # extract for lambda
+    ## lambda only one per condition -> adapt estimates_data
+    lambda_data <- data.frame(
+      metabolite = rep(unique(data_df$metabolite), each = C),
+      condition = rep(unique(data_df$condition), M)
+    )
+
+    lambda <- rstan::summary(fit, pars = "lambda")$summary
+    lambda <- cbind(lambda_data, parameter = "lambda", lambda[, c("mean", "2.5%", "97.5%")])
+  }
+
   # extract for sigma
-  sigma <- rstan::summary(fit, pars = "sigma")$summary
-  sigma <- cbind(estimates_data, parameter = "sigma", sigma[, c("mean", "2.5%", "97.5%")])
+  if (model_option == "sd_per_condition") {
+    sigma <- rstan::summary(fit, pars = "sigma")$summary
+    sigma <- cbind(unique(estimates_data[, c("metabolite", "condition")]),
+      parameter = "sigma",
+      mean = sigma[, "mean"],
+      "2.5%" = sigma[, "2.5%"],
+      "97.5%" = sigma[, "97.5%"]
+    )
 
-  # extract for lambda
-  ## lambda only one per condition -> adapt estimates_data
-  lambda_data <- data.frame(
-    metabolite = rep(unique(data_df$metabolite), each = C),
-    condition = rep(unique(data_df$condition), M)
-  )
+    # extract for lambda
+    ## lambda only one per condition -> adapt estimates_data
+    metabolites <- levels(as.factor(data_df$metabolite))
 
-  lambda <- rstan::summary(fit, pars = "lambda")$summary
-  lambda <- cbind(lambda_data, parameter = "lambda", lambda[, c("mean", "2.5%", "97.5%")])
+    lambda <- rstan::summary(fit, pars = "lambda")$summary
+    lambda <- as.data.frame(cbind(
+      metabolite = metabolites,
+      parameter = "lambda",
+      mean = lambda[, "mean"],
+      "2.5%" = lambda[, "2.5%"],
+      "97.5%" = lambda[, "97.5%"]
+    ))
+  }
+
 
   # extract euclidean distances
   ## get possible dose combinations

@@ -16,6 +16,14 @@
 #' and metabolite concentrations. Additionally it assumes that cell counts were estimated
 #' e.g. by cell counters (i.e. that cells were not counted under the microscope)
 #' leading to a small uncertainty of the true cell count.
+#' @param model_option for each model ("scaled_log" and "raw_plus_counts") two
+#' versions are available: "sd_per_time_point" and "sd_per_condition".
+#' "sd_per_time_point" is suited for more replicates (at least triplicates) and
+#' estimates standard deviations per time point and therefore allows for more
+#' sensitive discrimination of changing abundances.
+# "sd_per_condition" can be suitable for down to duplicates (but may brake for
+#' high deviations between replicates) or for many metabolites, time points or conditions
+#' as it reduces run time due to less parameters. For model details see vignette (browseVignettes("MetaboDynamics")).
 #' @param data concentration table with at least three replicate measurements per
 #' metabolite. Must contain columns named "metabolite" (containing names or IDs), "time" (categorical, the same for all conditions), and "condition" or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
 #' Time column needs to be sorted in ascending order
@@ -55,7 +63,8 @@
 #'
 #' @return returns a list of model fits. One model fit named "condition" per
 #' experimental condition. If input is a summarizedExperiment object the dynamic
-#' fits are stored metadata(data) under "dynamic_fits"
+#' fits are stored metadata(data) under "dynamic_fits". 'model' and 'model_option'
+#' are also stored in metadata(data)
 #' @export
 #'
 #' @examples
@@ -82,6 +91,7 @@
 #' @useDynLib MetaboDynamics
 
 fit_dynamics_model <- function(model = "scaled_log",
+                               model_option = "sd_per_condition",
                                data,
                                scaled_measurement = "m_scaled",
                                counts = NULL,
@@ -90,7 +100,7 @@ fit_dynamics_model <- function(model = "scaled_log",
                                adapt_delta = 0.95, max_treedepth = 10,
                                iter = 2000, warmup = iter / 4) {
   .check_fit_dynamics_input(
-    model = model, data = data,
+    model = model, model_option = model_option, data = data,
     scaled_measurement = scaled_measurement,
     counts = counts, assay = assay, chains = chains,
     cores = cores, adapt_delta = adapt_delta,
@@ -120,15 +130,15 @@ fit_dynamics_model <- function(model = "scaled_log",
   if (!all(c("metabolite", "time", "condition", scaled_measurement) %in% colnames(data_df))) {
     stop("'data' must contain columns named 'metabolite','time','condition', and 'scaled_measurement'")
   }
-  
+
   if (!is.numeric(data_df[[scaled_measurement]])) {
     stop("'scaled_measurement' must be numeric")
   }
   if (all(is.na(data_df[[scaled_measurement]]))) {
     stop("'scaled_measurement' cannot contain NAs")
   }
-  
-    if (model == "raw_plus_counts") {
+
+  if (model == "raw_plus_counts") {
     if (is(counts, "tbl")) {
       counts <- as.data.frame(counts)
     }
@@ -136,15 +146,28 @@ fit_dynamics_model <- function(model = "scaled_log",
 
   # validate at least triplicate measurements
   # count replicates per metabolite, time and condition
-  grouped_data <- data_df %>%
-    group_by(metabolite, time, condition) %>%
-    summarise(count = n())
-  if (any(grouped_data$count < 3) == TRUE) {
-    stop("Input must contain at least three replicates per metabolite,
-      time point and experimental condition.")
+  if (model_option == "sd_per_time_point") {
+    grouped_data <- data_df %>%
+      group_by(metabolite, time, condition) %>%
+      summarise(count = n())
+    if (any(grouped_data$count < 3) == TRUE) {
+      stop("Input must contain at least three replicates per metabolite, time point and experimental condition.")
+    }
   }
 
-  # check if same all conditions and time points have cell counts
+  if (model_option == "sd_per_condition") {
+    grouped_data <- data_df %>%
+      group_by(metabolite, time, condition) %>%
+      summarise(count = n())
+    if (any(grouped_data$count < 2) == TRUE) {
+      stop("Input must contain at least two replicates per metabolite,
+      time point and experimental condition. Check diagnostics and PPC carefully
+      before using estimates!")
+    }
+  }
+
+
+  # check if all conditions and time points have cell counts
   if (model == "raw_plus_counts") {
     if (!identical(unique(data_df$time), unique(counts$time))) {
       stop("data and counts must have the same time points")
@@ -154,15 +177,22 @@ fit_dynamics_model <- function(model = "scaled_log",
     }
   }
 
+
   # Binding of global variables
   time <- NULL
   metabolite <- NULL
   condition <- NULL
 
   if (model == "scaled_log") {
+    if (model_option == "sd_per_time_point") {
+      stanmodel <- stanmodels$m_ANOVA_partial_pooling_euclidean_distance
+    }
+    if (model_option == "sd_per_condition") {
+      stanmodel <- stanmodels$m_ANOVA_partial_pooling_euclidean_distance_robust
+    }
     # fit model
     fit <- rstan::sampling(
-      object = stanmodels$m_ANOVA_partial_pooling_euclidean_distance,
+      object = stanmodel,
       data = list(
         N = nrow(data_df),
         M = length(unique(data_df$metabolite)),
@@ -190,9 +220,15 @@ fit_dynamics_model <- function(model = "scaled_log",
   }
 
   if (model == "raw_plus_counts") {
+    if (model_option == "sd_per_time_point") {
+      stanmodel <- stanmodels$m_ANOVA_partial_pooling_cell_counts_euclidean_distance
+    }
+    if (model_option == "sd_per_condition") {
+      stanmodel <- stanmodels$m_ANOVA_partial_pooling_cell_counts_euclidean_distance_robust
+    }
     # fit model
     fit <- rstan::sampling(
-      object = stanmodels$m_ANOVA_partial_pooling_cell_counts_euclidean_distance,
+      object = stanmodel,
       data = list(
         N = nrow(data_df),
         M = length(unique(data_df$metabolite)),
@@ -227,6 +263,8 @@ fit_dynamics_model <- function(model = "scaled_log",
   # if input is a SummarizedExperiment object, store the fits in the metadata
   if (is(data, "SummarizedExperiment")) {
     metadata(data)[["dynamic_fit"]] <- fit
+    metadata(data)[["model"]] <- model
+    metadata(data)[["model_option"]] <- model_option
     return(data)
   } else {
     # otherwise, return the list of fits

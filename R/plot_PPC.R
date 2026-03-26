@@ -37,9 +37,10 @@
 #'   data = data, assay = "scaled_log"
 #' )
 plot_PPC <- function(
-    posterior = metadata(data)[["diagnostics_dynamics"]],
-    data, assay = "scaled_log",
-    scaled_measurement = "scaled_measurement") {
+  posterior = metadata(data)[["diagnostics_dynamics"]],
+  data, assay = "scaled_log",
+  scaled_measurement = "scaled_measurement"
+) {
   # bind variables to function
   time.ID <- NULL
   plots <- NULL

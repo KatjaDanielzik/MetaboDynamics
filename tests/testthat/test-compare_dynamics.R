@@ -20,7 +20,7 @@ test_that("compare_dynamics: input checks", {
 test_that("compare_dynamics:output_checks", {
   # Prepare valid dummy data
   dummy_clusters <- list(A = list(data = data.frame(
-    metabolite = rep("A",10),
+    metabolite = rep("A", 10),
     condition = rep(c("A", "B"), each = 5),
     cluster = rep(c("1", "2"), times = 5),
     mu1_mean = rnorm(10), mu2_mean = rnorm(10)

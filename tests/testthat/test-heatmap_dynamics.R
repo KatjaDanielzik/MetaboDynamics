@@ -1,5 +1,5 @@
 # Mock data for testing
-clusters <- list(A=list(data=as.data.frame(cbind(
+clusters <- list(A = list(data = as.data.frame(cbind(
   cluster = 1:3,
   condition = c("A", "B", "C")
 ))))
@@ -9,8 +9,7 @@ data <- as.data.frame(cbind(
 ))
 
 test_that("heatmap_dynamics: input checks", {
-  clusters_error <- data.frame(
-  )
+  clusters_error <- data.frame()
   data_error <- list()
 
   # Check 1: inputs are dataframes
@@ -26,7 +25,7 @@ test_that("heatmap_dynamics: input checks", {
 })
 
 test_that("heatmap_dynamics:output_checks", {
-  plot <- heatmap_dynamics(estimates = data, data = clusters )
+  plot <- heatmap_dynamics(estimates = data, data = clusters)
   plot_title <- plot$labels$title
   expect_equal(plot_title, "similarity of dynamics in clusters")
 

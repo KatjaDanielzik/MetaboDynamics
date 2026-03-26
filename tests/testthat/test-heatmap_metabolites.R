@@ -1,5 +1,5 @@
 # Mock data for testing
-clusters <- list(A=list(data=as.data.frame(cbind(
+clusters <- list(A = list(data = as.data.frame(cbind(
   cluster = 1:3,
   condition = c("A", "B", "C")
 ))))

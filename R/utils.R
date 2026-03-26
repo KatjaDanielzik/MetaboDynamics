@@ -40,12 +40,20 @@
 #' facilitate efficiency, must be at least 25% of ITER, default=iter/4
 #' @returns description error messages
 #' @keywords internal
-.check_fit_dynamics_input <- function(model, data,
+.check_fit_dynamics_input <- function(model, model_option, data,
                                       scaled_measurement,
                                       counts, assay, chains, cores, adapt_delta,
                                       max_treedepth, iter, warmup) {
   if (!model %in% c("scaled_log", "raw_plus_counts")) {
     stop("'model' must be either 'scaled_log' or 'raw_plus_counts'")
+  }
+  if (!model_option %in% c("sd_per_time_point", "sd_per_condition")) {
+    stop("'model_option' must be either 'sd_per_time_point' or 'sd_per_condition'")
+  }
+
+  if (model_option == "sd_per_time_point") {
+    message("Check diagnostics and PPC carefully (see vignette)
+      and consider switching to model_option 'sd_per_condition'")
   }
   if (model == "scaled_log") {
     # hint user if data is standardized
@@ -153,13 +161,13 @@
 }
 
 
-#' get bootstrapps for clustering of dynamics vectors (cluster_dynamics function)
+#' get bootstraps for clustering of dynamics vectors (cluster_dynamics function)
 #' @param x posterior of dynamics model
 #' @param distance distance measure used for hierarchical clustering
 #' @param agglomeration agglomeration method used for hierarchical clustering
-#' @param B number of bootstrapps
+#' @param B number of bootstraps
 #' @keywords internal
-#' @returns bootsstrapps of clustering solution
+#' @returns bootstraps of clustering solution
 .get_boot_ph <- function(x, distance, agglomeration, B) {
   e <- x
   e <- as.data.frame(e)

@@ -6,6 +6,7 @@
 \usage{
 fit_dynamics_model(
   model = "scaled_log",
+  model_option = "sd_per_condition",
   data,
   scaled_measurement = "m_scaled",
   counts = NULL,
@@ -27,6 +28,14 @@ This model assumes independent measurement (i.e. different wells) of cell counts
 and metabolite concentrations. Additionally it assumes that cell counts were estimated
 e.g. by cell counters (i.e. that cells were not counted under the microscope)
 leading to a small uncertainty of the true cell count.}
+
+\item{model_option}{for each model ("scaled_log" and "raw_plus_counts") two
+versions are available: "sd_per_time_point" and "sd_per_condition".
+"sd_per_time_point" is suited for more replicates (at least triplicates) and
+estimates standard deviations per time point and therefore allows for more
+sensitive discrimination of changing abundances.
+high deviations between replicates) or for many metabolites, time points or conditions
+as it reduces run time due to less parameters. For model details see vignette (browseVignettes("MetaboDynamics")).}
 
 \item{data}{concentration table with at least three replicate measurements per
 metabolite. Must contain columns named "metabolite" (containing names or IDs), "time" (categorical, the same for all conditions), and "condition" or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
@@ -73,7 +82,8 @@ facilitate efficiency, must be at least 25\% of ITER, default=iter/4}
 \value{
 returns a list of model fits. One model fit named "condition" per
 experimental condition. If input is a summarizedExperiment object the dynamic
-fits are stored metadata(data) under "dynamic_fits"
+fits are stored metadata(data) under "dynamic_fits". 'model' and 'model_option'
+are also stored in metadata(data)
 }
 \description{
 Employs a hierarchical model that assumes a normal distribution of

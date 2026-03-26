@@ -7,7 +7,8 @@
 estimates_dynamics(
   data,
   assay = "scaled_log",
-  fit = metadata(data)[["dynamic_fit"]]
+  fit = metadata(data)[["dynamic_fit"]],
+  model_option = "sd_per_condition"
 )
 }
 \arguments{
@@ -15,13 +16,16 @@ estimates_dynamics(
 used to fit dynamics model, must contain a column named "condition" specifiyng
 the experimental condition and a column
 named "time" specifying the timepoints.
-If it is a SummarizedExperiment object the dynamic fits must be stores in metadata(data)
-under "dynamic_fits"}
+If it is a SummarizedExperiment object the dynamic fits must be stored in metadata(data)
+under "dynamic_fits" (automatically done by \code{\link[=fit_dynamics_model]{fit_dynamics_model()}}}
 
 \item{assay}{of the SummarizedExperiment object that was used to fit the dynamics
 model}
 
 \item{fit}{model fit for which estimates should be extracted}
+
+\item{model_option}{model option that was used for fitting with \code{\link[=fit_dynamics_model]{fit_dynamics_model()}}.
+If data is a SummarizedExperiment this is automatically provided by the metadata written by \code{\link[=fit_dynamics_model]{fit_dynamics_model()}}}
 }
 \value{
 a list of dataframes (one per parameters mu, sigma, lambda, delta_mu and euclidean distance) that contains

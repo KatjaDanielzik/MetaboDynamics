@@ -5,7 +5,7 @@
 #' posterior predictive checks. Output dataframe "model_diagnostics" contains
 #' information about experimental condition, number of divergent transitions
 #' and rhat and neff values for all timepoints.
-#' @param data dataframe or a \link[SummarizedExperiment]{SummarizedExperiment} used to fit dynamics model
+#' @param data data frame or a \link[SummarizedExperiment]{SummarizedExperiment} used to fit dynamics model
 #' column of "time" that contains time must be numeric, has to contain columns
 #' specifying the metabolite named "metabolite", and column specifiying the time
 #' point named "time", a column named "condition" must specify the experimental condition.
@@ -145,7 +145,10 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
 
   draws <- (iter - warmup) * chains
   # if model without cell counts y_rep else maven_rep (raw metabolite concentrations rep)
-  if (fit@model_name == "m_ANOVA_partial_pooling_euclidean_distance") {
+  if (fit@model_name %in% c(
+    "m_ANOVA_partial_pooling_euclidean_distance",
+    "m_ANOVA_partial_pooling_euclidean_distance_robust"
+  )) {
     # Posterior predictive checks for all fits
     posterior <- as.data.frame(fit, pars = "y_rep") %>%
       pivot_longer(
@@ -160,7 +163,10 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
       )
   }
 
-  if (fit@model_name == "m_ANOVA_partial_pooling_cell_counts_euclidean_distance") {
+  if (fit@model_name %in% c(
+    "m_ANOVA_partial_pooling_cell_counts_euclidean_distance",
+    "m_ANOVA_partial_pooling_cell_counts_euclidean_distance_robust"
+  )) {
     # Posterior predictive checks for all fits
     posterior <- as.data.frame(fit, pars = "maven_rep") %>%
       pivot_longer(

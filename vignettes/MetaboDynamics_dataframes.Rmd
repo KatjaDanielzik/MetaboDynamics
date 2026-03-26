@@ -47,7 +47,7 @@ data("longitudinalMetabolomics_df")
 # take a sample (of five metabolites and subset data
 samples <- c(
   "UMP", "PEP",
-  "2-Aminomuconate","ATP"
+  "2-Aminomuconate", "ATP"
 )
 data <- longitudinalMetabolomics_df %>% filter(metabolite %in% samples)
 
@@ -121,7 +121,8 @@ to for example test clustering performance.
 estimates <- # estimates have to be stored in a separate object when using data frames
   estimates_dynamics(
     data = data,
-    fit = fit)
+    fit = fit
+  )
 ```
 
 This returns a list containing the estimates for every experimental condition.
@@ -179,7 +180,7 @@ cluster <- # clustering results have to be stored in separate object when using 
     deepSplit = 2, # sensitivity of cluster analysis,
     minClusterSize = 1, # minimum number of metabolites in one cluster
     B = 10, # number of bootstrapps
-    )
+  )
 ```
 
 To visualize the clustering results we can use the function plot_cluster which

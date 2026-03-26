@@ -54,8 +54,8 @@ plot_cluster <- function(data) {
       ggtree::geom_nodelab(
         geom = "text", color = "#4c4c4c", size = 2.75, hjust = -0.2,
         mapping = aes(label = label, subset = isTip == FALSE)
-      )+
-      ggtitle("Dendrogram","number on nodes = bootstrapps")
+      ) +
+      ggtitle("Dendrogram", "number on nodes = bootstrapps")
   }
 
   # plot dynamics as lineplots
@@ -64,32 +64,34 @@ plot_cluster <- function(data) {
   clusterplots <- list()
   lineplots <- list()
   cluster_order <- list()
-  
+
   for (i in names(trees)) {
     tree <- trees[[i]]
     t <- tree$data
     t <- t[order(t$y, decreasing = FALSE), ]
     tips[[i]] <- t$label[t$isTip == TRUE]
     temp <- data[[i]]$data
-    temp <- temp %>% tidyr::pivot_longer(cols = -c(metabolite, condition, cluster),
-                                         names_to = "time", values_to = "mean")
+    temp <- temp %>% tidyr::pivot_longer(
+      cols = -c(metabolite, condition, cluster),
+      names_to = "time", values_to = "mean"
+    )
     temp$metabolite <- factor(temp$metabolite, levels = tips[[i]])
     temp$cluster <- as.factor(temp$cluster)
-    
-    cluster_order[[i]] <- unique(rev(temp[order(temp$metabolite), ]$cluster)) 
+
+    cluster_order[[i]] <- unique(rev(temp[order(temp$metabolite), ]$cluster))
     temp$cluster <- factor(temp$cluster, levels = cluster_order[[i]])
     clusterplots[[i]] <- ggplot(temp, aes(y = metabolite, x = cluster, fill = cluster)) +
       geom_tile() +
-      scale_fill_viridis_d(option="turbo") +
+      scale_fill_viridis_d(option = "turbo") +
       guides(col = "cluster") +
       ylab("") +
-      xlab("")+
-      theme_bw()+
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
-      ggtitle("Cluster affiliation","dynamic tree cut")
-    
-    temp$time <- gsub("_mean","",temp$time)
-    
+      xlab("") +
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+      ggtitle("Cluster affiliation", "dynamic tree cut")
+
+    temp$time <- gsub("_mean", "", temp$time)
+
     # Assure that if possible time points are numeric -> correct order on axis
     # This is where the special logic applies
     if (is.numeric(temp$time)) {
@@ -97,11 +99,11 @@ plot_cluster <- function(data) {
       temp$time_numeric <- temp$time
     } else {
       # If time is character, try to convert to numeric (if contains numbers + suffix)
-     # temp$time_numeric <- suppressWarnings(as.numeric(temp$time))
+      # temp$time_numeric <- suppressWarnings(as.numeric(temp$time))
       temp$time_numeric <- suppressWarnings(
         as.numeric(gsub("[^0-9.]", "", temp$time))
       )
-      
+
       # Check if conversion was successful (no NAs and all values are numeric)
       if (all(!is.na(temp$time_numeric)) && all(!is.infinite(temp$time_numeric))) {
         # Conversion successful - use numeric time for plotting
@@ -111,26 +113,27 @@ plot_cluster <- function(data) {
         temp$time_numeric <- temp$time
       }
     }
-    
-    lineplots[[i]] <- ggplot(temp, aes(x = as.factor(time_numeric), y = mean,col=cluster)) +
+
+    lineplots[[i]] <- ggplot(temp, aes(x = as.factor(time_numeric), y = mean, col = cluster)) +
       geom_line(aes(group = metabolite)) +
-      scale_color_viridis_d(option="turbo") +
+      scale_color_viridis_d(option = "turbo") +
       xlab("") +
-      facet_grid(cluster~.) +
+      facet_grid(cluster ~ .) +
       theme_bw() +
       ylim(c(-2, 2)) +
-      guides(col="none") +
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust =1))+
-      #geom_vline(aes(xintercept = as.factor(time)), col = "grey", linetype = "dashed") +
-      geom_hline(aes(yintercept = 0), col = "grey", linetype = "dashed")+
-      ggtitle("Dynamics","panel = cluster ID")
+      guides(col = "none") +
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+      # geom_vline(aes(xintercept = as.factor(time)), col = "grey", linetype = "dashed") +
+      geom_hline(aes(yintercept = 0), col = "grey", linetype = "dashed") +
+      ggtitle("Dynamics", "panel = cluster ID")
   }
 
   patchwork <- list()
   for (i in names(data)) {
     p <- trees[[i]] | clusterplots[[i]] | lineplots[[i]]
     patchwork[[i]] <- p + plot_annotation(
-      paste0("Condition ", i))
+      paste0("Condition ", i)
+    )
   }
 
   return(list(

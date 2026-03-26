@@ -6,6 +6,7 @@
 \usage{
 .check_fit_dynamics_input(
   model,
+  model_option,
   data,
   scaled_measurement,
   counts,

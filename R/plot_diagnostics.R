@@ -7,7 +7,7 @@
 #' @param assay of the \link[SummarizedExperiment]{SummarizedExperiment} object that was used to fit the dynamics
 #' model
 #' @param divergences should number of divergent transitions be visualized?
-#' @param max_treedepth should number of exeeded maximum treedepth be visualized?
+#' @param max_treedepth should number of exceeded maximum treedepth be visualized?
 #' @param Rhat should Rhat be visualized?
 #' @param n_eff should number of effective samples be visualized?
 #'
@@ -39,11 +39,12 @@
 #' plot_diagnostics(data = data, assay = "scaled_log")
 #'
 plot_diagnostics <- function(
-    data, assay = "scaled_log",
-    diagnostics = metadata(data)[["diagnostics_dynamics"]][["model_diagnostics"]],
-    divergences = TRUE,
-    max_treedepth = TRUE,
-    Rhat = TRUE, n_eff = TRUE) {
+  data, assay = "scaled_log",
+  diagnostics = metadata(data)[["diagnostics_dynamics"]][["model_diagnostics"]],
+  divergences = TRUE,
+  max_treedepth = TRUE,
+  Rhat = TRUE, n_eff = TRUE
+) {
   # bind variables to function
   neff.mu <- NULL
   neff.value <- NULL

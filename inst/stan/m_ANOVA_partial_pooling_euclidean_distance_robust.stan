@@ -11,22 +11,22 @@ data {
 
 parameters {
   real mu[M,t,d];  // metabolite, time, dose
-  real <lower=0> sigma[M,t,d]; // metabolite, time, and dose specific sigma
-  real <lower=0> lambda[M,d]; // metabolite and dose specific lambda (hyperprior for sigma)
+  real <lower=0> sigma[M,d]; // metabolite, and dose specific sigma
+  real <lower=0> lambda[M]; // metabolite specific lambda (hyperprior for sigma)
 }
 
 model {
   for (m in 1:M) {
-    lambda[m,] ~ exponential(2);
+    lambda[m] ~ exponential(2);
     for (i in 1:t) {
       for (j in 1:d) {
-          sigma[m,i,j] ~ exponential(lambda[m,j]);
+          sigma[m,j] ~ exponential(lambda[m]);
           mu[m,i,j] ~ normal(0, 2); // prior for mu
         }
       }
     }
   for (n in 1:N){
-    y[n]~normal(mu[Me[n],X[n],Do[n]],sigma[Me[n],X[n],Do[n]]);
+    y[n]~normal(mu[Me[n],X[n],Do[n]],sigma[Me[n],Do[n]]);
   }
 }
 
@@ -41,8 +41,8 @@ generated quantities {
   real euclidean_distance[M,d,d]; # euclidean distance between metabolite and cell line specific longitudinal vectors of different doses 
 
   for (n in 1:N){
-    y_rep[n]=normal_rng(mu[Me[n],X[n],Do[n]],sigma[Me[n],X[n],Do[n]]);
-    log_lik[n] = normal_lpdf(y[n]|mu[Me[n],X[n],Do[n]],sigma[Me[n],X[n],Do[n]]);
+    y_rep[n]=normal_rng(mu[Me[n],X[n],Do[n]],sigma[Me[n],Do[n]]);
+    log_lik[n] = normal_lpdf(y[n]|mu[Me[n],X[n],Do[n]],sigma[Me[n],Do[n]]);
   }
 
   lambda_prior = exponential_rng(2);

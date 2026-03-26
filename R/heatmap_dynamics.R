@@ -63,7 +63,8 @@ heatmap_dynamics <- function(estimates = metadata(data)[["comparison_dynamics"]]
     # combine data of list elements
     data_df <- bind_rows(lapply(data, function(x) {
       return(x$data)
-    }))}
+    }))
+  }
   # convert potential tibbles into data frame
   if (is(data, "tbl")) {
     data <- as.data.frame(data)

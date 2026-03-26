@@ -14,7 +14,7 @@ diagnostics_dynamics(
 )
 }
 \arguments{
-\item{data}{dataframe or a \link[SummarizedExperiment]{SummarizedExperiment} used to fit dynamics model
+\item{data}{data frame or a \link[SummarizedExperiment]{SummarizedExperiment} used to fit dynamics model
 column of "time" that contains time must be numeric, has to contain columns
 specifying the metabolite named "metabolite", and column specifiying the time
 point named "time", a column named "condition" must specify the experimental condition.}
