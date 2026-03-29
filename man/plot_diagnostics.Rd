@@ -26,7 +26,7 @@ fit of Bayesian model of dynamics obtained by function diagnostics_dynamics()}
 
 \item{divergences}{should number of divergent transitions be visualized?}
 
-\item{max_treedepth}{should number of exeeded maximum treedepth be visualized?}
+\item{max_treedepth}{should number of exceeded maximum treedepth be visualized?}
 
 \item{Rhat}{should Rhat be visualized?}
 

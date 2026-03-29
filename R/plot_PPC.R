@@ -102,7 +102,6 @@ plot_PPC <- function(
     geom_violin(aes(y = posterior, x = as.factor(time.ID)), scale = "count") +
     geom_jitter(data = PPC, aes(x = as.factor(time.ID), y = !!scaled_measurement), width = 0.05) + # aes_string allows us to use predefined variables
     theme_bw() +
-    ylim(-5, 5) + # we standardized data so we are not expecting much smaller or bigger values
     xlab("time point") +
     facet_wrap(~condition) +
     ggtitle(

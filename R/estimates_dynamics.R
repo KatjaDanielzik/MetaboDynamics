@@ -107,47 +107,6 @@ estimates_dynamics <- function(data, assay = "scaled_log",
   mu <- rstan::summary(fit, pars = "mu")$summary
   mu <- cbind(estimates_data, parameter = "mu", mu[, c("mean", "2.5%", "97.5%")])
 
-  if (model_option == "sd_per_time_point") {
-    # extract for sigma
-    sigma <- rstan::summary(fit, pars = "sigma")$summary
-    sigma <- cbind(estimates_data, parameter = "sigma", sigma[, c("mean", "2.5%", "97.5%")])
-
-    # extract for lambda
-    ## lambda only one per condition -> adapt estimates_data
-    lambda_data <- data.frame(
-      metabolite = rep(unique(data_df$metabolite), each = C),
-      condition = rep(unique(data_df$condition), M)
-    )
-
-    lambda <- rstan::summary(fit, pars = "lambda")$summary
-    lambda <- cbind(lambda_data, parameter = "lambda", lambda[, c("mean", "2.5%", "97.5%")])
-  }
-
-  # extract for sigma
-  if (model_option == "sd_per_condition") {
-    sigma <- rstan::summary(fit, pars = "sigma")$summary
-    sigma <- cbind(unique(estimates_data[, c("metabolite", "condition")]),
-      parameter = "sigma",
-      mean = sigma[, "mean"],
-      "2.5%" = sigma[, "2.5%"],
-      "97.5%" = sigma[, "97.5%"]
-    )
-
-    # extract for lambda
-    ## lambda only one per condition -> adapt estimates_data
-    metabolites <- levels(as.factor(data_df$metabolite))
-
-    lambda <- rstan::summary(fit, pars = "lambda")$summary
-    lambda <- as.data.frame(cbind(
-      metabolite = metabolites,
-      parameter = "lambda",
-      mean = lambda[, "mean"],
-      "2.5%" = lambda[, "2.5%"],
-      "97.5%" = lambda[, "97.5%"]
-    ))
-  }
-
-
   # extract euclidean distances
   ## get possible dose combinations
   if (C > 1 & t > 1) {
@@ -189,8 +148,6 @@ estimates_dynamics <- function(data, assay = "scaled_log",
   # combine results in one list
   result <- list(
     mu = mu,
-    sigma = sigma,
-    lambda = lambda,
     delta_mu = delta_mu,
     euclidean_distances = distances
   )

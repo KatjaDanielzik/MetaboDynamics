@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{.get_boot_ph}
 \alias{.get_boot_ph}
-\title{get bootstrapps for clustering of dynamics vectors (cluster_dynamics function)}
+\title{get bootstraps for clustering of dynamics vectors (cluster_dynamics function)}
 \usage{
 .get_boot_ph(x, distance, agglomeration, B)
 }
@@ -13,12 +13,12 @@
 
 \item{agglomeration}{agglomeration method used for hierarchical clustering}
 
-\item{B}{number of bootstrapps}
+\item{B}{number of bootstraps}
 }
 \value{
-bootsstrapps of clustering solution
+bootstraps of clustering solution
 }
 \description{
-get bootstrapps for clustering of dynamics vectors (cluster_dynamics function)
+get bootstraps for clustering of dynamics vectors (cluster_dynamics function)
 }
 \keyword{internal}
