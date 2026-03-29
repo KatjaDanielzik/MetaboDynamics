@@ -95,7 +95,7 @@ plot_PPC <- function(
   scaled_measurement <- as.symbol(scaled_measurement)
   scaled_measurement <- enquo(scaled_measurement)
 
-
+  
   # plot for every experimental condition
   plot <-
     ggplot(posterior, aes(x = as.factor(time.ID))) +

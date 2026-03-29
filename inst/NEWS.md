@@ -1,3 +1,7 @@
+# MetaboDynamics 2.3.1
+- bug fix in plot_PPC for raw_plus_counts_model
+- estimates_dynamics does not return 'sigma' or 'lambda' anymore
+
 # MetaboDynamics 2.1.99
 - added model_option in fit_dynamics_model(): either "sd_per_time_point" (only option before)
 or "sd_per_condition" (less sigmas, more robust with few replicates)
