@@ -103,6 +103,9 @@ diagnostics_dynamics <- function(data, assay = "scaled_log",
   if (!(all(c(warmup, iter, chains) > 0 & c(warmup, iter, chains) %% 1 == 0))) {
     stop("'iter', 'warmup', and 'chains' must be positive integers")
   }
+  
+  message("Did you use non-default 'iter' in 'fit_dynamics_model()'?
+          Than you need to specify 'iter' in this function, too.")
 
   # Diagnostic column names
   rhat_cols <- paste0("rhat_mu", seq_len(t), "_mean")

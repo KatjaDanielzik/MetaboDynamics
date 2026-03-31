@@ -169,10 +169,10 @@ fit_dynamics_model <- function(model = "scaled_log",
 
   # check if all conditions and time points have cell counts
   if (model == "raw_plus_counts") {
-    if (!identical(unique(data_df$time), unique(counts$time))) {
+    if (!setequal(unique(data_df$time), unique(counts$time))) {
       stop("data and counts must have the same time points")
     }
-    if (!identical(unique(data_df$condition), unique(counts$condition))) {
+    if (!setequal(unique(data_df$condition), unique(counts$condition))) {
       stop("data and counts must have the same conditions")
     }
   }

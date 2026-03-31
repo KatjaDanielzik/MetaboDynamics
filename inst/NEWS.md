@@ -1,4 +1,8 @@
-# MetaboDynamics 2.3.1
+# MetaboDynamics 2.1.101
+- bug fix in fit_dynamics_model()
+- new message in diagnostics_dynamics
+
+# MetaboDynamics 2.1.100
 - bug fix in plot_PPC for raw_plus_counts_model
 - estimates_dynamics does not return 'sigma' or 'lambda' anymore
 
