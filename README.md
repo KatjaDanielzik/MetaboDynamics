@@ -8,7 +8,7 @@
 ![](man/figures/README-MetaboDynamics_graphical_abstract.png)
 
 # Data requirements
-- MetaboDynamics requires **at least triplicates of metabolite abundances** for all
+- MetaboDynamics requires **at least duplicates of metabolite abundances** for all
 analyzed time points and conditions. No minimum number of metabolites is required.
 - Data can be a data frame (see Vignette "using MetaboDynamics with data frames"")
 or a SummarizedExperiment object (demonstrated in this vignette).

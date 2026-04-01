@@ -18,7 +18,7 @@ BiocStyle::markdown()
 ```
 
 # Data requirements
-- MetaboDynamics requires at least triplicates of metabolite abundances for all
+- MetaboDynamics requires at least duplicates of metabolite abundances for all
 analyzed time points and conditions. No minimum number of metabolites is required.
 Time points are treated as categorical variables and have to be the same for all
 conditions.
@@ -205,9 +205,12 @@ to provide a flexible and robust framework for analysis.
 
 We provide two model options: *sd_per_time_point* and *sd_per_condition*.
 
+## sd per time point
+
 For the *sd_per_time_point* option we assume a normal distribution of log-transformed
 metabolite abundances.  
-This model assumes a normal distribution of log-transformed and scaled metabolite
+This model requires **at least triplicates** and assumes a normal distribution 
+of log-transformed and scaled metabolite
 abundances and estimates a mean $\mu$ per metabolite and time point. The spread $\sigma$ 
 of the replicate measurements is also estimated per metabolite and time point, 
 but the spread of different time points inform each other through the hierarchical
@@ -230,8 +233,11 @@ variance between replicates.
 We advice to **check the diagnostic criteria and PPC carefully** and if in doubt
 switch to *sd_per_condition*.
 
+## sd per condition
+
 For these cases we provide the second option 
-*sd_per_condition* that assumes the same $\sigma$ for all time points per condition
+*sd_per_condition* that requires at least **duplicates** and assumes the same 
+$\sigma$ for all time points per condition
 and metabolite and has partial pooling of metabolite and condition specific 
 $\sigma$ into metabolite specific $\lambda$.
 
