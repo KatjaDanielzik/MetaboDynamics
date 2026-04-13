@@ -113,14 +113,18 @@ estimates_dynamics <- function(data, assay = "scaled_log",
     combinations <- t(combn(unique(data_df$condition), 2))
 
     distances_data <- data.frame(
-      metabolite = rep(unique(data_df$metabolite), each = nrow(combinations)),
+      metabolite = rep(levels(as.factor(data_df$metabolite)), 
+                       each = nrow(combinations)),
       condition_1 = combinations[, 1],
       condition_2 = combinations[, 2]
     )
 
-    distances <- as.data.frame(rstan::summary(fit, pars = "euclidean_distance")$summary)
-    distances <- distances %>% na.omit() # posterior contains estiamtes that do not fullfull condition_1<conditon_2 due to stan technicalities
-    distances <- cbind(distances_data, parameter = "euclidean_distance", distances[, c("mean", "2.5%", "97.5%")])
+    distances <- as.data.frame(rstan::summary(fit, 
+                                              pars = "euclidean_distance")$summary)
+    distances <- distances %>% na.omit() # posterior contains estimates that do not fulfill condition_1<conditon_2 due to stan technicalities
+    distances <- cbind(distances_data, 
+                       parameter = "euclidean_distance", 
+                       distances[, c("mean", "2.5%", "97.5%")])
   }
   if (t == 1 | C == 1) {
     distances <- "only possible for more than one time point and more than one condition"
@@ -128,11 +132,11 @@ estimates_dynamics <- function(data, assay = "scaled_log",
 
   # extract for delta_mu
   if (t > 1) {
-    combinations <- t(combn(unique(data_df$time), 2))
+    combinations <- t(combn(levels(as.factor(data_df$time)), 2))
 
     delta_mu_data <- data.frame(
-      metabolite = rep(rep(unique(data_df$metabolite), each = nrow(combinations)), each = C),
-      condition = rep(rep(unique(data_df$condition), each = nrow(combinations)), M),
+      metabolite = rep(rep(levels(as.factor(data_df$metabolite)), each = nrow(combinations)), each = C),
+      condition = rep(rep(levels(as.factor(data_df$condition)), each = nrow(combinations)), M),
       timepoint_1 = combinations[, 1],
       timepoint_2 = combinations[, 2]
     )
