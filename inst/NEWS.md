@@ -1,3 +1,5 @@
+# MetaboDynamics 2.1.104
+- bug fix in estimates_dynamics
 # MetaboDynamics 2.1.103
 - bug fix in estimates_dynamics
 

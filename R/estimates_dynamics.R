@@ -110,7 +110,7 @@ estimates_dynamics <- function(data, assay = "scaled_log",
   # extract euclidean distances
   ## get possible dose combinations
   if (C > 1 & t > 1) {
-    combinations <- t(combn(unique(data_df$condition), 2))
+    combinations <- t(combn(levels(as.factor(data_df$condition)), 2))
 
     distances_data <- data.frame(
       metabolite = rep(levels(as.factor(data_df$metabolite)), 
