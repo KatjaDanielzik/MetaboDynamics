@@ -1,8 +1,10 @@
 
-# MetaboDynamics:
+# MetaboDynamics: a framework of probabilistic models to analyze longitudinal metabolomics data 
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![](https://img.shields.io/badge/doi-10.18129/B9.bioc.MetaboDynamics%20-yellow.svg)](https://doi.org/10.18129/B9.bioc.MetaboDynamics )
 [![License: GPL](https://img.shields.io/badge/license-GPL-blue.svg)](https://cran.r-project.org/web/licenses/GPL)
+
+![](man/figures/README-logo.png)
 
 # Graphical abstract
 ![](man/figures/README-MetaboDynamics_graphical_abstract.png)
