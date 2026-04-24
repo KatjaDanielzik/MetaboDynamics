@@ -4,7 +4,10 @@
 [![](https://img.shields.io/badge/doi-10.18129/B9.bioc.MetaboDynamics%20-yellow.svg)](https://doi.org/10.18129/B9.bioc.MetaboDynamics )
 [![License: GPL](https://img.shields.io/badge/license-GPL-blue.svg)](https://cran.r-project.org/web/licenses/GPL)
 
-![](man/figures/README-logo.png)
+<p align="center">
+  <img src="man/figures/README-logo.png"/>
+</p>
+
 
 # Graphical abstract
 ![](man/figures/README-MetaboDynamics_graphical_abstract.png)
