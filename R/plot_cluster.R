@@ -55,7 +55,7 @@ plot_cluster <- function(data) {
         geom = "text", color = "#4c4c4c", size = 2.75, hjust = -0.2,
         mapping = aes(label = label, subset = isTip == FALSE)
       ) +
-      ggtitle("Dendrogram", "number on nodes = bootstrapps")
+      ggtitle("Dendrogram", "number on nodes = bootstraps")
   }
 
   # plot dynamics as lineplots

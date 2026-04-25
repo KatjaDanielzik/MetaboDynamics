@@ -17,6 +17,10 @@ vignette: >
 BiocStyle::markdown()
 ```
 
+```{r graphic_logo, echo = FALSE, fig.align="left", out.width='100%'}
+knitr::include_graphics("../man/figures/README-logo.png")
+```
+
 # Data requirements
 - MetaboDynamics requires at least duplicates of metabolite abundances for all
 analyzed time points and conditions. No minimum number of metabolites is required.
