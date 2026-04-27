@@ -60,8 +60,8 @@
    inkscape:deskcolor="#d1d1d1"
    showgrid="false"
    inkscape:zoom="0.22959761"
-   inkscape:cx="884.15554"
-   inkscape:cy="1230.4135"
+   inkscape:cx="583.62977"
+   inkscape:cy="1234.769"
    inkscape:window-width="1854"
    inkscape:window-height="1011"
    inkscape:window-x="0"
@@ -85,7 +85,7 @@
    points="67.6,2145.2 1260.5,2833.8 2453.1,2145.2 2453.1,767.6 1260.5,78.9 67.6,767.6 "
    id="polygon6210"
    transform="translate(-36.306772,5.954538)"
-   style="fill:#e6e6e6" /><g
+   style="fill:#ffffff" /><g
    id="g39917"
    transform="matrix(23.659594,0,0,30.354373,-6637.4899,1020.8742)" />
 	<path
@@ -472,14 +472,14 @@
    transform="translate(-46.640238,-16.998323)"><tspan
      x="548.28906"
      y="865.2683"
-     id="tspan72773">Metabo</tspan></text><text
+     id="tspan3717">Metabo</tspan></text><text
    xml:space="preserve"
    id="text59885"
    style="font-size:96px;white-space:pre;shape-inside:url(#rect59887);display:inline;fill:#2b0000;stroke:#0a0a0a;stroke-width:0.9;stroke-dasharray:none"
    transform="translate(70.656902,-12.896201)"><tspan
      x="1103.4883"
      y="2247.4593"
-     id="tspan72775">time</tspan></text><text
+     id="tspan3719">time</tspan></text><text
    xml:space="preserve"
    style="font-size:85.3333px;fill:#d45500;stroke:#0a0a0a;stroke-width:0.9;stroke-dasharray:none"
    x="2538.8743"
@@ -523,5 +523,5 @@
    transform="translate(634.93601,-13.731735)"><tspan
      x="548.28906"
      y="865.2683"
-     id="tspan72777">Dynamics</tspan></text></g>
+     id="tspan3721">Dynamics</tspan></text></g>
 </svg>
