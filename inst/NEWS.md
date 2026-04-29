@@ -1,7 +1,10 @@
 # MetaboDynamics 2.1.104
-- bug fix in estimates_dynamics
+- bug fix in estimates_dynamics leading to mixed up condition annotations to
+model fit results
+
 # MetaboDynamics 2.1.103
-- bug fix in estimates_dynamics
+- bug fix in estimates_dynamics leading to mixed up metabolite annotations to 
+model fit results
 
 # MetaboDynamics 2.1.101
 - bug fix in fit_dynamics_model()
