@@ -252,11 +252,16 @@ $\sigma$ into metabolite specific $\lambda$.
 \lambda_{m}&\sim {\sf exponential}(2) 
 \end{align*}
 
-If the untargeted LC-MS experiment is conducted in vitro and independent cell counts
+If the untargeted LC-MS experiment is conducted *in vitro* and independent cell counts
 (i.e. cell counts were measured in a different well than metabolite abundances) are
 available adapted models can be run that takes the **raw** (i.e. not normalized and not scaled)
 metabolite abundances and the cell counts as input. 
 Again we have the two options *sd_per_time_point* and *sd_per_condition*.
+
+The priors in this model are not as generic as in the other model options, as the
+data is not scaled. MetaboDynamics provides default priors that fit our data well, 
+but priors can be adapted to your specific experiment. For details please see
+Vignette **"MetaboDynamics_Guide_to_prior_setting"** as guidance. 
 
 With cc = cell counts and con = metabolite abundance per cell we get:
 

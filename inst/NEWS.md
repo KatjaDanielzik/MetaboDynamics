@@ -1,3 +1,9 @@
+# MetaboDynamics 2.3.1
+new functionality: priors in model "raw_plus_counts" are adjustable by user,
+compatible with older versions as default priors are previous fixed priors
+- if run on Summarized Experiment object, priors are stored in metadata(data)[["priors"]]
+- new vignette "MetaboDynamics_Guide_to_prior_setting"
+
 # MetaboDynamics 2.1.104
 - bug fix in estimates_dynamics
 # MetaboDynamics 2.1.103

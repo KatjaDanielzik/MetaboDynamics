@@ -24,13 +24,16 @@
 # "sd_per_condition" can be suitable for down to duplicates (but may brake for
 #' high deviations between replicates) or for many metabolites, time points or conditions
 #' as it reduces run time due to less parameters. For model details see vignette (browseVignettes("MetaboDynamics")).
-#' @param data concentration table with at least three replicate measurements per
+#' @param data concentration table with at least three (model_option "sd_per_time_point) or two (model_option "sd_per_condition")
+#' replicate measurements per
 #' metabolite. Must contain columns named "metabolite" (containing names or IDs), "time" (categorical, the same for all conditions), and "condition" or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
 #' Time column needs to be sorted in ascending order
-#' @param scaled_measurement column of "data" that contains the concentrations per cell,
-#' centered and normalized per metabolite and experimental condition (mean=0, sd=1),
+#' @param scaled_measurement column of "data" that contains the abundances per cell (model "raw_plus_counts"),
+#' or in case of model "scaled_log" the log-transformed metabolite abundances
+#' centered and normalized per metabolite and experimental condition  to mean=0 and sd=1,
 #' must be numeric
-#' @param counts data frame with at least one replicate per time point and condition
+#' @param counts only model "raw_plus_counts", data frame with at least one replicate 
+#' per time point and condition
 #' specifying the cell counts, must contain columns "time", and "condition" equivalent
 #' to the specifications of "data".
 #' Must contain a column named "counts" that specifies the cell counts.
@@ -56,6 +59,15 @@
 #' sample size being to low, default=2000
 #' @param warmup how many iterations the model warms up for, increasing might
 #' facilitate efficiency, must be at least 25% of ITER, default=iter/4
+#' @param prior_mean_abundance only for model 'raw_plus_counts', has to be >0, mu and sigma of
+#' normal distribution covering the range for log-transformed metabolite abundances,
+#' for details see Vignette "Prior setting".
+#' @param prior_sd_abundance only for model 'raw_plus_counts', has to be >0, expected value
+#' (most abundant) value of metabolite specific standard deviation of log-transformed metabolite abundances,
+#' for details see Vignette "Prior setting". 
+#' @param prior_counts only for model 'raw_plus_counts', has to be >0, expected value of cell counts,
+#' for details see Vignette "Prior setting".
+#' 
 #'
 #' @seealso Example data set[longitudinalMetabolomics].
 #' Get model diagnostics [diagnostics_dynamics()]
@@ -97,14 +109,21 @@ fit_dynamics_model <- function(model = "scaled_log",
                                counts = NULL,
                                assay = "scaled_log",
                                chains = 4, cores = 4,
-                               adapt_delta = 0.95, max_treedepth = 10,
-                               iter = 2000, warmup = iter / 4) {
+                               adapt_delta = 0.95, 
+                               max_treedepth = 10,
+                               iter = 2000, 
+                               warmup = iter / 4,
+                               prior_mean_abundance = c(12,5),
+                               prior_sd_abundance = 2,
+                               prior_counts = 1e7) {
+  
   .check_fit_dynamics_input(
     model = model, model_option = model_option, data = data,
     scaled_measurement = scaled_measurement,
     counts = counts, assay = assay, chains = chains,
     cores = cores, adapt_delta = adapt_delta,
-    max_treedepth = max_treedepth, iter = iter, warmup = warmup
+    max_treedepth = max_treedepth, iter = iter, warmup = warmup, prior_mean_abundance,
+    prior_sd_abundance, prior_counts
   )
 
   # check input class and convert SummarizedExperiment to dataframe
@@ -244,7 +263,10 @@ fit_dynamics_model <- function(model = "scaled_log",
         Nc = nrow(counts),
         Cc = as.numeric(counts$counts),
         X_c = as.numeric(as.factor(counts$time)),
-        Do_c = as.numeric(as.factor(counts$condition))
+        Do_c = as.numeric(as.factor(counts$condition),
+        prior_mean_abundance = prior_mean_abundance,
+        prior_sd_abundance = prior_sd_abundance,
+        prior_counts = prior_counts)
       ),
       chains = chains,
       iter = iter,
@@ -265,6 +287,12 @@ fit_dynamics_model <- function(model = "scaled_log",
     metadata(data)[["dynamic_fit"]] <- fit
     metadata(data)[["model"]] <- model
     metadata(data)[["model_option"]] <- model_option
+    # store priors
+    if(model=="raw_plus_counts"){
+      metadata(data)[["priors"]] <- list(prior_mean_abundance=prior_mean_abundance,
+                                         prior_sd_abundance=prior_sd_abundance,
+                                         prior_counts=prior_counts)
+    }
     return(data)
   } else {
     # otherwise, return the list of fits

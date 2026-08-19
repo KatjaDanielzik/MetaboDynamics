@@ -16,7 +16,10 @@ fit_dynamics_model(
   adapt_delta = 0.95,
   max_treedepth = 10,
   iter = 2000,
-  warmup = iter/4
+  warmup = iter/4,
+  prior_mean_abundance = c(12, 5),
+  prior_sd_abundance = 2,
+  prior_counts = 1e+07
 )
 }
 \arguments{
@@ -37,15 +40,18 @@ sensitive discrimination of changing abundances.
 high deviations between replicates) or for many metabolites, time points or conditions
 as it reduces run time due to less parameters. For model details see vignette (browseVignettes("MetaboDynamics")).}
 
-\item{data}{concentration table with at least three replicate measurements per
+\item{data}{concentration table with at least three (model_option "sd_per_time_point) or two (model_option "sd_per_condition")
+replicate measurements per
 metabolite. Must contain columns named "metabolite" (containing names or IDs), "time" (categorical, the same for all conditions), and "condition" or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
 Time column needs to be sorted in ascending order}
 
-\item{scaled_measurement}{column of "data" that contains the concentrations per cell,
-centered and normalized per metabolite and experimental condition (mean=0, sd=1),
+\item{scaled_measurement}{column of "data" that contains the abundances per cell (model "raw_plus_counts"),
+or in case of model "scaled_log" the log-transformed metabolite abundances
+centered and normalized per metabolite and experimental condition  to mean=0 and sd=1,
 must be numeric}
 
-\item{counts}{data frame with at least one replicate per time point and condition
+\item{counts}{only model "raw_plus_counts", data frame with at least one replicate
+per time point and condition
 specifying the cell counts, must contain columns "time", and "condition" equivalent
 to the specifications of "data".
 Must contain a column named "counts" that specifies the cell counts.
@@ -78,6 +84,17 @@ sample size being to low, default=2000}
 
 \item{warmup}{how many iterations the model warms up for, increasing might
 facilitate efficiency, must be at least 25\% of ITER, default=iter/4}
+
+\item{prior_mean_abundance}{only for model 'raw_plus_counts', has to be >0, mu and sigma of
+normal distribution covering the range for log-transformed metabolite abundances,
+for details see Vignette "Prior setting".}
+
+\item{prior_sd_abundance}{only for model 'raw_plus_counts', has to be >0, expected value
+(most abundant) value of metabolite specific standard deviation of log-transformed metabolite abundances,
+for details see Vignette "Prior setting".}
+
+\item{prior_counts}{only for model 'raw_plus_counts', has to be >0, expected value of cell counts,
+for details see Vignette "Prior setting".}
 }
 \value{
 returns a list of model fits. One model fit named "condition" per

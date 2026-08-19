@@ -43,7 +43,8 @@
 .check_fit_dynamics_input <- function(model, model_option, data,
                                       scaled_measurement,
                                       counts, assay, chains, cores, adapt_delta,
-                                      max_treedepth, iter, warmup) {
+                                      max_treedepth, iter, warmup, prior_mean_abundance,
+                                      prior_sd_abundance, prior_counts) {
   if (!model %in% c("scaled_log", "raw_plus_counts")) {
     stop("'model' must be either 'scaled_log' or 'raw_plus_counts'")
   }
@@ -73,6 +74,21 @@
     }
     if (!all(c("time", "condition", "counts") %in% colnames(counts))) {
       stop("'counts' must contain columns named 'time','condition', and 'counts'")
+    }
+    
+    # check prior input
+    # check prior input
+    if(!is.vector(prior_mean_abundance) || 
+       length(prior_mean_abundance) != 2 || 
+       !is.numeric(prior_mean_abundance) || 
+       any(prior_mean_abundance < 0)){
+      stop("'prior_mean_abundance' has to be an vector with two numeric elements > 0")
+    }
+    if(!is.numeric(prior_sd_abundance)|!prior_sd_abundance>0){
+      stop("'prior_sd_abundance' has to be numeric and > 0")
+    }
+    if(!is.numeric(prior_counts)|!prior_counts>0){
+      stop("'prior_counts' has to be numeric and > 0")
     }
   }
 

@@ -23,7 +23,6 @@ test_that("fit_dynamics_model:input_checks", {
     "'data' must contain columns named 'metabolite','time','condition', and 'scaled_measurement'"
   )
 
-
   # adapt_delta must be in range [0;1]
   expect_error(fit_dynamics_model(
     data = mock_data,
@@ -124,7 +123,53 @@ test_that("fit_dynamics_model:input_checks", {
     ),
     "data and counts must have the same time points"
   )
+  
+  # prior settings
+  mock_counts <- data.frame(time = rep(seq(1, 10), times = 2),
+                            condition = rep(c("Condition_A", "Condition_B"), each = 10),
+                            counts = as.integer(rexp(2,1e7)))
+  expect_error(
+    fit_dynamics_model(
+      model = "raw_plus_counts",
+      data = mock_data,
+      counts = mock_counts,
+      prior_sd_abundance = -1
+    ),
+    "'prior_sd_abundance' has to be numeric and > 0"
+  )
+  
+  expect_error(
+    fit_dynamics_model(
+      model = "raw_plus_counts",
+      data = mock_data,
+      counts = mock_counts,
+      prior_counts = "true"
+    ),
+    "'prior_counts' has to be numeric and > 0"
+  )
+  
+  expect_error(
+    fit_dynamics_model(
+      model = "raw_plus_counts",
+      data = mock_data,
+      counts = mock_counts,
+      prior_counts = "true"
+    ),
+    "'prior_counts' has to be numeric and > 0"
+  )
+  
+  expect_error(
+  fit_dynamics_model(
+    model = "raw_plus_counts",
+    data = mock_data,
+    counts = mock_counts,
+    prior_mean_abundance = c(0,-1)
+  ),
+  "'prior_mean_abundance' has to be an vector with two numeric elements > 0")
+  
 })
+  
+
 
 test_that("fit_dynamics_model:output_checks", {
   # create triplicates
@@ -148,5 +193,39 @@ test_that("fit_dynamics_model:output_checks", {
 
 
   # Test: output must be a 'stanfit' object
+  expect_true(inherits(fit, "stanfit"))
+  
+  # test cell count models
+  # create triplicates
+  mock_data <- data.frame(
+    metabolite = rep(c("Metabolite_A", "Metabolite_B"), each = 10),
+    time = rep(seq(1, 10), times = 2),
+    condition = rep(c("Condition_A", "Condition_B"), each = 10),
+    m_scaled = exp(rnorm(20, mean = 0, sd = 1))
+  )
+  mock_data <- rbind(mock_data, mock_data, mock_data)
+  
+  mock_counts <- data.frame(time = rep(seq(1, 10), times = 2),
+                            condition = rep(c("Condition_A", "Condition_B"), each = 10),
+                            counts = as.integer(rexp(2,1e7)))
+  
+  # basic function output
+  fit <- fit_dynamics_model(
+    model = "raw_plus_counts",
+    model_option = "sd_per_time_point",
+    data = mock_data,
+    scaled_measurement = "m_scaled",
+    counts = mock_counts,
+    prior_mean_abundance = c(10,5),
+    prior_sd_abundance = 2,
+    prior_counts = 1e7,
+    chains = 1,
+    cores = 1,
+    iter = 100, # Use fewer iterations for testing purposes
+    warmup = 20, adapt_delta = 0.8, max_treedepth = 10
+  )
+  
+  
+# Test: output must be a 'stanfit' object
   expect_true(inherits(fit, "stanfit"))
 })

@@ -11,14 +11,20 @@ data {
   int <lower=0 > Cc[Nc]; // cell counts
   int <lower=1 > X_c[Nc]; // time predictor for cell counts
   int <lower=1 > Do_c[Nc]; // dose predictor for cell counts
+  
+  # Priors
+  real<lower=0> prior_mean_abundance[2]; // prior for mu_maven (normal distribution): mu and sigma, expected range for mean of metabolite abundances
+  real<lower=0> prior_sd_abundance; // expected value for standard deviation of metabolite abundances per metabolite/condition
+  real<lower=0> prior_counts; // expected value of cell counts (rate of 
+                                // exponential distribution) -> will be divided by one  
 }
 
 parameters {
   real mu_maven[M, t, D]; // mean of maven values for each metabolite, time, dose, and cell line
-  real <lower=0 > sd_maven[M, D]; // standard deviation of maven values for each metabolite, and dose
+  real <lower=0> sd_maven[M, D]; // standard deviation of maven values for each metabolite, and dose
   real <lower=0> lambda_maven[M]; // metabolite specific lambda (hyperprior for sigma)
   
-  real <lower=0 > mu_counts[t, D]; // mean of cell counts for each time, dose, and cell line
+  real <lower=0> mu_counts[t, D]; // mean of cell counts for each time, dose, and cell line
 }
 
 transformed parameters {
@@ -62,11 +68,11 @@ model {
   // priors
   // maven
   for (m in 1:M) {
-    lambda_maven[m] ~ exponential(2);
+    lambda_maven[m] ~ exponential(1/prior_sd_abundance);
       for (d in 1:D) {
         for (i in 1:t) {
           sd_maven[m, d] ~ exponential(lambda_maven[m]); // hierarchy of sd_maven: pooling of sd for all measurements of one metabolite
-          mu_maven[m, i, d] ~ normal(12, 5);
+          mu_maven[m, i, d] ~ normal(prior_mean_abundance[1], prior_mean_abundance[2]);
       }
     }
   }
@@ -74,7 +80,7 @@ model {
   // cell counts
   for (i in 1:t) {
     for (d in 1:D) {
-        mu_counts[i,d]~exponential(1/1e6); // expects values between 0 and 2e6 cells (highest probability mass)
+        mu_counts[i,d]~exponential(1/prior_counts); // expects values between 0 and 2e6 cells (highest probability mass)
     }
   }
 
@@ -101,13 +107,13 @@ generated quantities {
   real euclidean_distance[M,D,D]; # euclidean distance between metabolite and cell line specific longitudinal vectors of different doses
 
   // Prior predictive check
-  real mu_counts_prior = exponential_rng(1/1e6);
+  real mu_counts_prior = exponential_rng(1/prior_counts);
   real counts_prior = poisson_rng(mu_counts_prior);
-  
-  real lambda_maven_prior = exponential_rng(2);
+
+  real lambda_maven_prior = exponential_rng(1/prior_sd_abundance);
   real sigma_maven_prior = exponential_rng(lambda_maven_prior);
-  real mu_maven_prior = normal_rng(12,5);
-  real maven_prior = normal_rng(mu_maven_prior,sigma_maven_prior);
+  real mu_maven_prior = normal_rng(prior_mean_abundance[1],prior_mean_abundance[2]);
+  real maven_prior = lognormal_rng(mu_maven_prior,sigma_maven_prior);
 
 
   // y_rep
@@ -122,7 +128,7 @@ generated quantities {
 
   // log_lik
   for (n in 1:N) {
-    log_lik[n] = normal_lpdf(log10(maven[n]) | mu_maven[Me[n], X[n], Do[n]], sd_maven[Me[n], Do[n]]);
+    log_lik[n] = lognormal_lpdf(maven[n] | mu_maven[Me[n], X[n], Do[n]], sd_maven[Me[n], Do[n]]);
   }
 
   for (n in 1:Nc) {

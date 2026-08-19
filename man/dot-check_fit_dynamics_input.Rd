@@ -16,7 +16,10 @@
   adapt_delta,
   max_treedepth,
   iter,
-  warmup
+  warmup,
+  prior_mean_abundance,
+  prior_sd_abundance,
+  prior_counts
 )
 }
 \arguments{

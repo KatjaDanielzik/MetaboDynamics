@@ -1,0 +1,307 @@
+---
+title: "Guide to prior setting"
+package: MetaboDynamics
+author: "Katja Danielzik (katja.danielzik@uni-due.de)"
+
+output:
+  BiocStyle::html_document:
+    toc: true
+    toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{2. MetaboDynamics_dataframes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+library(tidyverse)
+library(MetaboDynamics)
+set.seed(123)
+```
+
+**MetaboDynamics** allows the user in the case of model "raw_plus_counts" to set 
+priors for the underlying Bayesian model that are *specific to their experiment*.
+This Vignette should provide help how to set these priors.
+
+# What Bayesian Priors Do
+In a Bayesian framework, priors are formal representations of prior knowledge, i.e.
+they encode what we know before fitting the model to the data.
+When you specify a prior for a metabolite’s abundance, you’re saying:
+
+    "Before running the model, I believe this metabolite’s abundance is likely between X and Y, based     on what I know from the nature of the system and e.g. technical limits."
+
+This prior is combined with the observed data via Bayes’ theorem to produce a posterior distribution, the updated belief about the parameter after seeing the data.
+Unlike frequentist methods (e.g., t-tests, linear models), which treat parameters as fixed and unknown, Bayesian models treat them as random variables with distributions.
+
+We Know More About Our Experiment Than We Think. For example:
+
+    Metabolite abundances are strictly positive.
+    They are log-normally distributed.
+    Possible ranges of abundances due to biological or technical limits
+
+Yet, in a frequentist analysis, you often ignore this knowledge. In Bayesian model's
+even the information that abundances are strictly positive can reduce uncertainty 
+in your posterior estimates especially with sparse data with small number of replicates.
+
+In Bayesian analysis, the choice of prior reflects how much you want to let the data speak versus how much you want to incorporate existing knowledge. Here’s how to think about the three main types:
+
+1. Non-Informative Priors
+
+    What they do: Provide minimal influence on the posterior, essentially letting the data dominate.
+    When to use: When you have no prior knowledge or want to mimic frequentist inference.
+    Example: A uniform prior over a wide range (e.g., μ ~ Uniform(0, 100) for metabolite abundance).
+    Caution: Can lead to unstable estimates, especially with small sample sizes or high noise. May not     respect biological constraints (e.g., allowing negative abundances if not properly bounded).
+
+2. Weakly Informative Priors
+
+    What they do: Provide gentle regularization by encoding general biological knowledge, such as        positivity, plausible ranges, or typical variability, without strongly favoring any specific         value.
+    When to use: The recommended default for metabolite abundance analysis.
+    Example:
+
+    # Based on literature and data exploration:
+    μ ~ N(10, 5)      # log(Mean abundance) ~10, with uncertainty ±5 
+    σ ~ exponential(2) # Log-scale SD ~2 (moderate variability)
+
+    Why they work: They stabilize estimates, prevent extreme values, and improve convergence,             especially when data are sparse or noisy.
+
+3. Strongly Informative Priors
+
+    What they do: Strongly constrain the posterior, reflecting strong prior evidence (e.g., from          previous studies, pilot data, or expert knowledge).
+    When to use: When you have high-confidence prior information (e.g., a metabolite is known to be       stable, or a specific abundance range is well-established).
+    Example:
+
+    μ ~ N(8, 0.5)     # Mean abundance is very likely ~8 μM, with tight uncertainty
+
+    Caution: Can dominate the data if the prior is too strong and the data are inconsistent. Use only when you’re confident in the prior.
+
+
+**MetaboDynamics** allows the adjustment of three priors in the model option
+"raw_plus_counts". I will explain all three of them in the following.
+
+**Important**: If you can not find a prior that fits to your data you still
+have the option to use the model option "scaled_log" that relies on log-transformed,
+normalized and scaled cell counts (see main Vignette). The scaling transforms
+all abundances to a fixed range regardless of experiment for which the set priors
+are valid.
+
+**Set priors are stored in metadata(data)[["priors]] if MetaboDynamics is performed
+on a summarized experiment object"**
+
+# Priors on metabolite abundances
+First, let's simulate and look at the distribution of metabolite abundances
+that resembled experimental data we observed in our experiments.
+
+```{r}
+mu_mean <- 12      # Mean of the prior for metabolite mean
+sd_mean <- 5       # SD of the prior for metabolite mean
+prior_mean_abundance <- c(mu_mean,sd_mean)
+prior_sd_abundance <- 2  # Rate parameter for exponential prior on SD
+
+# Step 1: Sample metabolite-specific parameters from priors
+n_metabolites <- 300
+mu <- rnorm(n_metabolites, mean = prior_mean_abundance[1], sd = prior_mean_abundance[2])        # μ ~ N(12, 5)
+sigma <- rexp(n_metabolites, rate = 1/prior_sd_abundance)      # σ ~ Exp(1/2), so mean = 2
+
+n_observations <- 3
+abundances <- as.data.frame(cbind(metabolite=rep(seq_len(300),each=n_observations),
+                                  abundance=NA))
+
+for (i in seq_len(n_metabolites)){
+abundance <- rnorm(3, mean = mu[i], sd = sigma[i])
+
+abundances[abundances$metabolite==i,]$abundance <- abundance
+}
+
+abundances$abundance <- exp(abundances$abundance)
+
+ggplot(abundances,aes(x=log(abundance)))+
+  geom_density()+
+  ggtitle("Distribution of log-transformed metabolite abundances")
+```
+
+The log-transformed metabolite abundances roughly follow a normal distribution.
+
+**MetaboDynamics** assumes a log-normal distribution of metabolite abundances,
+i.e. a normal distribution of log-transformed metabolite abundances:
+
+  abundances~Normal(mean,sd)
+
+We therefore need priors for two parameters: mean and sd. 
+
+## Prior for mean abundance: prior_mean_abundace
+**MetaboDynamics** assumes a normal distribution as prior for the *mean* abundance
+ per metabolite, condition and time point.
+ 
+So we know from looking at our data that a plausible range for (log-transformed) 
+metabolite abundances lies between -20 and 50 with most of the observations
+between 0 and 25.
+
+We could for example set as the prior for the *mean* a normal distribution 
+with a mean of 12 (between 0 and 20) and a standard deviation of 10.
+
+```{r}
+ggplot(abundances,aes(x=log(abundance)))+
+  geom_density()+
+  geom_density(aes(x=rnorm(nrow(abundances),mean = 12,sd = 10)),col="red")+
+  ggtitle("Distribution of log-transformed metabolite abundances",
+          "red line = N(12,10)")
+```
+
+This would be an example of a weakly informative prior for the **mean** of 
+metabolite specific abundances.
+
+For the log-normal distribution of metabolite abundances N(mean,sd) we could
+now set mean~N(12,10).
+
+So we can set **prior_mean_abundance=c(12,10)**.
+
+## Prior for metabolite specific standard deviation: prior_sd_abundance
+For the log-normal distribution of metabolite abundances N(mean,sd) we do not 
+only need a prior for the mean but also a prior for the standard deviation of
+abundances **per metabolite, time point and condition**. 
+Before we looked at the distribution of *all* metabolite abundances, *per metabolite*
+we get:
+
+```{r}
+ggplot(abundances,aes(x=log(abundance),col=as.factor(metabolite)))+
+  geom_density()+
+  guides(col="none")+
+  ggtitle("Distribution of log-transformed metabolite abundances","colour = metabolite")
+```
+Above we can clearly see that although the standard deviation of *mean abundances* 
+overall might be wide (we just set it to 10), the *metabolite specific standard deviations*
+are much smaller. 
+
+So let's calculate and
+visualize the standard deviations of log-transformed abundances
+in our experimental (simulated) data.
+
+```{r}
+sds <- abundances%>%group_by(metabolite)%>%
+  mutate(sd_metabolite=sd(log(abundance)))%>%select(metabolite,sd_metabolite)%>%distinct()
+
+ggplot(sds,aes(x=sd_metabolite))+
+  geom_density()+
+  ggtitle("Distribution of metabolite specific standard deviations")
+  
+```
+
+We can observe that:
+  
+  Standard deviations are strictly positive (not surprising)
+  Most of the standard deviations are smaller than 2-3
+  We observe standard deviations up to ~17
+  
+**MetaboDynamics** assumes an exponential distribution as a prior for the
+standard deviation were the parameter of the exponential distribution "prior_sd_abundance".
+The expected value (i.e. the mean) of the exponential distribution is the
+most observed value. So we could try setting our **prior_sd_abundance** to four (already bigger than would saw in the dataset) and visualize.
+
+```{r}
+ggplot(sds,aes(x=sd_metabolite))+
+  geom_density()+
+  geom_density(aes(x=rexp(nrow(sds),1/4)),col="red")+
+  ggtitle("Distribution of metabolite specific standard deviations","red line: prior for standard deviation")
+```
+
+To be exact the expected value of the exponential distribution is the inverse
+of the parameter (1/parameter). **MetaboDynamics** facilitates the prior setting
+by just taking the expected value of the exponential distribution so a setting
+of the prior for the *metabolite specific standard deviation*. So we can set
+
+So we can set **prior_sd_abundance=4**.
+
+# Prior on cell counts: prior_counts
+This prior defines the expected number of cell counts in your experiment.
+The modelling approach is similiar to the *prior_sd_abundance*.
+
+Let's look at the distribution of (simulated) cell counts that resemble what
+we have observed in our own experiments.
+
+```{r}
+# simulate
+counts <- as.data.frame(cbind(observation = 1:20, counts = as.integer(rexp(20,1e-7))))
+
+ggplot(counts,aes(x=counts))+
+  geom_density()+  # visualize distribution
+  ggtitle("Distribution of observed cell counts")
+```
+
+We can learn multiple things here: 
+  
+    Cell counts are strictly positive
+    We observed cell counts in a range between zero an ~4e7
+    Most of the observed cell counts are lie between 0 an 1e7
+  
+The **MetaboDynamics** model uses as prior for the cell counts an exponential distribution
+(exponential distribution have a lower limit of zero and most of the probability
+mass in lower ranges, which represents the general observed distribution),
+where the value set to the parameter "prior_cell_counts" represents the expected 
+(i.e. most abundant) of the cell counts.
+
+Here we set our expected value of cell counts to 1e7, which would lead to the
+following prior:
+
+```{r}
+ggplot(counts)+
+  geom_density(aes(x=counts))+ # observed data
+  geom_density(data=as.data.frame(cbind(observations=1:1e5,counts=rexp(1e5,1/1e7))),
+               aes(x=counts),col="red")+
+  ggtitle("Distribution of cell counts","red line = prior for cell counts")
+```
+
+Generally our chosen prior represents the observed cell counts well but assumes
+lower cell counts more often than we observed. This can influence the results of
+our analysis, especially in cases with low number of observations. 
+So we could adapt our prior to an expected value of e.g. 5e7 to cover all of
+our observed cell counts and exceed the range of observed cells counts.
+
+```{r}
+ggplot(counts)+
+  geom_density(aes(x=counts))+ # observed data
+  geom_density(data=as.data.frame(cbind(observations=1:1e5,counts=rexp(1e5,1/5e7))),
+               aes(x=counts),col="red")+
+  ggtitle("Distribution of cell counts","red line = prior for cell counts")
+```
+
+Now our prior is wider (i.e. less informative) and a safer choice overall. 
+This would be considered a weakly informative prior for the cell counts. 
+
+So we can set **prior_counts=5e7**.
+
+# Code example for prior setting.
+The priors can be visualized by a prior predicitve check (i.e. the prior distribution
+of parameter values inside the model). For this we first need to fit the model:
+
+```{r}
+# we need at least two time points in one condition
+abundances$condition <- "A"
+abundances <- rbind(abundances,abundances)
+abundances$time <- rep(c(1,2),each=nrow(abundances)/2)
+
+counts$condition <- "A"
+coutns <- rbind(counts,counts)
+counts$time <- rep(c(1,2),each=nrow(counts)/2)
+
+
+# out commented to reduce run-time of vignettes
+# fit <- fit_dynamics_model(
+#    model = "raw_plus_counts",
+#    model_option = "sd_per_condition",
+#     data = abundances,
+#     counts = counts,
+#     scaled_measurement = "abundance",
+# 
+#     # prior for mean of metabolite specific abundances
+#     prior_mean_abundance = c(12,10), # N(12,10)
+# 
+#     # prior for metabolite specific standard deviation
+#     prior_sd_abundance = 4, # exponential(1/4)
+# 
+#     # prior for cell counts
+#     prior_counts = 5e7, # exponential(1/5e7),
+#   )
+```
+
+
