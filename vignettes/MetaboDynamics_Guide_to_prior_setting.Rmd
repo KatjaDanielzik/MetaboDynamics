@@ -15,8 +15,6 @@ vignette: >
 
 ```{r style, echo = FALSE, results = 'asis'}
 BiocStyle::markdown()
-library(tidyverse)
-library(MetaboDynamics)
 set.seed(123)
 ```
 
@@ -24,7 +22,7 @@ set.seed(123)
 priors for the underlying Bayesian model that are *specific to their experiment*.
 This Vignette should provide help how to set these priors.
 
-# What Bayesian Priors Do
+# What Bayesian priors do
 In a Bayesian framework, priors are formal representations of prior knowledge, i.e.
 they encode what we know before fitting the model to the data.
 When you specify a prior for a metabolite’s abundance, you’re saying:
@@ -63,7 +61,7 @@ In Bayesian analysis, the choice of prior reflects how much you want to let the 
     μ ~ N(10, 5)      # log(Mean abundance) ~10, with uncertainty ±5 
     σ ~ exponential(2) # Log-scale SD ~2 (moderate variability)
 
-    Why they work: They stabilize estimates, prevent extreme values, and improve convergence,             especially when data are sparse or noisy.
+    Weakly informative priors stabilize estimates, prevent extreme values, and improve convergence,             especially when data are sparse or noisy.
 
 3. Strongly Informative Priors
 
@@ -86,13 +84,16 @@ all abundances to a fixed range regardless of experiment for which the set prior
 are valid.
 
 **Set priors are stored in metadata(data)[["priors]] if MetaboDynamics is performed
-on a summarized experiment object"**
+on a summarized experiment object**
 
 # Priors on metabolite abundances
 First, let's simulate and look at the distribution of metabolite abundances
 that resembled experimental data we observed in our experiments.
 
 ```{r}
+library(ggplot2)
+library(dplyr)
+library(MetaboDynamics)
 mu_mean <- 12      # Mean of the prior for metabolite mean
 sd_mean <- 5       # SD of the prior for metabolite mean
 prior_mean_abundance <- c(mu_mean,sd_mean)
@@ -125,9 +126,9 @@ The log-transformed metabolite abundances roughly follow a normal distribution.
 **MetaboDynamics** assumes a log-normal distribution of metabolite abundances,
 i.e. a normal distribution of log-transformed metabolite abundances:
 
-  abundances~Normal(mean,sd)
+    abundances~Normal(mean,sd)
 
-We therefore need priors for two parameters: mean and sd. 
+We therefore need priors for two parameters: *mean* and *sd*. 
 
 ## Prior for mean abundance: prior_mean_abundace
 **MetaboDynamics** assumes a normal distribution as prior for the *mean* abundance
@@ -154,7 +155,7 @@ metabolite specific abundances.
 For the log-normal distribution of metabolite abundances N(mean,sd) we could
 now set mean~N(12,10).
 
-So we can set **prior_mean_abundance=c(12,10)**.
+    So we can set **prior_mean_abundance=c(12,10)**.
 
 ## Prior for metabolite specific standard deviation: prior_sd_abundance
 For the log-normal distribution of metabolite abundances N(mean,sd) we do not 
@@ -189,9 +190,9 @@ ggplot(sds,aes(x=sd_metabolite))+
 
 We can observe that:
   
-  Standard deviations are strictly positive (not surprising)
-  Most of the standard deviations are smaller than 2-3
-  We observe standard deviations up to ~17
+    Standard deviations are strictly positive (not surprising)
+    Most of the standard deviations are smaller than 2-3
+    We observe standard deviations up to ~17
   
 **MetaboDynamics** assumes an exponential distribution as a prior for the
 standard deviation were the parameter of the exponential distribution "prior_sd_abundance".
@@ -208,9 +209,9 @@ ggplot(sds,aes(x=sd_metabolite))+
 To be exact the expected value of the exponential distribution is the inverse
 of the parameter (1/parameter). **MetaboDynamics** facilitates the prior setting
 by just taking the expected value of the exponential distribution so a setting
-of the prior for the *metabolite specific standard deviation*. So we can set
+of the prior for the *metabolite specific standard deviation*.
 
-So we can set **prior_sd_abundance=4**.
+    So we can set **prior_sd_abundance=4**.
 
 # Prior on cell counts: prior_counts
 This prior defines the expected number of cell counts in your experiment.
@@ -268,7 +269,7 @@ ggplot(counts)+
 Now our prior is wider (i.e. less informative) and a safer choice overall. 
 This would be considered a weakly informative prior for the cell counts. 
 
-So we can set **prior_counts=5e7**.
+    So we can set **prior_counts=5e7**.
 
 # Code example for prior setting.
 The priors can be visualized by a prior predicitve check (i.e. the prior distribution
