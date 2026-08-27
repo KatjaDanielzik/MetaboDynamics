@@ -8,7 +8,7 @@ output:
     toc: true
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{2. MetaboDynamics_dataframes}
+  %\VignetteIndexEntry{3. MetaboDynamics_Guide_to_prior_setting}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
