@@ -1,7 +1,7 @@
 
 data {
   int <lower=1> C; // number of cluster comparisons
-  int<lower=1> N[C]; //number of observations
+  array[C] int<lower=1> N; //number of observations
   int <lower=0> M; //maximum number of observations
   matrix [C,M] y;
 }
@@ -9,8 +9,8 @@ data {
 // The parameters accepted by the model. Our model
 // accepts two parameters 'mu' and 'sigma'.
 parameters {
-  real <lower=0> mu[C];
-  real<lower=0> sigma[C];
+  array[C] real<lower=0> mu;
+  array[C] real<lower=0> sigma;
 }
 
 // The model to be estimated. We model the output

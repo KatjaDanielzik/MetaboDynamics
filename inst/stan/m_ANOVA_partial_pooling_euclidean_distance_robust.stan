@@ -3,16 +3,16 @@ data {
   int<lower=0> M; // number of metabolites
   int<lower=0> t; // number of timesteps
   int<lower=0> d; // number of doses (conditions)
-  real y [N]; // outcome value: log(cpc)
-  int<lower=1> Me[N]; //metabolite predictor
-  int<lower=1> X[N]; //time predictor
-  int<lower=1> Do[N]; //dose predictor
+  array[N] real y; // outcome value: log(cpc)
+  array[N] int<lower=1> Me; //metabolite predictor
+  array[N] int<lower=1> X; //time predictor
+  array[N] int<lower=1> Do; //dose predictor
 }
 
 parameters {
-  real mu[M,t,d];  // metabolite, time, dose
-  real <lower=0> sigma[M,d]; // metabolite, and dose specific sigma
-  real <lower=0> lambda[M]; // metabolite specific lambda (hyperprior for sigma)
+  array[M, t, d] real mu;  // metabolite, time, dose
+  array[M, d] real<lower=0> sigma; // metabolite, and dose specific sigma
+  array[M] real<lower=0> lambda; // metabolite specific lambda (hyperprior for sigma)
 }
 
 model {
@@ -31,14 +31,14 @@ model {
 }
 
 generated quantities {
-  real log_lik[N];
-  real y_rep[N];
+  array[N] real log_lik;
+  array[N] real y_rep;
   real y_prior;
   real mu_prior;
   real <lower=0> sigma_prior;
   real <lower=0> lambda_prior;
-  real delta_mu[M,d,t,t];
-  real euclidean_distance[M,d,d]; # euclidean distance between metabolite and cell line specific longitudinal vectors of different doses 
+  array[M, d, t, t] real delta_mu;
+  array[M, d, d] real euclidean_distance; // euclidean distance between metabolite and cell line specific longitudinal vectors of different doses 
 
   for (n in 1:N){
     y_rep[n]=normal_rng(mu[Me[n],X[n],Do[n]],sigma[Me[n],Do[n]]);
@@ -57,7 +57,7 @@ generated quantities {
       for (t1 in 1:t) {
         for(t2 in 1:t){
           if(t1 < t2){
-          delta_mu[m,j,t1,t2] = mu[m,t2,j] - mu[m,t1,j]; # t2 - t1 -> positive estimates mean increase
+          delta_mu[m,j,t1,t2] = mu[m,t2,j] - mu[m,t1,j]; // t2 - t1 -> positive estimates mean increase
           }
           else {
           delta_mu[m,j,t1,t2] = 0;
@@ -75,9 +75,9 @@ generated quantities {
           if (d1 < d2) {
             vector[t] mu_d1;
             vector[t] mu_d2;
-            mu_d1 = to_vector(mu[m,:,d1]); # time point length vectors per metabolite dose and cell line
+            mu_d1 = to_vector(mu[m,:,d1]); // time point length vectors per metabolite dose and cell line
             mu_d2 = to_vector(mu[m,:,d2]);
-            euclidean_distance[m,d1,d2] = distance(mu_d1,mu_d2); # euclidean distance between vectors
+            euclidean_distance[m,d1,d2] = distance(mu_d1,mu_d2); // euclidean distance between vectors
           } else {
             euclidean_distance[m,d1,d2] = 0;
         }

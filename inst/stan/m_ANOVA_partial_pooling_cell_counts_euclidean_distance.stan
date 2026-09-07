@@ -1,40 +1,40 @@
 data {
   int <lower=0 > N; // number of data points maven values
-  real maven[N]; // LCMS measurements processed by maven software
+  array[N] real maven; // LCMS measurements processed by maven software
   int <lower=1 > M; // number of metabolites
   int <lower=1 > t; // number of time points
   int <lower=1 > D; // number of radiation doses (experimental conditions)
-  int <lower=1 > Me[N]; // metabolite predictor
-  int <lower=1 > X[N]; // time predictor
-  int <lower=1 > Do[N]; // dose predictor
+  array[N] int<lower=1> Me; // metabolite predictor
+  array[N] int<lower=1> X; // time predictor
+  array[N] int<lower=1> Do; // dose predictor
   int <lower=0 > Nc; // number of data points cell counts
-  int <lower=0 > Cc[Nc]; // cell counts
-  int <lower=1 > X_c[Nc]; // time predictor for cell counts
-  int <lower=1 > Do_c[Nc]; // dose predictor for cell counts
+  array[Nc] int<lower=0> Cc; // cell counts
+  array[Nc] int<lower=1> X_c;// time predictor for cell counts
+  array[Nc] int<lower=1> Do_c; // dose predictor for cell counts
   
-  # Priors
-  real<lower=0> prior_mean_abundance[2]; // prior for mu_maven (normal distribution): mu and sigma, expected range for mean of metabolite abundances
+  // Priors
+  array[2] real<lower=0> prior_mean_abundance; // prior for mu_maven (normal distribution): mu and sigma, expected range for mean of metabolite abundances
   real<lower=0> prior_sd_abundance; // expected value for standard deviation of metabolite abundances per metabolite/condition
   real<lower=0> prior_counts; // expected value of cell counts (rate of 
                                 // exponential distribution) -> will be divided by one  
 }
 
 parameters {
-  real mu_maven[M, t, D]; // mean of maven values for each metabolite, time, dose, and cell line
-  real <lower=0 > sd_maven[M, t, D]; // standard deviation of maven values for each metabolite, time, dose, and cell line
-  real <lower=0> lambda_maven[M, D]; // metabolite specific lambda (hyperprior for sigma)
+  array[M, t, D] real mu_maven;// mean of maven values for each metabolite, time, dose, and cell line
+  array[M, t, D] real<lower=0> sd_maven; // standard deviation of maven values for each metabolite, time, dose, and cell line
+  array[M, D] real<lower=0> lambda_maven; // metabolite specific lambda (hyperprior for sigma)
   
-  real <lower=0 > mu_counts[t, D]; // mean of cell counts for each time, dose, and cell line
+  array[t, D] real<lower=0> mu_counts; // mean of cell counts for each time, dose, and cell line
 }
 
 transformed parameters {
-  real mean_natural[M,t,D];
-  real cpc[M, t, D];
-  real log_cpc[M, t, D];
+  array[M, t, D] real mean_natural;
+  array[M, t, D] real cpc;
+  array[M, t, D] real log_cpc;
   for (m in 1:M) {
     for (i in 1:t) {
       for (d in 1:D) {
-          mean_natural[m,i,d] = exp(mu_maven[m, i, d]+(sd_maven[m, i, d]/2)); # expected value for log-normal distribution 2= exp(mu+(sigma²/2))
+          mean_natural[m,i,d] = exp(mu_maven[m, i, d]+(sd_maven[m, i, d]/2)); // expected value for log-normal distribution 2= exp(mu+(sigma²/2))
           cpc[m, i, d] = mean_natural[m,i,d]/ mu_counts[i, d];
           log_cpc[m, i, d] = log10(cpc[m, i, d]);
       }
@@ -43,8 +43,8 @@ transformed parameters {
 
   // scaling of log_cpc with z-transformation?
   // Calculate mean and standard deviation for z-transformation
-  real mean_log_cpc[M, D];
-  real sd_log_cpc[M, D];
+  array[M, D] real mean_log_cpc;
+  array[M, D] real sd_log_cpc;
   for (m in 1:M) {
     for (d in 1:D) {
         mean_log_cpc[m, d] = mean(log_cpc[m, :, d]);
@@ -53,7 +53,7 @@ transformed parameters {
   }
 
   // Apply z-transformation
-  real mu[M,t,D];
+  array[M, t, D] real mu;
   for (m in 1:M) {
     for (d in 1:D) {
       for (i in 1:t) {
@@ -98,13 +98,13 @@ model {
 
 generated quantities {
   // yrep and log-lik
-  real maven_rep[N];
-  real counts_rep[Nc];
-  real log_lik[N + Nc];
+  array[N] real maven_rep;
+  array[Nc] real counts_rep;
+  array[N + Nc] real log_lik;
 
   // differences between time points and euclidean distances between z-scaled vectors
-  real delta_mu[M,D,t,t];
-  real euclidean_distance[M,D,D]; # euclidean distance between metabolite and cell line specific longitudinal vectors of different doses
+  array[M, D, t, t] real delta_mu;
+  array[M, D, D] real euclidean_distance; // euclidean distance between metabolite and cell line specific longitudinal vectors of different doses
 
   // Prior predictive check
   real mu_counts_prior = exponential_rng(1/prior_counts);
@@ -160,9 +160,9 @@ generated quantities {
         if (d1 < d2) {
             vector[t] mu_d1;
             vector[t] mu_d2;
-            mu_d1 = to_vector(mu[m,:,d1]); # time point length vectors per metabolite dose and cell line
+            mu_d1 = to_vector(mu[m,:,d1]); // time point length vectors per metabolite dose and cell line
             mu_d2 = to_vector(mu[m,:,d2]);
-            euclidean_distance[m,d1,d2] = distance(mu_d1,mu_d2); # euclidean distance between vectors
+            euclidean_distance[m,d1,d2] = distance(mu_d1,mu_d2); // euclidean distance between vectors
           } else {
             euclidean_distance[m,d1,d2] = 0;
           }
