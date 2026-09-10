@@ -42,9 +42,10 @@ To select appropriate values, inspect the distribution of your data. The followi
 
 **MetaboDynamics** assumes a metabolite specific log-normal distribution for metabolite abundances. 
 
+\begin{align*}
 \log(abundances_{m})&\sim {\sf normal}(\mu_{m},\sigma_{m})
-
-The prior for \mu in **MetaboDynamics** is a normal distribution. In the next
+\end{align*}
+The prior for $\mu$ in **MetaboDynamics** is a normal distribution. In the next
 I visualize the observed data (black) and the chosen prior (red).
 
 ```{r}
@@ -89,16 +90,15 @@ parameter setting in `fit_dynamics_model`.
 
 ## Prior for standard deviation of log-transformed metaoblite abundances (`prior_sd_abundance`)
 
-Additional to the prior on the mean of log-transformed metabolite abundances **MetaboDynamics**
-also allows to set a prior on the standard deviation of log-transformed metabolite abundances `prior_sd_abundance`.
+Additional to the prior on the mean $\mu$ of log-transformed metabolite abundances **MetaboDynamics**
+also allows to set a prior on the standard deviation $\sigma$ of log-transformed metabolite abundances `prior_sd_abundance`.
 
-As the observed standard deviation of *metabolite specific* log-transformed metabolite abundances roughly follow an exponential distribution **MetaboDynamics** implements an exponential distribution for the standard deviation.
-`prior_sd_abundance`is hereby the *rate* of the exponential distribution of standard deviations.
+As the observed standard deviation of *metabolite specific* log-transformed metabolite abundances roughly follow an exponential distribution **MetaboDynamics** implements an exponential distribution as the prior for $\sigma$.
+`prior_sd_abundance`is hereby the *rate* ($\lambda$) of the exponential distribution of standard deviations.
 
-**Note**: The *expected value*/mean of the exponential distribution is 1/*rate*. **MetaboDynamics** takes as input the *rate* as we found it more intuitive. If your median observed standard deviation is 2, the *rate* is 2 and the mean equals 1/2.
+**Note**: The *expected value*/mean of the exponential distribution is 1/*rate*. **MetaboDynamics** takes as input the *rate* ($\lambda$) as we found it more intuitive. If your median observed standard deviation is 2, the *rate* is 2 and the mean equals 1/2.
 
-In the next
-I visualize the observed data (black) and the chosen prior (red).
+In the next I visualize the observed data (black) and the chosen prior (red).
 
 ```{r}
 sds <- abundances %>%
@@ -122,7 +122,7 @@ ggplot(sds, aes(x = sd_log_abundance)) +
 Similarly to the prior for the standard deviation of log-transformed metabolite abundances **MetaboDynamics**
 uses an exponential distribution for cell counts. The argument `prior_counts` sets the *expected value* of cell counts.
 
-**Note**: The *expected value*/mean of the exponential distribution is 1/*rate*. **MetaboDynamics** takes as input the *rate* as we found it more intuitive. 
+**Note**: The *expected value* or mean of the exponential distribution is 1/*rate*. **MetaboDynamics** takes as input the *rate* ($\lambda$) as we found it more intuitive. 
 
 ```{r}
 # Simulate counts
@@ -148,30 +148,30 @@ ggplot(counts, aes(x = counts)) +
 The following code demonstrates how to pass these priors to `fit_dynamics_model()`.
 
 ```{r, eval = FALSE}
-# Prepare data (ensure at least two time points per condition)
-abundances$condition <- "A"
-abundances <- rbind(abundances, abundances)
-abundances$time <- rep(c(1, 2), each = nrow(abundances) / 2)
-
-counts$condition <- "A"
-counts <- rbind(counts, counts)
-counts$time <- rep(c(1, 2), each = nrow(counts) / 2)
-
-# Fit model with custom priors
-fit <- fit_dynamics_model(
-  model = "raw_plus_counts",
-  model_option = "sd_per_condition",
-  data = abundances,
-  counts = counts,
-  scaled_measurement = "abundance",
-  
-  # Prior for mean of metabolite specific abundances (Normal)
-  prior_mean_abundance = c(12, 10), 
-  
-  # Prior for metabolite specific standard deviation (Exponential mean)
-  prior_sd_abundance = 4, 
-  
-  # Prior for cell counts (Exponential mean)
-  prior_counts = 5e7
-)
+# # Prepare data (ensure at least two time points per condition)
+# abundances$condition <- "A"
+# abundances <- rbind(abundances, abundances)
+# abundances$time <- rep(c(1, 2), each = nrow(abundances) / 2)
+# 
+# counts$condition <- "A"
+# counts <- rbind(counts, counts)
+# counts$time <- rep(c(1, 2), each = nrow(counts) / 2)
+# 
+# # Fit model with custom priors
+# fit <- fit_dynamics_model(
+#   model = "raw_plus_counts",
+#   model_option = "sd_per_condition",
+#   data = abundances,
+#   counts = counts,
+#   scaled_measurement = "abundance",
+#   
+#   # Prior for mean of metabolite specific abundances (Normal)
+#   prior_mean_abundance = c(12, 10), 
+#   
+#   # Prior for metabolite specific standard deviation (Exponential mean)
+#   prior_sd_abundance = 4, 
+#   
+#   # Prior for cell counts (Exponential mean)
+#   prior_counts = 5e7
+# )
 ```
