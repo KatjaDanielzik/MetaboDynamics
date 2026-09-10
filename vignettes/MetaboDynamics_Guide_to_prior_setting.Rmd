@@ -114,7 +114,7 @@ ggplot(sds, aes(x = sd_log_abundance)) +
        subtitle = "Black: Observed SDs | Red: Prior Exp(1/4)")
 ```
 
-**Recommendation:** Set `prior_sd_abundance` to a value slightly larger than the median observed SD to ensure the prior is weakly informative.
+**Recommendation:** Set `prior_sd_abundance` slightly larger than the median observed counts, in this way we change the exponential distribution to be wider and therefore the prior to be *weakly informative*. 
 *Example:* `prior_sd_abundance = 4`
 
 
@@ -140,7 +140,7 @@ ggplot(counts, aes(x = counts)) +
        subtitle = "Black: Observed Counts | Red: Prior Exp(1/5e7)")
 ```
 
-**Recommendation:** Set `prior_counts` to a value slightly larger than the median observed counts to ensure the prior is weakly informative.
+**Recommendation:** Set `prior_counts` to a value slightly larger than the median observed counts, in this way we change the exponential distribution to be wider and therefore the prior to be *weakly informative*. 
 *Example:* `prior_counts = 5e7`
 
 # Implementation Example
