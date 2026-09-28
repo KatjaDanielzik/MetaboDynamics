@@ -68,7 +68,7 @@ model {
   // priors
   // maven
   for (m in 1:M) {
-    lambda_maven[m,] ~ exponential(1/prior_sd_abundance);
+    lambda_maven[m,] ~ exponential(prior_sd_abundance);
       for (d in 1:D) {
         for (i in 1:t) {
           sd_maven[m, i, d] ~ exponential(lambda_maven[m,d]); // hierarchy of sd_maven: pooling of sd for all measurements of one metabolite
@@ -110,7 +110,7 @@ generated quantities {
   real mu_counts_prior = exponential_rng(1/prior_counts);
   real counts_prior = poisson_rng(mu_counts_prior);
   
-  real lambda_maven_prior = exponential_rng(1/prior_sd_abundance);
+  real lambda_maven_prior = exponential_rng(prior_sd_abundance);
   real sigma_maven_prior = exponential_rng(lambda_maven_prior);
   real mu_maven_prior = normal_rng(prior_mean_abundance[1],prior_mean_abundance[2]);
   real maven_prior = lognormal_rng(mu_maven_prior,sigma_maven_prior);

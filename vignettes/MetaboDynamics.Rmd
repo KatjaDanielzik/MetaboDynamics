@@ -225,10 +225,10 @@ With: con = metabolite abundances,
 m = metabolite, c = experimental condition and t = time point ID:
 
 \begin{align*}
-\log(con_{m,c,t})&\sim {\sf normal}(\mu_{m,c,t},\sigma_{m,c,t}) \\
-\mu_{m,c,t}&\sim {\sf normal}(0,2) \\
-\sigma_{m,c,t}&\sim {\sf exponential}(\lambda_{m,c}) \\
-\lambda_{m,c}&\sim {\sf exponential}(2) 
+		\log(a_{i})&\sim {\sf normal}(\mu_{m c t},\sigma_{m c t}), \\ 
+		\mu_{m c t}&\sim {\sf normal}(0,2), \\
+		\sigma_{m,c,t}&\sim {\sf exponential}(\lambda_{m c}), \\
+		\lambda_{m c}&\sim {\sf exponential}(2). \\
 \end{align*}
 
 While this option maximizes the sensitivity of the detection of differential
@@ -246,10 +246,10 @@ and metabolite and has partial pooling of metabolite and condition specific
 $\sigma$ into metabolite specific $\lambda$.
 
 \begin{align*}
-\log(con_{m,c,t})&\sim {\sf normal}(\mu_{m,c,t},\sigma_{m,c}) \\
-\mu_{m,c,t}&\sim {\sf normal}(0,2) \\
-\sigma_{m,c}&\sim {\sf exponential}(\lambda_{m}) \\
-\lambda_{m}&\sim {\sf exponential}(2) 
+		\log(a_{i})&\sim {\sf normal}(\mu_{m c t},\sigma_{m c}), \\ 
+		\mu_{m c t}&\sim {\sf normal}(0,2), \\
+		\sigma_{m c}&\sim {\sf exponential}(\lambda_{m}), \\
+		\lambda_{m c}&\sim {\sf exponential}(2).
 \end{align*}
 
 If the untargeted LC-MS experiment is conducted *in vitro* and independent cell counts
@@ -268,29 +268,29 @@ With cc = cell counts and con = metabolite abundance per cell we get:
 - **sd_per_time_point** 
 
 \begin{align*}
-con_{m,c,t}&\sim {\sf lognormal}(\mu_{m,c,t},\sigma_{m,c,t}) \\
-\mu_{m,c,t}&\sim {\sf normal}(12,5) \\
-\sigma_{m,c,t}&\sim {\sf exponential}(\lambda_{m,c}) \\
-\lambda_{m,c}&\sim {\sf exponential}(2) \\
-cc_{c,t}&\sim {\sf poisson}(meanCounts_{c,t}) \\
-meanCounts_{c,t}&\sim{\sf exponential}(1/1e6) \\
-meanNatural_{m,c,t}&=exp(\mu_{m,c,t}+\sigma_{m,c,t}) \\
-apc_{m,c,t}&=meanNatural_{m,c,t}/meanCounts_{c,t} \\
-apcScaled_{m,c,t}&=(log(apc_{m,c,t})-mean(log(apc_{m,c,t})))/sd(log(apc_{m,c,t})) \\
+	a_{i}&\sim {\sf lognormal}(\mu_{m c t},\sigma_{m c t}), \\
+	\mu_{m c t}&\sim {\sf normal}(12,5), \\
+	\sigma_{m c t}&\sim {\sf exponential}(\lambda_{m c}), \\
+	\lambda_{m c}&\sim {\sf exponential}(2), \\
+	y_{c,t}&\sim {\sf poisson}(\kappa_{c t}), \\
+	\kappa_{c,t}&\sim{\sf exponential}(1 \times 10^{-6}), \\
+		A_{m,c,t} &= e^{\mu_{m,c,t} + \frac{\sigma_{m c t}^2}{2}}, \\
+	log(A^{(c)}_{m ct})&=log(A_{m c t}/\kappa_{c,t}), \\
+	z\log A^{(c)}_{m c t} &= \frac{ \log A^{(c)}_{m c t} - \langle \log A^{(c)}_{m c} \rangle} { \text{sd}\left( \log A^{(c)}_{m c} \right) }. \\
 \end{align*}
 
 - **sd_per_condition**
 
 \begin{align*}
-con_{m,c,t}&\sim {\sf lognormal}(\mu_{m,c,t},\sigma_{m,c}) \\
-\mu_{m,c,t}&\sim {\sf normal}(12,5) \\
-\sigma_{m,c}&\sim {\sf exponential}(\lambda_{m}) \\
-\lambda_{m}&\sim {\sf exponential}(2) \\
-cc_{c,t}&\sim {\sf poisson}(meanCounts_{c,t}) \\
-meanCounts_{c,t}&\sim{\sf exponential}(1/1e6) \\
-meanNatural_{m,c,t}&=exp(\mu_{m,c,t}+\sigma_{m,c,t}) \\
-apc_{m,c,t}&=meanNatural_{m,c,t}/meanCounts_{c,t} \\
-apcScaled_{m,c,t}&=(log(apc_{m,c,t})-mean(log(apc_{m,c,t})))/sd(log(apc_{m,c,t})) \\
+	a_{i}&\sim {\sf lognormal}(\mu_{m c t},\sigma_{m c}), \\
+	\mu_{m c t}&\sim {\sf normal}(12,5), \\
+	\sigma_{m c}&\sim {\sf exponential}(\lambda_{m}), \\
+	\lambda_{m}&\sim {\sf exponential}(2), \\
+	y_{c,t}&\sim {\sf poisson}(\kappa_{c t}), \\
+	\kappa_{c,t}&\sim{\sf exponential}(1 \times 10^{-6}), \\
+		A_{m,c,t} &= e^{\mu_{m,c,t} + \frac{\sigma_{m,c}^2}{2}}, \\
+	log(A^{(c)}_{m ct})&=log(A_{m c t}/\kappa_{c,t}), \\
+	z\log A^{(c)}_{m c t} &= \frac{ \log A^{(c)}_{m c t} - \langle \log A^{(c)}_{m c} \rangle} { \text{sd}\left( \log A^{(c)}_{m c} \right) }. \\
 \end{align*}
 
 The "raw_plus_counts" model is

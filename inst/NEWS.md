@@ -1,3 +1,6 @@
+# MetaboDynamics 2.3.7
+- bug fix in prior settings including corrected explanation in vignette
+
 # MetaboDynamics 2.3.1
 new functionality: priors in model "raw_plus_counts" are adjustable by user,
 compatible with older versions as default priors are previous fixed priors
