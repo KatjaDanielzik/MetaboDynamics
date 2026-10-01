@@ -40,18 +40,19 @@ To select appropriate values, inspect the distribution of your data. The followi
 
 ## Prior for mean of log-transformed metabolite abundances (`prior_mean_abundance`)
 
-**MetaboDynamics** assumes a metabolite specific log-normal distribution for metabolite abundances. 
+**MetaboDynamics** assumes a metabolite $m$ specific log-normal distribution for 
+metabolite abundances. 
 
 \begin{align*}
 \log(abundances_{m})&\sim {\sf normal}(\mu_{m},\sigma_{m})
 \end{align*}
-The prior for $\mu$ in **MetaboDynamics** is a normal distribution. In the next
-I visualize the observed data (black) and the chosen prior (red).
+The prior for $\mu_{m}$ in MetaboDynamics is itself a normal distribution. In the next
+I visualize the observed **metabolite specific log-transformed mean abundances** (black)
+and the chosen prior (red).
 
 ```{r}
 library(ggplot2)
 library(dplyr)
-library(MetaboDynamics)
 
 # Simulate data resembling experimental observations
 mu_mean <- 12; sd_mean <- 5
@@ -73,12 +74,15 @@ for (i in seq_len(n_metabolites)){
 }
 abundances$abundance <- exp(abundances$abundance)
 
+abundances <- abundances%>%group_by(metabolite)%>%mutate(mean_log=mean(log(abundance)))
+
 # Visualize: Black = Data, Red = Prior
-ggplot(abundances, aes(x = log(abundance))) +
+ggplot(abundances, aes(x = mean_log)) +
   geom_density(fill = "grey80", alpha = 0.5) +
   geom_density(aes(x = rnorm(nrow(abundances), mean = 12, sd = 10)), 
                color = "red", linewidth = 1) +
-  labs(title = "Distribution of log-transformed metabolite abundances",
+  xlab("log(mean(abundance))")+
+  labs(title = "Distribution of metabolite specific mean abundances",
        subtitle = "Black: Observed Data | Red: Prior N(12, 10)")
 ```
 
@@ -91,16 +95,18 @@ parameter setting in `fit_dynamics_model`.
 ## Prior for standard deviation of log-transformed metaoblite abundances (`prior_sd_abundance`)
 
 Additional to the prior on the mean $\mu$ of log-transformed metabolite abundances **MetaboDynamics**
-also allows to set a prior on the standard deviation $\sigma$ of log-transformed metabolite abundances `prior_sd_abundance`.
+also allows to set a prior on the **metabolite** specific standard deviation $\sigma_{mc}$ of log-transformed metabolite abundances `prior_sd_abundance`.
 
 As the observed standard deviation of *metabolite specific* log-transformed metabolite abundances roughly follow an exponential distribution **MetaboDynamics** implements an exponential distribution as the prior for $\sigma$.
-As $\sigma$ is partially pooled in MetaboDynamics, 'prior_sd_abundance' should be set to the *expected value*
-of the standard deviation. 
 
-**Note**: The *expected value*/mean of the exponential distribution is 1/*rate*. **MetaboDynamics** takes as input the *expected value* as we found it more intuitive. If your median observed standard deviation is 2, you should set
+**Note**: The *expected value* or mean of the exponential distribution is 
+$\frac{1}{rate}$. **MetaboDynamics** takes as input the *expected value* as we
+found it more intuitive. If your 
+median observed standard deviation is 2, you should set
 'prior_sd_abundance' to 2 or greater.
 
-In the next I visualize the observed data (black) and the chosen prior (red).
+In the next I visualize the observed metabolite specific standard deviation of log-transformed
+abundances (black) and the chosen prior (red).
 
 ```{r}
 sds <- abundances %>%
@@ -110,8 +116,9 @@ sds <- abundances %>%
 # Visualize: Black = Data SDs, Red = Prior
 ggplot(sds, aes(x = sd_log_abundance)) +
   geom_density(fill = "grey80", alpha = 0.5) +
-  geom_density(aes(x = rexp(nrow(sds), rate = 1/4)), # rexp takes as input the rate
+  geom_density(aes(x = rexp(nrow(sds), rate = 1/4)), # rexp takes as input the rate instead of expected value
                color = "red", linewidth = 1) +
+  xlab("sd(log(abundance)")+
   labs(title = "Distribution of metabolite specific standard deviations",
        subtitle = "Black: Observed SDs | Red: Prior Exp(1/4)")
 ```
@@ -124,7 +131,7 @@ ggplot(sds, aes(x = sd_log_abundance)) +
 Similarly to the prior for the standard deviation of log-transformed metabolite abundances **MetaboDynamics**
 uses an exponential distribution for cell counts. The argument `prior_counts` sets the *expected value* of cell counts.
 
-**Note**: The *expected value* or mean of the exponential distribution is 1/*rate*. **MetaboDynamics** takes as input the *expected value* as we found it more intuitive. 
+**Note**: The *expected value* or mean of the exponential distribution is $\frac{1}{rate}$. **MetaboDynamics** takes as input the *expected value* as we found it more intuitive. 
 
 ```{r}
 # Simulate counts
@@ -136,7 +143,7 @@ counts <- data.frame(
 # Visualize: Black = Data, Red = Prior
 ggplot(counts, aes(x = counts)) +
   geom_density(fill = "grey80", alpha = 0.5) +
-  geom_density(data = data.frame(counts = rexp(1e5, 1/5e7)), # rexp takes as input the rate
+  geom_density(data = data.frame(counts = rexp(1e5, 1/5e7)), # rexp takes as input the rate instead of expected value
                aes(x = counts), color = "red", linewidth = 1) +
   labs(title = "Distribution of cell counts",
        subtitle = "Black: Observed Counts | Red: Prior Exp(1/5e7)")
@@ -150,6 +157,7 @@ ggplot(counts, aes(x = counts)) +
 The following code demonstrates how to pass these priors to `fit_dynamics_model()`.
 
 ```{r, eval = FALSE}
+# library("MetaboDynamics")
 # # Prepare data (ensure at least two time points per condition)
 # abundances$condition <- "A"
 # abundances <- rbind(abundances, abundances)

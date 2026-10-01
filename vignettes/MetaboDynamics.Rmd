@@ -45,9 +45,9 @@ point and condition is required.
 Metabolite abundances have to be adequately normalized and scaled.
 The expected scaling is explained in the following workflow. 
 
-In the case of an in vitro experiment with available cell counts for all time points
+In the case of an *in vitro* experiment with available cell counts for all time points
 and conditions no scaling or normalization is necessary as this will be handled
-by the fit_dynamics_model() function (model="raw_plus_counts")
+by the 'fit_dynamics_model()' function (model='raw_plus_counts')
 
 # Analysis time
 For two conditions of 100 metabolites the fitting of the dynamics model will take 
@@ -75,7 +75,7 @@ To address these challenges, we employ a Bayesian hierarchical model that balanc
 between under- and over-fitting. This model provides a robust method for 
 estimating mean abundances at every time point as well as abundance differences 
 between subsequent time points, even with limited replicates. An additional output
-of the model are dynamics vectors (i.e. abundances of one metabolite in one condition
+of the model are metabolite dynamics vectors (MDV) (i.e. abundances of one metabolite in one condition
 over all observed time points) and the difference between these dynamics vectors
 between experimental conditions.
 
@@ -167,10 +167,10 @@ ggplot(abundances) +
 ```
 
 The dynamics profiles of single metabolites have intercepts (i.e. mean metabolite
-abundances) that differ by magnitudes from each other. To be able to compare
-metabolites with each other we define dynamics as deviations at the observed
+abundances) that differ by magnitudes from each other. To be able to compare the
+*shape* of metabolites with each other we define dynamics as deviations at the observed
 time points from the metabolite's mean abundance. For this we standardize each 
-metabolite at each experimental condition to a mean of zero and a standard deviation of one. 
+metabolite at each experimental condition to a mean of zero and a standard deviation of one.
 
 In the simulated data set the scaled measurements
 are in column "m_scaled".
@@ -198,7 +198,7 @@ ggplot(abundances) +
   ylab("deviation from mean abundance") +
   facet_grid(rows = vars(condition)) +
   theme(legend.position = "none") +
-  ggtitle("standardized dynamics", "color=metabolite")
+  ggtitle("Metabolite dynamics vector", "color=metabolite")
 ```
 
 
@@ -213,9 +213,8 @@ We provide two model options: *sd_per_time_point* and *sd_per_condition*.
 
 For the *sd_per_time_point* option we assume a normal distribution of log-transformed
 metabolite abundances.  
-This model requires **at least triplicates** and assumes a normal distribution 
-of log-transformed and scaled metabolite
-abundances and estimates a mean $\mu$ per metabolite and time point. The spread $\sigma$ 
+This model requires **at least triplicates** and estimates a mean $\mu$ per 
+metabolite and time point. The standard deviation $\sigma$ 
 of the replicate measurements is also estimated per metabolite and time point, 
 but the spread of different time points inform each other through the hierarchical
 structure of the hyper-parameter $\lambda$. This partial pooling allows for the
@@ -239,9 +238,9 @@ switch to *sd_per_condition*.
 
 ## sd per condition
 
-For these cases we provide the second option 
-*sd_per_condition* that requires at least **duplicates** and assumes the same 
-$\sigma$ for all time points per condition
+For cases with low number of replicates or similar variance at all time points
+we provide the second option *sd_per_condition* that requires at least 
+**duplicates** and assumes the same  $\sigma$ for all time points per condition
 and metabolite and has partial pooling of metabolite and condition specific 
 $\sigma$ into metabolite specific $\lambda$.
 
@@ -252,18 +251,25 @@ $\sigma$ into metabolite specific $\lambda$.
 		\lambda_{m c}&\sim {\sf exponential}(2).
 \end{align*}
 
+**Note**: As the speed limiting step in the fitting of these Bayesian models
+is the estimation of $\sigma$ the 'sd_per_condition' has lower run times and may
+therefore also be suitable for large scale analysis.
+
+## Model dynamics in vitro
 If the untargeted LC-MS experiment is conducted *in vitro* and independent cell counts
 (i.e. cell counts were measured in a different well than metabolite abundances) are
 available adapted models can be run that takes the **raw** (i.e. not normalized and not scaled)
 metabolite abundances and the cell counts as input. 
-Again we have the two options *sd_per_time_point* and *sd_per_condition*.
+Again we have the two options *sd_per_time_point* and *sd_per_condition* and the
+hierarchical structure described in the previous section remains the same.
 
-The priors in this model are not as generic as in the other model options, as the
-data is not scaled. MetaboDynamics provides default priors that fit our data well, 
-but priors can be adapted to your specific experiment. For details please see
+As raw metabolite abundances and cell counts are provided the priors in this model 
+are not as generic as in the other model options, as the
+data is not scaled. MetaboDynamics provides default priors that fit our experimental
+data well, but priors can be adapted to your specific experiment. For details please see
 Vignette **"MetaboDynamics_Guide_to_prior_setting"** as guidance. 
 
-With cc = cell counts and con = metabolite abundance per cell we get:
+With y = cell counts and a = metabolite abundance per cell we get:
 
 - **sd_per_time_point** 
 
@@ -293,10 +299,8 @@ With cc = cell counts and con = metabolite abundance per cell we get:
 	z\log A^{(c)}_{m c t} &= \frac{ \log A^{(c)}_{m c t} - \langle \log A^{(c)}_{m c} \rangle} { \text{sd}\left( \log A^{(c)}_{m c} \right) }. \\
 \end{align*}
 
-The "raw_plus_counts" model is
-slower but has the advantage of additionally incorporating the uncertainty of cell counts
-into the estimates of the Bayesian model.  
 
+## Fitting of the Bayesian model
 The code below shows how to fit the Bayesian model with the function
 fit_dynamics_model(). Just in this vignette the number of chains is set to one.
 To get reliable estimates at least four chains should be used. If more than
@@ -428,29 +432,12 @@ If the 95% CrI contains zero, we
 cannot conclude that there is a difference in abundance between the two time points given
 the provided data.
 
-### Difference of dynamics between experimental conditions
-If the parameter "distance_conditions" is set to TRUE a ranked list of differences
-between metabolite dynamics of different conditions is visualized.
-
-```{r,fig.wide=TRUE}
-# 1) the differences between two timepoints
-plot_estimates(
-  data = data,
-  delta_t = FALSE,
-  dynamics = FALSE, distance_conditions = TRUE
-)
-```
-
-In the case of our simulated data set the uncertainty (i.e. the CrI width) for
-the estimated differences between dynamics is pretty high. Higher euclidean
-distances indicate big differences between dynamics, euclidean distances close to
-zero small differences between dynamics. 
-
-### Dynamic profiles
-
-The dynamic profiles of each metabolite can be visualized using the estimated 
+### Metabolite dynamics vectors
+The MDVs of each metabolite can be visualized using the estimated 
 mean abundances at each time point (parameter "dynamics"). The plot below shows the estimated mean 
-abundances at each time point for each metabolite.
+abundances at each time point for each metabolite. In case of model 'scaled_log'
+MDVs are vectors of $\mu_{mct}$, in model 'raw_plus_counts' MDVs are vectors
+of $\z\log A^{(c)}_{m c t}$.
 
 ```{r,fig.wide=TRUE}
 # 2) dynamic profiles
@@ -479,12 +466,33 @@ To identify groups of metabolites that have similar dynamics we could now cluste
 metabolite specific dynamics vectors (estimates$mu) to 
 determine if groups of metabolites have similar dynamics.
 
+### Difference of MDVs between experimental conditions
+If the parameter "distance_conditions" is set to TRUE a ranked list of Euclidean
+distances between MDVs of the same metabolite under different conditions is 
+visualized.
+
+```{r,fig.wide=TRUE}
+# 1) the differences between two timepoints
+plot_estimates(
+  data = data,
+  delta_t = FALSE,
+  dynamics = FALSE, distance_conditions = TRUE
+)
+```
+
+In the case of our simulated data set the uncertainty (i.e. the CrI width) for
+the estimated differences between dynamics is pretty high. Higher Euclidean
+distances indicate big differences between dynamics, Euclidean distances close to
+zero small differences between dynamics.
+
 # Cluster dynamics
-MetaboDynamics has a build-in wrapper function for clustering with the "hybrid"
+MetaboDynamics has a build-in wrapper function for clustering the posterior mean of MDVs with the "hybrid"
 method of the package [dynamicTreeCut](https://cran.r-project.org/web/packages/dynamicTreeCut/index.html).
 Bootstrapping of the clustering solution is implemented with draws from the 
-posterior distribution of mean metabolite abundances. Bootstrapping allows
-for the estimation of clustering reliability.
+posterior distribution of MDVs, which allows for estimation of clustering reliability.
+If the number of clustering solutions from bootstraps that are the same as the
+clustering solution of the posterior mean is high we have a high clustering reliability and
+vice versa.
 
 From here on I will demonstrate the workflow on the whole simulated data set.
 
@@ -631,13 +639,15 @@ p + plot_layout(ncol = 4, widths = c(2, 1, 2, 2))
 # Comparison of clusters of different experimental conditions
 ## Dynamics 
 We can not only conduct over-representation analysis of KEGG-functional modules but
-also compare dynamics clusters across different experimental conditions. For 
-this we employ a Bayesian model that estimates the mean difference as well as 
+also compare dynamics clusters across different experimental conditions.For this
+we compare the posterior means of every MDV of cluster a with every MDV of cluster b
+and record the Euclidean distance. We employ a Bayesian model that estimates the 
+mean Euclidean distance between well as 
 the standard deviation of differences between dynamics clusters. If data is a 
 SummarizedExperiment object the results of compare_metabolites are stored 
 in metadata(data)[["comparison_dynamics"]].
 
-dist = vector of pairwise euclidean distances between every dynamic vector of 
+dist = vector of pairwise Euclidean distances between every dynamic vector of 
 cluster a and every dynamic vector of cluster b, ID = cluster pair ID
 \begin{align*}
 dist_{ID}&\sim {\sf normal}(\mu_{ID},\sigma_{ID}) \\
