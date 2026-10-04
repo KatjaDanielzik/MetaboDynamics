@@ -211,8 +211,9 @@ We provide two model options: *sd_per_time_point* and *sd_per_condition*.
 
 ## sd per time point
 
-For the *sd_per_time_point* option we assume a normal distribution of log-transformed
-metabolite abundances.  
+For the *sd_per_time_point* option we assume a normal distribution of scaled and
+centered (to a mean of zero and standard deviation of one per metabolite and condition) 
+log-transformed metabolite abundances.  
 This model requires **at least triplicates** and estimates a mean $\mu$ per 
 metabolite and time point. The standard deviation $\sigma$ 
 of the replicate measurements is also estimated per metabolite and time point, 
@@ -220,11 +221,11 @@ but the spread of different time points inform each other through the hierarchic
 structure of the hyper-parameter $\lambda$. This partial pooling allows for the
 balance between over- and under fitting.
 
-With: con = metabolite abundances,
+With: a = scaled and centered log-transformed metabolite abundances,
 m = metabolite, c = experimental condition and t = time point ID:
 
 \begin{align*}
-		\log(a_{i})&\sim {\sf normal}(\mu_{m c t},\sigma_{m c t}), \\ 
+		a_{i}&\sim {\sf normal}(\mu_{m c t},\sigma_{m c t}), \\ 
 		\mu_{m c t}&\sim {\sf normal}(0,2), \\
 		\sigma_{m,c,t}&\sim {\sf exponential}(\lambda_{m c}), \\
 		\lambda_{m c}&\sim {\sf exponential}(2). \\
@@ -245,7 +246,7 @@ and metabolite and has partial pooling of metabolite and condition specific
 $\sigma$ into metabolite specific $\lambda$.
 
 \begin{align*}
-		\log(a_{i})&\sim {\sf normal}(\mu_{m c t},\sigma_{m c}), \\ 
+		a_{i}&\sim {\sf normal}(\mu_{m c t},\sigma_{m c}), \\ 
 		\mu_{m c t}&\sim {\sf normal}(0,2), \\
 		\sigma_{m c}&\sim {\sf exponential}(\lambda_{m}), \\
 		\lambda_{m c}&\sim {\sf exponential}(2).
@@ -255,7 +256,7 @@ $\sigma$ into metabolite specific $\lambda$.
 is the estimation of $\sigma$ the 'sd_per_condition' has lower run times and may
 therefore also be suitable for large scale analysis.
 
-## Model dynamics in vitro
+## Model dynamics *in vitro*
 If the untargeted LC-MS experiment is conducted *in vitro* and independent cell counts
 (i.e. cell counts were measured in a different well than metabolite abundances) are
 available adapted models can be run that takes the **raw** (i.e. not normalized and not scaled)
@@ -442,7 +443,7 @@ of $\z\log A^{(c)}_{m c t}$.
 ```{r,fig.wide=TRUE}
 # 2) dynamic profiles
 plot_estimates(
-  data = data, dynamics = TRUE,
+  data = data, MDVs = TRUE,
   distance_conditions = FALSE,
   delta_t = FALSE
 )
@@ -459,7 +460,7 @@ and can be accessed with. The estimates are ordered by condition.
 # get estimates
 estimates <- metadata(data)[["estimates_dynamics"]]
 # only show first rows of condition A
-estimates$euclidean_distances
+head(estimates$mu)
 ```
 
 To identify groups of metabolites that have similar dynamics we could now cluster these 
@@ -476,7 +477,7 @@ visualized.
 plot_estimates(
   data = data,
   delta_t = FALSE,
-  dynamics = FALSE, distance_conditions = TRUE
+  MDVs = FALSE, distance_conditions = TRUE
 )
 ```
 
@@ -484,6 +485,13 @@ In the case of our simulated data set the uncertainty (i.e. the CrI width) for
 the estimated differences between dynamics is pretty high. Higher Euclidean
 distances indicate big differences between dynamics, Euclidean distances close to
 zero small differences between dynamics.
+
+```{r}
+# get estimates
+estimates <- metadata(data)[["estimates_dynamics"]]
+# only show first rows of condition A
+head(estimates$euclidean_distances)
+```
 
 # Cluster dynamics
 MetaboDynamics has a build-in wrapper function for clustering the posterior mean of MDVs with the "hybrid"
@@ -650,7 +658,7 @@ in metadata(data)[["comparison_dynamics"]].
 dist = vector of pairwise Euclidean distances between every dynamic vector of 
 cluster a and every dynamic vector of cluster b, ID = cluster pair ID
 \begin{align*}
-dist_{ID}&\sim {\sf normal}(\mu_{ID},\sigma_{ID}) \\
+log(dist_{ID})&\sim {\sf normal}(\mu_{ID},\sigma_{ID}) \\
 \mu_{ID}&\sim {\sf normal^+}(0,2) \\
 \sigma_{ID}&\sim {\sf exponential}(1) 
 \end{align*}

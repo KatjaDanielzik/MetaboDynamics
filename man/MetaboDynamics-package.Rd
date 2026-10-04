@@ -6,6 +6,8 @@
 \alias{MetaboDynamics-package}
 \title{MetaboDynamics: Bayesian analysis of longitudinal metabolomics data}
 \description{
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
+
 MetaboDynamics is an R-package that provides a framework of probabilistic models to analyze longitudinal metabolomics data. It enables robust estimation of mean concentrations despite varying spread between timepoints and reports differences between timepoints as well as metabolite specific dynamics profiles that can be used for identifying "dynamics clusters" of metabolites of similar dynamics. Provides probabilistic over-representation analysis of KEGG functional modules and pathways as well as comparison between clusters of different experimental conditions.
 }
 \seealso{
@@ -18,6 +20,11 @@ Useful links:
 }
 \author{
 \strong{Maintainer}: Katja Danielzik \email{katja.danielzik@uni-due.de} (\href{https://orcid.org/0009-0007-5021-6212}{ORCID})
+
+Authors:
+\itemize{
+  \item Katja Danielzik \email{katja.danielzik@uni-due.de} (\href{https://orcid.org/0009-0007-5021-6212}{ORCID})
+}
 
 Other contributors:
 \itemize{

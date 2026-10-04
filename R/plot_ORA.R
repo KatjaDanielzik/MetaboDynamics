@@ -73,10 +73,10 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
   tested_column <- enquo(tested_column)
 
   # color code for visualization
-  a_clusters <- a_clusters %>% mutate(col = ifelse(log(OvE_gen_higher) < 0,
-    "ICR<0",
-    ifelse(log(OvE_gen_lower) > 0,
-      "ICR>0", "ICR includes 0"
+  a_clusters <- a_clusters %>% mutate(col = ifelse(OvE_gen_higher < 1,
+    "ICR<1",
+    ifelse(OvE_gen_lower > 1,
+      "ICR>1", "ICR includes 1"
     )
   ))
 
@@ -84,20 +84,20 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
 
   plot <- ggplot(
     a_clusters,
-    aes(x = log(as.numeric(OvE_gen)), y = (!!module_name), col = col)
+    aes(x = as.numeric(OvE_gen), y = (!!module_name), col = col)
   ) +
     geom_errorbarh(aes(
-      xmin = log(as.numeric(OvE_gen_lower)),
-      xmax = log(as.numeric(OvE_gen_higher))
+      xmin = as.numeric(OvE_gen_lower),
+      xmax = as.numeric(OvE_gen_higher)
     )) +
-    geom_point(aes(x = log(as.numeric(OvE_gen_median)))) +
-    geom_vline(xintercept = 0, linetype = "dashed") +
+    geom_point(aes(x = as.numeric(OvE_gen_median))) +
+    geom_vline(xintercept = 1, linetype = "dashed") +
     theme_bw() +
     scale_color_manual(
       values = c("black", "green", "red"),
       labels = c("0 in ICR", "ICR>0", "ICR<0"), name = ""
     ) +
-    xlab("log(p(OvE))") +
+    xlab("OvE") +
     facet_grid(cols = vars(cluster), rows = vars(condition)) +
     ggtitle(
       "hypergeometric ORA",
@@ -115,21 +115,21 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
       temp$cluster <- factor(temp$cluster, levels = cluster_order)
       ora_patchwork[[i]] <- ggplot(
         temp,
-        aes(y = log(as.numeric(OvE_gen)), x = gsub(" metabolism", "", !!tested_column), col = col)
+        aes(y = as.numeric(OvE_gen), x = gsub(" metabolism", "", !!tested_column), col = col)
       ) +
         geom_errorbar(aes(
-          ymin = log(as.numeric(OvE_gen_lower)),
-          ymax = log(as.numeric(OvE_gen_higher))
+          ymin = as.numeric(OvE_gen_lower),
+          ymax = as.numeric(OvE_gen_higher)
         )) +
-        geom_point(aes(y = log(as.numeric(OvE_gen_median)))) +
-        geom_hline(yintercept = 0, linetype = "dashed") +
+        geom_point(aes(y = as.numeric(OvE_gen_median))) +
+        geom_hline(yintercept = 1, linetype = "dashed") +
         theme_bw() +
         scale_color_manual(
           values = c("black", "green", "red"),
           labels = c("0 in ICR", "ICR>0", "ICR<0"), name = ""
         ) +
         xlab("Metabolism module") +
-        ylab("log(p(OvE))") +
+        ylab("OvE") +
         theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
         facet_grid(rows = vars(cluster)) +
         ggtitle(

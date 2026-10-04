@@ -8,7 +8,7 @@ plot_estimates(
   data = NULL,
   estimates = metadata(data)[["estimates_dynamics"]],
   delta_t = TRUE,
-  dynamics = TRUE,
+  MDVs = TRUE,
   distance_conditions = TRUE
 )
 }
@@ -21,13 +21,12 @@ must be stored in metadata(data) under "estimates_dynamics"}
 
 \item{delta_t}{should differences between time points be plotted?}
 
-\item{dynamics}{should dynamics be plotted?}
+\item{MDVs}{should metabolite dynamics vectors (MDVs) be plotted?}
 
-\item{distance_conditions}{should differences in metabolite specific dynamic should be plotted?}
+\item{distance_conditions}{should differences (i.e. Euclidean distances) of MDVs between conditions be plotted?}
 }
 \value{
-Visualization of differences between time points(delta_t) and dynamics
-profiles of single metabolites
+Visualization of differences between time points(delta_t), MDVs and Euclidean distances
 }
 \description{
 Visualization of parameter estimates from numeric fit of Bayesian model of dynamics
@@ -44,9 +43,10 @@ data <- fit_dynamics_model(
 data <- estimates_dynamics(
   data = data
 )
-plot_estimates(data = data, delta_t = TRUE, dynamic = FALSE, distance_conditions = FALSE)
-plot_estimates(data = data, delta_t = FALSE, dynamic = TRUE, distance_conditions = FALSE)
-plot_estimates(data = data, delta_t = FALSE, dynamic = FALSE, distance_conditions = TRUE)
+plot_estimates(data = data, delta_t = TRUE, MDVs = FALSE, distance_conditions = FALSE)
+plot_estimates(data = data, delta_t = FALSE, MDVs = TRUE, distance_conditions = FALSE)
+plot_estimates(data = data, delta_t = FALSE, MDVs = FALSE, distance_conditions = TRUE)
+
 }
 \seealso{
 parent function \code{\link[=estimates_dynamics]{estimates_dynamics()}}

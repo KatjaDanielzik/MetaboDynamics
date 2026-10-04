@@ -5,10 +5,9 @@
 #' must be stored in metadata(data) under "estimates_dynamics"
 #' @param data \link[SummarizedExperiment]{SummarizedExperiment} used to fit dynamics model and extract the estimates
 #' @param delta_t should differences between time points be plotted?
-#' @param dynamics should dynamics be plotted?
-#' @param distance_conditions should differences in metabolite specific dynamic should be plotted?
-#' @return Visualization of differences between time points(delta_t) and dynamics
-#' profiles of single metabolites
+#' @param MDVs should metabolite dynamics vectors (MDVs) be plotted?
+#' @param distance_conditions should differences (i.e. Euclidean distances) of MDVs between conditions be plotted?
+#' @return Visualization of differences between time points(delta_t), MDVs and Euclidean distances 
 #' @export
 #' @import ggplot2
 #' @import dplyr
@@ -28,11 +27,12 @@
 #' data <- estimates_dynamics(
 #'   data = data
 #' )
-#' plot_estimates(data = data, delta_t = TRUE, dynamic = FALSE, distance_conditions = FALSE)
-#' plot_estimates(data = data, delta_t = FALSE, dynamic = TRUE, distance_conditions = FALSE)
-#' plot_estimates(data = data, delta_t = FALSE, dynamic = FALSE, distance_conditions = TRUE)
+#' plot_estimates(data = data, delta_t = TRUE, MDVs = FALSE, distance_conditions = FALSE)
+#' plot_estimates(data = data, delta_t = FALSE, MDVs = TRUE, distance_conditions = FALSE)
+#' plot_estimates(data = data, delta_t = FALSE, MDVs = FALSE, distance_conditions = TRUE)
+#' 
 plot_estimates <- function(data = NULL, estimates = metadata(data)[["estimates_dynamics"]],
-                           delta_t = TRUE, dynamics = TRUE, distance_conditions = TRUE) {
+                           delta_t = TRUE, MDVs = TRUE, distance_conditions = TRUE) {
   # bind variables to function
   r <- NULL
 
@@ -50,8 +50,8 @@ plot_estimates <- function(data = NULL, estimates = metadata(data)[["estimates_d
   if (!is.logical(delta_t)) {
     stop("'delta_t' must be either 'TRUE' or 'FALSE'")
   }
-  if (!is.logical(dynamics)) {
-    stop("'dynamics' must be either 'TRUE' or 'FALSE'")
+  if (!is.logical(MDVs)) {
+    stop("'MDVs' must be either 'TRUE' or 'FALSE'")
   }
   if (!is.logical(distance_conditions)) {
     stop("'distance_conditions' must be either 'TRUE' or 'FALSE'")
@@ -137,7 +137,7 @@ plot_estimates <- function(data = NULL, estimates = metadata(data)[["estimates_d
           ggplot(temp_plot, aes(y = r, x = mean)) +
           geom_point() +
           geom_errorbarh(aes(xmin = `2.5%`, xmax = `97.5%`), height = 0.2) +
-          xlab("euclidean distancs between dynamics vectors") +
+          xlab("euclidean distancs between metabolite dynamics vectors") +
           geom_vline(xintercept = 0, linetype = "dashed") +
           theme_bw() +
           ylab("metabolite") +
@@ -156,8 +156,8 @@ plot_estimates <- function(data = NULL, estimates = metadata(data)[["estimates_d
   }
 
 
-  # dynamics
-  if (dynamics == TRUE) {
+  # MDVs
+  if (MDVs == TRUE) {
     temp_d <- estimates[["mu"]]
     temp_d <- temp_d %>% select(metabolite, condition, time, mean)
 
@@ -173,7 +173,7 @@ plot_estimates <- function(data = NULL, estimates = metadata(data)[["estimates_d
       theme_bw() +
       theme(legend.position = "none") +
       facet_grid(rows = vars(condition)) +
-      ggtitle("dynamics", "color = metabolite, row label = condition")
+      ggtitle("Metabolite dynamics vectors", "color = metabolite, row label = condition")
   }
 
   return(plots)

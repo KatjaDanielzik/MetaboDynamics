@@ -1,7 +1,9 @@
 #' Extracts parameter estimates from numeric fit of Bayesian model of dynamics
 #'
-#' Extracts the mean concentrations (mu) at every time point from the dynamics model fit, the 95% highest density interval (HDI), the estimated standard deviation of metabolite concentrations at every time point (sigma), and the pooled standard deviation of every metabolite over all timepoints (lambda).
-#' Additionally samples from the posterior of mu can be drawn. This can be helpful if p.e. one wants to estimate the clustering precision. Lambda can be used for clustering algorithms such as VSClust that also take the variance into account.
+#' Extracts the mean concentrations (mu) at every time point from the dynamics 
+#' model fit, the 95% highest density interval (HDI) (i.e. metabolite dynamic vectors (MDVs)), differences
+#' between subsequent time points of the same condition and Euclidean distances
+#' between MDVs of the same metabolite under different conditions.
 #'
 #' @param data data frame or colData of a \link[SummarizedExperiment]{SummarizedExperiment}
 #' used to fit dynamics model, must contain a column named "condition" specifiyng

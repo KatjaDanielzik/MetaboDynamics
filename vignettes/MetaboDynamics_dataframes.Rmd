@@ -134,7 +134,7 @@ plot_estimates(
   # does not need data as input
   estimates = estimates,
   delta_t = TRUE, # choose to visualize differences between time points
-  dynamics = FALSE,
+  MDVs = FALSE,
   distance_conditions = FALSE
 )
 
@@ -143,7 +143,7 @@ plot_estimates(
   estimates = estimates,
   delta_t = FALSE,
   distance_conditions = FALSE,
-  dynamics = TRUE
+  MDVs = TRUE
 ) # choose to visualize the dynamics
 
 # only visualize euclidean distance between dynamics vectors
@@ -152,7 +152,7 @@ plot_estimates(
   estimates = estimates,
   delta_t = FALSE,
   distance_conditions = TRUE,
-  dynamics = FALSE
+  MDVs = FALSE
 ) # choose to visualize the dynamics
 ```
 

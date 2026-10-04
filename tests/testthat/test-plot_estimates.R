@@ -57,8 +57,8 @@ test_that("plot_estimates:input_checks", {
 
   # Test that the function throws an error if dynamics is not a logical value
   expect_error(
-    plot_estimates(data = dummy_data, estimates = dummy_estimates, dynamics = "not a logical value"),
-    "'dynamics' must be either 'TRUE' or 'FALSE'"
+    plot_estimates(data = dummy_data, estimates = dummy_estimates, MDVs = "not a logical value"),
+    "'MDVs' must be either 'TRUE' or 'FALSE'"
   )
 
   # Test that the function throws an error if distance_conditions is not a logical value
