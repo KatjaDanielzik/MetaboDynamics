@@ -1,6 +1,5 @@
 # MetaboDynamics 2.3.9
 - in "plot_estimates" argument "dynamics" changed to "MDVs"
-- in "compare_dynamics" lognormal instead of normal distribution of Euclidean distances
 - in "plot_ORA" OvE instead of p(OvE) are displayed, reducing distortion due to log-transformation
 
 # MetaboDynamics 2.3.8
