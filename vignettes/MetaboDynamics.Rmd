@@ -414,7 +414,7 @@ increase the most are visualized on the far right of the plot.
 plots <- plot_estimates(
   data = data,
   delta_t = TRUE,
-  dynamics = FALSE, distance_conditions = FALSE
+  MDVs = FALSE, distance_conditions = FALSE
 )
 plots$delta_t$`A_time_point_2-time_point_1`
 plots$delta_t$`A_time_point_3-time_point_2`
