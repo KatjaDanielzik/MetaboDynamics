@@ -107,7 +107,8 @@ plot_estimates <- function(data = NULL, estimates = metadata(data)[["estimates_d
             theme(axis.text.x = element_text(angle = -90, hjust = 0)) +
             ggtitle(
               "Differences between time points",
-              "point = mean, errorbar = 95% highest density interval (CrI)"
+              "point = mean,
+errorbar = 95% highest density interval (CrI)"
             )
           plots[["delta_t"]] <- plots_delta_t
         }
@@ -136,8 +137,8 @@ plot_estimates <- function(data = NULL, estimates = metadata(data)[["estimates_d
         plots_distances[[i]] <-
           ggplot(temp_plot, aes(y = r, x = mean)) +
           geom_point() +
-          geom_errorbarh(aes(xmin = `2.5%`, xmax = `97.5%`), height = 0.2) +
-          xlab("Euclidean distancs between metabolite dynamics vectors") +
+          geom_errorbar(aes(xmin = `2.5%`, xmax = `97.5%`), height = 0.2) +
+          xlab("Euclidean distancs between MDVs") +
           geom_vline(xintercept = 0, linetype = "dashed") +
           theme_bw() +
           ylab("metabolite") +
@@ -146,7 +147,8 @@ plot_estimates <- function(data = NULL, estimates = metadata(data)[["estimates_d
           ggtitle(
             "Difference of MDVs
 between conditions",
-            "point = mean, errorbar = 95% highest density interval (CrI)"
+            "point = mean, 
+errorbar = 95% highest density interval (CrI)"
           )
       }
       plots[["distance_conditions"]] <- plots_distances
@@ -162,7 +164,7 @@ between conditions",
     temp_d <- estimates[["mu"]]
     temp_d <- temp_d %>% select(metabolite, condition, time, mean)
 
-    plots[["MDVs"]]
+    plots[["MDVs"]] <-
       ggplot(temp_d, aes(
         x = as.factor(time),
         y = mean, group = metabolite, col = metabolite

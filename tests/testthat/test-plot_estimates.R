@@ -74,6 +74,6 @@ test_that("plot_estimates:output_checks", {
   expect_type(results, "list")
 
   # Test that the function returns a list with the expected elements
-  expected_elements <- c("delta_t", "distance_conditions", "dynamcis")
+  expected_elements <- c("delta_t", "distance_conditions", "MDVs")
   expect_true(all(expected_elements %in% names(results)))
 })
