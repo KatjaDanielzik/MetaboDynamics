@@ -11,7 +11,8 @@ src/*.h
 *.Rproj
 doc/*
 Meta/*
-/doc/
+/doc/*
 
 /Meta/
 .positai
+/doc/

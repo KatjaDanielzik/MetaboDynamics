@@ -95,7 +95,7 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
     theme_bw() +
     scale_color_manual(
       values = c("black", "green", "red"),
-      labels = c("0 in ICR", "ICR>0", "ICR<0"), name = ""
+      labels = c("1 in ICR", "ICR>1", "ICR<1"), name = ""
     ) +
     xlab("OvE") +
     facet_grid(cols = vars(cluster), rows = vars(condition)) +
@@ -126,7 +126,7 @@ plot_ORA <- function(data, tested_column = "middle_hierarchy",
         theme_bw() +
         scale_color_manual(
           values = c("black", "green", "red"),
-          labels = c("0 in ICR", "ICR>0", "ICR<0"), name = ""
+          labels = c("1 in ICR", "ICR>1", "ICR<1"), name = ""
         ) +
         xlab("Metabolism module") +
         ylab("OvE") +
