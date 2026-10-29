@@ -282,8 +282,8 @@ With y = cell counts and a = metabolite abundance per cell we get:
 	y_{c,t}&\sim {\sf poisson}(\kappa_{c t}), \\
 	\kappa_{c,t}&\sim{\sf exponential}(1 \times 10^{-6}), \\
 		A_{m,c,t} &= e^{\mu_{m,c,t} + \frac{\sigma_{m c t}^2}{2}}, \\
-	log(A^{(c)}_{m ct})&=log(A_{m c t}/\kappa_{c,t}), \\
-	z\log A^{(c)}_{m c t} &= \frac{ \log A^{(c)}_{m c t} - \langle \log A^{(c)}_{m c} \rangle} { \text{sd}\left( \log A^{(c)}_{m c} \right) }. \\
+	log(A'_{m ct})&=log(A_{m c t}/\kappa_{c,t}), \\
+	z\log A'_{m c t} &= \frac{ \log A'_{m c t} - \langle \log A'_{m c} \rangle} { \text{sd}\left( \log A'_{m c} \right) }. \\
 \end{align*}
 
 - **sd_per_condition**
@@ -296,8 +296,8 @@ With y = cell counts and a = metabolite abundance per cell we get:
 	y_{c,t}&\sim {\sf poisson}(\kappa_{c t}), \\
 	\kappa_{c,t}&\sim{\sf exponential}(1 \times 10^{-6}), \\
 		A_{m,c,t} &= e^{\mu_{m,c,t} + \frac{\sigma_{m,c}^2}{2}}, \\
-	log(A^{(c)}_{m ct})&=log(A_{m c t}/\kappa_{c,t}), \\
-	z\log A^{(c)}_{m c t} &= \frac{ \log A^{(c)}_{m c t} - \langle \log A^{(c)}_{m c} \rangle} { \text{sd}\left( \log A^{(c)}_{m c} \right) }. \\
+	log(A'_{m ct})&=log(A_{m c t}/\kappa_{c,t}), \\
+	z\log A'_{m c t} &= \frac{ \log A'_{m c t} - \langle \log A'_{m c} \rangle} { \text{sd}\left( \log A'_{m c} \right) }. \\
 \end{align*}
 
 
@@ -438,7 +438,7 @@ The MDVs of each metabolite can be visualized using the estimated
 mean abundances at each time point (parameter "dynamics"). The plot below shows the estimated mean 
 abundances at each time point for each metabolite. In case of model 'scaled_log'
 MDVs are vectors of $\mu_{mct}$, in model 'raw_plus_counts' MDVs are vectors
-of $\z\log A^{(c)}_{m c t}$.
+of $\z\log A'_{m c t}$.
 
 ```{r,fig.wide=TRUE}
 # 2) dynamic profiles
