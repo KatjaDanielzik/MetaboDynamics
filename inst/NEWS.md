@@ -1,3 +1,6 @@
+# MetaboDynamics 2.3.15
+- in "fit_dynamics_model" argument "raw_plus_counts" changed to "raw_plus_cell_counts"
+
 # MetaboDynamics 2.3.9
 - in "plot_estimates" argument "dynamics" changed to "MDVs"
 - in "plot_ORA" OvE instead of p(OvE) are displayed, reducing distortion due to log-transformation
