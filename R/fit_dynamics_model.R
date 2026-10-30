@@ -10,13 +10,13 @@
 #'
 #' @param model which model to fit. Two options are available:
 #' "scaled_log": taking in normalized and scaled metabolite concentrations (see scaled measurement)
-#' "raw_plus_counts": tailored for in vitro untargeted LC-MS experiments, taking in "raw"
+#' "raw_plus_cell_counts": tailored for in vitro untargeted LC-MS experiments, taking in "raw"
 #' (i.e. not normalized and not scaled) metabolite concentrations and cell counts.
 #' This model assumes independent measurement (i.e. different wells) of cell counts
 #' and metabolite concentrations. Additionally it assumes that cell counts were estimated
 #' e.g. by cell counters (i.e. that cells were not counted under the microscope)
 #' leading to a small uncertainty of the true cell count.
-#' @param model_option for each model ("scaled_log" and "raw_plus_counts") two
+#' @param model_option for each model ("scaled_log" and "raw_plus_cell_counts") two
 #' versions are available: "sd_per_time_point" and "sd_per_condition".
 #' "sd_per_time_point" is suited for more replicates (at least triplicates) and
 #' estimates standard deviations per time point and therefore allows for more
@@ -28,11 +28,11 @@
 #' replicate measurements per
 #' metabolite. Must contain columns named "metabolite" (containing names or IDs), "time" (categorical, the same for all conditions), and "condition" or colData of a \link[SummarizedExperiment]{SummarizedExperiment} object
 #' Time column needs to be sorted in ascending order
-#' @param scaled_measurement column of "data" that contains the abundances per cell (model "raw_plus_counts"),
+#' @param scaled_measurement column of "data" that contains the abundances per cell (model "raw_plus_cell_counts"),
 #' or in case of model "scaled_log" the log-transformed metabolite abundances
 #' centered and normalized per metabolite and experimental condition  to mean=0 and sd=1,
 #' must be numeric
-#' @param counts only model "raw_plus_counts", data frame with at least one replicate 
+#' @param counts only model "raw_plus_cell_counts", data frame with at least one replicate 
 #' per time point and condition
 #' specifying the cell counts, must contain columns "time", and "condition" equivalent
 #' to the specifications of "data".
@@ -45,7 +45,7 @@
 #' rowData the timepoint specifications, in case of the model "scaled_log"
 #' assay needs to hold scaled log-transformed metabolite concentrations
 #' (mean=0,sd=1 per metabolite and experimental condition), if model
-#' "raw_plus_counts" is chosen must hold the non-transformed and non-scaled metabolite concentrations
+#' "raw_plus_cell_counts" is chosen must hold the non-transformed and non-scaled metabolite concentrations
 #' @param cores how many cores should be used for model fitting; this
 #' parallelizes the model fitting and therefore speeds it up; default=4
 #' @param chains how many Markov-Chains should be used for model fitting, use at
@@ -59,13 +59,13 @@
 #' sample size being to low, default=2000
 #' @param warmup how many iterations the model warms up for, increasing might
 #' facilitate efficiency, must be at least 25% of ITER, default=iter/4
-#' @param prior_mean_abundance only for model 'raw_plus_counts', has to be >0, mu and sigma of
+#' @param prior_mean_abundance only for model 'raw_plus_cell_counts', has to be >0, mu and sigma of
 #' normal distribution covering the range for log-transformed metabolite abundances,
 #' for details see Vignette "Prior setting".
-#' @param prior_sd_abundance only for model 'raw_plus_counts', has to be >0, expected value
+#' @param prior_sd_abundance only for model 'raw_plus_cell_counts', has to be >0, expected value
 #' (most abundant) value of metabolite specific standard deviation of log-transformed metabolite abundances,
 #' for details see Vignette "Prior setting". 
-#' @param prior_counts only for model 'raw_plus_counts', has to be >0, expected value of cell counts,
+#' @param prior_counts only for model 'raw_plus_cell_counts', has to be >0, expected value of cell counts,
 #' for details see Vignette "Prior setting".
 #' 
 #'
@@ -157,7 +157,7 @@ fit_dynamics_model <- function(model = "scaled_log",
     stop("'scaled_measurement' cannot contain NAs")
   }
 
-  if (model == "raw_plus_counts") {
+  if (model == "raw_plus_cell_counts") {
     if (is(counts, "tbl")) {
       counts <- as.data.frame(counts)
     }
@@ -187,7 +187,7 @@ fit_dynamics_model <- function(model = "scaled_log",
 
 
   # check if all conditions and time points have cell counts
-  if (model == "raw_plus_counts") {
+  if (model == "raw_plus_cell_counts") {
     if (!setequal(unique(data_df$time), unique(counts$time))) {
       stop("data and counts must have the same time points")
     }
@@ -238,7 +238,7 @@ fit_dynamics_model <- function(model = "scaled_log",
     )
   }
 
-  if (model == "raw_plus_counts") {
+  if (model == "raw_plus_cell_counts") {
     if (model_option == "sd_per_time_point") {
       stanmodel <- stanmodels$m_ANOVA_partial_pooling_cell_counts_euclidean_distance
     }
@@ -288,7 +288,7 @@ fit_dynamics_model <- function(model = "scaled_log",
     metadata(data)[["model"]] <- model
     metadata(data)[["model_option"]] <- model_option
     # store priors
-    if(model=="raw_plus_counts"){
+    if(model=="raw_plus_cell_counts"){
       metadata(data)[["priors"]] <- list(prior_mean_abundance=prior_mean_abundance,
                                          prior_sd_abundance=prior_sd_abundance,
                                          prior_counts=prior_counts)

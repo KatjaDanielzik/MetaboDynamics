@@ -1,7 +1,7 @@
 #' input checks for fit_dynamics_model
 #' @param model which model to fit. Two options are available:
 #' "scaled_log": taking in normalized and scaled metabolite concentrations (see scaled measurement)
-#' "raw_plus_counts": tailored for in vitro untargeted LC-MS experiments, taking in "raw"
+#' "raw_plus_cell_counts": tailored for in vitro untargeted LC-MS experiments, taking in "raw"
 #' (i.e. not normalized and not scaled) metabolite concentrations and cell counts.
 #' This model assumes independent measurement (i.e. different wells) of cell counts
 #' and metabolite concentrations. Additionally it assumes that cell counts were estimated
@@ -24,7 +24,7 @@
 #' rowData the timepoint specifications, in case of the model "scaled_log"
 #' assay needs to hold scaled log-transformed metabolite concentrations
 #' (mean=0,sd=1 per metabolite and experimental condition), if model
-#' "raw_plus_counts" is chosen must hold the non-transformed and non-scaled metabolite concentrations
+#' "raw_plus_cell_counts" is chosen must hold the non-transformed and non-scaled metabolite concentrations
 #' @param cores how many cores should be used for model fitting; this
 #' parallelizes the model fitting and therefore speeds it up; default=4
 #' @param chains how many Markov-Chains should be used for model fitting, use at
@@ -45,8 +45,8 @@
                                       counts, assay, chains, cores, adapt_delta,
                                       max_treedepth, iter, warmup, prior_mean_abundance,
                                       prior_sd_abundance, prior_counts) {
-  if (!model %in% c("scaled_log", "raw_plus_counts")) {
-    stop("'model' must be either 'scaled_log' or 'raw_plus_counts'")
+  if (!model %in% c("scaled_log", "raw_plus_cell_counts")) {
+    stop("'model' must be either 'scaled_log' or 'raw_plus_cell_counts'")
   }
   if (!model_option %in% c("sd_per_time_point", "sd_per_condition")) {
     stop("'model_option' must be either 'sd_per_time_point' or 'sd_per_condition'")
@@ -62,14 +62,14 @@
           We recommend normalization by log-transformation.
           Scaling and centering (mean=0, sd=1) should be metabolite and condition specific.")
   }
-  if (model == "raw_plus_counts") {
+  if (model == "raw_plus_cell_counts") {
     # hint user if data is standardized
     message("Are your metabolite concentrations non-normalized and non-scaled?
-          The chosen 'raw_plus_counts' model expects raw metabolite concentrations.")
+          The chosen 'raw_plus_cell_counts' model expects raw metabolite concentrations.")
 
     # Input checks
     if (!is.data.frame(counts)) {
-      stop("'counts' must be a dataframe if you chose model 'raw_plus_counts'.
+      stop("'counts' must be a dataframe if you chose model 'raw_plus_cell_counts'.
                 If you cannot provide cell counts choose model 'scaled_log'")
     }
     if (!all(c("time", "condition", "counts") %in% colnames(counts))) {

@@ -34,7 +34,7 @@ test_that("fit_dynamics_model:input_checks", {
     data = mock_data,
     model = "invalid_model",
     scaled_measurement = "m_scaled"
-  ), "'model' must be either 'scaled_log' or 'raw_plus_counts'")
+  ), "'model' must be either 'scaled_log' or 'raw_plus_cell_counts'")
 
   # Test: model_option must be one of the allowed values
   expect_error(fit_dynamics_model(
@@ -74,15 +74,15 @@ test_that("fit_dynamics_model:input_checks", {
       before using estimates!"
   )
 
-  # Test: counts must be a data frame if model is 'raw_plus_counts'
+  # Test: counts must be a data frame if model is 'raw_plus_cell_counts'
   expect_error(
-    fit_dynamics_model(model = "raw_plus_counts", data = mock_data, counts = list()),
-    "'counts' must be a dataframe if you chose model 'raw_plus_counts'."
+    fit_dynamics_model(model = "raw_plus_cell_counts", data = mock_data, counts = list()),
+    "'counts' must be a dataframe if you chose model 'raw_plus_cell_counts'."
   )
 
   # Test: counts must contain columns named 'time','condition', and 'counts'
   expect_error(
-    fit_dynamics_model(model = "raw_plus_counts", data = mock_data, counts = data.frame(time = 1:10)),
+    fit_dynamics_model(model = "raw_plus_cell_counts", data = mock_data, counts = data.frame(time = 1:10)),
     "'counts' must contain columns named 'time','condition', and 'counts'"
   )
 
@@ -101,7 +101,7 @@ test_that("fit_dynamics_model:input_checks", {
 
   expect_error(
     fit_dynamics_model(
-      model = "raw_plus_counts",
+      model = "raw_plus_cell_counts",
       data = mock_data,
       counts = time_mismatch,
       scaled_measurement = "m_scaled"
@@ -116,7 +116,7 @@ test_that("fit_dynamics_model:input_checks", {
   )
   expect_error(
     fit_dynamics_model(
-      model = "raw_plus_counts",
+      model = "raw_plus_cell_counts",
       data = mock_data,
       counts = condition_mismatch,
       scaled_measurement = "m_scaled"
@@ -130,7 +130,7 @@ test_that("fit_dynamics_model:input_checks", {
                             counts = as.integer(rexp(2,1e7)))
   expect_error(
     fit_dynamics_model(
-      model = "raw_plus_counts",
+      model = "raw_plus_cell_counts",
       data = mock_data,
       counts = mock_counts,
       prior_sd_abundance = -1
@@ -140,7 +140,7 @@ test_that("fit_dynamics_model:input_checks", {
   
   expect_error(
     fit_dynamics_model(
-      model = "raw_plus_counts",
+      model = "raw_plus_cell_counts",
       data = mock_data,
       counts = mock_counts,
       prior_counts = "true"
@@ -150,7 +150,7 @@ test_that("fit_dynamics_model:input_checks", {
   
   expect_error(
     fit_dynamics_model(
-      model = "raw_plus_counts",
+      model = "raw_plus_cell_counts",
       data = mock_data,
       counts = mock_counts,
       prior_counts = "true"
@@ -160,7 +160,7 @@ test_that("fit_dynamics_model:input_checks", {
   
   expect_error(
   fit_dynamics_model(
-    model = "raw_plus_counts",
+    model = "raw_plus_cell_counts",
     data = mock_data,
     counts = mock_counts,
     prior_mean_abundance = c(0,-1)
@@ -211,7 +211,7 @@ test_that("fit_dynamics_model:output_checks", {
   
   # basic function output
   fit <- fit_dynamics_model(
-    model = "raw_plus_counts",
+    model = "raw_plus_cell_counts",
     model_option = "sd_per_time_point",
     data = mock_data,
     scaled_measurement = "m_scaled",

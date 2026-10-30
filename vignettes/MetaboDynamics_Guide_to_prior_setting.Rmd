@@ -18,13 +18,13 @@ BiocStyle::markdown()
 set.seed(123)
 ```
 
-**MetaboDynamics** allows users to specify custom priors for the underlying Bayesian model when using the `model = "raw_plus_counts"` option. This vignette provides a technical guide on how to configure these priors based on your experimental data.
+**MetaboDynamics** allows users to specify custom priors for the underlying Bayesian model when using the `model = "raw_plus_cell_counts"` option. This vignette provides a technical guide on how to configure these priors based on your experimental data.
 
 **Note:** If you cannot define appropriate priors for your data, use `model = "scaled_log"`. This option relies on log-transformed, normalized, and scaled cell counts, where priors are fixed to a standard range.
 
 # Prior Parameters
 
-The `raw_plus_counts` model requires three prior specifications. These are passed as arguments to `fit_dynamics_model()`.
+The `raw_plus_cell_counts` model requires three prior specifications. These are passed as arguments to `fit_dynamics_model()`.
 
 | Parameter | Argument | Description |
 | :--- | :--- | :--- | :--- |
@@ -169,7 +169,7 @@ The following code demonstrates how to pass these priors to `fit_dynamics_model(
 # 
 # # Fit model with custom priors
 # fit <- fit_dynamics_model(
-#   model = "raw_plus_counts",
+#   model = "raw_plus_cell_counts",
 #   model_option = "sd_per_condition",
 #   data = abundances,
 #   counts = counts,

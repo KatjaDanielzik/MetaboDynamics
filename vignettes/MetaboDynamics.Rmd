@@ -47,7 +47,7 @@ The expected scaling is explained in the following workflow.
 
 In the case of an *in vitro* experiment with available cell counts for all time points
 and conditions no scaling or normalization is necessary as this will be handled
-by the 'fit_dynamics_model()' function (model='raw_plus_counts')
+by the 'fit_dynamics_model()' function (model='raw_plus_cell_counts')
 
 # Analysis time
 For two conditions of 100 metabolites the fitting of the dynamics model will take 
@@ -437,7 +437,7 @@ the provided data.
 The MDVs of each metabolite can be visualized using the estimated 
 mean abundances at each time point (parameter "dynamics"). The plot below shows the estimated mean 
 abundances at each time point for each metabolite. In case of model 'scaled_log'
-MDVs are vectors of $\mu_{mct}$, in model 'raw_plus_counts' MDVs are vectors
+MDVs are vectors of $\mu_{mct}$, in model 'raw_plus_cell_counts' MDVs are vectors
 of $z_{\log A'_{m c t}}$.
 
 ```{r,fig.wide=TRUE}
