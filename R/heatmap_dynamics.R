@@ -91,8 +91,8 @@ heatmap_dynamics <- function(estimates = metadata(data)[["comparison_dynamics"]]
     scale_color_viridis_c(option = "viridis") +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
     labs(col = "1/estimated mean", size = "1/estimated sigma") +
-    xlab("cluster_b") +
-    ylab("cluster_a") +
+    xlab("") +
+    ylab("") +
     ggtitle(
       "similarity of dynamics in clusters",
       "estimated mean pairwise euclidean distance,

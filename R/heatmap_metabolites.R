@@ -75,8 +75,8 @@ heatmap_metabolites <- function(distances = metadata(data)[["comparison_metaboli
   ) +
     geom_tile(color = "white") +
     theme_bw() +
-    xlab("cluster_b") +
-    ylab("cluster_a") +
+    xlab("") +
+    ylab("") +
     scale_fill_viridis_c(option = "viridis") +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
     ggtitle(

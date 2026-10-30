@@ -114,9 +114,6 @@ below 1.01 and number of effective samples exceeded 100.
 # Extract estimates and visualize results
 To extract the estimates one has to specify again the data, list of fits and number of iterations and chains used to fit the model. Additionally is is possible to specify the columns in which metabolite names, experimental conditions and time points are stored. This is equivalent to the fit_dynamics_model function.
 
-Additionally one can specify how many samples should be drawn from the posterior
-to for example test clustering performance. 
-
 ```{r}
 estimates <- # estimates have to be stored in a separate object when using data frames
   estimates_dynamics(

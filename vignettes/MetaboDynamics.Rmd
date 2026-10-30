@@ -283,7 +283,7 @@ With y = cell counts and a = metabolite abundance per cell we get:
 	\kappa_{c,t}&\sim{\sf exponential}(1 \times 10^{-6}), \\
 		A_{m,c,t} &= e^{\mu_{m,c,t} + \frac{\sigma_{m c t}^2}{2}}, \\
 	log(A'_{m ct})&=log(A_{m c t}/\kappa_{c,t}), \\
-	z\log A'_{m c t} &= \frac{ \log A'_{m c t} - \langle \log A'_{m c} \rangle} { \text{sd}\left( \log A'_{m c} \right) }. \\
+	z_{\log A'_{m c t}} &= \frac{ \log A'_{m c t} - \langle \log A'_{m c} \rangle} { \text{sd}\left( \log A'_{m c} \right) }. \\
 \end{align*}
 
 - **sd_per_condition**
@@ -297,7 +297,7 @@ With y = cell counts and a = metabolite abundance per cell we get:
 	\kappa_{c,t}&\sim{\sf exponential}(1 \times 10^{-6}), \\
 		A_{m,c,t} &= e^{\mu_{m,c,t} + \frac{\sigma_{m,c}^2}{2}}, \\
 	log(A'_{m ct})&=log(A_{m c t}/\kappa_{c,t}), \\
-	z\log A'_{m c t} &= \frac{ \log A'_{m c t} - \langle \log A'_{m c} \rangle} { \text{sd}\left( \log A'_{m c} \right) }. \\
+	z_{\log A'_{m c t}} &= \frac{ \log A'_{m c t} - \langle \log A'_{m c} \rangle} { \text{sd}\left( \log A'_{m c} \right) }. \\
 \end{align*}
 
 
@@ -438,7 +438,7 @@ The MDVs of each metabolite can be visualized using the estimated
 mean abundances at each time point (parameter "dynamics"). The plot below shows the estimated mean 
 abundances at each time point for each metabolite. In case of model 'scaled_log'
 MDVs are vectors of $\mu_{mct}$, in model 'raw_plus_counts' MDVs are vectors
-of $\z\log A'_{m c t}$.
+of $z_{\log A'_{m c t}}$.
 
 ```{r,fig.wide=TRUE}
 # 2) dynamic profiles
@@ -648,19 +648,19 @@ p + plot_layout(ncol = 4, widths = c(2, 1, 2, 2))
 ## Dynamics 
 We can not only conduct over-representation analysis of KEGG-functional modules but
 also compare dynamics clusters across different experimental conditions.For this
-we compare the posterior means of every MDV of cluster a with every MDV of cluster b
+we compare the posterior means of every MDV of cluster x with every MDV of cluster y
 and record the Euclidean distance. We employ a Bayesian model that estimates the 
 mean Euclidean distance between well as 
 the standard deviation of differences between dynamics clusters. If data is a 
 SummarizedExperiment object the results of compare_metabolites are stored 
 in metadata(data)[["comparison_dynamics"]].
 
-dist = vector of pairwise Euclidean distances between every dynamic vector of 
-cluster a and every dynamic vector of cluster b, ID = cluster pair ID
+d = Euclidean distances between every MDV of 
+cluster x and every dynamic vector of cluster y, $k_a k_b$ = pair of clusters $k$ (one from condition $a$ and one from condition $b$).
 \begin{align*}
-log(dist_{ID})&\sim {\sf normal}(\mu_{ID},\sigma_{ID}) \\
-\mu_{ID}&\sim {\sf normal^+}(0,2) \\
-\sigma_{ID}&\sim {\sf exponential}(1) 
+d_{m_{k_{a}} m_{k_{b}}}&\sim {\sf normal^+}(\mu_{k_{a}\,k_{b}},\sigma_{k_{a}\,k_{b}}), \\
+		\mu_{k_{a}\,k_{b}}&\sim {\sf normal^+}(2,2), \\
+		\sigma_{k_{a}\,k_{b}}&\sim {\sf exponential}(1). 
 \end{align*}
 
 ```{r,fig.aling='center',fig.dpi=150}
